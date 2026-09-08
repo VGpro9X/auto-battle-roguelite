@@ -37,13 +37,37 @@ function update(dt){
 
   for(const enemy of state.enemies){
     if(enemy.dead)continue;
+    enemy.hit=Math.max(0,enemy.hit-dt);
+
+    if(isEnemyAllied(enemy)){
+      enemy.allyAttackTimer-=dt;
+      const[target,targetDistance]=getNearestHostileFromEnemy(enemy,260);
+      if(target){
+        const dx=target.x-enemy.x,dy=target.y-enemy.y,magnitude=Math.hypot(dx,dy)||1;
+        if(targetDistance>72){
+          enemy.x+=dx/magnitude*enemy.speed*.9*dt;
+          enemy.y+=dy/magnitude*enemy.speed*.9*dt;
+        }
+        if(enemy.allyAttackTimer<=0&&targetDistance<=210){
+          enemy.allyAttackTimer=.72;
+          hitEnemy(target,Math.max(6,enemy.dmg*1.8),0,{source:"bribedAlly",tags:["SUMMON","RULE"],allowProcs:false});
+        }
+      }else{
+        const angle=state.t*.9+(enemy.x+enemy.y)*.01;
+        const tx=player.x+Math.cos(angle)*58,ty=player.y+Math.sin(angle)*58;
+        const dx=tx-enemy.x,dy=ty-enemy.y,magnitude=Math.hypot(dx,dy)||1;
+        enemy.x+=dx/magnitude*enemy.speed*.55*dt;
+        enemy.y+=dy/magnitude*enemy.speed*.55*dt;
+      }
+      continue;
+    }
+
     const dx=player.x-enemy.x,dy=player.y-enemy.y,magnitude=Math.hypot(dx,dy)||1;
     const auraChilled=frostLevel&&magnitude<=frostRadius;
     enemy.chilled=Boolean(auraChilled||enemy.chillUntil>state.t);
     const speedFactor=enemy.chilled?frostSpeedFactor:1;
     enemy.x+=dx/magnitude*enemy.speed*speedFactor*dt;
     enemy.y+=dy/magnitude*enemy.speed*speedFactor*dt;
-    enemy.hit=Math.max(0,enemy.hit-dt);
     if(magnitude<player.r+enemy.r+3)damagePlayer(enemy.dmg*dt,{source:enemy,type:"contact"});
   }
 
@@ -57,7 +81,7 @@ function update(dt){
       const bladeX=player.x+Math.cos(angle)*orbitRadius;
       const bladeY=player.y+Math.sin(angle)*orbitRadius;
       for(const enemy of state.enemies){
-        if(enemy.dead)continue;
+        if(!isEnemyHostile(enemy))continue;
         if(Math.hypot(enemy.x-bladeX,enemy.y-bladeY)<enemy.r+7){
           if(!enemy.orbitHit||state.t-enemy.orbitHit>.32){
             enemy.orbitHit=state.t;
@@ -74,7 +98,7 @@ function update(dt){
     projectile.x+=projectile.vx*dt;projectile.y+=projectile.vy*dt;projectile.life-=dt;
     for(const enemy of state.enemies){
       if(projectile.life<=0||projectile.hitsRemaining<=0)break;
-      if(enemy.dead||projectile.hitEnemies.has(enemy))continue;
+      if(!isEnemyHostile(enemy)||projectile.hitEnemies.has(enemy))continue;
       if(Math.hypot(projectile.x-enemy.x,projectile.y-enemy.y)<projectile.r+enemy.r){
         hitEnemy(enemy,projectile.damage,projectile.type==="fire"?18:0,projectile.meta);
         if(projectile.meta?.chaosVariant==="poison")applyPoison(enemy,4+skillLevel("chaosOrb")*2,4);
@@ -128,7 +152,9 @@ function draw(){
 
   for(const enemy of state.enemies){
     ctx.save();ctx.translate(enemy.x,enemy.y);
-    ctx.fillStyle=enemy.hit>0?"#ffffff":(enemy.elite?"#b66ac8":"#cf6f6f");ctx.beginPath();ctx.arc(0,0,enemy.r,0,Math.PI*2);ctx.fill();
+    const allied=isEnemyAllied(enemy);
+    ctx.fillStyle=enemy.hit>0?"#ffffff":allied?"#73d6b2":(enemy.elite?"#b66ac8":"#cf6f6f");ctx.beginPath();ctx.arc(0,0,enemy.r,0,Math.PI*2);ctx.fill();
+    if(allied){ctx.strokeStyle="rgba(111,255,203,.8)";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,enemy.r+5+Math.sin(state.t*5)*1.5,0,Math.PI*2);ctx.stroke();}
     if(typeof drawEnemyStatusVisual==="function")drawEnemyStatusVisual(ctx,0,0,enemy.r,enemy,state.t);
     ctx.fillStyle="#17191f";ctx.beginPath();ctx.arc(-enemy.r*.3,-2,2.2,0,Math.PI*2);ctx.arc(enemy.r*.3,-2,2.2,0,Math.PI*2);ctx.fill();
     if(enemy.elite){ctx.strokeStyle="rgba(255,255,255,.55)";ctx.lineWidth=2;ctx.stroke();}
@@ -138,7 +164,7 @@ function draw(){
 
   for(const projectile of state.projectiles){
     const tags=projectile.meta?.tags||[];
-    if(typeof drawProjectileVisual==="function")drawProjectileVisual(ctx,projectile.x,projectile.y,projectile.r,tags,state.t,{type:projectile.type});
+    if(typeof drawProjectileVisual==="function")drawProjectileVisual(ctx,projectile.x,projectile.y,projectile.r,tags,state.t,{type:projectile.type,source:projectile.meta?.source});
     else{ctx.fillStyle="#e7e7e7";ctx.beginPath();ctx.arc(projectile.x,projectile.y,projectile.r,0,Math.PI*2);ctx.fill();}
   }
 
@@ -155,6 +181,7 @@ function draw(){
   if(state.running||state.gameOver){
     ctx.save();ctx.translate(player.x,player.y);ctx.fillStyle="#d7e2ff";ctx.beginPath();ctx.arc(0,0,player.r,0,Math.PI*2);ctx.fill();ctx.fillStyle="#7284ad";ctx.beginPath();ctx.arc(0,0,8,0,Math.PI*2);ctx.fill();
     if(player.shield>0){if(typeof drawShieldVisual==="function")drawShieldVisual(ctx,0,0,player.r+8,state.t,1);else{ctx.strokeStyle="rgba(120,190,255,.8)";ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,player.r+8,0,Math.PI*2);ctx.stroke();}}
+    if((player.invulnerableUntil||0)>state.t){ctx.strokeStyle="rgba(255,230,120,.92)";ctx.lineWidth=3;ctx.globalAlpha=.65+.25*Math.sin(state.t*10);ctx.beginPath();ctx.arc(0,0,player.r+12,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;}
     ctx.strokeStyle="rgba(255,255,255,.25)";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,player.r+5,0,Math.PI*2);ctx.stroke();ctx.restore();
   }
 
