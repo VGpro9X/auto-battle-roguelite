@@ -1,4 +1,4 @@
-const GAME_VERSION="V0.3";
+const GAME_VERSION="V0.4";
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 let W=innerWidth;
@@ -29,14 +29,21 @@ function getXpNeed(level){
 
 const state={
   t:0,
-  paused:false,
+  running:false,
+  paused:true,
   gameOver:false,
   kills:0,
+  eliteKills:0,
   enemies:[],
   projectiles:[],
   gems:[],
   particles:[],
-  spawnTimer:0
+  spawnTimer:0,
+  mode:null,
+  starterSelectionsRemaining:0,
+  currentScreen:"mainMenu",
+  settingsReturnScreen:"mainMenu",
+  result:null
 };
 
 function createInitialPlayer(){
