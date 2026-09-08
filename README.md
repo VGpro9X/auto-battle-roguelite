@@ -1,6 +1,6 @@
 # Auto Battle Roguelite
 
-Current master version: **V0.10 – Synergy Clarity & Pool Expansion**
+Current master version: **V0.11 – Skill Codex & Shared VFX Foundation**
 
 A browser-based auto-battle survival roguelite prototype built around unrestricted cross-archetype skill combinations.
 
@@ -16,73 +16,60 @@ A browser-based auto-battle survival roguelite prototype built around unrestrict
 - Harvest, kite, committed emergency escape and patrol modes
 - XP clusters, open-space preference, edge/corner penalties and multi-horizon escape routing
 
-## V0.10 skill system
+## Skill system
 - **64 base skills** with no class restriction
 - **20 automatic synergies**
 - **8 evolutions**
-- Tags span attack, projectile, crit, fire, ice, lightning, poison, blood, summon, shield, XP, mark, soul, time, random, risk, kill, hit, area, chain, control and more
-- Shared event bus for attack, hit, kill, damage taken, heal, dodge, shield break, revive, XP collection, level up and periodic triggers
-- Shared periodic scheduler for timed skills
+- Shared event bus and periodic scheduler
 - Build-aware random level-up choices
-- MAX skills and evolved bases are explicitly excluded from the level-up pool
-- UI guard also blocks forced selection of MAX/evolved skills
+- MAX skills and evolved bases are excluded from the level-up pool
+- Evolution hints only appear when the offered skill actually advances the evolution recipe
+
+## V0.11 Skill Codex
+- Main menu now includes **KỸ NĂNG**
+- Synergies are always prioritized at the top of the default codex view
+- Evolutions appear immediately after synergies
+- Base skills are assigned to readable groups: Attack/Projectile, Elemental, Summon, Defense/Healing, Control/Movement, XP/Growth, Trigger/Chain, and Time/Rule
+- Hover, keyboard focus, or click updates a detailed information panel
+- Detail view shows descriptions, tags, synergy ingredients, evolution requirements, and related combinations
+- Every codex entry has a live Canvas preview; no static image assets are required
+- Only visible mini-previews animate, reducing unnecessary work when the catalog contains many entries
+
+## Shared VFX foundation
+- `js/vfx.js` contains reusable visual primitives for projectiles, elemental effects, orbit blades, shields, enemy statuses, area pulses, lightning and codex previews
+- Gameplay projectile rendering, orbit blades, shields and status rings now call the same primitives used by the Skill Codex
+- This is the foundation for the next visual gameplay pass so codex animations and in-run effects can evolve together instead of becoming separate implementations
 
 ## Build clarity
-- Level-up cards show skill tags
-- Cards can show `MỞ SYNERGY`, `KẾT HỢP` and `HỖ TRỢ EVOLVE` hints
-- A persistent `BUILD SYNERGY` tracker shows unlocked synergies/evolutions and near-complete recipes
-- Synergy/evolution unlocks use queued on-screen banners so simultaneous unlocks are not lost
+- Level-up cards show skill tags and valid synergy/evolution hints
+- Persistent `BUILD SYNERGY` tracker shows unlocked and near-complete recipes
+- Synergy/evolution unlocks use queued on-screen banners
 - Skill bar labels skills as MAX or EVOLVED
 
-## Expanded V0.10 mechanics
-New archetypes include critical-damage specialization, elite hunting, on-hit lifesteal, kill-to-shield, chilled-target amplification, shatter explosions, poison-to-lightning conduction, burning-corpse explosions, attack echoes, point-blank scaling, area mastery, summon mastery, elemental mastery, spreading marks, shield-break nova, XP healing, level-up nova, sacrificial periodic blasts, marked-target bonus XP, projectile velocity/range scaling, gravity wells, chain mastery, random lucky effects and limited revives.
-
-## Synergy set
-Existing V0.9 synergies remain, plus:
-- Hàn Sát — Frostbite + Execution
-- Huyết Thành — Blood Shield + Barrier
-- Lôi Độc — Conductive Venom + Lightning
-- Liên Hoàn Hỏa Táng — Combustion + Corpse Burst
-- Vạn Ảnh Tiễn — Echo Shot + Multishot
-- Huyết Kính — Glass Cannon + Vampiric Touch
-- Trọng Lực Bạo — Black Hole + Nova
-- Săn Ấn — Death Mark + Bounty Mark
-- Ngũ Hành Hỗn Mang — Chaos Orb + Elemental Mastery
-- Hồn Thuẫn — Soul Harvest + Blood Shield
-- Bạo Lôi — Crit + Lightning
-- Hồi Quang — Last Stand + Second Wind
-
-## Evolutions
-Existing evolutions remain, plus:
-- Huyết Nguyệt — Blood
-- Kỳ Điểm — Black Hole
-- Hỗn Mang Vương Miện — Chaos Orb
-- Bất Diệt Thuẫn — Barrier
-
-## Validation performed for V0.10
-- JavaScript syntax checks for all modified modules
-- Definition validation: every synergy references existing skills and every evolution requirement is reachable
-- 500 repeated rolls verify MAX/evolved Fire never returns to level-up choices
-- 250 randomized build states verify no invalid MAX/evolved choice is returned
-- Direct UI guard test verifies forced selection cannot level a MAX skill
-- Every one of the 20 synergies is programmatically unlocked from its declared requirements
-- Every one of the 8 evolutions is programmatically unlocked and its base is then excluded from choices
-- Representative mechanic tests cover lifesteal, kill-to-shield, marked XP bonus, echo multishot and revival
-- Dense combat smoke test runs multiple new mechanics and synergies together
+## Validation performed for V0.11
+- JavaScript syntax checks for all project modules
+- Codex definition test confirms 64 base skills, 20 synergies and 8 evolutions
+- All 64 base skills resolve to exactly one primary codex group
+- All 92 codex entries resolve to a valid preview type
+- Mock-canvas rendering test executes every skill/synergy/evolution preview without throwing
+- Static index validation confirms the KỸ NĂNG menu entry, codex screen and required script order
 
 ## Project structure
-- `index.html` — game shell and build-feedback UI
-- `css/game.css` — prototype visuals, synergy tracker, unlock banners and level-up hints
+- `index.html` — game shell, menus and Skill Codex screen
+- `css/game.css` — prototype gameplay UI, build clarity and codex layout
 - `js/core.js` — shared state and player build stats
 - `js/modes.js` — mode rules and difficulty curves
 - `js/leaderboard.js` — local records/settings
 - `js/skills.js` — 64 base skill definitions and tags
-- `js/skill-engine.js` — event bus, periodic scheduler, choice rules, requirement progress and unlock evaluation
+- `js/skill-engine.js` — event bus, periodic scheduler, choice rules and unlock evaluation
 - `js/synergies.js` — 20 synergy definitions and 8 evolution definitions/hooks
 - `js/combat.js` — damage, statuses, projectiles, shields, revival and XP drops
 - `js/movement.js` — V0.8 strategic/tactical movement AI
+- `js/vfx.js` — shared gameplay/codex visual primitives
+- `js/skill-codex.js` — catalog grouping, interaction, details and animated previews
 - `js/ui.js` — menus, level-up choices, build tracker and unlock banners
-- `js/game.js` — main update/draw loop
+- `js/evolution-hint-fix.js` — V0.10 evolution-hint specificity hotfix
+- `js/game.js` — main update/draw loop and shared VFX integration
 
 ## Development rule
 GitHub is the master source. Chat previews and packaged builds are test/checkpoint artifacts.
