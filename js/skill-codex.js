@@ -4,9 +4,9 @@ const CODEX_GROUPS=[
   {id:"summon",label:"Triệu hồi",match:tags=>tags.includes("SUMMON")},
   {id:"defense",label:"Phòng thủ & Hồi phục",match:tags=>tags.some(t=>["DEFENSE","SHIELD","HEAL","HP","LOW_HP"].includes(t))},
   {id:"control",label:"Điều khiển & Di chuyển",match:tags=>tags.some(t=>["CONTROL","MOVEMENT","AURA","AREA"].includes(t))},
-  {id:"growth",label:"XP & Tăng trưởng",match:tags=>tags.some(t=>["XP","SCALING","SOUL"].includes(t))},
-  {id:"trigger",label:"Trigger & Chuỗi",match:tags=>tags.some(t=>["HIT","KILL","MARK","CHAIN","CHARGE","DAMAGE_TAKEN"].includes(t))},
-  {id:"rule",label:"Thời gian & Luật",match:tags=>tags.some(t=>["TIME","PERIODIC","RANDOM","RULE","RISK"].includes(t))}
+  {id:"growth",label:"Kinh nghiệm & Tăng trưởng",match:tags=>tags.some(t=>["XP","SCALING","SOUL"].includes(t))},
+  {id:"trigger",label:"Kích hoạt & Chuỗi",match:tags=>tags.some(t=>["HIT","KILL","MARK","CHAIN","CHARGE","DAMAGE_TAKEN"].includes(t))},
+  {id:"rule",label:"Thời gian & Quy tắc",match:tags=>tags.some(t=>["TIME","PERIODIC","RANDOM","RULE","RISK"].includes(t))}
 ];
 
 const CODEX_PRIMARY_OVERRIDES={
@@ -49,16 +49,20 @@ function getCodexBaseEntries(){
 
 function getCodexSynergyEntries(){return Object.entries(SYNERGIES).map(([key,item])=>codexEntry("synergy",key,item,"synergy"));}
 function getCodexEvolutionEntries(){return Object.entries(EVOLUTIONS).map(([key,item])=>codexEntry("evolution",key,item,"evolution"));}
+function getCodexDivineEntries(tier){
+  if(typeof DIVINE_SKILLS==="undefined")return[];
+  return Object.entries(DIVINE_SKILLS).filter(([,item])=>item.tier===tier).map(([key,item])=>codexEntry(tier,key,item,tier));
+}
 
 function getCodexEntryId(entry){return`${entry.kind}:${entry.key}`;}
 
 function formatCodexRequirements(item,kind){
   const req=item?.requires||{};
   const pieces=[];
-  if(kind==="evolution"&&item.base){pieces.push(`Base: ${skills[item.base]?.name||item.base} MAX`);}
+  if(kind==="evolution"&&item.base){pieces.push(`Kỹ năng gốc: ${skills[item.base]?.name||item.base} TỐI ĐA`);}
   for(const key of req.skills||[])pieces.push(skills[key]?.name||key);
-  for(const [key,level] of Object.entries(req.levels||{}))pieces.push(`${skills[key]?.name||key} Lv.${level}`);
-  for(const [tag,count] of Object.entries(req.tags||{}))pieces.push(`${tag} ×${count}`);
+  for(const [key,level] of Object.entries(req.levels||{}))pieces.push(`${skills[key]?.name||key} Cấp ${level}`);
+  for(const [tag,count] of Object.entries(req.tags||{}))pieces.push(`${typeof getTagLabel==="function"?getTagLabel(tag):tag} ×${count}`);
   return pieces;
 }
 
@@ -68,16 +72,19 @@ function getCodexRelated(entry){
     const list=[skills[entry.data.base]?.name||entry.data.base];
     return list.concat(formatCodexRequirements(entry.data,"evolution").slice(1));
   }
+  if(entry.kind==="divine"||entry.kind==="mystic")return[];
   const related=[];
-  for(const synergy of Object.values(SYNERGIES))if(synergy.requires?.skills?.includes(entry.key))related.push(`Synergy: ${synergy.name}`);
+  for(const synergy of Object.values(SYNERGIES))if(synergy.requires?.skills?.includes(entry.key))related.push(`Hợp Đạo Kỹ: ${synergy.name}`);
   const evo=Object.values(EVOLUTIONS).find(e=>e.base===entry.key);
-  if(evo)related.push(`Evolution: ${evo.name}`);
+  if(evo)related.push(`Siêu Cấp: ${evo.name}`);
   return related.slice(0,6);
 }
 
 function codexTypeLabel(entry){
-  if(entry.kind==="synergy")return"SYNERGY";
-  if(entry.kind==="evolution")return"EVOLUTION";
+  if(entry.kind==="mystic")return"THẦN BÍ KỸ";
+  if(entry.kind==="divine")return"THẦN KỸ";
+  if(entry.kind==="synergy")return"HỢP ĐẠO KỸ";
+  if(entry.kind==="evolution")return"SIÊU CẤP";
   return CODEX_GROUPS.find(g=>g.id===entry.group)?.label||"KỸ NĂNG";
 }
 
@@ -86,8 +93,10 @@ function renderCodexTabs(){
   if(!tabs)return;
   const all=[
     {id:"all",label:"Tất cả"},
-    {id:"synergy",label:`Synergy ${Object.keys(SYNERGIES).length}`},
-    {id:"evolution",label:`Evolution ${Object.keys(EVOLUTIONS).length}`},
+    {id:"mystic",label:`Thần Bí Kỹ ${getCodexDivineEntries("mystic").length}`},
+    {id:"divine",label:`Thần Kỹ ${getCodexDivineEntries("divine").length}`},
+    {id:"synergy",label:`Hợp Đạo Kỹ ${Object.keys(SYNERGIES).length}`},
+    {id:"evolution",label:`Siêu Cấp ${Object.keys(EVOLUTIONS).length}`},
     ...CODEX_GROUPS.map(group=>({id:group.id,label:group.label}))
   ];
   tabs.innerHTML=all.map(tab=>`<button class="codexTab${codexState.filter===tab.id?" active":""}" data-codex-filter="${tab.id}">${tab.label}</button>`).join("");
@@ -121,7 +130,7 @@ function createCodexSection(title,entries,accent=""){
   if(!entries.length)return null;
   const section=document.createElement("section");
   section.className=`codexSection ${accent}`;
-  section.innerHTML=`<div class="codexSectionHeader"><div><span>${accent==="synergy"?"ƯU TIÊN":accent==="evolution"?"POWER SPIKE":"NHÓM KỸ NĂNG"}</span><h3>${title}</h3></div><small>${entries.length} mục</small></div><div class="codexGrid"></div>`;
+  section.innerHTML=`<div class="codexSectionHeader"><div><span>${accent==="mystic"?"PHÁ LUẬT":accent==="divine"?"DUY NHẤT":accent==="synergy"?"LIÊN KẾT":accent==="evolution"?"BƯỚC NHẢY SỨC MẠNH":"NHÓM KỸ NĂNG"}</span><h3>${title}</h3></div><small>${entries.length} mục</small></div><div class="codexGrid"></div>`;
   const grid=section.querySelector(".codexGrid");
   for(const entry of entries)grid.appendChild(makeCodexCard(entry));
   return section;
@@ -135,16 +144,26 @@ function renderSkillCodexCatalog(){
   if(codexState.observer)codexState.observer.disconnect();
 
   const filter=codexState.filter;
+  const mystics=getCodexDivineEntries("mystic");
+  const divines=getCodexDivineEntries("divine");
   const synergies=getCodexSynergyEntries();
   const evolutions=getCodexEvolutionEntries();
   const base=getCodexBaseEntries();
 
+  if(filter==="all"||filter==="mystic"){
+    const section=createCodexSection("Thần Bí Kỹ",mystics,"mystic");
+    if(section)catalog.appendChild(section);
+  }
+  if(filter==="all"||filter==="divine"){
+    const section=createCodexSection("Thần Kỹ",divines,"divine");
+    if(section)catalog.appendChild(section);
+  }
   if(filter==="all"||filter==="synergy"){
-    const section=createCodexSection("Synergy",synergies,"synergy");
+    const section=createCodexSection("Hợp Đạo Kỹ",synergies,"synergy");
     if(section)catalog.appendChild(section);
   }
   if(filter==="all"||filter==="evolution"){
-    const section=createCodexSection("Evolution",evolutions,"evolution");
+    const section=createCodexSection("Siêu Cấp",evolutions,"evolution");
     if(section)catalog.appendChild(section);
   }
   for(const group of CODEX_GROUPS){
@@ -166,7 +185,7 @@ function renderSkillCodexCatalog(){
       const id=first.dataset.codexId;
       const [kind,...rest]=id.split(":");
       const key=rest.join(":");
-      const entry=kind==="skill"?getCodexBaseEntries().find(e=>e.key===key):kind==="synergy"?getCodexSynergyEntries().find(e=>e.key===key):getCodexEvolutionEntries().find(e=>e.key===key);
+      const entry=kind==="skill"?getCodexBaseEntries().find(e=>e.key===key):kind==="mystic"?getCodexDivineEntries("mystic").find(e=>e.key===key):kind==="divine"?getCodexDivineEntries("divine").find(e=>e.key===key):kind==="synergy"?getCodexSynergyEntries().find(e=>e.key===key):getCodexEvolutionEntries().find(e=>e.key===key);
       if(entry)selectCodexEntry(entry,false);
     }
   }else{
@@ -211,16 +230,17 @@ function renderCodexDetail(entry){
   if(entry.kind==="skill"){
     try{desc=entry.data.desc(Math.max(1,entry.data.max||1));}catch{desc="";}
   }else desc=entry.data.desc||"";
+  if(typeof localizeGameText==="function")desc=localizeGameText(desc);
 
   root.innerHTML=`
     <div class="codexDetailEyebrow">${codexTypeLabel(entry)}</div>
     <h3>${entry.data.icon?`${entry.data.icon} `:""}${entry.data.name}</h3>
-    ${entry.kind==="skill"?`<div class="codexDetailLevel">Cấp tối đa ${entry.data.max}</div>`:""}
-    ${tags.length?`<div class="codexDetailTags">${tags.map(tag=>`<span class="tagChip">${tag}</span>`).join("")}</div>`:""}
+    ${entry.kind==="skill"?`<div class="codexDetailLevel">Cấp tối đa ${entry.data.max}</div>`:(entry.kind==="mystic"||entry.kind==="divine")?`<div class="codexDetailLevel">DUY NHẤT · KHÔNG CÓ CẤP</div>`:""}
+    ${tags.length?`<div class="codexDetailTags">${tags.map(tag=>`<span class="tagChip">${typeof getTagLabel==="function"?getTagLabel(tag):tag}</span>`).join("")}</div>`:""}
     <p>${desc}</p>
     ${requirements.length?`<div class="codexInfoBlock"><b>Điều kiện</b><div>${requirements.map(item=>`<span>${item}</span>`).join("")}</div></div>`:""}
-    ${related.length?`<div class="codexInfoBlock"><b>Liên kết</b><div>${related.map(item=>`<span>${item}</span>`).join("")}</div></div>`:""}
-    <small class="codexDetailNote">Preview dùng cùng visual primitive với trận đấu. VFX sẽ tiếp tục được nâng cấp ở Visual Pass.</small>
+    ${related.length?`<div class="codexInfoBlock"><b>Liên kết</b><div>${related.map(item=>`<span>${typeof localizeGameText==="function"?localizeGameText(item):item}</span>`).join("")}</div></div>`:""}
+    <small class="codexDetailNote">Hoạt ảnh dùng chung hệ VFX với trận đấu để hiệu ứng trong Bách Khoa và khi chiến đấu luôn đồng nhất.</small>
   `;
   const detailCanvas=document.getElementById("codexDetailCanvas");
   if(detailCanvas)detailCanvas.__codexEntry=entry;
