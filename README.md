@@ -25,7 +25,8 @@ A browser-based auto-battle survival roguelite prototype built around unrestrict
 - Shared event bus and periodic scheduler
 - Build-aware random level-up choices
 - TỐI ĐA skills and evolved bases are excluded from the level-up pool
-- Evolution hints only appear when the offered skill actually advances the evolution recipe
+- Level-up cards stay quiet unless the offered skill is the final piece that immediately opens a Hợp Đạo Kỹ or Siêu Cấp
+- Detailed missing requirements remain in the left-side BỘ KỸ NĂNG & LIÊN KẾT tracker instead of being duplicated on choice cards
 
 ## V0.12 rare rule skills
 Rare rule skills can begin appearing from level 8, replace one normal level-up card when rolled, have no levels, and are limited to one owned rare rule skill per run.
@@ -50,6 +51,7 @@ Current set:
 - Player-facing tags are translated through `js/localization.js`
 - Player-facing system terms use Vietnamese consistently: **Hợp Đạo Kỹ, Siêu Cấp, Tối Đa, Thần Kỹ, Thần Bí Kỹ, Kỹ năng khởi đầu, Lên cấp**
 - Main menus, HUD labels, mode names, leaderboard headers, build tracker, level-up cards and Codex presentation are localized
+- Mua Chuộc uses a simple cross-platform handshake emoji and a separate emoji font fallback to avoid mixed-font rendering issues
 
 ## Bách Khoa Kỹ Năng
 - Main menu includes **KỸ NĂNG**
@@ -70,11 +72,12 @@ Current set:
 - Mua Chuộc ally combat and hostile-target filtering are validated
 - Bất Tử Nhất Tức lethal prevention and invulnerability are validated
 - TỐI ĐA base-skill exclusion remains validated
+- Level-up relation hints are restricted to immediate final-piece Hợp Đạo Kỹ / Siêu Cấp unlocks
 
 ## Project structure
 - `index.html` — game shell, menus and Bách Khoa Kỹ Năng screen
 - `css/game.css` — gameplay UI and Codex base styling
-- `css/v012.css` — Thần Kỹ/Thần Bí Kỹ visual accents
+- `css/v012.css` — Thần Kỹ/Thần Bí Kỹ visual accents and level-up clarity overrides
 - `js/core.js` — shared state, version and player build stats
 - `js/modes.js` — mode rules and difficulty curves
 - `js/leaderboard.js` — local records/settings
@@ -93,7 +96,7 @@ Current set:
 - `js/visual-scenes-4.js` — mastery, growth and control scenes
 - `js/skill-codex.js` — catalog grouping, rare tiers, interaction, details and animated previews
 - `js/ui.js` — menus, level-up choices, build tracker, localization and unlock banners
-- `js/evolution-hint-fix.js` — evolution-hint specificity hotfix
+- `js/evolution-hint-fix.js` — final-piece-only level-up hint logic and detailed left-side progress tracker
 - `js/game.js` — main update/draw loop and gameplay integration
 - `js/visual-bridge.js` — V0.12 bridge between Codex visuals, gameplay visuals and rare-rule feedback
 
