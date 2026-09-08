@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Auto Battle Roguelite V0.9</title>
+<title>Auto Battle Roguelite V0.10</title>
 <link rel="stylesheet" href="css/game.css">
 </head>
 <body>
@@ -35,10 +35,18 @@
     </div>
 
     <div id="skillBar"></div>
+    <div id="buildTracker" class="panel buildTracker">
+      <div class="buildTrackerTitle">BUILD SYNERGY</div>
+      <div id="buildTrackerContent" class="buildTrackerContent"></div>
+    </div>
     <div id="tip">AI tự chiến đấu. Bạn quyết định build.</div>
   </div>
 
-  <div id="version">Auto Battle Roguelite V0.9</div>
+  <div id="version">Auto Battle Roguelite V0.10</div>
+  <div id="unlockToast" class="unlockToast hidden">
+    <div id="unlockToastIcon" class="unlockToastIcon">✨</div>
+    <div><small id="unlockToastType">SYNERGY UNLOCKED</small><b id="unlockToastTitle"></b><span id="unlockToastDesc"></span></div>
+  </div>
 
   <div id="mainMenu" class="screenOverlay menuScreen visible">
     <div class="menuCard heroCard">
@@ -157,7 +165,10 @@
         <p><b>2.</b> Mỗi lần lên cấp, chọn 1 trong 3 skill ngẫu nhiên.</p>
         <p><b>3.</b> Chế độ có thời gian: sống sót đến khi đồng hồ về 00:00 để chiến thắng.</p>
         <p><b>4.</b> Endless: không có chiến thắng; mục tiêu là sống càng lâu càng tốt.</p>
-        <p><b>5.</b> Trong mode có thời gian, leaderboard xếp theo Run Score. Endless xếp theo thời gian sống.</p>
+        <p><b>5.</b> Skill có nhiều tag và có thể kết hợp chéo, không giới hạn class.</p>
+        <p><b>6.</b> BUILD SYNERGY bên trái hiển thị combo đã mở và combo chỉ còn thiếu một mảnh.</p>
+        <p><b>7.</b> Skill đạt MAX sẽ rời khỏi pool level-up. Một số skill MAX có thể tự tiến hóa khi build đủ tag yêu cầu.</p>
+        <p><b>8.</b> Trong mode có thời gian, leaderboard xếp theo Run Score. Endless xếp theo thời gian sống.</p>
       </div>
     </div>
   </div>
@@ -207,6 +218,7 @@
     </div>
   </div>
 </div>
+
 
 <script src="js/core.js"></script>
 <script src="js/modes.js"></script>
