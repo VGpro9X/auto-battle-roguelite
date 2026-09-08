@@ -10,7 +10,7 @@ Use this file as the starting context when continuing development in a new chat.
 - Commit/checkpoint frequently after meaningful changes so work is not lost between chats.
 
 ## Current baseline
-- Current version line: **V0.13 – Combat Readability & Feel**
+- Current version line: **V0.14 – Character & Enemy Presentation**
 - Movement baseline: **V0.8 Strategic Movement AI**. Do not alter movement unless specifically requested.
 - Current skill content:
   - 64 base Kỹ Năng
@@ -45,14 +45,14 @@ Architecture direction:
 A skill must behave exactly as its player-facing description says.
 - Do **not** add silent caps, hidden limits or undocumented exceptions to a skill effect.
 - If an effect has a cap/limit/cooldown/maximum stack count, that restriction must be stated in the skill description.
-- If the description says a resource keeps accumulating (for example, periodically gaining shield), the implementation must continue accumulating unless the description explicitly states a maximum.
+- If the description says a resource keeps accumulating, the implementation must continue accumulating unless the description explicitly states a maximum.
 - V0.12 removed the undocumented shield cap of 85% max HP from `addShield()`.
-- V0.13 corrected **Săn Ấn** to describe only the implemented extra `25%` base XP from marked targets; do not re-add the old unimplemented “ấn lan ổn định hơn” claim unless that mechanic is actually implemented.
+- V0.13 corrected **Săn Ấn** to describe only the implemented extra `25%` base XP from marked targets; do not re-add the old unimplemented mark-spread claim unless that mechanic is actually implemented.
 
 ## Current rare rule skills
-- **Mua Chuộc — Thần Bí Kỹ:** every few seconds, temporarily converts a hostile enemy into an ally that fights other enemies, then returns to normal if still alive.
+- **Mua Chuộc — Thần Bí Kỹ:** every 8 seconds, temporarily converts a random hostile into an ally for 5 seconds.
 - **Đổi Mệnh — Thần Bí Kỹ:** at low HP, can exchange HP ratio with a healthier enemy when beneficial.
-- **Bất Tử Nhất Tức — Thần Kỹ:** prevents one lethal hit and grants a short invulnerability window.
+- **Bất Tử Nhất Tức — Thần Kỹ:** prevents one lethal hit and grants a 4-second invulnerability window.
 - **Thiên Phạt — Thần Kỹ:** after enough kills, strikes multiple enemies with heavy lightning damage.
 
 ## Level-up clarity rule — IMPORTANT
@@ -73,108 +73,113 @@ If the pick only makes progress toward a future combination, show no hint on the
 Mua Chuộc uses the simpler `🤝` icon and an emoji font fallback to avoid Windows/Chrome rendering issues.
 
 ## Standalone-build safety rule
-- A previous standalone V0.12 test build accidentally shipped with the internal validation harness still embedded. That harness programmatically granted rare rule skills during startup and caused Thần Kỹ/Thần Bí Kỹ unlock toasts to appear on the main menu.
-- GitHub master itself did not intentionally auto-grant those skills; the issue was in the packaged preview artifact.
-- Future standalone/playable builds must **never include executable test harness code**.
-- `visual-bridge.js` contains a defensive guard so build-unlock toasts only render while a real run is active.
+- A previous standalone V0.12 test build accidentally shipped with an executable validation harness that auto-granted rare skills.
+- Future playable builds must **never include executable test harness code**.
+- Test automation may drive a build externally, but harness logic must not be embedded in the delivered HTML.
+- `visual-bridge.js` also guards build-unlock toasts so they only render during a real run.
 
 ## Visual-system status
-V0.12 established the Codex visual foundation; V0.13 moved that identity into live combat.
+V0.12 established Codex identities, V0.13 moved skill identity into live combat, and V0.14 upgrades the player/enemy actors.
 
 Foundation:
 - 64/64 base skills have explicit visual profiles.
 - 64/64 base skills have distinct Codex scene identifiers.
 - Visual scenes are split across `visual-scenes-1.js` to `visual-scenes-4.js`.
 - `vfx.js` is the shared low-level VFX layer.
-- `visual-bridge.js` connects Codex visuals and gameplay feedback.
-- Do not generate static image assets for this phase unless the user explicitly asks. Current direction is code/Canvas/CSS visuals.
+- Do not generate static image assets for this phase unless the user explicitly asks. Current direction remains code/Canvas/CSS visuals.
 
 ### V0.13 completed — Combat Readability & Feel
-1. **Common attack identity**
-   - Cường Kích: stronger/wider projectile body and power aura.
-   - Song Tiễn: fan/chevron mechanic shape.
-   - Xuyên Phá: longer lance and penetration marks.
-   - Bạo Kích: gold critical treatment and stronger impact.
-   - Tâm Nhãn: sharper critical reticle.
-   - Element color and mechanic shape remain separate layers.
+- Common attack identity for Cường Kích, Song Tiễn, Xuyên Phá, Bạo Kích and Tâm Nhãn.
+- Stronger but controlled hit/crit/death feedback.
+- Compact burn/poison/chill/mark status visuals.
+- Visible Linh Hỏa and Lôi Linh actors; Ngự Linh adds aura feedback.
+- Hợp Đạo Kỹ and Siêu Cấp use live usage signatures.
+- Mua Chuộc, Đổi Mệnh, Bất Tử Nhất Tức and Thiên Phạt have dedicated combat feedback.
+- V0.8 movement was not modified.
 
-2. **Hit / damage / kill feedback**
-   - Heavy and critical impacts are stronger without flooding the screen with every DOT number.
-   - Damage taken, heal, shield gain, dodge, shield break and revive are visually distinct.
-   - Death feedback is stronger for elites than ordinary enemies.
+### V0.13 playtest status
+- User completed a hands-on playtest of the packaged V0.13 build and reported no major issue.
+- Before V0.14 implementation, current GitHub source and integration order were re-audited.
+- One non-blocking detail remains known: Đổi Mệnh emits two `divine_trigger` events for one successful activation; only the event carrying `enemy` drives the detailed tether, while the second generic event contributes only generic background feedback. Do not change this unless an actual visual problem appears in playtest.
 
-3. **Status readability**
-   - Burn = compact flame strokes.
-   - Poison = compact bubbles/dots.
-   - Chill = short ice marks.
-   - Mark = corner-reticle treatment.
-   - Avoid returning to multiple stacked full rings.
+## V0.14 completed — Character & Enemy Presentation
+Integration file: `js/v014-character-enemy-presentation.js`
 
-4. **Summon readability**
-   - `Linh Hỏa` has a visible orbiting actor and fires from its visible position.
-   - `Lôi Linh` has a visible actor and visible lightning arcs to targets.
-   - `Ngự Linh` adds summon aura feedback.
-   - Integration lives in `js/v013-summon-power-feedback.js`.
+### Player
+- Code-drawn directional cloak/body silhouette with hood/head, shoulders and a small weapon arm.
+- Facing follows actual movement and temporarily faces the real normal-attack target when an attack fires.
+- Movement bob/foot cues are derived from actual movement distance only; they do not alter pathfinding or speed.
+- The visible weapon briefly extends on normal attacks.
+- Shield and invulnerability states influence presentation palette only.
+- Presentation state resets between runs.
 
-5. **Hợp Đạo Kỹ / Siêu Cấp power feedback**
-   - Hợp Đạo Kỹ receive two-tone usage signatures where the combined mechanic actually triggers.
-   - Direct and passive Hợp Đạo Kỹ are covered; routing was re-audited after initial implementation so base effects do not incorrectly masquerade as synergy effects.
-   - Siêu Cấp uses a deliberately larger/stronger signature.
-   - Existing evolved visuals such as Kiếm Vực and poison spreading remain in use.
+### Enemies
+- Normal enemies are assigned a presentation archetype from their **existing spawn-speed variance**:
+  - `runner` for faster-than-average normal enemies
+  - `hunter` for middle-speed enemies
+  - `anchor` for slower-than-average normal enemies
+- These archetypes are purely visual classifications. They do **not** change HP, damage, speed, radius, collision or AI.
+- Enemies face the player and receive small movement bob/contact-lunge cues.
+- Bribed allies use the existing green faction treatment and remain compatible with V0.13 Mua Chuộc feedback.
 
-6. **Thần Kỹ / Thần Bí Kỹ feedback**
-   - Mua Chuộc shows conversion burst, friendly marker, remaining-duration arc and reversion cue.
-   - Bất Tử Nhất Tức shows trigger burst and a 4-second invulnerability countdown arc.
-   - Thiên Phạt has stronger target strike presentation.
-   - Đổi Mệnh has a two-color exchange tether.
-   - Integration lives in `js/v013-rule-feedback.js`.
+### Elites
+- Elite enemies use a larger angular/star-like silhouette, crown/horn stroke and pulsing inner structure.
+- Elite combat stats remain exactly as defined by the existing spawn logic.
 
-## V0.13 validation status
+### Layering
+Current order near the end of `index.html` is:
+1. `js/game.js`
+2. `js/v014-character-enemy-presentation.js`
+3. `js/visual-bridge.js`
+4. `js/v013-summon-power-feedback.js`
+5. `js/v013-rule-feedback.js`
+
+This order is intentional: V0.14 actors render before V0.13 hit/crit/synergy/rule feedback so combat information stays on top.
+
+### V0.14 implementation notes
+- A dark inner plate makes the old prototype circle read as a thin underglow rather than the main actor body.
+- No static assets were added.
+- No changes were made to `js/movement.js`.
+- No skill mechanics or level-up hint rules were changed.
+
+## V0.14 validation status
 Completed:
-- New V0.13 integration modules pass JavaScript syntax checks.
-- Current `index.html` integration order was re-read from GitHub after the modules were added.
-- Hợp Đạo Kỹ source routing was checked against the actual sources emitted by `synergies.js` / `skill-engine.js`.
-- Passive Hợp Đạo Kỹ received usage cues where their mechanics trigger.
-- Săn Ấn player-facing description was aligned with implemented mechanics.
-- V0.8 movement code was not modified.
-- Level-up hint behavior was not changed.
+- `js/v014-character-enemy-presentation.js` passes `node --check`.
+- Initial validation caught an invalid `player.moveSpeed` reference before module activation; corrected to observe the actual `player.speed` value.
+- Elite visual seed initialization was fixed before release.
+- A headless Chromium runtime test loaded the single-file build with **0 console errors and 0 page errors**.
+- Automated UI path: CHƠI → 5 phút → all three starter picks → live run.
+- Runner, hunter, anchor and elite render paths were exercised.
+- Synthetic dense test pushed the run to 300 enemies and executed 30 `draw()` calls without runtime errors.
+- In that headless environment, the dense test averaged about **4.3 ms per draw()**; treat this only as a regression indicator, not a real-device FPS guarantee.
 
-Still required before calling V0.13 fully playtested:
-- Run an interactive browser playtest across early, mid and dense late-game combat.
-- Check visual clutter and FPS/performance under high enemy/projectile counts.
-- Confirm the common projectile identities remain distinguishable when elemental/proc effects overlap.
-- Exercise every Hợp Đạo Kỹ and all 8 Siêu Cấp at least once in live gameplay.
-- Exercise all four rare rule skills, especially Mua Chuộc conversion/reversion and Bất Tử Nhất Tức's full invulnerability window.
-- If the new feedback feels too noisy, tune animation frequency/alpha first; do not remove mechanical information blindly.
+Still required for V0.14 hands-on validation:
+- User playtest the V0.14 single-file build in normal browser gameplay.
+- Confirm the actor silhouettes remain readable under actual late-game VFX density.
+- Confirm the old circle underglow feels intentional rather than visually redundant.
+- Confirm contact-lunge/movement animation is helpful rather than distracting.
+- Confirm elite enemies are easy to identify instantly.
 
-## Current V0.13 integration files
-- `js/visual-bridge.js` — base V0.12 bridge plus V0.13 combat hit/status/projectile feedback
-- `js/v013-summon-power-feedback.js` — visible summon actors and Hợp Đạo Kỹ/Siêu Cấp usage signatures
-- `js/v013-rule-feedback.js` — rare rule-skill feedback and Mua Chuộc faction-state cues
-- `index.html` loads both V0.13 modules after `game.js` and `visual-bridge.js`
+## Current integration files
+- `js/visual-bridge.js` — V0.13 hit/status/projectile feedback
+- `js/v013-summon-power-feedback.js` — summon actors and Hợp Đạo Kỹ/Siêu Cấp signatures
+- `js/v013-rule-feedback.js` — rare rule-skill feedback
+- `js/v014-character-enemy-presentation.js` — V0.14 actor silhouettes and movement/attack presentation
 
 ## Next development roadmap
 
-### Immediate checkpoint — V0.13 hands-on playtest
-Before adding V0.14 presentation work:
-- Verify the V0.13 readability pass in the browser.
-- Fix any actual runtime regressions found by the playtest.
-- Tune noise/performance only from observed gameplay, not assumptions.
-
-### V0.14 — Character & Enemy Presentation
-After V0.13 combat readability is stable:
-- Replace the plain prototype-circle feeling of player/enemies with cleaner code-drawn silhouettes/shapes.
-- Add readable enemy archetypes and elite distinction.
-- Improve movement/attack animation cues without changing the V0.8 movement logic.
-- Keep the playfield visually clean enough for dense late-game combat.
+### Immediate checkpoint — V0.14 hands-on playtest
+- Test the new character/enemy presentation in early, mid and dense late-game combat.
+- Tune silhouette scale, animation amplitude and underglow only from observed gameplay.
+- Do not change V0.8 movement during this pass.
 
 ### Playtest / balance pass
 Before massively expanding content:
-- Identify skills that feel duplicated despite different names.
+- Identify base skills that feel duplicated despite different names.
 - Identify Hợp Đạo Kỹ that are hard to notice or not worth building.
 - Check whether Siêu Cấp power spikes feel strong enough.
 - Check rare Thần Kỹ/Thần Bí Kỹ frequency and whether they genuinely change a run.
-- Check visual clutter/performance with dense enemy counts.
+- Re-check visual clutter/performance with dense enemy/projectile counts.
 
 ### Later content expansion
 Only after the visual/combat feedback loop is understandable:
@@ -195,7 +200,7 @@ Only after the visual/combat feedback loop is understandable:
 9. Keep player-facing terminology Vietnamese and consistent.
 10. Favor readable gameplay feedback over decorative complexity.
 11. Do not implement silent skill caps. Any intentional limit must be stated in the player-facing description.
-12. After V0.13, do not start V0.14 until a hands-on V0.13 playtest has checked runtime behavior and visual density.
+12. After V0.14, run a hands-on presentation playtest before expanding content aggressively.
 
 ## Recommended prompt for a new chat
-`Tiếp tục project VGpro9X/auto-battle-roguelite. GitHub main là master source. Đọc README.md và PROJECT_HANDOFF.md trước. Baseline hiện tại là V0.13; hãy playtest/ổn định V0.13 trước, sau đó tiếp tục roadmap V0.14. Fetch file hiện tại trước khi sửa và commit thường xuyên sau mỗi checkpoint.`
+`Tiếp tục project VGpro9X/auto-battle-roguelite. GitHub main là master source. Đọc README.md và PROJECT_HANDOFF.md trước. Baseline hiện tại là V0.14; hãy playtest/ổn định V0.14 rồi tiếp tục playtest/balance pass. Fetch file hiện tại trước khi sửa và commit thường xuyên sau mỗi checkpoint.`
