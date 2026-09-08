@@ -15,7 +15,7 @@ const SYNERGIES={
   echoBarrage:{id:"echoBarrage",name:"Vạn Ảnh Tiễn",icon:"🏹♾️",requires:{skills:["echoShot","multishot"]},desc:"Ảnh Xạ sao chép cả loạt multishot thay vì chỉ một viên."},
   glassBlood:{id:"glassBlood",name:"Huyết Kính",icon:"🔮🩸",requires:{skills:["glassCannon","vampiricTouch"]},desc:"Dưới nửa HP, Huyết Chạm hồi gấp đôi."},
   gravityNova:{id:"gravityNova",name:"Trọng Lực Bạo",icon:"🕳️💫",requires:{skills:["blackHole","nova"]},desc:"Linh Bạo kéo mục tiêu về tâm trước khi nổ."},
-  markedBounty:{id:"markedBounty",name:"Săn Ấn",icon:"☯️💰",requires:{skills:["deathMark","bountyMark"]},desc:"Mục tiêu có ấn rơi nhiều XP hơn và ấn lan ổn định hơn."},
+  markedBounty:{id:"markedBounty",name:"Săn Ấn",icon:"☯️💰",requires:{skills:["deathMark","bountyMark"]},desc:"Mục tiêu có ấn rơi thêm 25% XP gốc."},
   elementalChaos:{id:"elementalChaos",name:"Ngũ Hành Hỗn Mang",icon:"🌈🌀",requires:{skills:["chaosOrb","elementalMastery"]},desc:"Mỗi lần Hỗn Mang kích hoạt sẽ tung thêm một biến thể nguyên tố."},
   soulAegis:{id:"soulAegis",name:"Hồn Thuẫn",icon:"👁️🛡️",requires:{skills:["soulHarvest","bloodShield"]},desc:"Mỗi kill nuôi hồn đồng thời bồi thêm một lớp khiên nhỏ."},
   criticalStorm:{id:"criticalStorm",name:"Bạo Lôi",icon:"🎯⚡",requires:{skills:["crit","lightning"]},desc:"Lightning có thể tạo thêm phần sát thương chí mạng theo Crit Chance."},
