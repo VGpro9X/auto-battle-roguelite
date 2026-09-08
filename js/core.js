@@ -1,4 +1,4 @@
-const GAME_VERSION="V0.4";
+const GAME_VERSION="V0.5";
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 let W=innerWidth;
@@ -66,7 +66,13 @@ function createInitialPlayer(){
     magnet:70,
     orbitAngle:0,
     moveX:1,
-    moveY:0
+    moveY:0,
+    extraProjectiles:0,
+    projectilePierce:0,
+    critChance:0,
+    critMultiplier:1.75,
+    healOnKill:0,
+    xpMultiplier:1
   };
 }
 
