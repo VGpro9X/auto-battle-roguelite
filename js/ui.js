@@ -1,8 +1,8 @@
-const overlayIds=["mainMenu","modeMenu","leaderboardMenu","settingsMenu","howToMenu","pauseMenu","levelModal","resultModal"];
+const overlayIds=["mainMenu","modeMenu","skillCodexMenu","leaderboardMenu","settingsMenu","howToMenu","pauseMenu","levelModal","resultModal"];
 let leaderboardMode="5";
 
 function hideAllOverlays(){for(const id of overlayIds)document.getElementById(id).classList.remove("visible");}
-function showScreen(id){hideAllOverlays();const screen=document.getElementById(id);if(screen)screen.classList.add("visible");state.currentScreen=id;if(id==="leaderboardMenu")renderLeaderboard();if(id==="settingsMenu")renderSettings();}
+function showScreen(id){hideAllOverlays();const screen=document.getElementById(id);if(screen)screen.classList.add("visible");state.currentScreen=id;if(typeof setSkillCodexActive==="function")setSkillCodexActive(id==="skillCodexMenu");if(id==="leaderboardMenu")renderLeaderboard();if(id==="settingsMenu")renderSettings();}
 function setGameUiVisible(visible){document.getElementById("gameUi").classList.toggle("hidden",!visible);}
 function clearRunObjects(){state.enemies.length=0;state.projectiles.length=0;state.gems.length=0;state.particles.length=0;}
 
