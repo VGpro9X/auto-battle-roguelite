@@ -129,19 +129,17 @@ function draw(){
   for(const enemy of state.enemies){
     ctx.save();ctx.translate(enemy.x,enemy.y);
     ctx.fillStyle=enemy.hit>0?"#ffffff":(enemy.elite?"#b66ac8":"#cf6f6f");ctx.beginPath();ctx.arc(0,0,enemy.r,0,Math.PI*2);ctx.fill();
-    if(enemy.statuses?.poison){ctx.strokeStyle="#91d36b";ctx.lineWidth=2;ctx.stroke();}
-    if(enemy.statuses?.burn){ctx.strokeStyle="#ff9c55";ctx.lineWidth=2;ctx.stroke();}
+    if(typeof drawEnemyStatusVisual==="function")drawEnemyStatusVisual(ctx,0,0,enemy.r,enemy,state.t);
     ctx.fillStyle="#17191f";ctx.beginPath();ctx.arc(-enemy.r*.3,-2,2.2,0,Math.PI*2);ctx.arc(enemy.r*.3,-2,2.2,0,Math.PI*2);ctx.fill();
     if(enemy.elite){ctx.strokeStyle="rgba(255,255,255,.55)";ctx.lineWidth=2;ctx.stroke();}
-    if(enemy.markedUntil>state.t){ctx.strokeStyle="#e7d46b";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,enemy.r+5,0,Math.PI*2);ctx.stroke();}
     if(enemy.hp<enemy.maxHp){ctx.fillStyle="rgba(0,0,0,.5)";ctx.fillRect(-enemy.r,-enemy.r-8,enemy.r*2,3);ctx.fillStyle="#fff";ctx.fillRect(-enemy.r,-enemy.r-8,enemy.r*2*(enemy.hp/enemy.maxHp),3);}
     ctx.restore();
   }
 
   for(const projectile of state.projectiles){
     const tags=projectile.meta?.tags||[];
-    ctx.fillStyle=tags.includes("FIRE")?"#ffb05b":tags.includes("POISON")?"#91d36b":tags.includes("ICE")?"#8fd8ff":tags.includes("LIGHTNING")?"#fff58a":"#e7e7e7";
-    ctx.beginPath();ctx.arc(projectile.x,projectile.y,projectile.r,0,Math.PI*2);ctx.fill();
+    if(typeof drawProjectileVisual==="function")drawProjectileVisual(ctx,projectile.x,projectile.y,projectile.r,tags,state.t,{type:projectile.type});
+    else{ctx.fillStyle="#e7e7e7";ctx.beginPath();ctx.arc(projectile.x,projectile.y,projectile.r,0,Math.PI*2);ctx.fill();}
   }
 
   const orbitBase=skillLevel("orbit");
@@ -149,13 +147,14 @@ function draw(){
     const orbitLevel=orbitBase+(hasEvolution("swordDomain")?2:0),radius=hasEvolution("swordDomain")?62:48;
     for(let i=0;i<orbitLevel;i++){
       const angle=player.orbitAngle+i*Math.PI*2/orbitLevel,x=player.x+Math.cos(angle)*radius,y=player.y+Math.sin(angle)*radius;
-      ctx.save();ctx.translate(x,y);ctx.rotate(angle+Math.PI/2);ctx.fillStyle="#d9dde8";ctx.fillRect(-2,-10,4,17);ctx.fillStyle="#a8b0c2";ctx.fillRect(-5,5,10,3);ctx.restore();
+      if(typeof drawOrbitBladeVisual==="function")drawOrbitBladeVisual(ctx,x,y,angle+Math.PI/2,hasEvolution("swordDomain"),state.t);
+      else{ctx.save();ctx.translate(x,y);ctx.rotate(angle+Math.PI/2);ctx.fillStyle="#d9dde8";ctx.fillRect(-2,-10,4,17);ctx.fillStyle="#a8b0c2";ctx.fillRect(-5,5,10,3);ctx.restore();}
     }
   }
 
   if(state.running||state.gameOver){
     ctx.save();ctx.translate(player.x,player.y);ctx.fillStyle="#d7e2ff";ctx.beginPath();ctx.arc(0,0,player.r,0,Math.PI*2);ctx.fill();ctx.fillStyle="#7284ad";ctx.beginPath();ctx.arc(0,0,8,0,Math.PI*2);ctx.fill();
-    if(player.shield>0){ctx.strokeStyle="rgba(120,190,255,.8)";ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,player.r+8,0,Math.PI*2);ctx.stroke();}
+    if(player.shield>0){if(typeof drawShieldVisual==="function")drawShieldVisual(ctx,0,0,player.r+8,state.t,1);else{ctx.strokeStyle="rgba(120,190,255,.8)";ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,player.r+8,0,Math.PI*2);ctx.stroke();}}
     ctx.strokeStyle="rgba(255,255,255,.25)";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,player.r+5,0,Math.PI*2);ctx.stroke();ctx.restore();
   }
 
