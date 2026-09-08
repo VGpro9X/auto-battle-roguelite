@@ -1,0 +1,151 @@
+/* V0.15 Checkpoint 4 — tap-first responsive Bách Khoa Kỹ Năng */
+.codexDetailBack{display:none}
+
+@media(max-width:700px),(max-height:520px) and (orientation:landscape){
+  .codexCard{
+    overflow:hidden!important;
+  }
+
+  .codexHeader{
+    flex:0 0 auto;
+    margin-bottom:8px;
+  }
+
+  .codexToolbar{
+    flex:0 0 auto;
+    margin-bottom:8px;
+  }
+
+  .codexTabs{
+    flex-wrap:nowrap!important;
+    overflow-x:auto;
+    overflow-y:hidden;
+    overscroll-behavior-x:contain;
+    scrollbar-width:none;
+    padding-bottom:3px;
+  }
+  .codexTabs::-webkit-scrollbar{display:none}
+  .codexTab{flex:0 0 auto;min-height:38px}
+
+  .codexLayout{
+    position:relative;
+    display:block!important;
+    flex:1 1 auto;
+    min-height:0;
+    overflow:hidden!important;
+  }
+
+  .codexCatalogScroll{
+    height:100%;
+    min-height:0;
+    overflow:auto!important;
+    padding-right:0;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .codexGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+  }
+
+  .codexSkillCard{
+    min-height:118px;
+    padding:6px;
+    border-radius:11px;
+  }
+
+  .codexPreview{height:72px}
+  .codexCardMeta{padding:6px 2px 1px}
+  .codexCardMeta b{font-size:10px}
+  .codexCardType{font-size:7px}
+  .codexSection{margin-bottom:14px}
+  .codexSectionHeader{margin-bottom:7px}
+  .codexSectionHeader h3{font-size:15px}
+
+  .codexDetail{
+    position:absolute;
+    inset:0;
+    z-index:8;
+    height:100%;
+    max-height:none!important;
+    margin:0!important;
+    padding:10px;
+    overflow:auto;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+    background:rgba(14,16,22,.985);
+    transform:translateX(104%);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:transform .18s ease,opacity .18s ease,visibility .18s;
+  }
+
+  #skillCodexMenu.mobileDetailOpen .codexDetail{
+    transform:translateX(0);
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+  }
+
+  .codexDetailBack{
+    position:sticky;
+    top:0;
+    z-index:4;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    min-height:42px;
+    margin:0 0 9px;
+    padding:8px 10px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:10px;
+    background:rgba(34,38,48,.98);
+    color:#e1e7f4;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.04em;
+  }
+
+  .codexDetail canvas{
+    width:100%;
+    max-height:180px;
+    margin-bottom:10px;
+  }
+
+  .codexDetail h3{font-size:20px}
+  .codexDetail p{font-size:12px;line-height:1.5}
+  .codexInfoBlock span{font-size:9px}
+}
+
+@media(max-width:380px){
+  .codexGrid{gap:6px}
+  .codexSkillCard{min-height:110px}
+  .codexPreview{height:66px}
+  .codexCardMeta b{font-size:9px}
+}
+
+@media(max-height:520px) and (orientation:landscape){
+  .codexCard{
+    height:calc(var(--app-height) - var(--safe-top) - var(--safe-bottom) - 10px)!important;
+    max-height:calc(var(--app-height) - var(--safe-top) - var(--safe-bottom) - 10px)!important;
+    margin:0;
+    padding:10px 12px;
+  }
+  .codexHeader{margin-bottom:5px}
+  .codexHeader h2{font-size:22px}
+  .codexSubtitle{display:none}
+  .codexToolbar{margin-bottom:5px}
+  .codexTab{min-height:34px;padding:6px 9px;font-size:9px}
+  .codexGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .codexSkillCard{min-height:100px;padding:5px}
+  .codexPreview{height:58px}
+  .codexSectionHeader h3{font-size:13px}
+  .codexSectionHeader span,.codexSectionHeader small{font-size:7px}
+  .codexDetail canvas{max-height:128px}
+  .codexDetailBack{min-height:36px;margin-bottom:6px}
+  .codexDetail h3{font-size:18px}
+  .codexDetail p{font-size:10px;line-height:1.4}
+}
