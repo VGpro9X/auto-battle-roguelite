@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Auto Battle Roguelite V0.11</title>
+<title>Auto Battle Roguelite V0.12</title>
 <link rel="stylesheet" href="css/game.css">
+<link rel="stylesheet" href="css/v012.css">
 </head>
 <body>
 <div id="gameWrap">
@@ -14,12 +15,12 @@
     <div class="hud">
       <div class="panel stats">
         <div class="row">
-          <b>HP</b>
+          <b>SINH LỰC</b>
           <div class="bar hp"><i id="hpBar"></i></div>
           <span id="hpText">100/100</span>
         </div>
         <div class="row">
-          <b>XP</b>
+          <b>KINH NGHIỆM</b>
           <div class="bar xp"><i id="xpBar"></i></div>
           <span id="xpText">0/5</span>
         </div>
@@ -27,7 +28,7 @@
 
       <div class="rightHud">
         <div class="panel pill" id="modeHud">10 PHÚT</div>
-        <div class="panel pill">LV <b id="lvText">1</b></div>
+        <div class="panel pill">CẤP <b id="lvText">1</b></div>
         <div class="panel pill"><span id="timeIcon">⏳</span> <b id="timeText">10:00</b></div>
         <div class="panel pill">☠ <b id="killText">0</b></div>
         <button id="pauseButton" class="iconButton" aria-label="Tạm dừng">Ⅱ</button>
@@ -36,23 +37,23 @@
 
     <div id="skillBar"></div>
     <div id="buildTracker" class="panel buildTracker">
-      <div class="buildTrackerTitle">BUILD SYNERGY</div>
+      <div class="buildTrackerTitle">BỘ KỸ NĂNG & LIÊN KẾT</div>
       <div id="buildTrackerContent" class="buildTrackerContent"></div>
     </div>
-    <div id="tip">AI tự chiến đấu. Bạn quyết định build.</div>
+    <div id="tip">AI tự chiến đấu. Bạn quyết định bộ kỹ năng.</div>
   </div>
 
-  <div id="version">Auto Battle Roguelite V0.11</div>
+  <div id="version">Auto Battle Roguelite V0.12</div>
   <div id="unlockToast" class="unlockToast hidden">
     <div id="unlockToastIcon" class="unlockToastIcon">✨</div>
-    <div><small id="unlockToastType">SYNERGY UNLOCKED</small><b id="unlockToastTitle"></b><span id="unlockToastDesc"></span></div>
+    <div><small id="unlockToastType">HỢP ĐẠO KỸ KÍCH HOẠT</small><b id="unlockToastTitle"></b><span id="unlockToastDesc"></span></div>
   </div>
 
   <div id="mainMenu" class="screenOverlay menuScreen visible">
     <div class="menuCard heroCard">
-      <div class="eyebrow">AUTO-BATTLE SURVIVAL ROGUELITE</div>
+      <div class="eyebrow">SINH TỒN TỰ ĐỘNG · XÂY DỰNG KỸ NĂNG</div>
       <h1>AUTO BATTLE<br>ROGUELITE</h1>
-      <p class="subtitle">Nhân vật tự chiến đấu. Bạn xây dựng build và sống sót.</p>
+      <p class="subtitle">Nhân vật tự chiến đấu. Bạn xây dựng bộ kỹ năng và sống sót.</p>
       <div class="menuButtons">
         <button class="primary large" data-screen="modeMenu">CHƠI</button>
         <button class="secondary" data-screen="skillCodexMenu">KỸ NĂNG</button>
@@ -77,32 +78,32 @@
         <button class="modeCard" data-mode="5">
           <span class="modeTime">5</span>
           <span class="modeUnit">PHÚT</span>
-          <strong>Quick Run</strong>
-          <small>3 skill khởi đầu · tiến độ được nén nhanh</small>
+          <strong>Nhanh</strong>
+          <small>3 kỹ năng khởi đầu · tiến độ được nén nhanh</small>
         </button>
         <button class="modeCard" data-mode="10">
           <span class="modeTime">10</span>
           <span class="modeUnit">PHÚT</span>
-          <strong>Standard</strong>
-          <small>2 skill khởi đầu · nhịp chơi tiêu chuẩn</small>
+          <strong>Tiêu chuẩn</strong>
+          <small>2 kỹ năng khởi đầu · nhịp chơi tiêu chuẩn</small>
         </button>
         <button class="modeCard" data-mode="15">
           <span class="modeTime">15</span>
           <span class="modeUnit">PHÚT</span>
-          <strong>Long Run</strong>
-          <small>1 skill khởi đầu · build dài hơi</small>
+          <strong>Dài hơi</strong>
+          <small>1 kỹ năng khởi đầu · phát triển dài hơi</small>
         </button>
         <button class="modeCard" data-mode="20">
           <span class="modeTime">20</span>
           <span class="modeUnit">PHÚT</span>
-          <strong>Challenge</strong>
-          <small>1 skill khởi đầu · áp lực cuối trận cao</small>
+          <strong>Thử thách</strong>
+          <small>1 kỹ năng khởi đầu · áp lực cuối trận cao</small>
         </button>
         <button class="modeCard endlessCard" data-mode="endless">
           <span class="modeTime">∞</span>
-          <span class="modeUnit">ENDLESS</span>
+          <span class="modeUnit">VÔ HẠN</span>
           <strong>Không giới hạn</strong>
-          <small>1 skill khởi đầu · độ khó tăng vô hạn</small>
+          <small>1 kỹ năng khởi đầu · độ khó tăng vô hạn</small>
         </button>
       </div>
     </div>
@@ -112,9 +113,9 @@
     <div class="menuCard codexCard">
       <div class="screenHeader codexHeader">
         <div>
-          <div class="eyebrow">SKILL CODEX</div>
+          <div class="eyebrow">BÁCH KHOA KỸ NĂNG</div>
           <h2>Kỹ năng</h2>
-          <p class="codexSubtitle">Xem toàn bộ kỹ năng, synergy và evolution. Hover hoặc click để xem mô tả và animation.</p>
+          <p class="codexSubtitle">Xem toàn bộ Kỹ Năng, Hợp Đạo Kỹ, Siêu Cấp, Thần Kỹ và Thần Bí Kỹ. Di chuột hoặc bấm để xem mô tả và hoạt ảnh.</p>
         </div>
         <button class="backButton" data-screen="mainMenu">← Quay lại</button>
       </div>
@@ -140,7 +141,7 @@
     <div class="menuCard wideCard">
       <div class="screenHeader">
         <div>
-          <div class="eyebrow">LOCAL RECORDS</div>
+          <div class="eyebrow">THÀNH TÍCH TRÊN MÁY</div>
           <h2>Bảng xếp hạng</h2>
         </div>
         <button class="backButton" data-screen="mainMenu">← Quay lại</button>
@@ -148,7 +149,7 @@
 
       <div id="leaderboardTabs" class="tabs"></div>
       <div id="leaderboardContent" class="leaderboardTable"></div>
-      <p class="finePrint">Thành tích hiện được lưu trên trình duyệt này. Global leaderboard sẽ cần backend riêng.</p>
+      <p class="finePrint">Thành tích hiện được lưu trên trình duyệt này. Bảng xếp hạng toàn cầu sẽ được bổ sung khi có hệ thống máy chủ riêng.</p>
     </div>
   </div>
 
@@ -171,8 +172,8 @@
       </div>
       <div class="settingRow">
         <div>
-          <strong>Tự tạm dừng khi mất focus</strong>
-          <small>Pause nếu chuyển tab hoặc cửa sổ.</small>
+          <strong>Tự tạm dừng khi rời cửa sổ</strong>
+          <small>Tự tạm dừng khi bạn chuyển sang cửa sổ khác.</small>
         </div>
         <button id="autoPauseToggle" class="toggleButton"></button>
       </div>
@@ -190,25 +191,25 @@
       </div>
 
       <div class="howToList">
-        <p><b>1.</b> Nhân vật tự di chuyển, tự tìm XP và tự tấn công.</p>
-        <p><b>2.</b> Mỗi lần lên cấp, chọn 1 trong 3 skill ngẫu nhiên.</p>
+        <p><b>1.</b> Nhân vật tự di chuyển, tự tìm kinh nghiệm và tự tấn công.</p>
+        <p><b>2.</b> Mỗi lần lên cấp, chọn 1 trong 3 kỹ năng ngẫu nhiên.</p>
         <p><b>3.</b> Chế độ có thời gian: sống sót đến khi đồng hồ về 00:00 để chiến thắng.</p>
-        <p><b>4.</b> Endless: không có chiến thắng; mục tiêu là sống càng lâu càng tốt.</p>
-        <p><b>5.</b> Skill có nhiều tag và có thể kết hợp chéo, không giới hạn class.</p>
-        <p><b>6.</b> BUILD SYNERGY bên trái hiển thị combo đã mở và combo chỉ còn thiếu một mảnh.</p>
-        <p><b>7.</b> Skill đạt MAX sẽ rời khỏi pool level-up. Một số skill MAX có thể tự tiến hóa khi build đủ tag yêu cầu.</p>
-        <p><b>8.</b> Trong mode có thời gian, leaderboard xếp theo Run Score. Endless xếp theo thời gian sống.</p>
+        <p><b>4.</b> Vô Hạn: không có chiến thắng; mục tiêu là sống càng lâu càng tốt.</p>
+        <p><b>5.</b> Kỹ năng có nhiều thuộc tính và có thể kết hợp chéo, không bị giới hạn bởi vai trò nhân vật.</p>
+        <p><b>6.</b> BỘ KỸ NĂNG & LIÊN KẾT bên trái hiển thị liên kết đã mở và liên kết chỉ còn thiếu một mảnh.</p>
+        <p><b>7.</b> Kỹ năng đạt TỐI ĐA sẽ rời khỏi lượt chọn. Một số kỹ năng TỐI ĐA có thể đạt Siêu Cấp khi bộ kỹ năng đủ điều kiện.</p>
+        <p><b>8.</b> Trong chế độ có thời gian, bảng xếp hạng dựa trên điểm lượt chơi. Vô Hạn xếp theo thời gian sống.</p>
       </div>
     </div>
   </div>
 
   <div id="pauseMenu" class="screenOverlay">
     <div class="modalCard compactCard">
-      <div class="eyebrow">PAUSED</div>
+      <div class="eyebrow">TẠM DỪNG</div>
       <h2>Tạm dừng</h2>
       <div class="menuButtons">
         <button id="resumeButton" class="primary">TIẾP TỤC</button>
-        <button id="restartRunButton" class="secondary">CHƠI LẠI RUN</button>
+        <button id="restartRunButton" class="secondary">CHƠI LẠI LƯỢT</button>
         <button id="pauseSettingsButton" class="secondary">CÀI ĐẶT</button>
         <button id="pauseMainMenuButton" class="dangerButton">VỀ MENU CHÍNH</button>
       </div>
@@ -217,25 +218,25 @@
 
   <div id="levelModal" class="screenOverlay">
     <div class="modalCard">
-      <div class="eyebrow" id="skillPickEyebrow">LEVEL UP</div>
+      <div class="eyebrow" id="skillPickEyebrow">LÊN CẤP</div>
       <h2 id="skillPickTitle">Lên cấp!</h2>
-      <p id="skillPickDescription">Chọn một kỹ năng để định hình build.</p>
+      <p id="skillPickDescription">Chọn một kỹ năng để định hình bộ kỹ năng.</p>
       <div id="choices" class="choices"></div>
     </div>
   </div>
 
   <div id="resultModal" class="screenOverlay">
     <div class="modalCard resultCard">
-      <div id="resultBadge" class="resultBadge">VICTORY</div>
+      <div id="resultBadge" class="resultBadge">CHIẾN THẮNG</div>
       <h2 id="resultTitle">Chiến thắng</h2>
       <p id="resultSubtitle"></p>
 
       <div class="resultStats">
         <div><span>Thời gian</span><b id="resultTime">00:00</b></div>
         <div><span>Hạ gục</span><b id="resultKills">0</b></div>
-        <div><span>Elite</span><b id="resultElites">0</b></div>
-        <div><span>Level</span><b id="resultLevel">1</b></div>
-        <div><span>Score</span><b id="resultScore">0</b></div>
+        <div><span>Tinh anh</span><b id="resultElites">0</b></div>
+        <div><span>Cấp</span><b id="resultLevel">1</b></div>
+        <div><span>Điểm</span><b id="resultScore">0</b></div>
       </div>
 
       <div id="recordNotice" class="recordNotice hidden">★ KỶ LỤC MỚI ★</div>
@@ -257,10 +258,17 @@
 <script src="js/combat.js"></script>
 <script src="js/movement.js"></script>
 <script src="js/divine-skills.js"></script>
+<script src="js/localization.js"></script>
 <script src="js/vfx.js"></script>
+<script src="js/visual-profiles.js"></script>
+<script src="js/visual-scenes-1.js"></script>
+<script src="js/visual-scenes-2.js"></script>
+<script src="js/visual-scenes-3.js"></script>
+<script src="js/visual-scenes-4.js"></script>
 <script src="js/skill-codex.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/evolution-hint-fix.js"></script>
 <script src="js/game.js"></script>
+<script src="js/visual-bridge.js"></script>
 </body>
 </html>
