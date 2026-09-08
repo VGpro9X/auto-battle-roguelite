@@ -12,6 +12,15 @@ if(!state.presentationV014){
   };
 }
 
+function resetPresentationV014(){
+  state.presentationV014.playerFacingX=1;
+  state.presentationV014.playerFacingY=0;
+  state.presentationV014.playerMoveAmount=0;
+  state.presentationV014.playerStepPhase=0;
+  state.presentationV014.playerAttackUntil=0;
+  state.presentationV014.playerAttackStrength=0;
+}
+
 function normalizeFacingV014(x,y,fallbackX=1,fallbackY=0){
   const m=Math.hypot(x,y);
   if(m<.0001)return{x:fallbackX,y:fallbackY};
@@ -66,6 +75,13 @@ update=function(dt){
   return result;
 };
 
+const baseResetSkillEnginePresentationV014=resetSkillEngine;
+resetSkillEngine=function(){
+  const result=baseResetSkillEnginePresentationV014();
+  resetPresentationV014();
+  return result;
+};
+
 function drawPlayerSilhouetteV014(){
   if(!state.running&&!state.gameOver)return;
   const p=state.presentationV014;
@@ -79,6 +95,9 @@ function drawPlayerSilhouetteV014(){
   ctx.save();
   ctx.translate(player.x,player.y+bob);
   ctx.rotate(angle);
+
+  // Dark inner plate turns the old prototype circle into a thin intentional underglow.
+  ctx.fillStyle="#151820";ctx.globalAlpha=.94;ctx.beginPath();ctx.arc(0,0,player.r*.88,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
 
   // Ground shadow keeps the actor readable without adding another full status ring.
   ctx.save();ctx.rotate(-angle);ctx.globalAlpha=.26;ctx.fillStyle="#05070b";ctx.beginPath();ctx.ellipse(0,player.r*.72,player.r*.82,player.r*.34,0,0,Math.PI*2);ctx.fill();ctx.restore();
@@ -207,6 +226,7 @@ function drawEnemySilhouetteV014(enemy){
   const lunge=attackCue*(2.5+Math.sin(state.t*18+seed)*1.2);
 
   ctx.save();ctx.translate(enemy.x+facing.x*lunge,enemy.y+facing.y*lunge+bob);ctx.rotate(angle);
+  ctx.fillStyle="#151820";ctx.globalAlpha=.93;ctx.beginPath();ctx.arc(0,0,enemy.r*.88,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
   ctx.save();ctx.rotate(-angle);ctx.globalAlpha=.22;ctx.fillStyle="#05070b";ctx.beginPath();ctx.ellipse(0,enemy.r*.72,enemy.r*.75,enemy.r*.28,0,0,Math.PI*2);ctx.fill();ctx.restore();
 
   const pulse=Math.max(0,gait);
