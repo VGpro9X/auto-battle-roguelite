@@ -1,4 +1,4 @@
-const GAME_VERSION="V0.9";
+const GAME_VERSION="V0.10";
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 let W=innerWidth;
@@ -61,6 +61,17 @@ function createInitialPlayer(){
     xpMultiplier:1,
     periodicCooldownMultiplier:1,
     areaMultiplier:1,
+    areaDamageMultiplier:1,
+    summonDamageMultiplier:1,
+    elementalDamageMultiplier:1,
+    chainDamageMultiplier:1,
+    eliteDamageMultiplier:1,
+    chilledDamageMultiplier:1,
+    projectileSpeedMultiplier:1,
+    healOnHitChance:0,
+    healOnHitAmount:0,
+    shieldOnKill:0,
+    reviveCharges:0,
     explosionChance:0,
     poisonChance:0,
     burnChance:0
