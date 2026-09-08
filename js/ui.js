@@ -39,20 +39,27 @@ function resetRunState(){
 
   Object.assign(player,createInitialPlayer());
   for(const key of Object.keys(owned)) delete owned[key];
-  skills.fire.timer=0;
-  skills.knock.timer=0;
+
+  for(const skill of Object.values(skills)){
+    if(Object.prototype.hasOwnProperty.call(skill,"timer")) skill.timer=0;
+  }
+
+  resetMovementAI();
   refreshSkillBar();
 }
 
 function startRun(modeId){
   const mode=MODES[modeId];
   if(!mode) return;
+
   state.mode=mode;
   resetRunState();
   state.starterSelectionsRemaining=mode.starterPicks;
+
   hideAllOverlays();
   setGameUiVisible(true);
   updateHud();
+
   setTimeout(()=>showLevelUp(true),120);
 }
 
@@ -83,6 +90,7 @@ function showLevelUp(isStarter=false){
 
   let available=Object.keys(skills).filter(key=>skillLevel(key)<skills[key].max);
   if(isStarter) available=available.filter(key=>skillLevel(key)===0);
+
   if(!available.length){
     state.starterSelectionsRemaining=0;
     state.paused=false;
@@ -108,6 +116,7 @@ function showLevelUp(isStarter=false){
     const skill=skills[key];
     const next=skillLevel(key)+1;
     const button=document.createElement("button");
+
     button.className="choice";
     button.innerHTML=`
       <div class="icon">${skill.icon}</div>
@@ -115,6 +124,7 @@ function showLevelUp(isStarter=false){
       <div class="lvl">Cấp ${next}/${skill.max}</div>
       <div class="desc">${skill.desc(next)}</div>
     `;
+
     button.onclick=()=>selectSkill(key,isStarter);
     container.appendChild(button);
   }
@@ -130,6 +140,7 @@ function selectSkill(key,isStarter=false){
 
   if(isStarter){
     state.starterSelectionsRemaining--;
+
     if(state.starterSelectionsRemaining>0){
       setTimeout(()=>showLevelUp(true),70);
       return;
@@ -153,6 +164,7 @@ function refreshSkillBar(){
   for(const key of keys){
     const skill=skills[key];
     const element=document.createElement("div");
+
     element.className="skillMini";
     element.innerHTML=`<b>${skill.icon} ${skill.name}</b><small>Lv.${owned[key]}</small>`;
     bar.appendChild(element);
@@ -161,9 +173,11 @@ function refreshSkillBar(){
 
 function finishRun(outcome){
   if(state.gameOver) return;
+
   state.gameOver=true;
   state.running=false;
   state.paused=true;
+
   if(outcome==="victory"&&!state.mode.endless) state.t=state.mode.duration;
 
   const score=state.mode.endless?0:calculateRunScore();
@@ -192,7 +206,7 @@ function updateHud(){
   document.getElementById("hpBar").style.width=(player.hp/player.maxHp*100)+"%";
   document.getElementById("hpText").textContent=`${Math.ceil(player.hp)}/${Math.ceil(player.maxHp)}`;
   document.getElementById("xpBar").style.width=(player.xp/player.xpNeed*100)+"%";
-  document.getElementById("xpText").textContent=`${player.xp}/${player.xpNeed}`;
+  document.getElementById("xpText").textContent=`${Math.floor(player.xp)}/${player.xpNeed}`;
   document.getElementById("lvText").textContent=player.level;
   document.getElementById("killText").textContent=state.kills;
 
@@ -214,6 +228,7 @@ function fmtTime(time){
 function renderLeaderboardTabs(){
   const container=document.getElementById("leaderboardTabs");
   container.innerHTML="";
+
   for(const mode of Object.values(MODES)){
     const button=document.createElement("button");
     button.className="tabButton"+(leaderboardMode===mode.id?" active":"");
@@ -225,6 +240,7 @@ function renderLeaderboardTabs(){
 
 function renderLeaderboard(){
   renderLeaderboardTabs();
+
   const mode=MODES[leaderboardMode];
   const board=leaderboards[leaderboardMode]||[];
   const content=document.getElementById("leaderboardContent");
@@ -253,8 +269,10 @@ function renderLeaderboard(){
 function renderSettings(){
   const particles=document.getElementById("particlesToggle");
   const autoPause=document.getElementById("autoPauseToggle");
+
   particles.textContent=settings.particles?"BẬT":"TẮT";
   particles.classList.toggle("on",settings.particles);
+
   autoPause.textContent=settings.autoPause?"BẬT":"TẮT";
   autoPause.classList.toggle("on",settings.autoPause);
 }
@@ -267,6 +285,7 @@ function openSettings(returnScreen){
 for(const button of document.querySelectorAll("[data-screen]")){
   button.addEventListener("click",()=>showScreen(button.dataset.screen));
 }
+
 for(const button of document.querySelectorAll("[data-mode]")){
   button.addEventListener("click",()=>startRun(button.dataset.mode));
 }
@@ -287,15 +306,30 @@ document.getElementById("pauseMainMenuButton").addEventListener("click",abandonR
 document.getElementById("retryButton").addEventListener("click",()=>startRun(state.mode.id));
 document.getElementById("resultMainMenuButton").addEventListener("click",abandonRunToMenu);
 
-document.getElementById("particlesToggle").addEventListener("click",()=>{settings.particles=!settings.particles;saveSettings();renderSettings();});
-document.getElementById("autoPauseToggle").addEventListener("click",()=>{settings.autoPause=!settings.autoPause;saveSettings();renderSettings();});
+document.getElementById("particlesToggle").addEventListener("click",()=>{
+  settings.particles=!settings.particles;
+  saveSettings();
+  renderSettings();
+});
 
-document.querySelector('#mainMenu [data-screen="settingsMenu"]').addEventListener("click",()=>{state.settingsReturnScreen="mainMenu";});
+document.getElementById("autoPauseToggle").addEventListener("click",()=>{
+  settings.autoPause=!settings.autoPause;
+  saveSettings();
+  renderSettings();
+});
+
+document.querySelector('#mainMenu [data-screen="settingsMenu"]').addEventListener("click",()=>{
+  state.settingsReturnScreen="mainMenu";
+});
 
 addEventListener("keydown",event=>{
   if(event.key!=="Escape") return;
-  if(document.getElementById("pauseMenu").classList.contains("visible")) resumeRun();
-  else if(state.running&&!state.paused) openPause();
+
+  if(document.getElementById("pauseMenu").classList.contains("visible")){
+    resumeRun();
+  }else if(state.running&&!state.paused){
+    openPause();
+  }
 });
 
 addEventListener("blur",()=>{
