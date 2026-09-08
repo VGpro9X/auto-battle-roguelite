@@ -79,6 +79,11 @@ body{
   top:calc(var(--safe-top) + 92px);
 }
 
+.buildTrackerToggle{
+  display:none;
+  pointer-events:auto;
+}
+
 .unlockToast{
   max-width:calc(100vw - var(--safe-left) - var(--safe-right) - 24px);
 }
@@ -188,4 +193,242 @@ button:focus-visible,.choice:focus-visible,.modeCard:focus-visible,.codexSkillCa
   .modeGrid{grid-template-columns:repeat(5,minmax(128px,1fr));overflow-x:auto;overflow-y:hidden;max-height:none}
   .modeCard{min-height:132px}
   .modeTime{font-size:36px}
+}
+
+/* Checkpoint 2 — compact gameplay HUD + mobile build tracker drawer */
+@media(max-width:700px){
+  .hud{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:5px;
+    align-items:stretch;
+  }
+
+  .stats{
+    width:100%;
+    min-width:0;
+    padding:6px 8px;
+    border-radius:11px;
+  }
+
+  .stats .row{
+    gap:5px;
+    margin:2px 0;
+    font-size:10px;
+  }
+
+  .stats .row>b{
+    flex:0 0 64px;
+    font-size:9px;
+    letter-spacing:.02em;
+  }
+
+  .stats .bar{height:9px;min-width:0}
+  .stats .row>span{
+    flex:0 0 auto;
+    min-width:58px;
+    max-width:88px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    text-align:right;
+    font-size:9px;
+  }
+
+  .rightHud{
+    width:100%;
+    margin-left:0;
+    display:grid;
+    grid-template-columns:minmax(0,1.15fr) repeat(3,minmax(0,.9fr)) 44px;
+    gap:4px;
+    align-items:stretch;
+  }
+
+  .rightHud .pill{
+    min-width:0;
+    padding:7px 4px;
+    border-radius:10px;
+    font-size:10px;
+    line-height:1.1;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  .rightHud .iconButton{
+    width:44px;
+    height:44px;
+    min-width:44px;
+    border-radius:10px;
+  }
+
+  #skillBar{
+    width:calc(100vw - var(--safe-left) - var(--safe-right) - 12px);
+    bottom:calc(var(--safe-bottom) + 6px);
+    gap:5px;
+    padding:5px;
+    border-radius:11px;
+    justify-content:flex-start;
+    overflow-x:auto;
+    overflow-y:hidden;
+    overscroll-behavior-x:contain;
+    scrollbar-width:none;
+  }
+
+  #skillBar::-webkit-scrollbar{display:none}
+
+  .skillMini{
+    flex:0 0 96px;
+    width:96px;
+    min-height:50px;
+    padding:6px;
+    border-radius:8px;
+    font-size:9px;
+  }
+
+  .skillMini b{font-size:10px;margin-bottom:3px}
+  .skillMini small{font-size:8px;line-height:1.25}
+
+  .buildTrackerToggle{
+    display:block;
+    position:absolute;
+    left:calc(var(--safe-left) + 8px);
+    bottom:calc(var(--safe-bottom) + 78px);
+    z-index:13;
+    min-height:40px;
+    max-width:min(48vw,190px);
+    padding:8px 10px;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:10px;
+    background:rgba(12,13,17,.92);
+    color:#dce5fb;
+    box-shadow:0 8px 24px rgba(0,0,0,.28);
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:.04em;
+    white-space:nowrap;
+  }
+
+  .buildTrackerToggle.active{
+    background:rgba(31,35,46,.97);
+    border-color:rgba(150,176,238,.35);
+  }
+
+  .buildTracker{
+    display:block!important;
+    top:auto;
+    left:calc(var(--safe-left) + 8px);
+    right:calc(var(--safe-right) + 8px);
+    bottom:calc(var(--safe-bottom) + 124px);
+    width:auto;
+    max-height:min(42dvh,360px);
+    overflow:auto;
+    z-index:12;
+    pointer-events:auto;
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(12px) scale(.99);
+    transition:opacity .16s ease,transform .16s ease,visibility .16s;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .buildTracker.mobileOpen{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0) scale(1);
+  }
+
+  .buildTrackerContent .buildLine:nth-child(n+4){display:flex}
+  .buildTrackerTitle{
+    position:sticky;
+    top:0;
+    z-index:1;
+    margin:-2px -2px 7px;
+    padding:4px 2px 6px;
+    background:linear-gradient(rgba(12,13,17,.98),rgba(12,13,17,.92));
+  }
+}
+
+@media(max-width:380px){
+  .stats .row>b{flex-basis:58px;font-size:8px}
+  .stats .row>span{min-width:52px;font-size:8px}
+  .rightHud{grid-template-columns:minmax(0,1.15fr) repeat(3,minmax(0,.82fr)) 42px}
+  .rightHud .pill{font-size:9px;padding-inline:3px}
+  .rightHud .iconButton{width:42px;height:42px;min-width:42px}
+}
+
+@media(max-height:520px) and (orientation:landscape){
+  .hud{
+    top:calc(var(--safe-top) + 6px);
+    left:calc(var(--safe-left) + 6px);
+    right:calc(var(--safe-right) + 6px);
+    display:grid;
+    grid-template-columns:minmax(220px,32vw) minmax(0,1fr);
+    gap:6px;
+    align-items:start;
+  }
+
+  .stats{min-width:0;padding:5px 7px}
+  .stats .row{font-size:9px;margin:1px 0;gap:4px}
+  .stats .row>b{flex:0 0 58px;font-size:8px}
+  .stats .row>span{font-size:8px;min-width:48px;text-align:right}
+  .stats .bar{height:8px}
+
+  .rightHud{
+    margin-left:0;
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr)) 42px;
+    gap:4px;
+    width:100%;
+  }
+
+  .rightHud .pill{min-width:0;padding:6px 4px;font-size:9px}
+  .rightHud .iconButton{width:42px;height:42px;min-width:42px}
+
+  #skillBar{
+    bottom:calc(var(--safe-bottom) + 5px);
+    max-width:calc(100vw - var(--safe-left) - var(--safe-right) - 12px);
+    padding:4px;
+    gap:4px;
+  }
+
+  .skillMini{flex:0 0 88px;width:88px;min-height:44px;padding:5px}
+  .skillMini b{font-size:9px}.skillMini small{font-size:7px}
+
+  .buildTrackerToggle{
+    display:block;
+    position:absolute;
+    left:calc(var(--safe-left) + 6px);
+    bottom:calc(var(--safe-bottom) + 65px);
+    z-index:13;
+    min-height:36px;
+    padding:7px 9px;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:9px;
+    background:rgba(12,13,17,.92);
+    color:#dce5fb;
+    font-size:8px;
+    font-weight:900;
+  }
+
+  .buildTracker{
+    display:block!important;
+    top:auto;
+    left:calc(var(--safe-left) + 6px);
+    right:auto;
+    bottom:calc(var(--safe-bottom) + 106px);
+    width:min(340px,48vw);
+    max-height:52dvh;
+    overflow:auto;
+    z-index:12;
+    pointer-events:auto;
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(10px) scale(.99);
+    transition:opacity .16s ease,transform .16s ease,visibility .16s;
+  }
+
+  .buildTracker.mobileOpen{opacity:1;visibility:visible;transform:none}
+  .buildTrackerContent .buildLine:nth-child(n+4){display:flex}
 }
