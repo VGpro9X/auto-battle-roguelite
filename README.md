@@ -1,6 +1,6 @@
 # Auto Battle Roguelite
 
-Current master version: **V0.12 – Skill Visual Identity, Rare Rule Skills & Vietnamese UI**
+Current master version: **V0.13 – Combat Readability & Feel**
 
 A browser-based auto-battle survival roguelite prototype built around unrestricted cross-archetype skill combinations.
 
@@ -16,6 +16,7 @@ A browser-based auto-battle survival roguelite prototype built around unrestrict
 - Harvest, kite, committed emergency escape and patrol modes
 - XP clusters, open-space preference, edge/corner penalties and multi-horizon escape routing
 - Temporarily bribed allies are ignored by hostile targeting and movement threat calculations
+- V0.13 does not change the V0.8 movement logic
 
 ## Skill system
 - **64 base skills** with no class restriction
@@ -28,7 +29,7 @@ A browser-based auto-battle survival roguelite prototype built around unrestrict
 - Level-up cards stay quiet unless the offered skill is the final piece that immediately opens a Hợp Đạo Kỹ or Siêu Cấp
 - Detailed missing requirements remain in the left-side BỘ KỸ NĂNG & LIÊN KẾT tracker instead of being duplicated on choice cards
 
-## V0.12 rare rule skills
+## Rare rule skills
 Rare rule skills can begin appearing from level 8, replace one normal level-up card when rolled, have no levels, and are limited to one owned rare rule skill per run.
 
 Current set:
@@ -37,13 +38,46 @@ Current set:
 - **Bất Tử Nhất Tức — Thần Kỹ:** prevents one lethal hit per run, holds the player at 1 HP and grants a short invulnerability window
 - **Thiên Phạt — Thần Kỹ:** after enough kills, calls down heavy lightning damage on multiple enemies
 
-## V0.12 visual identity
+## V0.13 combat readability
+V0.13 moves visual identity from Codex-only presentation into the actual combat loop.
+
+### Common attack identity
+- **Cường Kích:** stronger/wider projectile body plus a power aura
+- **Song Tiễn:** fan/chevron projectile identity reinforces the multishot mechanic
+- **Xuyên Phá:** longer lance shape and trailing cut marks communicate penetration
+- **Bạo Kích:** gold critical ring and stronger impact language
+- **Tâm Nhãn:** adds a sharper critical reticle around critical projectiles
+- Element color and mechanic shape remain separate layers so elemental effects do not erase projectile identity
+
+### Hit, damage and status feedback
+- Heavy hits and critical hits use stronger impact bursts without showing a number for every small damage tick
+- Damage taken, healing, shield gain, dodge, shield break and revival have distinct player feedback
+- Enemy deaths use a short burst; elite deaths are deliberately stronger
+- Burn, poison, chill and mark now use compact mechanic-specific marks instead of stacking full circular rings
+- Shield remains a player-centered defensive visual and can continue accumulating without an undocumented cap
+
+### Summons
+- **Linh Hỏa** now has a visible orbiting summon actor and fires from that visible actor
+- **Lôi Linh** now has a visible summon actor and visible lightning arcs from the summon to its targets
+- **Ngự Linh** adds an additional summon aura so summon investment is visible
+
+### Hợp Đạo Kỹ and Siêu Cấp
+- Hợp Đạo Kỹ usage receives a two-tone mechanic signature at the point where the combined effect actually happens
+- Direct and passive Hợp Đạo Kỹ are both covered, including effects triggered by hits, healing, periodic echoes, marked kills and soul/shield interactions
+- Siêu Cấp uses a larger and stronger visual signature than ordinary Hợp Đạo Kỹ
+- Existing Siêu Cấp-specific visuals such as Kiếm Vực and Dịch Triều remain active alongside the V0.13 feedback layer
+
+### Thần Kỹ / Thần Bí Kỹ
+- **Mua Chuộc:** conversion burst, friendly marker, remaining-duration arc and reversion cue make faction state readable without text
+- **Bất Tử Nhất Tức:** lethal prevention now has a strong trigger burst plus a visible invulnerability countdown arc
+- **Thiên Phạt:** affected targets receive a stronger lightning strike presentation
+- **Đổi Mệnh:** the player and target are connected by a two-color exchange tether when the rule triggers
+
+## Visual identity foundation from V0.12
 - Every one of the **64 base skills has an explicit visual profile**
 - Every base skill has its own scene signature in the Bách Khoa Kỹ Năng
 - Visual identities are split into four scene modules to keep edits manageable
 - Rare rule skills have dedicated animated Codex previews
-- Gameplay projectile visuals can react to source skill and build state
-- Unique rule-skill triggers have additional in-run feedback
 - `js/vfx.js` remains the shared low-level rendering layer for Codex and gameplay
 
 ## Vietnamese presentation layer
@@ -61,21 +95,17 @@ Current set:
 - Detail view shows descriptions, translated tags, requirements and related combinations
 - Codex currently covers **96 entries total**: 64 base skills + 20 Hợp Đạo Kỹ + 8 Siêu Cấp + 4 rare rule skills
 
-## Validation performed for V0.12
-- JavaScript syntax checks for V0.12 integration modules
-- Definition test confirms 64 base skills, 20 Hợp Đạo Kỹ, 8 Siêu Cấp and 4 rare rule skills
-- All 64 base skills have explicit visual profiles and unique visual scene identifiers
-- Every tag currently used by the 64 skills has a Vietnamese display label
-- All 96 Codex previews render in the integration harness without throwing
-- Codex priority order is validated
-- Rare rule-skill offer and one-per-run ownership rules are validated
-- Mua Chuộc ally combat and hostile-target filtering are validated
-- Bất Tử Nhất Tức lethal prevention and invulnerability are validated
-- TỐI ĐA base-skill exclusion remains validated
-- Level-up relation hints are restricted to immediate final-piece Hợp Đạo Kỹ / Siêu Cấp unlocks
+## Validation status for V0.13
+- The two new V0.13 integration modules pass JavaScript syntax checks
+- Current `index.html` script order was re-read from GitHub after integration
+- Hợp Đạo Kỹ source/signature routing was re-audited so base skills do not incorrectly display a synergy signature
+- Passive Hợp Đạo Kỹ received explicit usage cues where their mechanics trigger
+- The pre-existing Săn Ấn description was corrected to match its implemented +25% base-XP effect rather than claiming an unimplemented mark-spread bonus
+- V0.12 definition/Codex/rule-skill validation remains the inherited content baseline
+- **An interactive browser playtest has not yet been completed for this V0.13 checkpoint.** Dense-combat readability and performance still need hands-on playtesting before balance/content expansion
 
 ## Project structure
-- `index.html` — game shell, menus and Bách Khoa Kỹ Năng screen
+- `index.html` — game shell, menus, Bách Khoa Kỹ Năng screen and V0.13 integration order
 - `css/game.css` — gameplay UI and Codex base styling
 - `css/v012.css` — Thần Kỹ/Thần Bí Kỹ visual accents and level-up clarity overrides
 - `js/core.js` — shared state, version and player build stats
@@ -98,7 +128,12 @@ Current set:
 - `js/ui.js` — menus, level-up choices, build tracker, localization and unlock banners
 - `js/evolution-hint-fix.js` — final-piece-only level-up hint logic and detailed left-side progress tracker
 - `js/game.js` — main update/draw loop and gameplay integration
-- `js/visual-bridge.js` — V0.12 bridge between Codex visuals, gameplay visuals and rare-rule feedback
+- `js/visual-bridge.js` — shared gameplay/Codex visual bridge plus V0.13 hit/status/projectile feedback
+- `js/v013-summon-power-feedback.js` — summon actors plus Hợp Đạo Kỹ/Siêu Cấp usage signatures
+- `js/v013-rule-feedback.js` — Thần Kỹ/Thần Bí Kỹ combat feedback and Mua Chuộc faction-state cues
+
+## Next development target
+**V0.14 — Character & Enemy Presentation**, after a hands-on V0.13 playtest confirms combat readability and performance are acceptable.
 
 ## Development rule
 GitHub is the master source. Chat previews and packaged builds are test/checkpoint artifacts.
