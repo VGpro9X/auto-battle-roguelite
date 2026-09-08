@@ -1,0 +1,18 @@
+/* V0.12 rare rule-skill tiers and visual identity accents */
+.choice.divineChoice{position:relative;overflow:hidden;border-width:1px}
+.choice.divineChoice::after{content:"";position:absolute;inset:auto -28px -38px auto;width:110px;height:110px;border-radius:50%;pointer-events:none;opacity:.12}
+.choice.divineChoice.divine{border-color:rgba(255,194,78,.46);background:linear-gradient(145deg,rgba(91,53,20,.42),#20232b 58%)}
+.choice.divineChoice.divine::after{background:#ffbd4a}
+.choice.divineChoice.mystic{border-color:rgba(177,113,255,.52);background:linear-gradient(145deg,rgba(57,27,82,.55),#20232b 58%)}
+.choice.divineChoice.mystic::after{background:#9f66e7}
+.relationHint.divine{background:rgba(255,194,78,.09);border-color:rgba(255,194,78,.24);color:#f1d293}
+.skillMini.divineSkill{border-color:rgba(255,194,78,.34);background:rgba(255,179,67,.08)}
+.skillMini.mysticSkill{border-color:rgba(177,113,255,.38);background:rgba(140,82,211,.09)}
+.buildLine.divine{border-color:rgba(255,194,78,.34);background:rgba(255,179,67,.08)}
+.buildLine.mystic{border-color:rgba(177,113,255,.38);background:rgba(140,82,211,.09)}
+.codexSkillCard.divine{border-color:rgba(255,194,78,.28)}
+.codexSkillCard.mystic{border-color:rgba(177,113,255,.34)}
+.codexSection.divine .codexSectionHeader span{color:#e7b65d}
+.codexSection.mystic .codexSectionHeader span{color:#c392ff}
+.unlockToast.divine{border-color:rgba(255,194,78,.48);box-shadow:0 18px 70px rgba(188,119,30,.24)}
+.unlockToast.mystic{border-color:rgba(177,113,255,.52);box-shadow:0 18px 76px rgba(112,57,181,.28)}
