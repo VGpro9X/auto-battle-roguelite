@@ -1,6 +1,6 @@
 # Auto Battle Roguelite
 
-Current master version: **V0.7 – Patrol Fallback**
+Current master version: **V0.8 – Committed Escape Routing**
 
 A browser-based auto-battle survival roguelite prototype.
 
@@ -22,12 +22,12 @@ Timed modes end in Victory when the countdown reaches zero. Endless ends on deat
 - Local settings
 - Two-layer autonomous movement: strategic zone planning + tactical context steering
 - Strategic modes: harvest XP, kite, emergency escape and patrol
-- V0.7 stable patrol fallback: when there is no meaningful enemy or XP objective, the character follows a broad central patrol ellipse instead of idling/spinning
-- Patrol goals persist briefly and immediately yield to Harvest, Kite or Escape priorities
-- XP is evaluated as spatial clusters instead of one global target/centroid
-- Strong center/open-space preference and explicit corner/edge penalties
-- Context-style danger-first direction filtering before interest/goal selection
-- Persistent kite direction and short goal locks to reduce oscillation
+- Stable patrol fallback for low-pressure moments
+- XP evaluated as spatial clusters
+- Strong center/open-space preference with explicit corner/edge penalties
+- V0.8 emergency escape hysteresis to reduce ESCAPE/KITE indecision
+- V0.8 multi-horizon escape scan across 48 headings and 4 look-ahead distances
+- V0.8 committed escape corridor: keep the chosen gap briefly unless it materially collapses
 - 18-skill pool including multishot, piercing, critical hits, lightning, nova, frost aura, heal-on-kill and XP gain
 - Difficulty normalized by run progress for timed modes
 
@@ -39,7 +39,7 @@ Timed modes end in Victory when the countdown reaches zero. Endless ends on deat
 - `js/leaderboard.js` — local records and settings persistence
 - `js/skills.js` — skill definitions
 - `js/combat.js` — enemies, projectiles, damage, crit/pierce and XP
-- `js/movement.js` — strategic movement planner, patrol fallback and tactical context steering
+- `js/movement.js` — strategic movement planner, patrol, kite and committed emergency escape routing
 - `js/ui.js` — menus, run lifecycle, pause, skill pick and results
 - `js/game.js` — update/draw loop and active skill execution
 
