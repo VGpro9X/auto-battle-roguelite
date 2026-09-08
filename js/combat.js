@@ -6,27 +6,24 @@ function spawnEnemy(){
   if(side===2){x=rand(-30,W+30);y=H+25;}
   if(side===3){x=-25;y=rand(-30,H+30);}
 
-  const scale=1+state.t/150;
-  const elite=Math.random()<Math.min(.12,state.t/800);
-  const hp=(elite?54:25)*scale;
+  const difficulty=getDifficultyProfile();
+  const elite=Math.random()<difficulty.eliteChance;
+  const hp=(elite?54:25)*difficulty.hpScale;
 
   state.enemies.push({
     x,y,
     r:elite?18:12,
     hp,maxHp:hp,
-    speed:(elite?34:48)*rand(.85,1.15),
-    dmg:(elite?15:8)*(1+state.t/220),
+    speed:(elite?34:48)*rand(.85,1.15)*difficulty.speedScale,
+    dmg:(elite?15:8)*difficulty.damageScale,
     hit:0,
     elite,
     dead:false
   });
 }
 
-function getSpawnCooldown(time){
-  if(time<30) return 1.05;
-  if(time<60) return .85;
-  if(time<120) return .65;
-  return Math.max(.24,.65-(time-120)/420);
+function getSpawnCooldown(){
+  return getDifficultyProfile().spawnCooldown;
 }
 
 function nearestEnemy(){
@@ -71,17 +68,20 @@ function hitEnemy(enemy,damage,knockback=0){
     enemy.y+=dy/magnitude*knockback;
   }
 
-  for(let i=0;i<4;i++){
-    state.particles.push({
-      x:enemy.x,y:enemy.y,
-      vx:rand(-55,55),vy:rand(-55,55),
-      life:.35,r:2
-    });
+  if(settings.particles){
+    for(let i=0;i<4;i++){
+      state.particles.push({
+        x:enemy.x,y:enemy.y,
+        vx:rand(-55,55),vy:rand(-55,55),
+        life:.35,r:2
+      });
+    }
   }
 
   if(enemy.hp<=0){
     enemy.dead=true;
     state.kills++;
+    if(enemy.elite) state.eliteKills++;
     state.gems.push({x:enemy.x,y:enemy.y,r:5,xp:enemy.elite?4:1});
     return true;
   }
@@ -90,10 +90,11 @@ function hitEnemy(enemy,damage,knockback=0){
 
 function gainXp(amount){
   player.xp+=amount;
-  if(player.xp>=player.xpNeed){
+  while(player.xp>=player.xpNeed&&!state.gameOver){
     player.xp-=player.xpNeed;
     player.level++;
     player.xpNeed=getXpNeed(player.level);
-    showLevelUp();
+    showLevelUp(false);
+    break;
   }
 }
