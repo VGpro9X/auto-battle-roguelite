@@ -1,5 +1,7 @@
-// V0.10 hotfix: only show evolution hints when the offered skill
-// actually advances the evolution, and make tracker progress explicit.
+// V0.12.1 clarity hotfix:
+// - level-up cards only show a relation hint when THIS pick immediately unlocks
+//   a Hợp Đạo Kỹ or Siêu Cấp;
+// - detailed missing requirements stay in the left build tracker.
 
 function getEvolutionRequirementSnapshot(evolution,candidateKey=null){
   const parts=[];
@@ -24,7 +26,7 @@ function getEvolutionRequirementSnapshot(evolution,candidateKey=null){
       const current=skillLevel(key)+(key===candidateKey?1:0);
       const ok=current>=required;
       if(ok)met++;
-      parts.push({type:"level",key,current,required,ok,label:`${skills[key]?.name||key} ${current}/${required}`});
+      parts.push({type:"level",key,current,required,ok,label:skills[key]?.name||key});
     }
   }
 
@@ -35,7 +37,7 @@ function getEvolutionRequirementSnapshot(evolution,candidateKey=null){
       if(candidateIsNew&&(skills[candidateKey]?.tags||[]).includes(tag))current++;
       const ok=current>=required;
       if(ok)met++;
-      parts.push({type:"tag",tag,current,required,ok,label:`${tag} ${current}/${required}`});
+      parts.push({type:"tag",tag,current,required,ok,label:typeof getTagLabel==="function"?getTagLabel(tag):tag});
     }
   }
 
@@ -57,31 +59,15 @@ function getEvolutionCandidateEffect(evolution,key){
     if(previous&&next&&next.current>previous.current)changes.push({before:previous,after:next});
   }
 
-  const baseImproved=baseAfter>baseBefore;
-  const ready=baseAfter>=baseMax&&after.met===after.total;
-
   return{
-    baseKey,baseBefore,baseAfter,baseMax,
-    before,after,changes,baseImproved,ready,
-    contributes:baseImproved||changes.length>0
+    baseKey,baseBefore,baseAfter,baseMax,before,after,changes,
+    baseImproved:baseAfter>baseBefore,
+    ready:baseAfter>=baseMax&&after.met===after.total
   };
 }
 
-function formatEvolutionCandidateEffect(effect){
-  if(effect.baseImproved){
-    return `${skills[effect.baseKey].name} ${effect.baseBefore}/${effect.baseMax}→${effect.baseAfter}/${effect.baseMax}`;
-  }
-
-  const change=effect.changes[0];
-  if(!change)return"";
-
-  const before=change.before;
-  const after=change.after;
-  if(after.type==="tag")return `${after.tag} ${before.current}/${after.required}→${after.current}/${after.required}`;
-  if(after.type==="level")return `${skills[after.key]?.name||after.key} ${before.current}/${after.required}→${after.current}/${after.required}`;
-  return skills[after.key]?.name||after.key||"";
-}
-
+// Level-up cards are intentionally quiet. A colored hint means the offered
+// skill is the FINAL piece and choosing it produces the unlock immediately.
 getSkillRelationHints=function(key){
   const hints=[];
 
@@ -89,12 +75,9 @@ getSkillRelationHints=function(key){
     for(const synergy of Object.values(SYNERGIES)){
       if(hasSynergy(synergy.id))continue;
       if(!synergy.requires?.skills?.includes(key))continue;
-
       const progress=getRequirementProgress(synergy.requires,key);
       if(progress.met===progress.total){
-        hints.push({type:"complete",text:`MỞ SYNERGY → ${synergy.name}`});
-      }else if(progress.total-progress.met<=1){
-        hints.push({type:"near",text:`KẾT HỢP → ${synergy.name}`});
+        hints.push({type:"complete",text:`CHỌN → MỞ HỢP ĐẠO KỸ: ${synergy.name}`});
       }
     }
   }
@@ -103,24 +86,10 @@ getSkillRelationHints=function(key){
     for(const evolution of Object.values(EVOLUTIONS)){
       if(hasEvolution(evolution.id))continue;
       if(skillLevel(evolution.base)<=0&&evolution.base!==key)continue;
-
       const effect=getEvolutionCandidateEffect(evolution,key);
-      if(!effect.contributes)continue;
-
       if(effect.ready){
-        hints.push({type:"evolution",text:`TIẾN HÓA → ${evolution.name}`});
-        continue;
+        hints.push({type:"evolution",text:`CHỌN → ĐẠT SIÊU CẤP: ${evolution.name}`});
       }
-
-      // Do not advertise a distant evolution on the first few levels of its
-      // base skill unless this pick also fixes another concrete requirement.
-      if(key===evolution.base&&effect.baseAfter<Math.ceil(effect.baseMax*.5)&&effect.changes.length===0)continue;
-
-      const contribution=formatEvolutionCandidateEffect(effect);
-      hints.push({
-        type:"evolution-near",
-        text:`HỖ TRỢ EVOLVE → ${evolution.name}${contribution?` · ${contribution}`:""}`
-      });
     }
   }
 
@@ -149,16 +118,8 @@ getNearBuildUnlocks=function(limit=4){
       const baseMax=skills[evolution.base].max;
       const levelRatio=baseLevel/baseMax;
       const missing=progress.total-progress.met;
-
       if(levelRatio>=.5&&missing<=2){
-        results.push({
-          kind:"evolution",
-          item:evolution,
-          progress,
-          baseLevel,
-          baseMax,
-          priority:1+levelRatio
-        });
+        results.push({kind:"evolution",item:evolution,progress,baseLevel,baseMax,priority:1+levelRatio});
       }
     }
   }
@@ -166,44 +127,56 @@ getNearBuildUnlocks=function(limit=4){
   return results.sort((a,b)=>b.priority-a.priority).slice(0,limit);
 };
 
+function formatTrackerRequirement(part,item){
+  if(part.type==="skill")return skills[part.key]?.name||part.key;
+  if(part.type==="level"){
+    const required=item?.requires?.levels?.[part.key]??part.required??1;
+    const current=skillLevel(part.key);
+    return `${skills[part.key]?.name||part.key} ${current}/${required}`;
+  }
+  if(part.type==="tag"){
+    const required=item?.requires?.tags?.[part.tag]??part.required??1;
+    const current=part.current??getTagCount(part.tag);
+    const label=typeof getTagLabel==="function"?getTagLabel(part.tag):part.tag;
+    return `${label} ${current}/${required}`;
+  }
+  return part.label||"";
+}
+
 refreshBuildTracker=function(){
   const content=document.getElementById("buildTrackerContent");
   if(!content)return;
-
   const lines=[];
 
   for(const synergy of Object.values(SYNERGIES)){
     if(!hasSynergy(synergy.id))continue;
-    lines.push(`<div class="buildLine unlocked"><span class="buildIcon">${synergy.icon}</span><div><b>${synergy.name}</b><small>SYNERGY · ${synergy.desc}</small></div></div>`);
+    const desc=typeof localizeGameText==="function"?localizeGameText(synergy.desc):synergy.desc;
+    lines.push(`<div class="buildLine unlocked"><span class="buildIcon">${synergy.icon}</span><div><b>${synergy.name}</b><small>HỢP ĐẠO KỸ · ${desc}</small></div></div>`);
   }
 
   for(const evolution of Object.values(EVOLUTIONS)){
     if(!hasEvolution(evolution.id))continue;
-    lines.push(`<div class="buildLine evolution"><span class="buildIcon">${evolution.icon}</span><div><b>${evolution.name}</b><small>EVOLUTION · ${evolution.desc}</small></div></div>`);
+    const desc=typeof localizeGameText==="function"?localizeGameText(evolution.desc):evolution.desc;
+    lines.push(`<div class="buildLine evolution"><span class="buildIcon">${evolution.icon}</span><div><b>${evolution.name}</b><small>SIÊU CẤP · ${desc}</small></div></div>`);
   }
 
   const near=getNearBuildUnlocks(Math.max(0,4-lines.length));
-
   for(const entry of near){
     if(entry.kind==="evolution"){
+      const missing=[];
       const baseName=skills[entry.item.base]?.name||entry.item.base;
-      const requirements=entry.progress.parts.map(part=>{
-        if(part.type==="tag")return `${part.tag} ${part.current}/${part.required}`;
-        if(part.type==="level")return `${skills[part.key]?.name||part.key} ${part.current}/${part.required}`;
-        if(part.type==="skill")return `${skills[part.key]?.name||part.key} ${part.ok?"✓":"✗"}`;
-        return part.label;
-      }).join(" · ");
-
-      lines.push(`<div class="buildLine near evolution"><span class="buildIcon">${entry.item.icon}</span><div><b>${entry.item.name}</b><small>EVOLVE GẦN · ${baseName} ${entry.baseLevel}/${entry.baseMax}${requirements?` · ${requirements}`:""}</small></div></div>`);
+      if(entry.baseLevel<entry.baseMax)missing.push(`${baseName} ${entry.baseLevel}/${entry.baseMax}`);
+      for(const part of entry.progress.missing)missing.push(formatTrackerRequirement(part,entry.item));
+      lines.push(`<div class="buildLine near evolution"><span class="buildIcon">${entry.item.icon}</span><div><b>${entry.item.name}</b><small>GẦN SIÊU CẤP · CÒN THIẾU: ${missing.join(" · ")||"Sẵn sàng"}</small></div></div>`);
     }else{
-      const missing=entry.progress.missing.map(part=>part.label).join(" + ")||"Sẵn sàng";
-      lines.push(`<div class="buildLine near"><span class="buildIcon">${entry.item.icon}</span><div><b>${entry.item.name}</b><small>COMBO GẦN · thiếu ${missing}</small></div></div>`);
+      const missing=entry.progress.missing.map(part=>formatTrackerRequirement(part,entry.item));
+      lines.push(`<div class="buildLine near"><span class="buildIcon">${entry.item.icon}</span><div><b>${entry.item.name}</b><small>GẦN HỢP ĐẠO · CÒN THIẾU: ${missing.join(" · ")||"Sẵn sàng"}</small></div></div>`);
     }
   }
 
   content.innerHTML=lines.length
     ?lines.slice(0,5).join("")
-    :`<div class="buildEmpty">Chưa có combo. Chọn các skill có tag hoặc gợi ý liên kết trùng nhau để hình thành synergy.</div>`;
+    :`<div class="buildEmpty">Chưa có liên kết gần hoàn thành. Tiếp tục xây dựng bộ kỹ năng để mở Hợp Đạo Kỹ và Siêu Cấp.</div>`;
 };
 
 refreshBuildTracker();
