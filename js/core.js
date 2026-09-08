@@ -1,4 +1,4 @@
-const GAME_VERSION="V0.8";
+const GAME_VERSION="V0.9";
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 let W=innerWidth;
@@ -48,31 +48,22 @@ const state={
 
 function createInitialPlayer(){
   return{
-    x:W/2,
-    y:H/2,
-    r:16,
-    hp:100,
-    maxHp:100,
-    speed:105,
-    damage:14,
-    attackRange:185,
-    attackCd:.6,
-    attackTimer:0,
-    level:1,
-    xp:0,
-    xpNeed:getXpNeed(1),
-    armor:0,
-    regen:0,
-    magnet:70,
-    orbitAngle:0,
-    moveX:1,
-    moveY:0,
-    extraProjectiles:0,
-    projectilePierce:0,
-    critChance:0,
-    critMultiplier:1.75,
-    healOnKill:0,
-    xpMultiplier:1
+    x:W/2,y:H/2,r:16,
+    hp:100,maxHp:100,shield:0,
+    speed:105,damage:14,damageMultiplier:1,
+    attackRange:185,attackCd:.6,attackTimer:0,
+    level:1,xp:0,xpNeed:getXpNeed(1),
+    armor:0,regen:0,magnet:70,orbitAngle:0,
+    moveX:1,moveY:0,
+    extraProjectiles:0,projectilePierce:0,projectileRicochet:0,
+    critChance:0,critMultiplier:1.75,
+    dodgeChance:0,
+    xpMultiplier:1,
+    periodicCooldownMultiplier:1,
+    areaMultiplier:1,
+    explosionChance:0,
+    poisonChance:0,
+    burnChance:0
   };
 }
 
