@@ -6,7 +6,7 @@ if(skillRuntime.divineOffers===undefined)skillRuntime.divineOffers=0;
 
 const DIVINE_SKILLS={
   bribery:{
-    id:"bribery",tier:"mystic",name:"Mua Chuộc",icon:"🫱🏼‍🫲🏽",
+    id:"bribery",tier:"mystic",name:"Mua Chuộc",icon:"🤝",
     desc:"Cứ mỗi 8 giây, mua chuộc một kẻ địch ngẫu nhiên. Nó đổi phe và chiến đấu cho bạn trong 5 giây, sau đó trở lại bình thường nếu còn sống.",
     preview:"bribery",cooldown:8,
     execute:()=>{
