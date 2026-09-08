@@ -1,7 +1,13 @@
 function update(dt){
-  if(state.paused||state.gameOver) return;
+  if(!state.running||state.paused||state.gameOver) return;
 
   state.t+=dt;
+
+  if(state.mode&&!state.mode.endless&&state.t>=state.mode.duration){
+    finishRun("victory");
+    return;
+  }
+
   player.orbitAngle+=dt*2.2;
   player.hp=Math.min(player.maxHp,player.hp+player.regen*dt);
 
@@ -46,10 +52,11 @@ function update(dt){
 
   state.spawnTimer-=dt;
   if(state.spawnTimer<=0){
+    const difficulty=getDifficultyProfile();
     spawnEnemy();
-    if(state.t>75&&Math.random()<.22) spawnEnemy();
-    if(state.t>150&&Math.random()<.25) spawnEnemy();
-    state.spawnTimer=getSpawnCooldown(state.t);
+    if(Math.random()<difficulty.extraSpawnChance) spawnEnemy();
+    if(getRunProgress()>.78&&Math.random()<difficulty.extraSpawnChance*.42) spawnEnemy();
+    state.spawnTimer=getSpawnCooldown();
   }
 
   for(const enemy of state.enemies){
@@ -129,10 +136,7 @@ function update(dt){
 
   if(player.hp<=0){
     player.hp=0;
-    state.gameOver=true;
-    state.paused=true;
-    document.getElementById("finalStats").textContent=`Sống sót ${fmtTime(state.t)} · Cấp ${player.level} · Hạ ${state.kills} kẻ địch`;
-    document.getElementById("gameOver").style.display="flex";
+    finishRun("defeat");
   }
 }
 
@@ -143,7 +147,8 @@ function draw(){
   ctx.strokeStyle="#7f8aa3";
   ctx.lineWidth=1;
   const grid=42;
-  for(let x=(state.t*8)%grid-grid;x<W;x+=grid){
+  const gridOffset=state.running?(state.t*8)%grid:0;
+  for(let x=gridOffset-grid;x<W;x+=grid){
     ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();
   }
   for(let y=0;y<H;y+=grid){
@@ -208,16 +213,18 @@ function draw(){
     }
   }
 
-  ctx.save();
-  ctx.translate(player.x,player.y);
-  ctx.fillStyle="#d7e2ff";
-  ctx.beginPath();ctx.arc(0,0,player.r,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle="#7284ad";
-  ctx.beginPath();ctx.arc(0,0,8,0,Math.PI*2);ctx.fill();
-  ctx.strokeStyle="rgba(255,255,255,.25)";
-  ctx.lineWidth=2;
-  ctx.beginPath();ctx.arc(0,0,player.r+5,0,Math.PI*2);ctx.stroke();
-  ctx.restore();
+  if(state.running||state.gameOver){
+    ctx.save();
+    ctx.translate(player.x,player.y);
+    ctx.fillStyle="#d7e2ff";
+    ctx.beginPath();ctx.arc(0,0,player.r,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#7284ad";
+    ctx.beginPath();ctx.arc(0,0,8,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle="rgba(255,255,255,.25)";
+    ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(0,0,player.r+5,0,Math.PI*2);ctx.stroke();
+    ctx.restore();
+  }
 
   for(const particle of state.particles){
     ctx.globalAlpha=Math.max(0,particle.life/.35);
@@ -226,7 +233,7 @@ function draw(){
   }
   ctx.globalAlpha=1;
 
-  updateHud();
+  if(state.mode) updateHud();
 }
 
 let last=performance.now();
@@ -238,4 +245,3 @@ function loop(now){
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
-setTimeout(showLevelUp,300);
