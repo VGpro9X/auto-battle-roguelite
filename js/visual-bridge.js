@@ -67,3 +67,19 @@ draw=function(){
   }
   state.ruleVfx=state.ruleVfx.filter(fx=>state.t-fx.start<fx.life);
 };
+
+// Safety guard: build-unlock toasts belong to an active run only.
+// This also prevents development/test events from leaking onto the main menu.
+if(typeof showNextBuildUnlockToast==="function"){
+  const baseShowNextBuildUnlockToastV012=showNextBuildUnlockToast;
+  showNextBuildUnlockToast=function(){
+    if(!state.running||state.gameOver){
+      if(typeof unlockToastQueue!=="undefined")unlockToastQueue.length=0;
+      if(typeof unlockToastActive!=="undefined")unlockToastActive=false;
+      const toast=document.getElementById("unlockToast");
+      if(toast)toast.classList.add("hidden");
+      return;
+    }
+    return baseShowNextBuildUnlockToastV012();
+  };
+}
