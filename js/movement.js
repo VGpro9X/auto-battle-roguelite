@@ -15,7 +15,12 @@ const movementBrain={
   lastModeChange:0,
   patrolGoal:null,
   patrolUntil:0,
-  patrolAngle:0
+  patrolAngle:0,
+  escapeDirX:0,
+  escapeDirY:0,
+  escapeRouteUntil:0,
+  escapeModeUntil:0,
+  nextEscapeCheckAt:0
 };
 
 function resetMovementAI(){
@@ -31,6 +36,11 @@ function resetMovementAI(){
   movementBrain.patrolGoal=null;
   movementBrain.patrolUntil=0;
   movementBrain.patrolAngle=Math.random()*Math.PI*2;
+  movementBrain.escapeDirX=0;
+  movementBrain.escapeDirY=0;
+  movementBrain.escapeRouteUntil=0;
+  movementBrain.escapeModeUntil=0;
+  movementBrain.nextEscapeCheckAt=0;
 }
 
 function getEdgeSafety(x,y){
@@ -211,8 +221,28 @@ function selectStrategicGoal(mode,threat){
 }
 
 function chooseStrategicMode(threat){
-  if(threat.nearest<58||threat.close80>=3) return"escape";
-  if(threat.nearest<128||threat.close125>=5) return"kite";
+  const edgeSafety=getEdgeSafety(player.x,player.y);
+
+  // Once an emergency escape starts, keep it active briefly while the player is
+  // still compressed. This prevents ESCAPE <-> KITE oscillation in a crowd.
+  if(
+    movementBrain.mode==="escape"&&
+    state.t<movementBrain.escapeModeUntil&&
+    (threat.nearest<155||threat.close125>=2||edgeSafety<.42)
+  ){
+    return"escape";
+  }
+
+  if(
+    threat.nearest<68||
+    threat.close80>=2||
+    threat.close125>=6||
+    (edgeSafety<.38&&threat.close125>=2)
+  ){
+    return"escape";
+  }
+
+  if(threat.nearest<132||threat.close125>=5) return"kite";
   if(state.gems.length) return"harvest";
   return"patrol";
 }
@@ -237,8 +267,6 @@ function getPatrolGoal(){
   let best=null;
   let bestScore=-Infinity;
 
-  // Move around a broad central ellipse. This gives the idle state a stable,
-  // readable patrol path instead of repeatedly selecting a nearby center cell.
   for(let step=1;step<=7;step++){
     const angle=movementBrain.patrolAngle+
       movementBrain.orbitSign*(.55+step*.32);
@@ -276,12 +304,144 @@ function getPatrolGoal(){
   return movementBrain.patrolGoal;
 }
 
+function evaluateEscapeRay(dirX,dirY){
+  const b=MOVEMENT_BOUNDS;
+  const distances=[48,92,148,215];
+  const riskWeights=[1.35,1.05,.78,.55];
+
+  let totalRisk=0;
+  let maxDanger=0;
+  let clearanceScore=0;
+  let finalX=player.x;
+  let finalY=player.y;
+  let finalNearest=0;
+
+  for(let i=0;i<distances.length;i++){
+    const distance=distances[i];
+    const x=player.x+dirX*distance;
+    const y=player.y+dirY*distance;
+
+    // An emergency route must remain inside the playable field for the whole
+    // corridor. A direction that merely points into a wall is not an exit.
+    if(x<b.left+10||x>b.right-10||y<b.top+10||y>b.bottom-10){
+      return{valid:false,score:-Infinity,maxDanger:Infinity};
+    }
+
+    const threat=getEnemyDangerAt(x,y);
+    const wallSafety=getEdgeSafety(x,y);
+    const cornerPenalty=getCornerPenalty(x,y);
+    const wallRisk=(1-wallSafety)*.52+cornerPenalty*1.5;
+    const danger=threat.danger+wallRisk;
+
+    totalRisk+=danger*riskWeights[i];
+    maxDanger=Math.max(maxDanger,danger);
+    clearanceScore+=Math.min(threat.nearest,230)*(i+1);
+    finalX=x;
+    finalY=y;
+    finalNearest=threat.nearest;
+  }
+
+  const edgeSafety=getEdgeSafety(finalX,finalY);
+  const cornerPenalty=getCornerPenalty(finalX,finalY);
+  const centerDistance=Math.hypot(finalX-W/2,finalY-H/2);
+  const centerQuality=1-clamp(centerDistance/(Math.hypot(W/2,H/2)||1),0,1);
+  const inertia=dirX*player.moveX+dirY*player.moveY;
+
+  // Worst-point danger dominates. The rest rewards an actual corridor that
+  // opens into clear playable space, especially away from corners.
+  const score=
+    -maxDanger*1080-
+    totalRisk*360+
+    clearanceScore*.72+
+    Math.min(finalNearest,240)*1.7+
+    edgeSafety*360+
+    centerQuality*120-
+    cornerPenalty*1050+
+    inertia*42;
+
+  return{
+    valid:true,
+    score,
+    maxDanger,
+    totalRisk,
+    dirX,
+    dirY
+  };
+}
+
+function scanBestEscapeRoute(){
+  const candidateCount=48;
+  let best=null;
+
+  for(let i=0;i<candidateCount;i++){
+    const angle=i/candidateCount*Math.PI*2;
+    const dirX=Math.cos(angle);
+    const dirY=Math.sin(angle);
+    const route=evaluateEscapeRay(dirX,dirY);
+
+    if(!route.valid) continue;
+    if(!best||route.score>best.score){
+      best=route;
+    }
+  }
+
+  return best;
+}
+
+function getCommittedEscapeDirection(){
+  const hasRoute=
+    movementBrain.escapeRouteUntil>state.t&&
+    (movementBrain.escapeDirX||movementBrain.escapeDirY);
+
+  // Do not reconsider the route every frame. A short commitment is what lets
+  // the player actually pass through a visible gap instead of rotating inside
+  // the crowd while comparing equally-bad headings.
+  if(hasRoute&&state.t<movementBrain.nextEscapeCheckAt){
+    return{x:movementBrain.escapeDirX,y:movementBrain.escapeDirY};
+  }
+
+  if(hasRoute){
+    const current=evaluateEscapeRay(
+      movementBrain.escapeDirX,
+      movementBrain.escapeDirY
+    );
+
+    movementBrain.nextEscapeCheckAt=state.t+.10;
+
+    // Keep the committed corridor unless it has materially collapsed.
+    if(current.valid&&current.maxDanger<3.0){
+      return{x:movementBrain.escapeDirX,y:movementBrain.escapeDirY};
+    }
+  }
+
+  const best=scanBestEscapeRoute();
+
+  if(!best){
+    // Extremely rare fallback: head toward the map interior. Tactical wall
+    // guards still apply afterwards.
+    const dx=W/2-player.x;
+    const dy=H/2-player.y;
+    const magnitude=Math.hypot(dx,dy)||1;
+    movementBrain.escapeDirX=dx/magnitude;
+    movementBrain.escapeDirY=dy/magnitude;
+  }else{
+    movementBrain.escapeDirX=best.dirX;
+    movementBrain.escapeDirY=best.dirY;
+  }
+
+  movementBrain.escapeRouteUntil=state.t+.62;
+  movementBrain.nextEscapeCheckAt=state.t+.10;
+
+  return{x:movementBrain.escapeDirX,y:movementBrain.escapeDirY};
+}
+
 function updateStrategicPlan(){
   const threat=getLocalThreat();
   const desiredMode=chooseStrategicMode(threat);
   const modeChanged=desiredMode!==movementBrain.mode;
 
   if(modeChanged){
+    const previousMode=movementBrain.mode;
     movementBrain.mode=desiredMode;
     movementBrain.lastModeChange=state.t;
     movementBrain.lockUntil=state.t+(desiredMode==="escape"?.35:.75);
@@ -290,10 +450,27 @@ function updateStrategicPlan(){
       movementBrain.orbitSign=Math.random()<.5?-1:1;
     }
 
+    if(desiredMode==="escape"){
+      movementBrain.escapeModeUntil=state.t+.90;
+      movementBrain.escapeRouteUntil=0;
+      movementBrain.nextEscapeCheckAt=0;
+    }else if(previousMode==="escape"){
+      movementBrain.escapeRouteUntil=0;
+      movementBrain.escapeDirX=0;
+      movementBrain.escapeDirY=0;
+    }
+
     if(desiredMode!=="patrol"){
       movementBrain.patrolGoal=null;
       movementBrain.patrolUntil=0;
     }
+  }
+
+  if(desiredMode==="escape"){
+    movementBrain.escapeModeUntil=Math.max(
+      movementBrain.escapeModeUntil,
+      state.t+.55
+    );
   }
 
   const shouldReplan=
@@ -382,6 +559,27 @@ function chooseMovementDirection(){
   const candidateCount=32;
   const lookAhead=86;
   const b=MOVEMENT_BOUNDS;
+
+  if(movementBrain.mode==="escape"){
+    const escape=getCommittedEscapeDirection();
+
+    // Strong commitment removes the small "thinking spin" seen when surrounded.
+    // We still blend a little so the motion does not snap unnaturally.
+    const smoothing=.90;
+    player.moveX=player.moveX*(1-smoothing)+escape.x*smoothing;
+    player.moveY=player.moveY*(1-smoothing)+escape.y*smoothing;
+
+    if(player.x<=b.left+7&&player.moveX<0) player.moveX=.60;
+    if(player.x>=b.right-7&&player.moveX>0) player.moveX=-.60;
+    if(player.y<=b.top+7&&player.moveY<0) player.moveY=.60;
+    if(player.y>=b.bottom-7&&player.moveY>0) player.moveY=-.60;
+
+    const magnitude=Math.hypot(player.moveX,player.moveY)||1;
+    player.moveX/=magnitude;
+    player.moveY/=magnitude;
+
+    return{x:player.moveX,y:player.moveY};
+  }
 
   const goalDx=goal.x-player.x;
   const goalDy=goal.y-player.y;
