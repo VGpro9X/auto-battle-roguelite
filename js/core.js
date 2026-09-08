@@ -1,4 +1,4 @@
-const GAME_VERSION="V0.6";
+const GAME_VERSION="V0.7";
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 let W=innerWidth;
