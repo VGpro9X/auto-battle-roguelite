@@ -31,7 +31,10 @@ jobs:
           while IFS= read -r -d '' file; do
             echo "Checking $file"
             node --check "$file"
-          done < <(find js -type f -name '*.js' -print0 | sort -z)
+          done < <(find js tests -type f -name '*.js' -print0 | sort -z)
+
+      - name: V0.16 A1 smoke test
+        run: node tests/v016-a1-smoke.js
 
       - name: Prepare public game artifact
         run: |
