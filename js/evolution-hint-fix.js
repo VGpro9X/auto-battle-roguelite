@@ -87,7 +87,8 @@ getSkillRelationHints=function(key){
       if(hasEvolution(evolution.id))continue;
       if(skillLevel(evolution.base)<=0&&evolution.base!==key)continue;
       const effect=getEvolutionCandidateEffect(evolution,key);
-      if(effect.ready){
+      const contributes=effect.baseImproved||effect.changes.length>0;
+      if(contributes&&effect.ready){
         hints.push({type:"evolution",text:`CHỌN → ĐẠT SIÊU CẤP: ${evolution.name}`});
       }
     }
