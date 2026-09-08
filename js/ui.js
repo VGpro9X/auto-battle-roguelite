@@ -340,3 +340,6 @@ refreshSkillBar();
 renderSettings();
 showScreen("mainMenu");
 setGameUiVisible(false);
+
+document.title=`Auto Battle Roguelite ${GAME_VERSION}`;
+document.getElementById("version").textContent=`Auto Battle Roguelite ${GAME_VERSION}`;
