@@ -56,7 +56,7 @@ function grantDivineSkill(id){
   const item=DIVINE_SKILLS[id];
   if(!item||hasDivineSkill(id)||getOwnedDivineCount()>=1)return false;
   skillRuntime.divineSkills.add(id);
-  skillRuntime.divineTimers[id]=0;
+  skillRuntime.divineTimers[id]=item.cooldown||0;
   emitSkillEvent("build_unlock",{kind:item.tier==="mystic"?"mystic":"divine",item});
   emitSkillEvent("divine_acquired",{id,item});
   return true;
