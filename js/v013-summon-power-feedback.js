@@ -45,31 +45,42 @@ if(skills.stormTotem?.periodic){
   };
 }
 
-const SYNERGY_SIGNATURES_V013={
+const DIRECT_SYNERGY_SIGNATURES_V013={
   thermalShock:[VFX_COLORS.fire,VFX_COLORS.ice],
   explosiveBlades:["#d7dfff","#ff8a65"],
   toxicFlame:[VFX_COLORS.fire,VFX_COLORS.poison],
   stormVolley:["#e8efff",VFX_COLORS.lightning],
   bloodConductor:[VFX_COLORS.blood,VFX_COLORS.lightning],
   arcCollector:[VFX_COLORS.xp,VFX_COLORS.lightning],
-  plagueLightning:[VFX_COLORS.poison,VFX_COLORS.lightning],
-  combustion:[VFX_COLORS.fire,"#ff7f4f"],
   criticalStorm:["#ffd36f",VFX_COLORS.lightning],
   lastBreath:["#fff0a1","#d7a2ff"]
 };
 
-onSkillEvent("hit",payload=>{
+function getSynergySignatureForHitV013(payload){
   const source=payload.meta?.source||"";
-  const colors=SYNERGY_SIGNATURES_V013[source];
-  if(!colors||!payload.enemy)return;
-  const key=`sig_${source}`;
+  if(DIRECT_SYNERGY_SIGNATURES_V013[source])return{key:source,colors:DIRECT_SYNERGY_SIGNATURES_V013[source]};
+  if(source==="conductiveVenom"&&hasSynergy("plagueLightning"))return{key:"plagueLightning",colors:[VFX_COLORS.poison,VFX_COLORS.lightning]};
+  if(source==="combustion"&&hasSynergy("combustionChain"))return{key:"combustionChain",colors:[VFX_COLORS.fire,"#ff7f4f"]};
+  if(source==="echoShot"&&hasSynergy("echoBarrage"))return{key:"echoBarrage",colors:["#bfc9ff","#e8efff"]};
+  if(source==="nova"&&hasSynergy("gravityNova"))return{key:"gravityNova",colors:[VFX_COLORS.void,"#d7a2ff"]};
+  return null;
+}
+
+onSkillEvent("hit",payload=>{
+  const signature=getSynergySignatureForHitV013(payload);
+  if(!signature||!payload.enemy)return;
+  const key=`sig_${signature.key}`;
   if(state.t-(skillRuntime.cooldowns[key]||-99)<.12)return;
   skillRuntime.cooldowns[key]=state.t;
-  pushPowerSignatureV013("synergy",payload.enemy.x,payload.enemy.y,colors,{life:.42,r:payload.enemy.r+7});
+  pushPowerSignatureV013("synergy",payload.enemy.x,payload.enemy.y,signature.colors,{life:.42,r:payload.enemy.r+7});
 });
 
 onSkillEvent("periodic",payload=>{
   const key=payload.skillKey;
+  if(key==="chaosOrb"&&hasSynergy("elementalChaos")){
+    pushPowerSignatureV013("synergy",player.x,player.y,["#c987ff",VFX_COLORS.fire],{life:.5,r:player.r+15});
+  }
+
   let colors=null;
   if(key==="fire"&&hasEvolution("heavenfire"))colors=[VFX_COLORS.fire,"#fff0a0"];
   else if(key==="lightning"&&hasEvolution("stormNetwork"))colors=[VFX_COLORS.lightning,"#9ddcff"];
@@ -77,6 +88,17 @@ onSkillEvent("periodic",payload=>{
   else if(key==="barrier"&&hasEvolution("immortalAegis"))colors=[VFX_COLORS.shield,"#fff0a1"];
   else if(key==="chaosOrb"&&hasEvolution("chaosCrown"))colors=["#c987ff","#fff0a1"];
   if(colors)pushPowerSignatureV013("evolution",player.x,player.y,colors,{life:.72,r:player.r+24,strong:true});
+});
+
+onSkillEvent("periodic_echo",payload=>{
+  if(!hasSynergy("timeLoop"))return;
+  pushPowerSignatureV013("synergy",player.x,player.y,["#b9c6ff","#eef2ff"],{life:.46,r:player.r+14});
+});
+
+onSkillEvent("heal",payload=>{
+  if(hasSynergy("glassBlood")&&payload.meta?.source==="vampiricTouch"&&player.hp/player.maxHp<.5){
+    pushPowerSignatureV013("synergy",player.x,player.y,[VFX_COLORS.blood,"#d6caff"],{life:.42,r:player.r+12});
+  }
 });
 
 onSkillEvent("kill",payload=>{
