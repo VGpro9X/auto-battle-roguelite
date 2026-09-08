@@ -1,6 +1,6 @@
 # Auto Battle Roguelite
 
-Current master version: **V0.11 – Skill Codex & Shared VFX Foundation**
+Current master version: **V0.12 – Skill Visual Identity, Rare Rule Skills & Vietnamese UI**
 
 A browser-based auto-battle survival roguelite prototype built around unrestricted cross-archetype skill combinations.
 
@@ -9,67 +9,93 @@ A browser-based auto-battle survival roguelite prototype built around unrestrict
 - 10 minutes — 2 unique starter skill picks
 - 15 minutes — 1 starter skill pick
 - 20 minutes — 1 starter skill pick
-- Endless — 1 starter skill pick, difficulty scales without a fixed end
+- Vô Hạn — 1 starter skill pick, difficulty scales without a fixed end
 
 ## Movement AI
 - V0.8 strategic zone planning + tactical context steering remains the movement baseline
 - Harvest, kite, committed emergency escape and patrol modes
 - XP clusters, open-space preference, edge/corner penalties and multi-horizon escape routing
+- Temporarily bribed allies are ignored by hostile targeting and movement threat calculations
 
 ## Skill system
 - **64 base skills** with no class restriction
-- **20 automatic synergies**
-- **8 evolutions**
+- **20 automatic Hợp Đạo Kỹ**
+- **8 Siêu Cấp evolutions**
+- **4 unique rare rule skills** split between Thần Kỹ and Thần Bí Kỹ
 - Shared event bus and periodic scheduler
 - Build-aware random level-up choices
-- MAX skills and evolved bases are excluded from the level-up pool
+- TỐI ĐA skills and evolved bases are excluded from the level-up pool
 - Evolution hints only appear when the offered skill actually advances the evolution recipe
 
-## V0.11 Skill Codex
-- Main menu now includes **KỸ NĂNG**
-- Synergies are always prioritized at the top of the default codex view
-- Evolutions appear immediately after synergies
-- Base skills are assigned to readable groups: Attack/Projectile, Elemental, Summon, Defense/Healing, Control/Movement, XP/Growth, Trigger/Chain, and Time/Rule
-- Hover, keyboard focus, or click updates a detailed information panel
-- Detail view shows descriptions, tags, synergy ingredients, evolution requirements, and related combinations
-- Every codex entry has a live Canvas preview; no static image assets are required
-- Only visible mini-previews animate, reducing unnecessary work when the catalog contains many entries
+## V0.12 rare rule skills
+Rare rule skills can begin appearing from level 8, replace one normal level-up card when rolled, have no levels, and are limited to one owned rare rule skill per run.
 
-## Shared VFX foundation
-- `js/vfx.js` contains reusable visual primitives for projectiles, elemental effects, orbit blades, shields, enemy statuses, area pulses, lightning and codex previews
-- Gameplay projectile rendering, orbit blades, shields and status rings now call the same primitives used by the Skill Codex
-- This is the foundation for the next visual gameplay pass so codex animations and in-run effects can evolve together instead of becoming separate implementations
+Current set:
+- **Mua Chuộc — Thần Bí Kỹ:** periodically converts a random hostile into a temporary ally that fights other enemies
+- **Đổi Mệnh — Thần Bí Kỹ:** at low HP, can exchange HP ratios with a healthier enemy when beneficial
+- **Bất Tử Nhất Tức — Thần Kỹ:** prevents one lethal hit per run, holds the player at 1 HP and grants a short invulnerability window
+- **Thiên Phạt — Thần Kỹ:** after enough kills, calls down heavy lightning damage on multiple enemies
 
-## Build clarity
-- Level-up cards show skill tags and valid synergy/evolution hints
-- Persistent `BUILD SYNERGY` tracker shows unlocked and near-complete recipes
-- Synergy/evolution unlocks use queued on-screen banners
-- Skill bar labels skills as MAX or EVOLVED
+## V0.12 visual identity
+- Every one of the **64 base skills has an explicit visual profile**
+- Every base skill has its own scene signature in the Bách Khoa Kỹ Năng
+- Visual identities are split into four scene modules to keep edits manageable
+- Rare rule skills have dedicated animated Codex previews
+- Gameplay projectile visuals can react to source skill and build state
+- Unique rule-skill triggers have additional in-run feedback
+- `js/vfx.js` remains the shared low-level rendering layer for Codex and gameplay
 
-## Validation performed for V0.11
-- JavaScript syntax checks for all project modules
-- Codex definition test confirms 64 base skills, 20 synergies and 8 evolutions
-- All 64 base skills resolve to exactly one primary codex group
-- All 92 codex entries resolve to a valid preview type
-- Mock-canvas rendering test executes every skill/synergy/evolution preview without throwing
-- Static index validation confirms the KỸ NĂNG menu entry, codex screen and required script order
+## Vietnamese presentation layer
+- Internal engine tags remain stable in English for code safety
+- Player-facing tags are translated through `js/localization.js`
+- Player-facing system terms use Vietnamese consistently: **Hợp Đạo Kỹ, Siêu Cấp, Tối Đa, Thần Kỹ, Thần Bí Kỹ, Kỹ năng khởi đầu, Lên cấp**
+- Main menus, HUD labels, mode names, leaderboard headers, build tracker, level-up cards and Codex presentation are localized
+
+## Bách Khoa Kỹ Năng
+- Main menu includes **KỸ NĂNG**
+- Default priority order is **Thần Bí Kỹ → Thần Kỹ → Hợp Đạo Kỹ → Siêu Cấp → base-skill groups**
+- Hover, keyboard focus or click updates the detail panel
+- Only visible mini-previews animate
+- Detail view shows descriptions, translated tags, requirements and related combinations
+- Codex currently covers **96 entries total**: 64 base skills + 20 Hợp Đạo Kỹ + 8 Siêu Cấp + 4 rare rule skills
+
+## Validation performed for V0.12
+- JavaScript syntax checks for V0.12 integration modules
+- Definition test confirms 64 base skills, 20 Hợp Đạo Kỹ, 8 Siêu Cấp and 4 rare rule skills
+- All 64 base skills have explicit visual profiles and unique visual scene identifiers
+- Every tag currently used by the 64 skills has a Vietnamese display label
+- All 96 Codex previews render in the integration harness without throwing
+- Codex priority order is validated
+- Rare rule-skill offer and one-per-run ownership rules are validated
+- Mua Chuộc ally combat and hostile-target filtering are validated
+- Bất Tử Nhất Tức lethal prevention and invulnerability are validated
+- TỐI ĐA base-skill exclusion remains validated
 
 ## Project structure
-- `index.html` — game shell, menus and Skill Codex screen
-- `css/game.css` — prototype gameplay UI, build clarity and codex layout
-- `js/core.js` — shared state and player build stats
+- `index.html` — game shell, menus and Bách Khoa Kỹ Năng screen
+- `css/game.css` — gameplay UI and Codex base styling
+- `css/v012.css` — Thần Kỹ/Thần Bí Kỹ visual accents
+- `js/core.js` — shared state, version and player build stats
 - `js/modes.js` — mode rules and difficulty curves
 - `js/leaderboard.js` — local records/settings
 - `js/skills.js` — 64 base skill definitions and tags
 - `js/skill-engine.js` — event bus, periodic scheduler, choice rules and unlock evaluation
-- `js/synergies.js` — 20 synergy definitions and 8 evolution definitions/hooks
+- `js/synergies.js` — 20 Hợp Đạo Kỹ and 8 Siêu Cấp definitions/hooks
+- `js/divine-skills.js` — rare Thần Kỹ/Thần Bí Kỹ rules and integrations
+- `js/localization.js` — Vietnamese display labels for internal tags and system terms
 - `js/combat.js` — damage, statuses, projectiles, shields, revival and XP drops
 - `js/movement.js` — V0.8 strategic/tactical movement AI
-- `js/vfx.js` — shared gameplay/codex visual primitives
-- `js/skill-codex.js` — catalog grouping, interaction, details and animated previews
-- `js/ui.js` — menus, level-up choices, build tracker and unlock banners
-- `js/evolution-hint-fix.js` — V0.10 evolution-hint specificity hotfix
-- `js/game.js` — main update/draw loop and shared VFX integration
+- `js/vfx.js` — shared low-level VFX primitives
+- `js/visual-profiles.js` — 64 explicit skill visual identities and palettes
+- `js/visual-scenes-1.js` — core attack and elemental scenes
+- `js/visual-scenes-2.js` — blood, defense and risk scenes
+- `js/visual-scenes-3.js` — marks, summons and advanced-effect scenes
+- `js/visual-scenes-4.js` — mastery, growth and control scenes
+- `js/skill-codex.js` — catalog grouping, rare tiers, interaction, details and animated previews
+- `js/ui.js` — menus, level-up choices, build tracker, localization and unlock banners
+- `js/evolution-hint-fix.js` — evolution-hint specificity hotfix
+- `js/game.js` — main update/draw loop and gameplay integration
+- `js/visual-bridge.js` — V0.12 bridge between Codex visuals, gameplay visuals and rare-rule feedback
 
 ## Development rule
 GitHub is the master source. Chat previews and packaged builds are test/checkpoint artifacts.
