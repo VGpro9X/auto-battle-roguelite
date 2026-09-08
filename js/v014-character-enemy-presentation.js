@@ -19,13 +19,13 @@ function normalizeFacingV014(x,y,fallbackX=1,fallbackY=0){
 }
 
 function enemyArchetypeV014(enemy){
+  if(enemy._v14Seed===undefined)enemy._v14Seed=((enemy.x*13.17+enemy.y*7.31+enemy.speed*5.03)%97+97)%97;
   if(enemy.elite)return "elite";
   if(enemy._v14Archetype)return enemy._v14Archetype;
   const difficulty=typeof getDifficultyProfile==="function"?getDifficultyProfile():{speedScale:1};
   const expected=Math.max(1,48*(difficulty.speedScale||1));
   const ratio=enemy.speed/expected;
   enemy._v14Archetype=ratio>=1.055?"runner":(ratio<=.945?"anchor":"hunter");
-  enemy._v14Seed=((enemy.x*13.17+enemy.y*7.31+enemy.speed*5.03)%97+97)%97;
   return enemy._v14Archetype;
 }
 
@@ -52,7 +52,7 @@ update=function(dt){
   const result=baseUpdatePresentationV014(dt);
   const dx=player.x-beforeX,dy=player.y-beforeY;
   const moved=Math.hypot(dx,dy);
-  const targetMove=state.running&&!state.paused&&!state.gameOver?clamp(moved/Math.max(.001,dt*player.moveSpeed),0,1):0;
+  const targetMove=state.running&&!state.paused&&!state.gameOver?clamp(moved/Math.max(.001,dt*Math.max(1,player.speed||105)),0,1):0;
   state.presentationV014.playerMoveAmount+=(targetMove-state.presentationV014.playerMoveAmount)*Math.min(1,dt*9);
   if(moved>.02){
     const f=normalizeFacingV014(dx,dy,state.presentationV014.playerFacingX,state.presentationV014.playerFacingY);
