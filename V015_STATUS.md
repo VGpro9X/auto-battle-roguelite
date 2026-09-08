@@ -1,6 +1,6 @@
-# V0.15 Responsive RC Status
+# V0.15 Responsive Release Status
 
-Current release remains **V0.14** until real-device validation is complete. This file records active V0.15 work on `main`.
+V0.15 is **accepted and released**. The user tested the GitHub Pages build on a real phone after Checkpoints 1–5 and reported the responsive result was good.
 
 ## Implemented checkpoints
 
@@ -10,7 +10,7 @@ Current release remains **V0.14** until real-device validation is complete. This
 - Safe-area insets are used for HUD, overlays, skill bar and toasts.
 - `dvh`/`svh` viewport sizing added with fallback.
 - Horizontal overflow / overscroll protection added.
-- Menu/modal max-height now follows the usable viewport.
+- Menu/modal max-height follows the usable viewport.
 
 Commits:
 - `0525e59d37288af96289325e5d54bb1f1ed03c3b`
@@ -33,7 +33,7 @@ Commits:
 - Portrait level-up cards stack vertically and scroll inside the modal.
 - Landscape keeps three choices side by side with smaller responsive typography.
 - Result, pause, settings and how-to screens receive viewport-safe scrolling.
-- Mobile leaderboard no longer hides Elite/Level columns; it preserves all fields with horizontal scrolling.
+- Mobile leaderboard preserves Elite/Level fields with horizontal scrolling instead of hiding them.
 
 Commit:
 - `47e192748f4dd9b9e1081d622e9af1f5d63aa4dd`
@@ -44,7 +44,7 @@ Commit:
 - Detail has a dedicated `DANH SÁCH KỸ NĂNG` back control.
 - Codex tabs remain horizontally scrollable.
 - Mobile detail keeps preview, description, tags, requirements and related links.
-- Player-facing Codex help text now mentions touch/click as well as mouse interaction.
+- Player-facing Codex help text mentions touch/click as well as mouse interaction.
 
 Commits:
 - `7b323baa67f952d409464f72db857355d35f0a24`
@@ -61,31 +61,26 @@ Commits:
 Commit:
 - `d35fff892527739f038d7c0171330c3de05f08b9`
 
+### Checkpoint 6 — Real-device acceptance
+- GitHub Pages build was tested by the user on a real phone.
+- User confirmed the result was good and accepted the responsive pass.
+- This satisfies the required hands-on mobile gate for release.
+
+## Release commits
+- `ef97dcf2fac87f79f166fdd65e222227f2ae4bb5` — bump runtime version to V0.15
+- `010fe7747a585ef827b553343879761af5752d98` — update visible version to V0.15
+
 ## Deployment
-- GitHub Pages deployment for commit `d35fff892527739f038d7c0171330c3de05f08b9` completed successfully.
-- Test URL: `https://vgpro9x.github.io/auto-battle-roguelite/`
+Primary test URL:
+`https://vgpro9x.github.io/auto-battle-roguelite/`
 
-## Still required before V0.15 release
-Checkpoint 6 real-device / viewport validation:
-- 360×800 phone portrait
-- 390×844 / 393×852 phone portrait
-- 412×915 phone portrait
-- 844×390 phone landscape
-- 915×412 phone landscape
-- 768×1024 tablet portrait
-- 1024×768 tablet landscape
-- 1366×768 desktop
-- 1920×1080 desktop
+## Locked constraints preserved
+- V0.8 movement AI unchanged.
+- Combat balance unchanged.
+- No new skill content was introduced in V0.15.
+- No player-facing feature was intentionally hidden on mobile.
+- Level-up cards still only show immediate final-piece Hợp Đạo Kỹ / Siêu Cấp unlock hints.
 
-Must confirm:
-- no horizontal overflow
-- no unreachable UI
-- all HUD information visible
-- build tracker drawer opens/closes correctly
-- all level-up choices readable/selectable
-- Codex catalog/detail flow works by touch
-- leaderboard preserves all fields
-- rotation does not break Canvas/HUD
-- dense combat remains readable
-
-Do **not** bump `GAME_VERSION` to V0.15 or begin V0.16 until real-device validation is accepted.
+## Next target
+**V0.16 — Skill Expansion & Rare Rule Expansion.**
+Start with `V016_SKILL_DESIGN.md`; do not implement a proposed skill until its exact mechanic and description are design-locked.
