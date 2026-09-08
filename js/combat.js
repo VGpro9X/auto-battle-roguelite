@@ -53,9 +53,10 @@ function getRandomEnemies(limit){
 function randomEnemy(){const living=state.enemies.filter(enemy=>!enemy.dead);return living.length?living[(Math.random()*living.length)|0]:null;}
 
 function createProjectile(angle,damage,speed=430,radius=4,type="normal",pierce=0,meta={}){
+  const actualSpeed=speed*player.projectileSpeedMultiplier;
   state.projectiles.push({
     x:player.x,y:player.y,
-    vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,
+    vx:Math.cos(angle)*actualSpeed,vy:Math.sin(angle)*actualSpeed,
     r:radius,damage,life:2,type,
     hitsRemaining:1+Math.max(0,pierce),
     ricochetsRemaining:type==="normal"?player.projectileRicochet:0,
@@ -66,8 +67,9 @@ function createProjectile(angle,damage,speed=430,radius=4,type="normal",pierce=0
 
 function createProjectileFrom(x,y,target,damage,speed=430,radius=4,type="normal",pierce=0,meta={}){
   const angle=Math.atan2(target.y-y,target.x-x);
+  const actualSpeed=speed*player.projectileSpeedMultiplier;
   state.projectiles.push({
-    x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,
+    x,y,vx:Math.cos(angle)*actualSpeed,vy:Math.sin(angle)*actualSpeed,
     r:radius,damage,life:1.6,type,hitsRemaining:1+Math.max(0,pierce),ricochetsRemaining:0,hitEnemies:new Set(),
     meta:{source:type,tags:["PROJECTILE"],...meta}
   });
@@ -115,17 +117,24 @@ function damagePlayer(amount,meta={}){
   if(Math.random()<player.dodgeChance){emitSkillEvent("dodge",{amount,meta});return 0;}
 
   let remaining=amount*getIncomingDamageMultiplier(meta);
+  const hadShield=player.shield>0;
   if(player.shield>0){
     const absorbed=Math.min(player.shield,remaining);
     player.shield-=absorbed;
     remaining-=absorbed;
+    if(hadShield&&player.shield<=0)emitSkillEvent("shield_broken",{absorbed,meta});
   }
   if(remaining<=0)return 0;
   player.hp-=remaining;
   emitSkillEvent("damage_taken",{amount:remaining,source:meta.source||null,meta});
+
+  if(player.hp<=0&&player.reviveCharges>0){
+    player.reviveCharges--;
+    player.hp=Math.max(1,player.maxHp*(.24+.06*skillLevel("secondWind")));
+    emitSkillEvent("revive",{chargesLeft:player.reviveCharges});
+  }
   return remaining;
 }
-
 function applyPoison(enemy,dps,duration){
   if(!enemy||enemy.dead)return;
   const current=enemy.statuses.poison;
@@ -182,14 +191,17 @@ function hitEnemy(enemy,damage,knockback=0,meta={}){
   }
 
   const killed=enemy.hp<=0;
-  if(killed)enemy.dead=true;
+  if(killed) enemy.dead=true;
   emitSkillEvent("hit",{enemy,damage:dealt,meta,killed});
 
   if(killed){
     state.kills++;
     if(enemy.elite)state.eliteKills++;
     emitSkillEvent("kill",{enemy,meta});
-    state.gems.push({x:enemy.x,y:enemy.y,r:5,xp:enemy.elite?4:1});
+    let gemXp=enemy.elite?4:1;
+    const bounty=skillLevel("bountyMark");
+    if(bounty&&enemy.markedUntil>state.t)gemXp*=1+bounty*.20+(hasSynergy("markedBounty")?.25:0);
+    state.gems.push({x:enemy.x,y:enemy.y,r:5,xp:gemXp});
     return true;
   }
   return false;
