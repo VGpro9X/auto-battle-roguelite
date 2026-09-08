@@ -12,7 +12,10 @@ const movementBrain={
   nextPlanAt:0,
   lockUntil:0,
   orbitSign:1,
-  lastModeChange:0
+  lastModeChange:0,
+  patrolGoal:null,
+  patrolUntil:0,
+  patrolAngle:0
 };
 
 function resetMovementAI(){
@@ -25,6 +28,9 @@ function resetMovementAI(){
   movementBrain.lockUntil=0;
   movementBrain.orbitSign=Math.random()<.5?-1:1;
   movementBrain.lastModeChange=0;
+  movementBrain.patrolGoal=null;
+  movementBrain.patrolUntil=0;
+  movementBrain.patrolAngle=Math.random()*Math.PI*2;
 }
 
 function getEdgeSafety(x,y){
@@ -115,8 +121,6 @@ function buildStrategicCells(){
     }
   }
 
-  // XP is accumulated into nearby strategic cells instead of averaging all gems
-  // into a single centroid. This preserves separate, meaningful XP clusters.
   for(const gem of state.gems){
     let bestCell=null;
     let bestDistance=Infinity;
@@ -147,9 +151,6 @@ function scoreStrategicCell(cell,mode){
   const clearance=Math.min(cell.nearest,230);
 
   let score=0;
-
-  // Danger is a hard concern. Open space matters, but huge distance from enemies
-  // is deliberately NOT rewarded enough to pull the player into corners.
   score-=cell.danger*720;
   score+=clearance*1.05;
   score+=edgeSafety*340;
@@ -216,6 +217,65 @@ function chooseStrategicMode(threat){
   return"patrol";
 }
 
+function getPatrolGoal(){
+  const b=MOVEMENT_BOUNDS;
+  const current=movementBrain.patrolGoal;
+
+  if(current){
+    const distance=Math.hypot(current.x-player.x,current.y-player.y);
+    const danger=getEnemyDangerAt(current.x,current.y).danger;
+    if(distance>62&&state.t<movementBrain.patrolUntil&&danger<.9){
+      return current;
+    }
+  }
+
+  const centerX=(b.left+b.right)/2;
+  const centerY=(b.top+b.bottom)/2;
+  const radiusX=Math.min(260,(b.right-b.left)*.27);
+  const radiusY=Math.min(175,(b.bottom-b.top)*.24);
+
+  let best=null;
+  let bestScore=-Infinity;
+
+  // Move around a broad central ellipse. This gives the idle state a stable,
+  // readable patrol path instead of repeatedly selecting a nearby center cell.
+  for(let step=1;step<=7;step++){
+    const angle=movementBrain.patrolAngle+
+      movementBrain.orbitSign*(.55+step*.32);
+    const x=clamp(centerX+Math.cos(angle)*radiusX,b.left+90,b.right-90);
+    const y=clamp(centerY+Math.sin(angle)*radiusY,b.top+85,b.bottom-85);
+    const danger=getEnemyDangerAt(x,y).danger;
+    const edgeSafety=getEdgeSafety(x,y);
+    const cornerPenalty=getCornerPenalty(x,y);
+    const travel=Math.hypot(x-player.x,y-player.y);
+    const forwardX=x-player.x;
+    const forwardY=y-player.y;
+    const forwardMag=Math.hypot(forwardX,forwardY)||1;
+    const forwardAlignment=(forwardX/forwardMag)*player.moveX+(forwardY/forwardMag)*player.moveY;
+
+    const score=
+      -danger*780+
+      edgeSafety*260-
+      cornerPenalty*1000+
+      Math.min(travel,240)*.18+
+      forwardAlignment*70;
+
+    if(score>bestScore){
+      bestScore=score;
+      best={x,y,angle};
+    }
+  }
+
+  if(!best){
+    best={x:centerX,y:centerY,angle:movementBrain.patrolAngle};
+  }
+
+  movementBrain.patrolAngle=best.angle;
+  movementBrain.patrolGoal={x:best.x,y:best.y};
+  movementBrain.patrolUntil=state.t+1.35+Math.random()*.85;
+  return movementBrain.patrolGoal;
+}
+
 function updateStrategicPlan(){
   const threat=getLocalThreat();
   const desiredMode=chooseStrategicMode(threat);
@@ -229,17 +289,26 @@ function updateStrategicPlan(){
     if(desiredMode==="kite"){
       movementBrain.orbitSign=Math.random()<.5?-1:1;
     }
+
+    if(desiredMode!=="patrol"){
+      movementBrain.patrolGoal=null;
+      movementBrain.patrolUntil=0;
+    }
   }
 
   const shouldReplan=
+    modeChanged||
     !movementBrain.goal||
     state.t>=movementBrain.nextPlanAt||
     desiredMode==="escape";
 
   if(!shouldReplan) return threat;
 
-  const candidate=selectStrategicGoal(desiredMode,threat);
-  movementBrain.nextPlanAt=state.t+(desiredMode==="escape"?.12:.28);
+  const candidate=desiredMode==="patrol"
+    ?{goal:getPatrolGoal(),score:0}
+    :selectStrategicGoal(desiredMode,threat);
+
+  movementBrain.nextPlanAt=state.t+(desiredMode==="escape"?.12:desiredMode==="patrol"?.34:.28);
 
   if(!candidate) return threat;
 
@@ -247,18 +316,32 @@ function updateStrategicPlan(){
     ?getEnemyDangerAt(movementBrain.goal.x,movementBrain.goal.y).danger
     :Infinity;
 
+  const currentGoalDistance=movementBrain.goal
+    ?Math.hypot(movementBrain.goal.x-player.x,movementBrain.goal.y-player.y)
+    :0;
+
   const currentInvalid=
     !movementBrain.goal||
     currentGoalDanger>1.8||
-    Math.hypot(movementBrain.goal.x-player.x,movementBrain.goal.y-player.y)<42;
+    currentGoalDistance<42;
 
   const lockExpired=state.t>=movementBrain.lockUntil;
   const clearlyBetter=candidate.score>movementBrain.goalScore+140;
 
-  if(currentInvalid||lockExpired||clearlyBetter||desiredMode==="escape"){
+  if(
+    desiredMode==="patrol"||
+    currentInvalid||
+    lockExpired||
+    clearlyBetter||
+    desiredMode==="escape"
+  ){
     movementBrain.goal=candidate.goal;
     movementBrain.goalScore=candidate.score;
-    movementBrain.lockUntil=state.t+(desiredMode==="escape"?.28:.70);
+    movementBrain.lockUntil=state.t+(
+      desiredMode==="escape"?.28:
+      desiredMode==="patrol"?.95:
+      .70
+    );
   }
 
   return threat;
@@ -329,22 +412,21 @@ function chooseMovementDirection(){
     const danger=Math.max(enemyDanger,wallDanger);
 
     let interest=0;
-
-    // Primary strategic target.
     const goalAlignment=dirX*goalX+dirY*goalY;
-    interest+=goalAlignment*(movementBrain.mode==="harvest"?1.45:1.10);
+    const goalWeight=
+      movementBrain.mode==="harvest"?1.45:
+      movementBrain.mode==="patrol"?1.28:
+      1.10;
+    interest+=goalAlignment*goalWeight;
 
-    // Kiting is tangential, not simply fleeing straight to the furthest corner.
     if(tangentX||tangentY){
       const tangentAlignment=dirX*tangentX+dirY*tangentY;
       interest+=tangentAlignment*(movementBrain.mode==="kite"?.85:.35);
     }
 
-    // Mild inertia/hysteresis: enough for smooth arcs, not enough to force a bad line.
     const inertia=dirX*player.moveX+dirY*player.moveY;
-    interest+=inertia*.24;
+    interest+=inertia*(movementBrain.mode==="patrol"?.34:.24);
 
-    // When near an edge, add interest toward the playable interior.
     const edgePushX=
       clamp((b.left+105-player.x)/105,0,1)-
       clamp((player.x-(b.right-105))/105,0,1);
@@ -357,8 +439,6 @@ function chooseMovementDirection(){
     minDanger=Math.min(minDanger,danger);
   }
 
-  // Context-steering style merge: reject materially more dangerous headings first,
-  // then choose the most interesting of the surviving directions.
   const dangerTolerance=minDanger<.35?.28:minDanger<1?.20:.12;
   let best=null;
   let bestInterest=-Infinity;
@@ -376,13 +456,11 @@ function chooseMovementDirection(){
   }
 
   const emergency=threat.nearest<62||threat.close80>=3;
-  const smoothing=emergency?.78:.42;
+  const smoothing=emergency?.78:movementBrain.mode==="patrol"?.30:.42;
 
   player.moveX=player.moveX*(1-smoothing)+best.dirX*smoothing;
   player.moveY=player.moveY*(1-smoothing)+best.dirY*smoothing;
 
-  // Final hard wall guard. Unlike V0.5 this does not create a corner goal; it only
-  // prevents residual inertia from pressing into a boundary after steering.
   if(player.x<=b.left+7&&player.moveX<0) player.moveX=.55;
   if(player.x>=b.right-7&&player.moveX>0) player.moveX=-.55;
   if(player.y<=b.top+7&&player.moveY<0) player.moveY=.55;
