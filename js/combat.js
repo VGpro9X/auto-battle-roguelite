@@ -109,7 +109,10 @@ function healPlayer(amount,meta={}){
 }
 
 function addShield(amount){
-  player.shield=Math.min(player.maxHp*.85,player.shield+Math.max(0,amount));
+  const gained=Math.max(0,amount);
+  if(gained<=0)return 0;
+  player.shield+=gained;
+  return gained;
 }
 
 function damagePlayer(amount,meta={}){
