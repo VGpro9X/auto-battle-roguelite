@@ -3,7 +3,7 @@ const MODES={
   "10":{id:"10",label:"10 PHÚT",duration:10*60,starterPicks:2,pressure:1.00,endless:false},
   "15":{id:"15",label:"15 PHÚT",duration:15*60,starterPicks:1,pressure:1.05,endless:false},
   "20":{id:"20",label:"20 PHÚT",duration:20*60,starterPicks:1,pressure:1.10,endless:false},
-  "endless":{id:"endless",label:"ENDLESS",duration:null,starterPicks:1,pressure:1.00,endless:true}
+  "endless":{id:"endless",label:"VÔ HẠN",duration:null,starterPicks:1,pressure:1.00,endless:true}
 };
 
 function getRunProgress(){
