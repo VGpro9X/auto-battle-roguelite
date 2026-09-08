@@ -19,7 +19,7 @@ function update(dt){
   if(player.attackTimer<=0){
     const[enemy,distance]=nearestEnemy();
     if(enemy&&distance<=player.attackRange){
-      shoot(enemy,player.damage);
+      fireNormalAttack(enemy);
       player.attackTimer=player.attackCd;
     }
   }
@@ -50,6 +50,40 @@ function update(dt){
     }
   }
 
+  if(skillLevel("lightning")){
+    skills.lightning.timer-=dt;
+    const level=skillLevel("lightning");
+    const cooldown=Math.max(1.8,4-.35*(level-1));
+
+    if(skills.lightning.timer<=0){
+      const targets=getNearestEnemies(Math.min(5,1+level));
+      for(const enemy of targets){
+        hitEnemy(enemy,12+level*8);
+      }
+      if(targets.length) skills.lightning.timer=cooldown;
+    }
+  }
+
+  if(skillLevel("nova")){
+    skills.nova.timer-=dt;
+    const level=skillLevel("nova");
+    const cooldown=Math.max(2.8,5.5-.45*(level-1));
+    const radius=95+level*18;
+    const damage=10+level*8;
+
+    if(skills.nova.timer<=0){
+      let hitAny=false;
+      for(const enemy of state.enemies){
+        if(enemy.dead) continue;
+        if(dist(player,enemy)<=radius){
+          hitEnemy(enemy,damage,26+level*4);
+          hitAny=true;
+        }
+      }
+      if(hitAny) skills.nova.timer=cooldown;
+    }
+  }
+
   state.spawnTimer-=dt;
   if(state.spawnTimer<=0){
     const difficulty=getDifficultyProfile();
@@ -59,14 +93,22 @@ function update(dt){
     state.spawnTimer=getSpawnCooldown();
   }
 
+  const frostLevel=skillLevel("frost");
+  const frostRadius=90+frostLevel*18;
+  const frostSpeedFactor=1-Math.min(.40,frostLevel*.08);
+
   for(const enemy of state.enemies){
     if(enemy.dead) continue;
+
     const dx=player.x-enemy.x;
     const dy=player.y-enemy.y;
     const magnitude=Math.hypot(dx,dy)||1;
-    enemy.x+=dx/magnitude*enemy.speed*dt;
-    enemy.y+=dy/magnitude*enemy.speed*dt;
+    const speedFactor=frostLevel&&magnitude<=frostRadius?frostSpeedFactor:1;
+
+    enemy.x+=dx/magnitude*enemy.speed*speedFactor*dt;
+    enemy.y+=dy/magnitude*enemy.speed*speedFactor*dt;
     enemy.hit=Math.max(0,enemy.hit-dt);
+
     if(magnitude<player.r+enemy.r+3){
       player.hp-=enemy.dmg*(1-player.armor)*dt;
     }
@@ -78,6 +120,7 @@ function update(dt){
       const angle=player.orbitAngle+i*Math.PI*2/orbitLevel;
       const bladeX=player.x+Math.cos(angle)*48;
       const bladeY=player.y+Math.sin(angle)*48;
+
       for(const enemy of state.enemies){
         if(enemy.dead) continue;
         if(Math.hypot(enemy.x-bladeX,enemy.y-bladeY)<enemy.r+7){
@@ -96,16 +139,24 @@ function update(dt){
     projectile.life-=dt;
 
     for(const enemy of state.enemies){
-      if(projectile.life<=0) break;
-      if(enemy.dead) continue;
+      if(projectile.life<=0||projectile.hitsRemaining<=0) break;
+      if(enemy.dead||projectile.hitEnemies.has(enemy)) continue;
+
       if(Math.hypot(projectile.x-enemy.x,projectile.y-enemy.y)<projectile.r+enemy.r){
         hitEnemy(enemy,projectile.damage,projectile.type==="fire"?18:0);
-        projectile.life=0;
+        projectile.hitEnemies.add(enemy);
+        projectile.hitsRemaining--;
+
+        if(projectile.hitsRemaining<=0){
+          projectile.life=0;
+        }
       }
     }
   }
 
-  state.projectiles=state.projectiles.filter(p=>p.life>0&&p.x>-60&&p.x<W+60&&p.y>-60&&p.y<H+60);
+  state.projectiles=state.projectiles.filter(
+    p=>p.life>0&&p.hitsRemaining>0&&p.x>-60&&p.x<W+60&&p.y>-60&&p.y<H+60
+  );
   state.enemies=state.enemies.filter(enemy=>!enemy.dead);
 
   for(const gem of state.gems){
@@ -191,6 +242,7 @@ function draw(){
   for(const projectile of state.projectiles){
     ctx.fillStyle=projectile.type==="fire"?"#ffb05b":"#e7e7e7";
     ctx.beginPath();ctx.arc(projectile.x,projectile.y,projectile.r,0,Math.PI*2);ctx.fill();
+
     if(projectile.type==="fire"){
       ctx.globalAlpha=.18;
       ctx.beginPath();ctx.arc(projectile.x,projectile.y,projectile.r*2.6,0,Math.PI*2);ctx.fill();
