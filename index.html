@@ -3,57 +3,214 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Auto Battle Roguelite V0.3</title>
+<title>Auto Battle Roguelite V0.4</title>
 <link rel="stylesheet" href="css/game.css">
 </head>
 <body>
 <div id="gameWrap">
   <canvas id="game"></canvas>
 
-  <div class="hud">
-    <div class="panel stats">
-      <div class="row">
-        <b>HP</b>
-        <div class="bar hp"><i id="hpBar"></i></div>
-        <span id="hpText">100/100</span>
+  <div id="gameUi" class="gameUi hidden">
+    <div class="hud">
+      <div class="panel stats">
+        <div class="row">
+          <b>HP</b>
+          <div class="bar hp"><i id="hpBar"></i></div>
+          <span id="hpText">100/100</span>
+        </div>
+        <div class="row">
+          <b>XP</b>
+          <div class="bar xp"><i id="xpBar"></i></div>
+          <span id="xpText">0/5</span>
+        </div>
       </div>
-      <div class="row">
-        <b>XP</b>
-        <div class="bar xp"><i id="xpBar"></i></div>
-        <span id="xpText">0/5</span>
+
+      <div class="rightHud">
+        <div class="panel pill" id="modeHud">10 PHÚT</div>
+        <div class="panel pill">LV <b id="lvText">1</b></div>
+        <div class="panel pill"><span id="timeIcon">⏳</span> <b id="timeText">10:00</b></div>
+        <div class="panel pill">☠ <b id="killText">0</b></div>
+        <button id="pauseButton" class="iconButton" aria-label="Tạm dừng">Ⅱ</button>
       </div>
     </div>
 
-    <div class="rightHud">
-      <div class="panel pill">LV <b id="lvText">1</b></div>
-      <div class="panel pill">⏱ <b id="timeText">00:00</b></div>
-      <div class="panel pill">☠ <b id="killText">0</b></div>
+    <div id="skillBar"></div>
+    <div id="tip">AI tự chiến đấu. Bạn quyết định build.</div>
+  </div>
+
+  <div id="version">Auto Battle Roguelite V0.4</div>
+
+  <div id="mainMenu" class="screenOverlay menuScreen visible">
+    <div class="menuCard heroCard">
+      <div class="eyebrow">AUTO-BATTLE SURVIVAL ROGUELITE</div>
+      <h1>AUTO BATTLE<br>ROGUELITE</h1>
+      <p class="subtitle">Nhân vật tự chiến đấu. Bạn xây dựng build và sống sót.</p>
+      <div class="menuButtons">
+        <button class="primary large" data-screen="modeMenu">CHƠI</button>
+        <button class="secondary" data-screen="leaderboardMenu">BẢNG XẾP HẠNG</button>
+        <button class="secondary" data-screen="settingsMenu">CÀI ĐẶT</button>
+        <button class="secondary" data-screen="howToMenu">CÁCH CHƠI</button>
+      </div>
     </div>
   </div>
 
-  <div id="skillBar"></div>
+  <div id="modeMenu" class="screenOverlay menuScreen">
+    <div class="menuCard wideCard">
+      <div class="screenHeader">
+        <div>
+          <div class="eyebrow">CHỌN CHẾ ĐỘ</div>
+          <h2>Sinh tồn</h2>
+        </div>
+        <button class="backButton" data-screen="mainMenu">← Quay lại</button>
+      </div>
 
-  <div id="tip">AI tự tìm đường thoát và chủ động thu thập XP.</div>
-  <div id="version">Auto Battle Roguelite V0.3</div>
+      <div class="modeGrid">
+        <button class="modeCard" data-mode="5">
+          <span class="modeTime">5</span>
+          <span class="modeUnit">PHÚT</span>
+          <strong>Quick Run</strong>
+          <small>3 skill khởi đầu · tiến độ được nén nhanh</small>
+        </button>
+        <button class="modeCard" data-mode="10">
+          <span class="modeTime">10</span>
+          <span class="modeUnit">PHÚT</span>
+          <strong>Standard</strong>
+          <small>2 skill khởi đầu · nhịp chơi tiêu chuẩn</small>
+        </button>
+        <button class="modeCard" data-mode="15">
+          <span class="modeTime">15</span>
+          <span class="modeUnit">PHÚT</span>
+          <strong>Long Run</strong>
+          <small>1 skill khởi đầu · build dài hơi</small>
+        </button>
+        <button class="modeCard" data-mode="20">
+          <span class="modeTime">20</span>
+          <span class="modeUnit">PHÚT</span>
+          <strong>Challenge</strong>
+          <small>1 skill khởi đầu · áp lực cuối trận cao</small>
+        </button>
+        <button class="modeCard endlessCard" data-mode="endless">
+          <span class="modeTime">∞</span>
+          <span class="modeUnit">ENDLESS</span>
+          <strong>Không giới hạn</strong>
+          <small>1 skill khởi đầu · độ khó tăng vô hạn</small>
+        </button>
+      </div>
+    </div>
+  </div>
 
-  <div id="levelModal">
+  <div id="leaderboardMenu" class="screenOverlay menuScreen">
+    <div class="menuCard wideCard">
+      <div class="screenHeader">
+        <div>
+          <div class="eyebrow">LOCAL RECORDS</div>
+          <h2>Bảng xếp hạng</h2>
+        </div>
+        <button class="backButton" data-screen="mainMenu">← Quay lại</button>
+      </div>
+
+      <div id="leaderboardTabs" class="tabs"></div>
+      <div id="leaderboardContent" class="leaderboardTable"></div>
+      <p class="finePrint">Thành tích hiện được lưu trên trình duyệt này. Global leaderboard sẽ cần backend riêng.</p>
+    </div>
+  </div>
+
+  <div id="settingsMenu" class="screenOverlay menuScreen">
+    <div class="menuCard mediumCard">
+      <div class="screenHeader">
+        <div>
+          <div class="eyebrow">TÙY CHỌN</div>
+          <h2>Cài đặt</h2>
+        </div>
+        <button class="backButton settingsBack">← Quay lại</button>
+      </div>
+
+      <div class="settingRow">
+        <div>
+          <strong>Hiệu ứng hạt</strong>
+          <small>Hiện các hạt khi đòn đánh trúng mục tiêu.</small>
+        </div>
+        <button id="particlesToggle" class="toggleButton"></button>
+      </div>
+      <div class="settingRow">
+        <div>
+          <strong>Tự tạm dừng khi mất focus</strong>
+          <small>Pause nếu chuyển tab hoặc cửa sổ.</small>
+        </div>
+        <button id="autoPauseToggle" class="toggleButton"></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="howToMenu" class="screenOverlay menuScreen">
+    <div class="menuCard mediumCard">
+      <div class="screenHeader">
+        <div>
+          <div class="eyebrow">HƯỚNG DẪN</div>
+          <h2>Cách chơi</h2>
+        </div>
+        <button class="backButton" data-screen="mainMenu">← Quay lại</button>
+      </div>
+
+      <div class="howToList">
+        <p><b>1.</b> Nhân vật tự di chuyển, tự tìm XP và tự tấn công.</p>
+        <p><b>2.</b> Mỗi lần lên cấp, chọn 1 trong 3 skill ngẫu nhiên.</p>
+        <p><b>3.</b> Chế độ có thời gian: sống sót đến khi đồng hồ về 00:00 để chiến thắng.</p>
+        <p><b>4.</b> Endless: không có chiến thắng; mục tiêu là sống càng lâu càng tốt.</p>
+        <p><b>5.</b> Trong mode có thời gian, leaderboard xếp theo Run Score. Endless xếp theo thời gian sống.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="pauseMenu" class="screenOverlay">
+    <div class="modalCard compactCard">
+      <div class="eyebrow">PAUSED</div>
+      <h2>Tạm dừng</h2>
+      <div class="menuButtons">
+        <button id="resumeButton" class="primary">TIẾP TỤC</button>
+        <button id="restartRunButton" class="secondary">CHƠI LẠI RUN</button>
+        <button id="pauseSettingsButton" class="secondary">CÀI ĐẶT</button>
+        <button id="pauseMainMenuButton" class="dangerButton">VỀ MENU CHÍNH</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="levelModal" class="screenOverlay">
     <div class="modalCard">
-      <h2>Lên cấp!</h2>
-      <p>Chọn một kỹ năng để định hình build.</p>
+      <div class="eyebrow" id="skillPickEyebrow">LEVEL UP</div>
+      <h2 id="skillPickTitle">Lên cấp!</h2>
+      <p id="skillPickDescription">Chọn một kỹ năng để định hình build.</p>
       <div id="choices" class="choices"></div>
     </div>
   </div>
 
-  <div id="gameOver">
-    <div class="modalCard">
-      <h2>Thất bại</h2>
-      <p id="finalStats"></p>
-      <button id="restartButton" class="primary">Chơi lại</button>
+  <div id="resultModal" class="screenOverlay">
+    <div class="modalCard resultCard">
+      <div id="resultBadge" class="resultBadge">VICTORY</div>
+      <h2 id="resultTitle">Chiến thắng</h2>
+      <p id="resultSubtitle"></p>
+
+      <div class="resultStats">
+        <div><span>Thời gian</span><b id="resultTime">00:00</b></div>
+        <div><span>Hạ gục</span><b id="resultKills">0</b></div>
+        <div><span>Elite</span><b id="resultElites">0</b></div>
+        <div><span>Level</span><b id="resultLevel">1</b></div>
+        <div><span>Score</span><b id="resultScore">0</b></div>
+      </div>
+
+      <div id="recordNotice" class="recordNotice hidden">★ KỶ LỤC MỚI ★</div>
+
+      <div class="resultButtons">
+        <button id="retryButton" class="primary">CHƠI LẠI</button>
+        <button id="resultMainMenuButton" class="secondary">MENU CHÍNH</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script src="js/core.js"></script>
+<script src="js/modes.js"></script>
+<script src="js/leaderboard.js"></script>
 <script src="js/skills.js"></script>
 <script src="js/combat.js"></script>
 <script src="js/movement.js"></script>
