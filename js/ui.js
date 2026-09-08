@@ -25,7 +25,7 @@ function showLevelUp(isStarter=false){
   document.getElementById("skillPickTitle").textContent=isStarter?"Chọn kỹ năng khởi đầu":"Lên cấp!";
   document.getElementById("skillPickDescription").textContent=isStarter
     ?`Còn ${state.starterSelectionsRemaining} lượt chọn khởi đầu trong ${state.mode.label}.`
-    :`Kỹ năng TỐI ĐA/Siêu Cấp đã rời khỏi pool. Thần Kỹ và Thần Bí Kỹ có thể xuất hiện cực hiếm.`;
+    :`Kỹ năng TỐI ĐA/Siêu Cấp đã rời khỏi danh sách lựa chọn. Thần Kỹ và Thần Bí Kỹ có thể xuất hiện cực hiếm.`;
 
   const container=document.getElementById("choices");container.innerHTML="";
   for(const pick of picks){
@@ -38,8 +38,8 @@ function showLevelUp(isStarter=false){
         <h3>${item.name}</h3>
         <div class="lvl">${getDivineTierLabel(item)} · DUY NHẤT · KHÔNG CÓ CẤP</div>
         <div class="tags"><span class="tagChip">QUY TẮC</span><span class="tagChip">HIẾM</span></div>
-        <div class="desc">${item.desc}</div>
-        <div class="relationHints"><div class="relationHint divine">Chọn một lần để thay đổi luật của run này.</div></div>
+        <div class="desc">${typeof localizeGameText==="function"?localizeGameText(item.desc):item.desc}</div>
+        <div class="relationHints"><div class="relationHint divine">Chọn một lần để thay đổi luật của lượt chơi này.</div></div>
       `;
       button.onclick=()=>selectLevelUpChoice(pick,isStarter);
       container.appendChild(button);
@@ -55,8 +55,8 @@ function showLevelUp(isStarter=false){
       <h3>${skill.name}</h3>
       <div class="lvl">Cấp ${next}/${skill.max}${next>=skill.max?" · TỐI ĐA":""}</div>
       <div class="tags">${tags.map(tag=>`<span class="tagChip">${typeof getTagLabel==="function"?getTagLabel(tag):tag}</span>`).join("")}</div>
-      <div class="desc">${skill.desc(next)}</div>
-      ${hints.length?`<div class="relationHints">${hints.map(h=>`<div class="relationHint ${h.type}">${h.text}</div>`).join("")}</div>`:""}
+      <div class="desc">${typeof localizeGameText==="function"?localizeGameText(skill.desc(next)):skill.desc(next)}</div>
+      ${hints.length?`<div class="relationHints">${hints.map(h=>`<div class="relationHint ${h.type}">${typeof localizeGameText==="function"?localizeGameText(h.text):h.text}</div>`).join("")}</div>`:""}
     `;
     button.onclick=()=>selectLevelUpChoice(pick,isStarter);container.appendChild(button);
   }
@@ -115,18 +115,18 @@ function refreshBuildTracker(){
   const lines=[];
   for(const synergy of Object.values(SYNERGIES)){
     if(!hasSynergy(synergy.id))continue;
-    lines.push(`<div class="buildLine unlocked"><span class="buildIcon">${synergy.icon}</span><div><b>${synergy.name}</b><small>HỢP ĐẠO KỸ · ${synergy.desc}</small></div></div>`);
+    lines.push(`<div class="buildLine unlocked"><span class="buildIcon">${synergy.icon}</span><div><b>${synergy.name}</b><small>HỢP ĐẠO KỸ · ${typeof localizeGameText==="function"?localizeGameText(synergy.desc):synergy.desc}</small></div></div>`);
   }
   for(const evolution of Object.values(EVOLUTIONS)){
     if(!hasEvolution(evolution.id))continue;
-    lines.push(`<div class="buildLine evolution"><span class="buildIcon">${evolution.icon}</span><div><b>${evolution.name}</b><small>SIÊU CẤP · ${evolution.desc}</small></div></div>`);
+    lines.push(`<div class="buildLine evolution"><span class="buildIcon">${evolution.icon}</span><div><b>${evolution.name}</b><small>SIÊU CẤP · ${typeof localizeGameText==="function"?localizeGameText(evolution.desc):evolution.desc}</small></div></div>`);
   }
   const near=getNearBuildUnlocks(Math.max(0,4-lines.length));
   for(const entry of near){
     const missing=entry.progress.missing.map(p=>p.label).join(" + ")||"Sẵn sàng";
     lines.push(`<div class="buildLine near ${entry.kind==="evolution"?"evolution":""}"><span class="buildIcon">${entry.item.icon}</span><div><b>${entry.item.name}</b><small>${entry.kind==="evolution"?"GẦN SIÊU CẤP":"GẦN HỢP ĐẠO"} · thiếu ${missing}</small></div></div>`);
   }
-  content.innerHTML=lines.length?lines.slice(0,5).join(""):`<div class="buildEmpty">Chưa có liên kết. Chọn các kỹ năng có tag hoặc gợi ý liên quan để hình thành Hợp Đạo Kỹ.</div>`;
+  content.innerHTML=lines.length?lines.slice(0,5).join(""):`<div class="buildEmpty">Chưa có liên kết. Chọn các kỹ năng có thuộc tính hoặc gợi ý liên quan để hình thành Hợp Đạo Kỹ.</div>`;
 }
 
 const unlockToastQueue=[];
@@ -145,7 +145,7 @@ function showNextBuildUnlockToast(){
   document.getElementById("unlockToastIcon").textContent=payload.item.icon||"✨";
   document.getElementById("unlockToastType").textContent=mystic?"THẦN BÍ KỸ XUẤT HIỆN":divine?"THẦN KỸ XUẤT HIỆN":evolution?"SIÊU CẤP KÍCH HOẠT":"HỢP ĐẠO KỸ KÍCH HOẠT";
   document.getElementById("unlockToastTitle").textContent=payload.item.name;
-  document.getElementById("unlockToastDesc").textContent=payload.item.desc||"Build của bạn vừa mở một liên kết mới.";
+  document.getElementById("unlockToastDesc").textContent=(typeof localizeGameText==="function"?localizeGameText(payload.item.desc):payload.item.desc)||"Bộ kỹ năng của bạn vừa mở một liên kết mới.";
   toast.classList.remove("hidden");
   setTimeout(()=>{
     toast.classList.add("hidden");
@@ -161,7 +161,7 @@ function finishRun(outcome){
   if(state.gameOver)return;state.gameOver=true;state.running=false;state.paused=true;if(outcome==="victory"&&!state.mode.endless)state.t=state.mode.duration;
   const score=state.mode.endless?0:calculateRunScore(),newRecord=recordRun(outcome);state.result={outcome,score,newRecord};
   document.getElementById("resultBadge").textContent=outcome==="victory"?"CHIẾN THẮNG":"THẤT BẠI";
-  document.getElementById("resultTitle").textContent=outcome==="victory"?"Chiến thắng!":"Run kết thúc";
+  document.getElementById("resultTitle").textContent=outcome==="victory"?"Chiến thắng!":"Lượt chơi kết thúc";
   document.getElementById("resultSubtitle").textContent=state.mode.endless?`Bạn đã sống sót ${fmtTime(state.t)} trong Vô Hạn.`:outcome==="victory"?`Bạn đã sống sót trọn vẹn ${state.mode.label.toLowerCase()}.`:`Bạn chưa sống sót hết ${state.mode.label.toLowerCase()}.`;
   document.getElementById("resultTime").textContent=fmtTime(state.t);document.getElementById("resultKills").textContent=state.kills;document.getElementById("resultElites").textContent=state.eliteKills;document.getElementById("resultLevel").textContent=player.level;document.getElementById("resultScore").textContent=state.mode.endless?"—":score.toLocaleString("vi-VN");document.getElementById("recordNotice").classList.toggle("hidden",!newRecord);showScreen("resultModal");
 }
@@ -176,7 +176,7 @@ function fmtTime(time){const total=Math.max(0,Math.floor(time)),m=Math.floor(tot
 function renderLeaderboardTabs(){const container=document.getElementById("leaderboardTabs");container.innerHTML="";for(const mode of Object.values(MODES)){const button=document.createElement("button");button.className="tabButton"+(leaderboardMode===mode.id?" active":"");button.textContent=mode.label;button.onclick=()=>{leaderboardMode=mode.id;renderLeaderboard();};container.appendChild(button);}}
 function renderLeaderboard(){
   renderLeaderboardTabs();const mode=MODES[leaderboardMode],board=leaderboards[leaderboardMode]||[],content=document.getElementById("leaderboardContent");
-  if(!board.length){content.innerHTML=`<div class="emptyState">${mode.endless?"Chưa có run Vô Hạn nào.":"Chưa có lần hoàn thành chế độ này."}</div>`;return;}
+  if(!board.length){content.innerHTML=`<div class="emptyState">${mode.endless?"Chưa có lượt Vô Hạn nào.":"Chưa có lần hoàn thành chế độ này."}</div>`;return;}
   const header=mode.endless?`<div class="leaderRow leaderHeader"><span>#</span><span>THỜI GIAN</span><span>HẠ GỤC</span><span>TINH ANH</span><span>CẤP</span></div>`:`<div class="leaderRow leaderHeader"><span>#</span><span>ĐIỂM</span><span>HẠ GỤC</span><span>TINH ANH</span><span>CẤP</span></div>`;
   content.innerHTML=header+board.map((entry,index)=>`<div class="leaderRow"><span class="leaderRank">${index+1}</span><strong>${mode.endless?fmtTime(entry.time):entry.score.toLocaleString("vi-VN")}</strong><span>${entry.kills}</span><span>${entry.eliteKills||0}</span><span>Cấp ${entry.level}</span></div>`).join("");
 }
