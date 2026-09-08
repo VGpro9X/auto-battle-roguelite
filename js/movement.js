@@ -5,159 +5,388 @@ const MOVEMENT_BOUNDS={
   get bottom(){return H-95;}
 };
 
+const movementBrain={
+  mode:"patrol",
+  goal:null,
+  goalScore:-Infinity,
+  nextPlanAt:0,
+  lockUntil:0,
+  orbitSign:1,
+  lastModeChange:0
+};
+
 function resetMovementAI(){
   player.moveX=1;
   player.moveY=0;
+  movementBrain.mode="patrol";
+  movementBrain.goal={x:W/2,y:H/2};
+  movementBrain.goalScore=-Infinity;
+  movementBrain.nextPlanAt=0;
+  movementBrain.lockUntil=0;
+  movementBrain.orbitSign=Math.random()<.5?-1:1;
+  movementBrain.lastModeChange=0;
 }
 
-function getXpTarget(){
-  if(state.gems.length===0) return null;
+function getEdgeSafety(x,y){
+  const b=MOVEMENT_BOUNDS;
+  const d=Math.min(x-b.left,b.right-x,y-b.top,b.bottom-y);
+  return clamp(d/150,0,1);
+}
 
-  let best=null;
-  let bestScore=-Infinity;
+function getCornerPenalty(x,y){
+  const b=MOVEMENT_BOUNDS;
+  const left=clamp((115-(x-b.left))/115,0,1);
+  const right=clamp((115-(b.right-x))/115,0,1);
+  const top=clamp((115-(y-b.top))/115,0,1);
+  const bottom=clamp((115-(b.bottom-y))/115,0,1);
+  return Math.max(left*top,left*bottom,right*top,right*bottom);
+}
 
-  for(const gem of state.gems){
-    const d=Math.hypot(gem.x-player.x,gem.y-player.y);
-    const valueBonus=gem.xp*95;
-    const score=valueBonus-d;
+function getEnemyDangerAt(x,y){
+  let danger=0;
+  let nearest=Infinity;
+  let closeCount=0;
 
-    if(score>bestScore){
-      bestScore=score;
-      best=gem;
+  for(const enemy of state.enemies){
+    if(enemy.dead) continue;
+    const d=Math.hypot(x-enemy.x,y-enemy.y);
+    nearest=Math.min(nearest,d);
+
+    if(d<85) closeCount++;
+    if(d<42) danger+=2.8+(42-d)/14;
+    else if(d<82) danger+=1.35*(1-(d-42)/40);
+    else if(d<145) danger+=.48*(1-(d-82)/63);
+  }
+
+  return{danger,nearest,closeCount};
+}
+
+function getLocalThreat(){
+  let nearest=Infinity;
+  let close80=0;
+  let close125=0;
+  let cx=0;
+  let cy=0;
+  let weightSum=0;
+
+  for(const enemy of state.enemies){
+    if(enemy.dead) continue;
+    const dx=enemy.x-player.x;
+    const dy=enemy.y-player.y;
+    const d=Math.hypot(dx,dy);
+    nearest=Math.min(nearest,d);
+    if(d<80) close80++;
+    if(d<125) close125++;
+
+    if(d<240){
+      const w=1/(35+d);
+      cx+=enemy.x*w;
+      cy+=enemy.y*w;
+      weightSum+=w;
     }
   }
 
-  return best;
+  return{
+    nearest,
+    close80,
+    close125,
+    centroid:weightSum?{x:cx/weightSum,y:cy/weightSum}:null
+  };
 }
 
-function getCornerEscapeVector(){
+function buildStrategicCells(){
   const b=MOVEMENT_BOUNDS;
-  const zone=62;
+  const cols=7;
+  const rows=5;
+  const padX=Math.min(105,Math.max(58,(b.right-b.left)*.09));
+  const padY=Math.min(100,Math.max(58,(b.bottom-b.top)*.10));
+  const minX=b.left+padX;
+  const maxX=b.right-padX;
+  const minY=b.top+padY;
+  const maxY=b.bottom-padY;
+  const cells=[];
 
-  const nearLeft=player.x<b.left+zone;
-  const nearRight=player.x>b.right-zone;
-  const nearTop=player.y<b.top+zone;
-  const nearBottom=player.y>b.bottom-zone;
+  for(let row=0;row<rows;row++){
+    for(let col=0;col<cols;col++){
+      const x=cols===1?(minX+maxX)/2:minX+(maxX-minX)*(col/(cols-1));
+      const y=rows===1?(minY+maxY)/2:minY+(maxY-minY)*(row/(rows-1));
+      const threat=getEnemyDangerAt(x,y);
+      cells.push({x,y,...threat,xp:0,xpCount:0,xpX:0,xpY:0});
+    }
+  }
 
-  if(!(nearLeft||nearRight) || !(nearTop||nearBottom)) return null;
+  // XP is accumulated into nearby strategic cells instead of averaging all gems
+  // into a single centroid. This preserves separate, meaningful XP clusters.
+  for(const gem of state.gems){
+    let bestCell=null;
+    let bestDistance=Infinity;
+    for(const cell of cells){
+      const d=Math.hypot(gem.x-cell.x,gem.y-cell.y);
+      if(d<bestDistance){bestDistance=d;bestCell=cell;}
+    }
+    if(bestCell){
+      const proximity=Math.max(.35,1-bestDistance/260);
+      const contribution=gem.xp*proximity;
+      bestCell.xp+=contribution;
+      bestCell.xpX+=gem.x*contribution;
+      bestCell.xpY+=gem.y*contribution;
+      bestCell.xpCount++;
+    }
+  }
 
-  let x=0;
-  let y=0;
+  return cells;
+}
 
-  if(nearLeft) x+=1;
-  if(nearRight) x-=1;
-  if(nearTop) y+=1;
-  if(nearBottom) y-=1;
+function scoreStrategicCell(cell,mode){
+  const travel=Math.hypot(cell.x-player.x,cell.y-player.y);
+  const edgeSafety=getEdgeSafety(cell.x,cell.y);
+  const cornerPenalty=getCornerPenalty(cell.x,cell.y);
+  const centerDistance=Math.hypot(cell.x-W/2,cell.y-H/2);
+  const maxCenterDistance=Math.hypot(W/2,H/2)||1;
+  const centerQuality=1-clamp(centerDistance/maxCenterDistance,0,1);
+  const clearance=Math.min(cell.nearest,230);
 
-  const magnitude=Math.hypot(x,y)||1;
-  return{x:x/magnitude,y:y/magnitude};
+  let score=0;
+
+  // Danger is a hard concern. Open space matters, but huge distance from enemies
+  // is deliberately NOT rewarded enough to pull the player into corners.
+  score-=cell.danger*720;
+  score+=clearance*1.05;
+  score+=edgeSafety*340;
+  score+=centerQuality*115;
+  score-=cornerPenalty*1150;
+  score-=travel*.22;
+
+  if(mode==="harvest"){
+    score+=cell.xp*205;
+    score+=Math.min(cell.xpCount,12)*18;
+  }else if(mode==="kite"){
+    score+=cell.xp*52;
+  }else if(mode==="escape"){
+    score+=edgeSafety*180;
+    score+=centerQuality*90;
+    score+=cell.xp*12;
+  }else{
+    score+=cell.xp*80;
+  }
+
+  return score;
+}
+
+function selectStrategicGoal(mode,threat){
+  const cells=buildStrategicCells();
+  let best=null;
+  let bestScore=-Infinity;
+
+  for(const cell of cells){
+    let score=scoreStrategicCell(cell,mode);
+
+    if(mode==="kite"&&threat.centroid){
+      const awayX=player.x-threat.centroid.x;
+      const awayY=player.y-threat.centroid.y;
+      const awayMag=Math.hypot(awayX,awayY)||1;
+      const tangentX=-awayY/awayMag*movementBrain.orbitSign;
+      const tangentY=awayX/awayMag*movementBrain.orbitSign;
+      const toCellX=cell.x-player.x;
+      const toCellY=cell.y-player.y;
+      const toCellMag=Math.hypot(toCellX,toCellY)||1;
+      const tangentAlignment=(toCellX/toCellMag)*tangentX+(toCellY/toCellMag)*tangentY;
+      score+=tangentAlignment*250;
+    }
+
+    if(score>bestScore){
+      bestScore=score;
+      best=cell;
+    }
+  }
+
+  if(!best) return null;
+
+  const goal=mode==="harvest"&&best.xp>0
+    ?{x:best.xpX/best.xp,y:best.xpY/best.xp}
+    :{x:best.x,y:best.y};
+
+  return{goal,score:bestScore};
+}
+
+function chooseStrategicMode(threat){
+  if(threat.nearest<58||threat.close80>=3) return"escape";
+  if(threat.nearest<128||threat.close125>=5) return"kite";
+  if(state.gems.length) return"harvest";
+  return"patrol";
+}
+
+function updateStrategicPlan(){
+  const threat=getLocalThreat();
+  const desiredMode=chooseStrategicMode(threat);
+  const modeChanged=desiredMode!==movementBrain.mode;
+
+  if(modeChanged){
+    movementBrain.mode=desiredMode;
+    movementBrain.lastModeChange=state.t;
+    movementBrain.lockUntil=state.t+(desiredMode==="escape"?.35:.75);
+
+    if(desiredMode==="kite"){
+      movementBrain.orbitSign=Math.random()<.5?-1:1;
+    }
+  }
+
+  const shouldReplan=
+    !movementBrain.goal||
+    state.t>=movementBrain.nextPlanAt||
+    desiredMode==="escape";
+
+  if(!shouldReplan) return threat;
+
+  const candidate=selectStrategicGoal(desiredMode,threat);
+  movementBrain.nextPlanAt=state.t+(desiredMode==="escape"?.12:.28);
+
+  if(!candidate) return threat;
+
+  const currentGoalDanger=movementBrain.goal
+    ?getEnemyDangerAt(movementBrain.goal.x,movementBrain.goal.y).danger
+    :Infinity;
+
+  const currentInvalid=
+    !movementBrain.goal||
+    currentGoalDanger>1.8||
+    Math.hypot(movementBrain.goal.x-player.x,movementBrain.goal.y-player.y)<42;
+
+  const lockExpired=state.t>=movementBrain.lockUntil;
+  const clearlyBetter=candidate.score>movementBrain.goalScore+140;
+
+  if(currentInvalid||lockExpired||clearlyBetter||desiredMode==="escape"){
+    movementBrain.goal=candidate.goal;
+    movementBrain.goalScore=candidate.score;
+    movementBrain.lockUntil=state.t+(desiredMode==="escape"?.28:.70);
+  }
+
+  return threat;
+}
+
+function getWallDangerForDirection(dirX,dirY,lookAhead){
+  const b=MOVEMENT_BOUNDS;
+  const futureX=player.x+dirX*lookAhead;
+  const futureY=player.y+dirY*lookAhead;
+
+  if(futureX<b.left||futureX>b.right||futureY<b.top||futureY>b.bottom) return 5;
+
+  const edgeDistance=Math.min(
+    futureX-b.left,
+    b.right-futureX,
+    futureY-b.top,
+    b.bottom-futureY
+  );
+
+  let danger=0;
+  if(edgeDistance<34) danger=2.6+(34-edgeDistance)/12;
+  else if(edgeDistance<78) danger=.95*(1-(edgeDistance-34)/44);
+  else if(edgeDistance<125) danger=.20*(1-(edgeDistance-78)/47);
+
+  danger+=getCornerPenalty(futureX,futureY)*2.5;
+  return danger;
+}
+
+function getEnemyDangerForDirection(dirX,dirY,lookAhead){
+  const futureX=player.x+dirX*lookAhead;
+  const futureY=player.y+dirY*lookAhead;
+  return getEnemyDangerAt(futureX,futureY).danger;
 }
 
 function chooseMovementDirection(){
-  const[nearest,nearestDistance]=nearestEnemy();
-  const xpTarget=getXpTarget();
-  const cornerEscape=getCornerEscapeVector();
-
+  const threat=updateStrategicPlan();
+  const goal=movementBrain.goal||{x:W/2,y:H/2};
   const candidateCount=32;
-  const lookAhead=92;
+  const lookAhead=86;
   const b=MOVEMENT_BOUNDS;
 
-  let bestScore=-Infinity;
-  let bestX=player.moveX;
-  let bestY=player.moveY;
+  const goalDx=goal.x-player.x;
+  const goalDy=goal.y-player.y;
+  const goalDistance=Math.hypot(goalDx,goalDy)||1;
+  const goalX=goalDx/goalDistance;
+  const goalY=goalDy/goalDistance;
+
+  let tangentX=0;
+  let tangentY=0;
+  if(threat.centroid&&(movementBrain.mode==="kite"||movementBrain.mode==="escape")){
+    const awayX=player.x-threat.centroid.x;
+    const awayY=player.y-threat.centroid.y;
+    const awayMag=Math.hypot(awayX,awayY)||1;
+    tangentX=-awayY/awayMag*movementBrain.orbitSign;
+    tangentY=awayX/awayMag*movementBrain.orbitSign;
+  }
+
+  const candidates=[];
+  let minDanger=Infinity;
 
   for(let i=0;i<candidateCount;i++){
     const angle=i/candidateCount*Math.PI*2;
     const dirX=Math.cos(angle);
     const dirY=Math.sin(angle);
-    const futureX=player.x+dirX*lookAhead;
-    const futureY=player.y+dirY*lookAhead;
 
-    let score=0;
-    let minimumEnemyDistance=Infinity;
+    const enemyDanger=getEnemyDangerForDirection(dirX,dirY,lookAhead);
+    const wallDanger=getWallDangerForDirection(dirX,dirY,lookAhead);
+    const danger=Math.max(enemyDanger,wallDanger);
 
-    for(const enemy of state.enemies){
-      if(enemy.dead) continue;
-      const d=Math.hypot(futureX-enemy.x,futureY-enemy.y);
-      minimumEnemyDistance=Math.min(minimumEnemyDistance,d);
+    let interest=0;
 
-      if(d<45) score-=(45-d)*48;
-      else if(d<90) score-=(90-d)*11;
-      else if(d<165) score-=(165-d)*1.8;
+    // Primary strategic target.
+    const goalAlignment=dirX*goalX+dirY*goalY;
+    interest+=goalAlignment*(movementBrain.mode==="harvest"?1.45:1.10);
+
+    // Kiting is tangential, not simply fleeing straight to the furthest corner.
+    if(tangentX||tangentY){
+      const tangentAlignment=dirX*tangentX+dirY*tangentY;
+      interest+=tangentAlignment*(movementBrain.mode==="kite"?.85:.35);
     }
 
-    if(minimumEnemyDistance<Infinity){
-      score+=Math.min(minimumEnemyDistance,230)*1.9;
-    }
-
-    const outsideLeft=Math.max(0,b.left-futureX);
-    const outsideRight=Math.max(0,futureX-b.right);
-    const outsideTop=Math.max(0,b.top-futureY);
-    const outsideBottom=Math.max(0,futureY-b.bottom);
-    const outside=outsideLeft+outsideRight+outsideTop+outsideBottom;
-    if(outside>0) score-=3200+outside*90;
-
-    const edgeZone=92;
-    const leftPressure=clamp((b.left+edgeZone-player.x)/edgeZone,0,1);
-    const rightPressure=clamp((player.x-(b.right-edgeZone))/edgeZone,0,1);
-    const topPressure=clamp((b.top+edgeZone-player.y)/edgeZone,0,1);
-    const bottomPressure=clamp((player.y-(b.bottom-edgeZone))/edgeZone,0,1);
-
-    score+=dirX*(leftPressure-rightPressure)*640;
-    score+=dirY*(topPressure-bottomPressure)*640;
-
-    if(cornerEscape){
-      const alignment=dirX*cornerEscape.x+dirY*cornerEscape.y;
-      score+=alignment*1500;
-      if(alignment<0) score-=1400;
-    }
-
-    if(xpTarget){
-      const currentXpDistance=Math.hypot(xpTarget.x-player.x,xpTarget.y-player.y);
-      const futureXpDistance=Math.hypot(xpTarget.x-futureX,xpTarget.y-futureY);
-      const progress=currentXpDistance-futureXpDistance;
-
-      let xpWeight;
-      if(nearestDistance>190) xpWeight=13;
-      else if(nearestDistance>140) xpWeight=9;
-      else if(nearestDistance>95) xpWeight=4.5;
-      else if(nearestDistance>70) xpWeight=1.5;
-      else xpWeight=.35;
-
-      score+=progress*xpWeight;
-
-      if(currentXpDistance>player.magnet&&futureXpDistance<=player.magnet){
-        score+=260;
-      }
-    }
-
+    // Mild inertia/hysteresis: enough for smooth arcs, not enough to force a bad line.
     const inertia=dirX*player.moveX+dirY*player.moveY;
-    const inertiaWeight=xpTarget&&nearestDistance>130?8:18;
-    score+=inertia*inertiaWeight;
+    interest+=inertia*.24;
 
-    if(nearest&&!xpTarget&&nearestDistance>230){
-      const futureDistance=Math.hypot(nearest.x-futureX,nearest.y-futureY);
-      score+=(nearestDistance-futureDistance)*.55;
-    }
+    // When near an edge, add interest toward the playable interior.
+    const edgePushX=
+      clamp((b.left+105-player.x)/105,0,1)-
+      clamp((player.x-(b.right-105))/105,0,1);
+    const edgePushY=
+      clamp((b.top+105-player.y)/105,0,1)-
+      clamp((player.y-(b.bottom-105))/105,0,1);
+    interest+=(dirX*edgePushX+dirY*edgePushY)*1.55;
 
-    if(score>bestScore){
-      bestScore=score;
-      bestX=dirX;
-      bestY=dirY;
+    candidates.push({dirX,dirY,danger,interest});
+    minDanger=Math.min(minDanger,danger);
+  }
+
+  // Context-steering style merge: reject materially more dangerous headings first,
+  // then choose the most interesting of the surviving directions.
+  const dangerTolerance=minDanger<.35?.28:minDanger<1?.20:.12;
+  let best=null;
+  let bestInterest=-Infinity;
+
+  for(const candidate of candidates){
+    if(candidate.danger>minDanger+dangerTolerance) continue;
+    if(candidate.interest>bestInterest){
+      bestInterest=candidate.interest;
+      best=candidate;
     }
   }
 
-  const emergency=nearestDistance<72;
-  let smoothing=emergency?.78:.34;
-  if(cornerEscape) smoothing=.92;
+  if(!best){
+    best=candidates.reduce((a,c)=>c.danger<a.danger?c:a,candidates[0]);
+  }
 
-  player.moveX=player.moveX*(1-smoothing)+bestX*smoothing;
-  player.moveY=player.moveY*(1-smoothing)+bestY*smoothing;
+  const emergency=threat.nearest<62||threat.close80>=3;
+  const smoothing=emergency?.78:.42;
 
-  if(player.x<=b.left+3&&player.moveX<0) player.moveX=Math.abs(player.moveX)+.45;
-  if(player.x>=b.right-3&&player.moveX>0) player.moveX=-Math.abs(player.moveX)-.45;
-  if(player.y<=b.top+3&&player.moveY<0) player.moveY=Math.abs(player.moveY)+.45;
-  if(player.y>=b.bottom-3&&player.moveY>0) player.moveY=-Math.abs(player.moveY)-.45;
+  player.moveX=player.moveX*(1-smoothing)+best.dirX*smoothing;
+  player.moveY=player.moveY*(1-smoothing)+best.dirY*smoothing;
+
+  // Final hard wall guard. Unlike V0.5 this does not create a corner goal; it only
+  // prevents residual inertia from pressing into a boundary after steering.
+  if(player.x<=b.left+7&&player.moveX<0) player.moveX=.55;
+  if(player.x>=b.right-7&&player.moveX>0) player.moveX=-.55;
+  if(player.y<=b.top+7&&player.moveY<0) player.moveY=.55;
+  if(player.y>=b.bottom-7&&player.moveY>0) player.moveY=-.55;
 
   const magnitude=Math.hypot(player.moveX,player.moveY)||1;
   player.moveX/=magnitude;
