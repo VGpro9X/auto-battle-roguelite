@@ -1,0 +1,34 @@
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101114;color:#f4f4f4;font-family:Inter,Arial,sans-serif}
+#gameWrap{position:relative;width:100vw;height:100vh}
+canvas{display:block;width:100%;height:100%;background:linear-gradient(#151820,#111319)}
+.hud{position:absolute;top:14px;left:14px;right:14px;display:flex;gap:12px;align-items:center;pointer-events:none}
+.panel{background:rgba(12,13,17,.78);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(7px);border-radius:14px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.stats{min-width:260px}
+.row{display:flex;align-items:center;gap:8px;font-size:13px;margin:4px 0}
+.bar{flex:1;height:11px;background:#292c33;border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.bar>i{display:block;height:100%}
+.hp>i{background:#d85f63}
+.xp>i{background:#6f92df}
+.rightHud{margin-left:auto;display:flex;gap:10px}
+.pill{font-size:13px;min-width:110px;text-align:center}
+#skillBar{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:8px;padding:8px;background:rgba(12,13,17,.78);border:1px solid rgba(255,255,255,.12);border-radius:14px}
+.skillMini{width:118px;min-height:62px;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px;background:rgba(255,255,255,.035);font-size:11px}
+.skillMini b{display:block;font-size:12px;margin-bottom:4px}
+.skillMini small{opacity:.72}
+#levelModal,#gameOver{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.68);backdrop-filter:blur(5px)}
+.modalCard{width:min(920px,calc(100vw - 30px));background:#17191f;border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.modalCard h2{margin:0 0 6px}
+.modalCard p{margin:0 0 16px;color:#aeb4c1}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.choice{border:1px solid rgba(255,255,255,.12);background:#20232b;color:#fff;border-radius:14px;padding:14px;text-align:left;cursor:pointer;min-height:165px;transition:.15s}
+.choice:hover{transform:translateY(-3px);background:#292d37}
+.choice .icon{font-size:28px}
+.choice h3{margin:8px 0 6px}
+.choice .lvl{font-size:12px;color:#7f8da8;margin-bottom:8px}
+.choice .desc{color:#c8ceda;font-size:13px;line-height:1.45}
+#gameOver .modalCard{max-width:430px;text-align:center}
+button.primary{border:0;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#111}
+#tip{position:absolute;bottom:96px;left:14px;color:#a7acb8;font-size:12px;background:rgba(12,13,17,.72);padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.08)}
+#version{position:absolute;right:14px;bottom:14px;font-size:11px;opacity:.4;pointer-events:none}
+@media(max-width:700px){.hud{flex-wrap:wrap}.stats{min-width:210px;flex:1}.rightHud{margin-left:0}.choices{grid-template-columns:1fr;max-height:72vh;overflow:auto}#skillBar{width:calc(100vw - 16px);overflow:auto;justify-content:flex-start}.skillMini{flex:0 0 112px}#tip,#version{display:none}}
