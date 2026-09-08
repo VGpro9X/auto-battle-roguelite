@@ -1,6 +1,6 @@
 # Auto Battle Roguelite
 
-Current master version: **V0.5 – Movement & Skill Expansion**
+Current master version: **V0.6 – Strategic Movement AI**
 
 A browser-based auto-battle survival roguelite prototype.
 
@@ -20,10 +20,12 @@ Timed modes end in Victory when the countdown reaches zero. Endless ends on deat
 - Timed-mode Run Score
 - Endless survival-time ranking
 - Local settings
-- Autonomous movement with multi-direction escape evaluation
-- V0.5 wall repulsion and dedicated corner-escape behavior
-- More aggressive active XP seeking across the battlefield
-- Random skill choices and skill upgrades
+- V0.6 two-layer autonomous movement: strategic zone planning + tactical context steering
+- Strategic modes: harvest XP, kite, emergency escape and patrol
+- XP is evaluated as spatial clusters instead of one global target/centroid
+- Strong center/open-space preference and explicit corner/edge penalties
+- Context-style danger-first direction filtering before interest/goal selection
+- Persistent kite direction and short goal locks to reduce oscillation
 - 18-skill pool including multishot, piercing, critical hits, lightning, nova, frost aura, heal-on-kill and XP gain
 - Difficulty normalized by run progress for timed modes
 
@@ -35,7 +37,7 @@ Timed modes end in Victory when the countdown reaches zero. Endless ends on deat
 - `js/leaderboard.js` — local records and settings persistence
 - `js/skills.js` — skill definitions
 - `js/combat.js` — enemies, projectiles, damage, crit/pierce and XP
-- `js/movement.js` — autonomous movement, XP pursuit and corner escape AI
+- `js/movement.js` — strategic movement planner and tactical context steering
 - `js/ui.js` — menus, run lifecycle, pause, skill pick and results
 - `js/game.js` — update/draw loop and active skill execution
 
