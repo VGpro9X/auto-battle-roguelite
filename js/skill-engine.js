@@ -38,16 +38,22 @@ function getTagCount(tag){
 
 function hasEvolution(id){return skillRuntime.evolutions.has(id);}
 function hasSynergy(id){return skillRuntime.unlockedSynergies.has(id);}
-
-function getSkillDisplayName(key){
-  const evolved=typeof EVOLUTIONS!=="undefined"?Object.values(EVOLUTIONS).find(e=>e.base===key&&hasEvolution(e.id)):null;
-  return evolved?evolved.name:skills[key].name;
+function getEvolutionForBase(key){
+  if(typeof EVOLUTIONS==="undefined")return null;
+  return Object.values(EVOLUTIONS).find(e=>e.base===key)||null;
+}
+function isBaseEvolved(key){const evolution=getEvolutionForBase(key);return Boolean(evolution&&hasEvolution(evolution.id));}
+function isSkillSelectable(key,isStarter=false){
+  const skill=skills[key];
+  if(!skill)return false;
+  if(skillLevel(key)>=skill.max)return false;
+  if(isBaseEvolved(key))return false;
+  if(isStarter&&(skillLevel(key)>0||skill.starter===false))return false;
+  return true;
 }
 
-function getSkillDisplayIcon(key){
-  const evolved=typeof EVOLUTIONS!=="undefined"?Object.values(EVOLUTIONS).find(e=>e.base===key&&hasEvolution(e.id)):null;
-  return evolved?.icon||skills[key].icon;
-}
+function getSkillDisplayName(key){const evolved=getEvolutionForBase(key);return evolved&&hasEvolution(evolved.id)?evolved.name:skills[key].name;}
+function getSkillDisplayIcon(key){const evolved=getEvolutionForBase(key);return evolved&&hasEvolution(evolved.id)?evolved.icon:skills[key].icon;}
 
 function requirementMet(requirement){
   if(!requirement) return true;
@@ -70,6 +76,7 @@ function evaluateBuildUnlocks(){
       if(requirementMet(synergy.requires)){
         skillRuntime.unlockedSynergies.add(synergy.id);
         if(synergy.unlock) synergy.unlock();
+        emitSkillEvent("build_unlock",{kind:"synergy",item:synergy});
       }
     }
   }
@@ -81,9 +88,92 @@ function evaluateBuildUnlocks(){
       if(requirementMet(evolution.requires)){
         skillRuntime.evolutions.add(evolution.id);
         if(evolution.unlock) evolution.unlock();
+        emitSkillEvent("build_unlock",{kind:"evolution",item:evolution});
       }
     }
   }
+}
+
+function getRequirementProgress(requirement,candidateKey=null){
+  const parts=[];
+  let met=0,total=0;
+  const candidateIsNew=candidateKey&&skillLevel(candidateKey)<=0;
+
+  if(requirement?.skills){
+    for(const key of requirement.skills){
+      total++;
+      const ok=skillLevel(key)>0||key===candidateKey;
+      if(ok)met++;
+      parts.push({type:"skill",key,ok,label:skills[key]?.name||key});
+    }
+  }
+  if(requirement?.levels){
+    for(const [key,level] of Object.entries(requirement.levels)){
+      total++;
+      const future=skillLevel(key)+(key===candidateKey?1:0);
+      const ok=future>=level;
+      if(ok)met++;
+      parts.push({type:"level",key,ok,label:`${skills[key]?.name||key} Lv.${level}`});
+    }
+  }
+  if(requirement?.tags){
+    for(const [tag,count] of Object.entries(requirement.tags)){
+      total++;
+      let current=getTagCount(tag);
+      if(candidateIsNew&&(skills[candidateKey]?.tags||[]).includes(tag))current++;
+      const ok=current>=count;
+      if(ok)met++;
+      parts.push({type:"tag",tag,ok,label:`${tag} ${current}/${count}`});
+    }
+  }
+  return{met,total,missing:parts.filter(p=>!p.ok),parts};
+}
+
+function getSkillRelationHints(key){
+  const hints=[];
+  if(typeof SYNERGIES!=="undefined"){
+    for(const synergy of Object.values(SYNERGIES)){
+      if(hasSynergy(synergy.id))continue;
+      const involvesSkill=synergy.requires?.skills?.includes(key);
+      if(!involvesSkill)continue;
+      const progress=getRequirementProgress(synergy.requires,key);
+      if(progress.met===progress.total)hints.push({type:"complete",text:`MỞ SYNERGY → ${synergy.name}`});
+      else if(progress.total-progress.met<=1)hints.push({type:"near",text:`KẾT HỢP → ${synergy.name}`});
+    }
+  }
+  if(typeof EVOLUTIONS!=="undefined"){
+    for(const evolution of Object.values(EVOLUTIONS)){
+      if(hasEvolution(evolution.id))continue;
+      if(skillLevel(evolution.base)<=0&&evolution.base!==key)continue;
+      const levelReady=skillLevel(evolution.base)+(evolution.base===key?1:0)>=skills[evolution.base].max;
+      const progress=getRequirementProgress(evolution.requires,key);
+      if(levelReady&&progress.met===progress.total)hints.push({type:"evolution",text:`TIẾN HÓA → ${evolution.name}`});
+      else if(progress.total-progress.met<=1)hints.push({type:"evolution-near",text:`HỖ TRỢ EVOLVE → ${evolution.name}`});
+    }
+  }
+  return hints.slice(0,2);
+}
+
+function getNearBuildUnlocks(limit=4){
+  const results=[];
+  if(typeof SYNERGIES!=="undefined"){
+    for(const synergy of Object.values(SYNERGIES)){
+      if(hasSynergy(synergy.id))continue;
+      const progress=getRequirementProgress(synergy.requires);
+      const missing=progress.total-progress.met;
+      if(progress.met>0&&missing<=1)results.push({kind:"synergy",item:synergy,progress,priority:progress.met/progress.total});
+    }
+  }
+  if(typeof EVOLUTIONS!=="undefined"){
+    for(const evolution of Object.values(EVOLUTIONS)){
+      if(hasEvolution(evolution.id)||skillLevel(evolution.base)<=0)continue;
+      const progress=getRequirementProgress(evolution.requires);
+      const levelRatio=skillLevel(evolution.base)/skills[evolution.base].max;
+      const missing=progress.total-progress.met;
+      if(levelRatio>=.5&&missing<=2)results.push({kind:"evolution",item:evolution,progress,priority:1+levelRatio});
+    }
+  }
+  return results.sort((a,b)=>b.priority-a.priority).slice(0,limit);
 }
 
 function getPeriodicEchoChance(){
@@ -147,6 +237,21 @@ function getOutgoingDamageMultiplier(enemy,meta={}){
     multiplier*=1+(enemy.markPower||.18);
   }
 
+  const tags=meta?.tags||[];
+  if(enemy?.elite)multiplier*=player.eliteDamageMultiplier;
+  if(enemy?.chilled)multiplier*=player.chilledDamageMultiplier;
+  if(tags.includes("SUMMON"))multiplier*=player.summonDamageMultiplier;
+  if(tags.includes("CHAIN"))multiplier*=player.chainDamageMultiplier;
+  if(tags.includes("AREA")||tags.includes("EXPLOSION"))multiplier*=player.areaDamageMultiplier;
+  if(tags.some(tag=>["FIRE","ICE","LIGHTNING","POISON","ELEMENTAL"].includes(tag)))multiplier*=player.elementalDamageMultiplier;
+
+  const pointBlank=skillLevel("pointBlank");
+  if(pointBlank&&enemy){
+    const d=dist(player,enemy);
+    if(d<145)multiplier*=1+(1-d/145)*pointBlank*.12;
+  }
+
+  if(hasSynergy("frozenExecution")&&enemy?.chilled&&enemy.maxHp>0&&enemy.hp/enemy.maxHp<.45)multiplier*=1.25;
   return multiplier;
 }
 
@@ -198,8 +303,7 @@ function weightedPick(keys){
 }
 
 function getSkillChoices(isStarter=false,count=3){
-  let available=Object.keys(skills).filter(key=>skillLevel(key)<skills[key].max);
-  if(isStarter) available=available.filter(key=>skillLevel(key)===0&&skills[key].starter!==false);
+  let available=Object.keys(skills).filter(key=>isSkillSelectable(key,isStarter));
   if(!available.length)return[];
 
   const picks=[];
@@ -249,7 +353,11 @@ function initializeBaseSkillHooks(){
 
   onSkillEvent("kill",payload=>{
     const blood=skillLevel("blood");
-    if(blood) healPlayer(.35*blood,{source:"blood"});
+    if(blood){
+      const mult=hasEvolution("crimsonMoon")?2.2:1;
+      healPlayer(.35*blood*mult,{source:"blood"});
+      if(hasEvolution("crimsonMoon"))addShield(.6+blood*.35);
+    }
 
     const corpse=skillLevel("corpseBurst");
     if(corpse&&Math.random()<.12+corpse*.07){
@@ -285,14 +393,84 @@ function initializeBaseSkillHooks(){
 
   onSkillEvent("xp_collected",payload=>{
     const storm=skillLevel("xpStorm");
-    if(!storm)return;
-    const threshold=Math.max(5,14-storm*2);
-    skillRuntime.counters.xpStorm=(skillRuntime.counters.xpStorm||0)+payload.baseAmount;
-    if(skillRuntime.counters.xpStorm>=threshold){
-      skillRuntime.counters.xpStorm-=threshold;
-      const targets=getNearestEnemies(Math.min(6,2+storm));
-      for(const enemy of targets) hitEnemy(enemy,5+storm*5,0,{source:"xpStorm",tags:["XP","LIGHTNING","CHAIN"],allowProcs:false});
+    if(storm){
+      const threshold=Math.max(5,14-storm*2);
+      skillRuntime.counters.xpStorm=(skillRuntime.counters.xpStorm||0)+payload.baseAmount;
+      if(skillRuntime.counters.xpStorm>=threshold){
+        skillRuntime.counters.xpStorm-=threshold;
+        const targets=getNearestEnemies(Math.min(6,2+storm));
+        for(const enemy of targets) hitEnemy(enemy,5+storm*5,0,{source:"xpStorm",tags:["XP","LIGHTNING","CHAIN"],allowProcs:false});
+      }
     }
+    const nourish=skillLevel("xpHeal");
+    if(nourish)healPlayer(payload.baseAmount*nourish*.08,{source:"xpHeal"});
+  });
+
+  onSkillEvent("hit",payload=>{
+    const {enemy,meta}=payload;
+    if(!enemy)return;
+    const vamp=skillLevel("vampiricTouch");
+    if(meta?.allowProcs!==false&&vamp&&!payload.killed&&Math.random()<player.healOnHitChance){
+      const factor=hasSynergy("glassBlood")&&player.hp/player.maxHp<.5?2:1;
+      healPlayer(player.healOnHitAmount*factor,{source:"vampiricTouch"});
+    }
+    const venom=skillLevel("conductiveVenom");
+    if(venom&&meta?.source==="poisonDot"&&Math.random()<.08+venom*.05){
+      const count=hasSynergy("plagueLightning")?2:1;
+      const targets=getNearestEnemiesFrom(enemy.x,enemy.y,count,new Set([enemy]),190);
+      for(const target of targets)hitEnemy(target,(4+venom*3)*(hasSynergy("plagueLightning")?1.35:1),0,{source:"conductiveVenom",tags:["POISON","LIGHTNING","DOT","CHAIN"],allowProcs:false});
+    }
+    if(hasSynergy("criticalStorm")&&(meta?.tags||[]).includes("LIGHTNING")&&meta?.source!=="criticalStorm"&&Math.random()<player.critChance){
+      hitEnemy(enemy,payload.damage*(player.critMultiplier-1)*.55,0,{source:"criticalStorm",tags:["LIGHTNING","CRITICAL"],allowProcs:false});
+    }
+  });
+
+  onSkillEvent("attack",payload=>{
+    const echo=skillLevel("echoShot");
+    if(!echo||!payload.target||payload.target.dead)return;
+    const threshold=Math.max(2,7-echo);
+    skillRuntime.counters.echoShot=(skillRuntime.counters.echoShot||0)+1;
+    if(skillRuntime.counters.echoShot<threshold)return;
+    skillRuntime.counters.echoShot=0;
+    const baseAngle=Math.atan2(payload.target.y-player.y,payload.target.x-player.x);
+    const count=hasSynergy("echoBarrage")?1+player.extraProjectiles:1;
+    for(let i=0;i<count;i++){
+      const offset=(i-(count-1)/2)*.13;
+      createProjectile(baseAngle+offset,player.damage*.62,430,4,"echo",player.projectilePierce,{source:"echoShot",tags:["PROJECTILE","ATTACK","TIME"],allowProcs:true});
+    }
+  });
+
+  onSkillEvent("kill",payload=>{
+    const enemy=payload.enemy;
+    const bloodShield=skillLevel("bloodShield");
+    if(bloodShield)addShield(player.shieldOnKill*(hasSynergy("crimsonFortress")?1.5:1));
+
+    const shatter=skillLevel("shatter");
+    if(shatter&&enemy?.chilled&&Math.random()<.20+shatter*.10){
+      damageAreaAt(enemy.x,enemy.y,(48+shatter*9)*player.areaMultiplier,(7+shatter*6)*player.areaDamageMultiplier,{source:"shatter",tags:["ICE","KILL","EXPLOSION","AREA"],allowProcs:false},10);
+    }
+
+    const combustion=skillLevel("combustion");
+    if(combustion&&enemy?.statuses?.burn&&Math.random()<.18+combustion*.08){
+      const scale=hasSynergy("combustionChain")?1.5:1;
+      damageAreaAt(enemy.x,enemy.y,(50+combustion*8)*player.areaMultiplier,(8+combustion*6)*scale*player.areaDamageMultiplier,{source:"combustion",tags:["FIRE","KILL","EXPLOSION","AREA"],allowProcs:false},12);
+    }
+
+    const spread=skillLevel("markSpread");
+    if(spread&&enemy?.markedUntil>state.t){
+      const targets=getNearestEnemiesFrom(enemy.x,enemy.y,Math.min(4,spread),new Set([enemy]),190);
+      for(const target of targets){target.markedUntil=state.t+4;target.markPower=Math.max(target.markPower||0,.10+spread*.04);}
+    }
+  });
+
+  onSkillEvent("shield_broken",()=>{
+    const pulse=skillLevel("shieldPulse");
+    if(pulse)damageAreaAt(player.x,player.y,(78+pulse*12)*player.areaMultiplier,(8+pulse*8)*player.areaDamageMultiplier,{source:"shieldPulse",tags:["SHIELD","EXPLOSION","AREA","DAMAGE_TAKEN"],allowProcs:false},20);
+  });
+
+  onSkillEvent("level_up",()=>{
+    const burst=skillLevel("levelBurst");
+    if(burst)damageAreaAt(player.x,player.y,(100+burst*18)*player.areaMultiplier,(12+burst*10)*player.areaDamageMultiplier,{source:"levelBurst",tags:["LEVEL_UP","EXPLOSION","AREA"],allowProcs:false},24);
   });
 }
 
