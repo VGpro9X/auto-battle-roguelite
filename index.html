@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Auto Battle Roguelite V0.3</title>
+<link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+<div id="gameWrap">
+  <canvas id="game"></canvas>
+
+  <div class="hud">
+    <div class="panel stats">
+      <div class="row">
+        <b>HP</b>
+        <div class="bar hp"><i id="hpBar"></i></div>
+        <span id="hpText">100/100</span>
+      </div>
+      <div class="row">
+        <b>XP</b>
+        <div class="bar xp"><i id="xpBar"></i></div>
+        <span id="xpText">0/5</span>
+      </div>
+    </div>
+
+    <div class="rightHud">
+      <div class="panel pill">LV <b id="lvText">1</b></div>
+      <div class="panel pill">⏱ <b id="timeText">00:00</b></div>
+      <div class="panel pill">☠ <b id="killText">0</b></div>
+    </div>
+  </div>
+
+  <div id="skillBar"></div>
+
+  <div id="tip">AI tự tìm đường thoát và chủ động thu thập XP.</div>
+  <div id="version">Auto Battle Roguelite V0.3</div>
+
+  <div id="levelModal">
+    <div class="modalCard">
+      <h2>Lên cấp!</h2>
+      <p>Chọn một kỹ năng để định hình build.</p>
+      <div id="choices" class="choices"></div>
+    </div>
+  </div>
+
+  <div id="gameOver">
+    <div class="modalCard">
+      <h2>Thất bại</h2>
+      <p id="finalStats"></p>
+      <button id="restartButton" class="primary">Chơi lại</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/core.js"></script>
+<script src="js/skills.js"></script>
+<script src="js/combat.js"></script>
+<script src="js/movement.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
