@@ -1,33 +1,41 @@
 # Auto Battle Roguelite
 
-ChatGPT-assisted web-game prototype.
+Current master version: **V0.4 – Game Structure**
 
-## Current canonical version
+A browser-based auto-battle survival roguelite prototype.
 
-**V0.3**
+## Current game modes
+- 5 minutes — 3 unique starter skill picks
+- 10 minutes — 2 unique starter skill picks
+- 15 minutes — 1 starter skill pick
+- 20 minutes — 1 starter skill pick
+- Endless — 1 starter skill pick, difficulty scales without a fixed end
 
-## Current gameplay
+Timed modes end in Victory when the countdown reaches zero. Endless ends on death and records survival time.
 
-- Character moves and attacks automatically.
-- Enemies spawn continuously and scale over time.
-- Early XP curve is reduced so the first levels arrive quickly.
-- Level-up offers 3 random skills.
-- Current skills include attack speed, damage, HP, movement speed, timed fireball, knockback, orbit swords, regeneration, armor, and XP magnet.
-- Movement AI evaluates multiple escape directions instead of only reacting to the nearest enemy.
-- Movement AI actively seeks nearby XP when it is reasonably safe.
-- Restart performs an in-game reset rather than relying on page reload.
+## Current systems
+- Main menu and mode select
+- Pause / restart / return to menu
+- Local leaderboards per mode
+- Timed-mode Run Score
+- Endless survival-time ranking
+- Local settings
+- Auto movement / escape AI
+- Active XP seeking
+- Random skill choices and skill upgrades
+- Difficulty normalized by run progress for timed modes
 
 ## Project structure
-
-- `index.html` — page shell and game UI
-- `css/game.css` — visual styling
-- `js/core.js` — canvas, helpers, game state, player defaults, XP curve
-- `js/skills.js` — skill definitions and owned-skill state
-- `js/combat.js` — enemies, targeting, projectiles, damage, XP gain
-- `js/movement.js` — auto-movement and XP-seeking AI
-- `js/ui.js` — level-up UI, HUD, restart/reset
-- `js/game.js` — main update loop and rendering
+- `index.html` — screens and game shell
+- `css/game.css` — interface and prototype visuals
+- `js/core.js` — canvas, shared state and player base stats
+- `js/modes.js` — game mode rules, starter picks and difficulty curves
+- `js/leaderboard.js` — local records and settings persistence
+- `js/skills.js` — skill definitions
+- `js/combat.js` — enemies, projectiles, damage and XP
+- `js/movement.js` — autonomous movement and XP-seeking AI
+- `js/ui.js` — menus, run lifecycle, pause, skill pick and results
+- `js/game.js` — update/draw loop
 
 ## Development rule
-
-GitHub should be treated as the master source once this repository is created. Chat versions are checkpoints and discussion history.
+GitHub is the master source. Chat previews and packaged builds are test/checkpoint artifacts.
