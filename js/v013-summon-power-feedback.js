@@ -67,12 +67,23 @@ function getSynergySignatureForHitV013(payload){
 }
 
 onSkillEvent("hit",payload=>{
+  if(!payload.enemy)return;
   const signature=getSynergySignatureForHitV013(payload);
-  if(!signature||!payload.enemy)return;
-  const key=`sig_${signature.key}`;
-  if(state.t-(skillRuntime.cooldowns[key]||-99)<.12)return;
-  skillRuntime.cooldowns[key]=state.t;
-  pushPowerSignatureV013("synergy",payload.enemy.x,payload.enemy.y,signature.colors,{life:.42,r:payload.enemy.r+7});
+  if(signature){
+    const key=`sig_${signature.key}`;
+    if(state.t-(skillRuntime.cooldowns[key]||-99)>=.12){
+      skillRuntime.cooldowns[key]=state.t;
+      pushPowerSignatureV013("synergy",payload.enemy.x,payload.enemy.y,signature.colors,{life:.42,r:payload.enemy.r+7});
+    }
+  }
+
+  if(hasSynergy("frozenExecution")&&payload.enemy.chilled&&payload.enemy.maxHp>0&&payload.enemy.hp/payload.enemy.maxHp<.45){
+    const key="sig_frozenExecution";
+    if(state.t-(skillRuntime.cooldowns[key]||-99)>=.28){
+      skillRuntime.cooldowns[key]=state.t;
+      pushPowerSignatureV013("synergy",payload.enemy.x,payload.enemy.y,[VFX_COLORS.ice,"#f2d36d"],{life:.42,r:payload.enemy.r+8});
+    }
+  }
 });
 
 onSkillEvent("periodic",payload=>{
@@ -99,11 +110,26 @@ onSkillEvent("heal",payload=>{
   if(hasSynergy("glassBlood")&&payload.meta?.source==="vampiricTouch"&&player.hp/player.maxHp<.5){
     pushPowerSignatureV013("synergy",player.x,player.y,[VFX_COLORS.blood,"#d6caff"],{life:.42,r:player.r+12});
   }
+  if(hasSynergy("crimsonFortress")&&state.t-(skillRuntime.cooldowns.sig_crimsonFortress||-99)>=.34){
+    skillRuntime.cooldowns.sig_crimsonFortress=state.t;
+    pushPowerSignatureV013("synergy",player.x,player.y,[VFX_COLORS.blood,VFX_COLORS.shield],{life:.46,r:player.r+14});
+  }
+  if(hasSynergy("soulFurnace")&&payload.meta?.source==="regen"&&state.t-(skillRuntime.cooldowns.sig_soulFurnace||-99)>=1.5){
+    skillRuntime.cooldowns.sig_soulFurnace=state.t;
+    pushPowerSignatureV013("synergy",player.x,player.y,[VFX_COLORS.soul,VFX_COLORS.blood],{life:.52,r:player.r+13});
+  }
 });
 
 onSkillEvent("kill",payload=>{
+  const enemy=payload.enemy;if(!enemy)return;
+  if(hasSynergy("markedBounty")&&enemy.markedUntil>state.t){
+    pushPowerSignatureV013("synergy",enemy.x,enemy.y,[VFX_COLORS.mark,VFX_COLORS.xp],{life:.48,r:(enemy.r||10)+9});
+  }
+  if(hasSynergy("soulAegis")&&skillLevel("soulHarvest")){
+    pushPowerSignatureV013("synergy",player.x,player.y,[VFX_COLORS.soul,VFX_COLORS.shield],{life:.44,r:player.r+13});
+  }
   if(hasEvolution("crimsonMoon")&&skillLevel("blood")){
-    pushPowerSignatureV013("evolution",payload.enemy.x,payload.enemy.y,[VFX_COLORS.blood,"#f3b4cf"],{life:.55,r:(payload.enemy.r||10)+12,strong:true});
+    pushPowerSignatureV013("evolution",enemy.x,enemy.y,[VFX_COLORS.blood,"#f3b4cf"],{life:.55,r:(enemy.r||10)+12,strong:true});
   }
 });
 
