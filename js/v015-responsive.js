@@ -13,6 +13,7 @@
   const codexDetail=document.getElementById("codexDetail");
 
   let codexBack=null;
+  let layoutRaf=0;
   if(codexDetail){
     codexBack=document.createElement("button");
     codexBack.type="button";
@@ -43,6 +44,16 @@
       setTrackerOpen(false);
       setCodexDetailOpen(false);
     }
+  }
+
+  function requestLayoutSync(){
+    if(layoutRaf)return;
+    layoutRaf=requestAnimationFrame(()=>{
+      layoutRaf=0;
+      syncResponsiveState();
+      // Core resize is presentation-only and recalculates Canvas pixel dimensions.
+      if(typeof resize==="function")resize();
+    });
   }
 
   toggle.addEventListener("click",()=>setTrackerOpen(!tracker.classList.contains("mobileOpen")));
@@ -82,10 +93,20 @@
     }
   },true);
 
-  if(typeof compactQuery.addEventListener==="function")compactQuery.addEventListener("change",syncResponsiveState);
-  else if(typeof compactQuery.addListener==="function")compactQuery.addListener(syncResponsiveState);
-  addEventListener("orientationchange",()=>setTimeout(syncResponsiveState,80));
-  addEventListener("resize",syncResponsiveState,{passive:true});
+  // Mobile browsers do not always emit window blur reliably when switching apps/tabs.
+  document.addEventListener("visibilitychange",()=>{
+    if(!document.hidden)return;
+    if(typeof settings!=="undefined"&&settings.autoPause&&state.running&&!state.paused&&typeof openPause==="function")openPause();
+  });
+
+  if(typeof compactQuery.addEventListener==="function")compactQuery.addEventListener("change",requestLayoutSync);
+  else if(typeof compactQuery.addListener==="function")compactQuery.addListener(requestLayoutSync);
+  addEventListener("orientationchange",()=>setTimeout(requestLayoutSync,80));
+  addEventListener("resize",requestLayoutSync,{passive:true});
+  if(window.visualViewport){
+    visualViewport.addEventListener("resize",requestLayoutSync,{passive:true});
+    visualViewport.addEventListener("scroll",requestLayoutSync,{passive:true});
+  }
 
   setTrackerOpen(false);
   setCodexDetailOpen(false);
