@@ -432,3 +432,161 @@ button:focus-visible,.choice:focus-visible,.modeCard:focus-visible,.codexSkillCa
   .buildTracker.mobileOpen{opacity:1;visibility:visible;transform:none}
   .buildTrackerContent .buildLine:nth-child(n+4){display:flex}
 }
+
+/* Checkpoint 3 — level-up, menus, settings, results and leaderboard */
+#levelModal .modalCard{
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  overflow:hidden;
+}
+
+#levelModal .choices{
+  min-height:0;
+  max-height:min(64dvh,640px);
+  overflow:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  padding:2px;
+}
+
+.choice{
+  overflow-wrap:anywhere;
+}
+
+.leaderboardTable{
+  max-width:100%;
+}
+
+@media(max-width:700px){
+  #levelModal .modalCard{
+    max-height:calc(var(--app-height) - var(--safe-top) - var(--safe-bottom) - 12px);
+  }
+
+  #skillPickEyebrow{margin-bottom:5px}
+  #skillPickTitle{margin-bottom:5px}
+  #skillPickDescription{
+    margin:0 0 10px;
+    color:#aeb6c5;
+    font-size:11px;
+    line-height:1.4;
+  }
+
+  #levelModal .choices{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    width:100%;
+    max-height:none;
+    flex:1 1 auto;
+    padding:2px 3px 4px 2px;
+  }
+
+  #levelModal .choice{
+    min-height:0;
+    padding:11px 12px;
+    border-radius:12px;
+  }
+
+  #levelModal .choice .icon{font-size:24px}
+  #levelModal .choice h3{font-size:16px;margin:6px 0 4px}
+  #levelModal .choice .lvl{font-size:10px;margin-bottom:6px}
+  #levelModal .choice .desc{font-size:12px;line-height:1.42}
+  #levelModal .choice .tags{gap:4px;margin:5px 0 7px}
+  #levelModal .tagChip{font-size:8px;padding:3px 5px}
+  #levelModal .relationHint{font-size:9px;padding:6px 7px}
+
+  #pauseMenu .modalCard,#settingsMenu .menuCard,#howToMenu .menuCard,#resultModal .modalCard,#leaderboardMenu .menuCard{
+    overflow:auto;
+  }
+
+  .resultCard h2{font-size:clamp(28px,9vw,36px)}
+  .resultStats{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+    margin:16px 0;
+  }
+  .resultStats div{padding:9px 5px}
+  .resultStats b{font-size:15px}
+  .resultButtons{gap:8px}
+  .resultButtons button{min-height:44px}
+
+  .settingRow{
+    gap:12px;
+    padding:14px 0;
+    align-items:flex-start;
+  }
+  .settingRow>div{min-width:0}
+  .settingRow small{font-size:11px}
+  .settingRow .toggleButton{flex:0 0 76px;min-width:76px;min-height:44px;padding-inline:10px}
+
+  .howToList{font-size:13px}
+  .howToList p{padding:8px 0}
+
+  /* Preserve every leaderboard field instead of hiding columns on mobile. */
+  .leaderboardTable{
+    overflow-x:auto;
+    overflow-y:hidden;
+    overscroll-behavior-x:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+  .leaderRow{
+    min-width:540px;
+    grid-template-columns:48px 1.2fr 1fr 1fr 1fr;
+    gap:8px;
+    padding:10px 12px;
+  }
+  .leaderRow>*:nth-child(4),.leaderRow>*:nth-child(5){display:block}
+  .tabs{flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:3px}
+  .tabButton{flex:0 0 auto;min-height:40px}
+}
+
+@media(max-width:390px){
+  .resultButtons{grid-template-columns:1fr}
+  .screenHeader{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:start;
+  }
+  .screenHeader .backButton{font-size:11px;padding-inline:9px}
+}
+
+@media(max-height:520px) and (orientation:landscape){
+  #levelModal{
+    overflow:hidden;
+    align-items:center;
+  }
+  #levelModal .modalCard{
+    width:min(980px,100%);
+    height:calc(var(--app-height) - var(--safe-top) - var(--safe-bottom) - 10px);
+    max-height:calc(var(--app-height) - var(--safe-top) - var(--safe-bottom) - 10px);
+    margin:0;
+    padding:10px 12px;
+  }
+  #skillPickEyebrow{margin-bottom:2px}
+  #skillPickTitle{font-size:22px;margin-bottom:3px}
+  #skillPickDescription{font-size:10px;margin:0 0 7px}
+  #levelModal .choices{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:7px;
+    max-height:none;
+    flex:1 1 auto;
+    overflow:auto;
+  }
+  #levelModal .choice{min-height:0;padding:8px 9px}
+  #levelModal .choice .icon{font-size:20px}
+  #levelModal .choice h3{font-size:14px;margin:4px 0 3px}
+  #levelModal .choice .lvl{font-size:8px;margin-bottom:4px}
+  #levelModal .choice .desc{font-size:10px;line-height:1.3}
+  #levelModal .choice .tags{margin:4px 0 5px}
+  #levelModal .tagChip{font-size:7px;padding:3px 4px}
+  #levelModal .relationHint{font-size:8px;padding:4px 5px}
+
+  #pauseMenu .modalCard,#settingsMenu .menuCard,#howToMenu .menuCard,#resultModal .modalCard,#leaderboardMenu .menuCard{
+    max-height:calc(var(--app-height) - var(--safe-top) - var(--safe-bottom) - 10px);
+    overflow:auto;
+  }
+  .resultStats{margin:10px 0;grid-template-columns:repeat(5,minmax(0,1fr))}
+  .resultStats div{padding:7px 4px}
+  .resultButtons button{min-height:40px}
+}
