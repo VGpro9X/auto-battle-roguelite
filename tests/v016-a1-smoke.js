@@ -95,9 +95,10 @@ assert.strictEqual(mirrored[0].damage,16,'Level 1 Huyết Liên must mirror exac
 sandbox.resetSkillEngine();
 hitLog.length=0;state.projectiles.length=0;state.t=0;
 
-// Linh Châu: 8 actual healed HP charges one pearl; cap blocks banked overflow; fires after 2.2 s.
+// Linh Châu: model real acquisition event, charge from actual healing, respect cap, then fire at 2.2 s.
 owned.spiritPearl=1;
 state.enemies=[{x:180,y:100,hp:100,maxHp:100,dead:false,r:12}];
+emit('skill_selected',{key:'spiritPearl',level:1});
 emit('heal',{amount:8,meta:{source:'test'}});
 assert.strictEqual(state.v016A1.pearls,1,'8 healing must charge one pearl');
 emit('heal',{amount:20,meta:{source:'test'}});
