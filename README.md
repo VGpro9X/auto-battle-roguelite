@@ -1,8 +1,8 @@
 # Auto Battle Roguelite
 
-Current master version: **V0.9 – Skill Engine Foundation**
+Current master version: **V0.10 – Synergy Clarity & Pool Expansion**
 
-A browser-based auto-battle survival roguelite prototype.
+A browser-based auto-battle survival roguelite prototype built around unrestricted cross-archetype skill combinations.
 
 ## Current game modes
 - 5 minutes — 3 unique starter skill picks
@@ -11,57 +11,78 @@ A browser-based auto-battle survival roguelite prototype.
 - 20 minutes — 1 starter skill pick
 - Endless — 1 starter skill pick, difficulty scales without a fixed end
 
-Timed modes end in Victory when the countdown reaches zero. Endless ends on death and records survival time.
-
 ## Movement AI
-- Two-layer autonomous movement: strategic zone planning + tactical context steering
-- Strategic modes: harvest XP, kite, emergency escape and patrol
-- Stable patrol fallback for low-pressure moments
-- XP evaluated as spatial clusters
-- Strong center/open-space preference with explicit corner/edge penalties
-- Multi-horizon committed emergency escape routing from V0.8 remains unchanged in V0.9
+- V0.8 strategic zone planning + tactical context steering remains the movement baseline
+- Harvest, kite, committed emergency escape and patrol modes
+- XP clusters, open-space preference, edge/corner penalties and multi-horizon escape routing
 
-## V0.9 skill architecture
-- 40 base skills across attack, projectile, fire, ice, lightning, poison, blood, summon, defense, movement, XP, time, mark, soul, random and rule-changing archetypes
-- Skills can have multiple tags; there is no class restriction
-- Event bus for `attack`, `hit`, `kill`, `damage_taken`, `heal`, `xp_collected`, `level_up`, `periodic` and future triggers
-- Periodic skills use a shared scheduler instead of hard-coded game-loop blocks
-- Level-up offers are still random but become build-aware: upgrades, new skills and synergy-weighted candidates are mixed when possible
-- 8 automatic synergies in the first synergy set
-- 4 first evolutions with max-level + tag requirements
-- Risk/reward rule-changing skills such as Glass Cannon, Greed and Overclock
-- Status engine for poison, burn, chill and marks
-- Shield, dodge, ricochet, chain, AoE, on-kill, on-damage-taken, heal-trigger and XP-charge mechanics
+## V0.10 skill system
+- **64 base skills** with no class restriction
+- **20 automatic synergies**
+- **8 evolutions**
+- Tags span attack, projectile, crit, fire, ice, lightning, poison, blood, summon, shield, XP, mark, soul, time, random, risk, kill, hit, area, chain, control and more
+- Shared event bus for attack, hit, kill, damage taken, heal, dodge, shield break, revive, XP collection, level up and periodic triggers
+- Shared periodic scheduler for timed skills
+- Build-aware random level-up choices
+- MAX skills and evolved bases are explicitly excluded from the level-up pool
+- UI guard also blocks forced selection of MAX/evolved skills
 
-## First synergies
-- Thermal Shock — Fire + Frost
-- Blood Conductor — Blood + Lightning
-- Arc Collector — Magnet + Lightning
-- Explosive Blades — Orbit + Explosive
-- Toxic Flame — Poison + Burn
-- Storm Volley — Multishot + Lightning
-- Soul Furnace — Soul Harvest + Blood
-- Time Loop — Time Echo + Overclock
+## Build clarity
+- Level-up cards show skill tags
+- Cards can show `MỞ SYNERGY`, `KẾT HỢP` and `HỖ TRỢ EVOLVE` hints
+- A persistent `BUILD SYNERGY` tracker shows unlocked synergies/evolutions and near-complete recipes
+- Synergy/evolution unlocks use queued on-screen banners so simultaneous unlocks are not lost
+- Skill bar labels skills as MAX or EVOLVED
 
-## First evolutions
-- Heavenfire — max Fireball + Fire/Explosion tag requirements
-- Storm Network — max Lightning + Lightning/Chain tag requirements
-- Sword Domain — max Orbit + Summon tag requirements
-- Plague Tide — max Poison + DOT/Kill tag requirements
+## Expanded V0.10 mechanics
+New archetypes include critical-damage specialization, elite hunting, on-hit lifesteal, kill-to-shield, chilled-target amplification, shatter explosions, poison-to-lightning conduction, burning-corpse explosions, attack echoes, point-blank scaling, area mastery, summon mastery, elemental mastery, spreading marks, shield-break nova, XP healing, level-up nova, sacrificial periodic blasts, marked-target bonus XP, projectile velocity/range scaling, gravity wells, chain mastery, random lucky effects and limited revives.
+
+## Synergy set
+Existing V0.9 synergies remain, plus:
+- Hàn Sát — Frostbite + Execution
+- Huyết Thành — Blood Shield + Barrier
+- Lôi Độc — Conductive Venom + Lightning
+- Liên Hoàn Hỏa Táng — Combustion + Corpse Burst
+- Vạn Ảnh Tiễn — Echo Shot + Multishot
+- Huyết Kính — Glass Cannon + Vampiric Touch
+- Trọng Lực Bạo — Black Hole + Nova
+- Săn Ấn — Death Mark + Bounty Mark
+- Ngũ Hành Hỗn Mang — Chaos Orb + Elemental Mastery
+- Hồn Thuẫn — Soul Harvest + Blood Shield
+- Bạo Lôi — Crit + Lightning
+- Hồi Quang — Last Stand + Second Wind
+
+## Evolutions
+Existing evolutions remain, plus:
+- Huyết Nguyệt — Blood
+- Kỳ Điểm — Black Hole
+- Hỗn Mang Vương Miện — Chaos Orb
+- Bất Diệt Thuẫn — Barrier
+
+## Validation performed for V0.10
+- JavaScript syntax checks for all modified modules
+- Definition validation: every synergy references existing skills and every evolution requirement is reachable
+- 500 repeated rolls verify MAX/evolved Fire never returns to level-up choices
+- 250 randomized build states verify no invalid MAX/evolved choice is returned
+- Direct UI guard test verifies forced selection cannot level a MAX skill
+- Every one of the 20 synergies is programmatically unlocked from its declared requirements
+- Every one of the 8 evolutions is programmatically unlocked and its base is then excluded from choices
+- Representative mechanic tests cover lifesteal, kill-to-shield, marked XP bonus, echo multishot and revival
+- Dense combat smoke test runs multiple new mechanics and synergies together
 
 ## Project structure
-- `index.html` — screens and game shell
-- `css/game.css` — interface and prototype visuals
-- `js/core.js` — canvas, shared state and player base/build stats
-- `js/modes.js` — game mode rules, starter picks and difficulty curves
-- `js/leaderboard.js` — local records and settings persistence
-- `js/skills.js` — base skill definitions, tags and periodic effect declarations
-- `js/skill-engine.js` — event bus, shared periodic scheduler, choice weighting and build unlock evaluation
-- `js/synergies.js` — synergy and evolution definitions/hooks
-- `js/combat.js` — enemies, projectiles, damage, statuses and combat events
-- `js/movement.js` — strategic movement planner, patrol, kite and committed emergency escape routing
-- `js/ui.js` — menus, run lifecycle, skill pick, synergy display and results
-- `js/game.js` — main update/draw loop and runtime integration
+- `index.html` — game shell and build-feedback UI
+- `css/game.css` — prototype visuals, synergy tracker, unlock banners and level-up hints
+- `js/core.js` — shared state and player build stats
+- `js/modes.js` — mode rules and difficulty curves
+- `js/leaderboard.js` — local records/settings
+- `js/skills.js` — 64 base skill definitions and tags
+- `js/skill-engine.js` — event bus, periodic scheduler, choice rules, requirement progress and unlock evaluation
+- `js/synergies.js` — 20 synergy definitions and 8 evolution definitions/hooks
+- `js/combat.js` — damage, statuses, projectiles, shields, revival and XP drops
+- `js/movement.js` — V0.8 strategic/tactical movement AI
+- `js/ui.js` — menus, level-up choices, build tracker and unlock banners
+- `js/game.js` — main update/draw loop
 
 ## Development rule
 GitHub is the master source. Chat previews and packaged builds are test/checkpoint artifacts.
