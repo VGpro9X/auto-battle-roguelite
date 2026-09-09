@@ -9,7 +9,7 @@
     fireWisp:{maxRank:3,tags:["SUMMON","FIRE","ELEMENTAL","PERIODIC"],rangeBias:.85,meleeBias:.15,summonBias:1,desc:r=>`Linh Hỏa tự bắn đối thủ mỗi ${[2.4,1.9,1.4][r-1].toFixed(1)} giây nếu ở trong 520px, gây ${[7,11,16][r-1]} sát thương Hỏa. Ngoài tầm sẽ thử lại sau 0,5 giây.`},
     stormTotem:{maxRank:3,tags:["SUMMON","LIGHTNING","ELEMENTAL","PERIODIC"],rangeBias:.75,meleeBias:.15,summonBias:1,desc:r=>`Lôi Linh đánh sét mỗi ${[4,3.2,2.5][r-1].toFixed(1)} giây nếu đối thủ trong 420px, gây ${[14,23,34][r-1]} sát thương Sét. Ngoài tầm sẽ thử lại sau 0,5 giây.`},
     strideShock:{maxRank:3,tags:["MOVEMENT","AREA","CONTROL"],rangeBias:0,meleeBias:.8,mobilityBias:.9,controlBias:.5,desc:r=>`Sau mỗi ${[220,180,145][r-1]}px thực sự di chuyển, phát chấn sóng bán kính ${[90,115,140][r-1]}px, gây ${[14,24,36][r-1]} sát thương và đẩy lùi ${[25,40,55][r-1]}px nếu đối thủ ở trong vùng. Quãng đường dư được giữ lại.`},
-    returnBlade:{maxRank:3,tags:["PROJECTILE","PIERCE","PERIODIC"],rangeBias:.9,meleeBias:.15,desc:r=>`Mỗi ${[5,4.1,3.3][r-1].toFixed(1)} giây ném Hồi Phong Nhận về vị trí đối thủ lúc thi triển rồi quay lại. Mỗi lượt bay ra và bay về có thể trúng đối thủ tối đa 1 lần, mỗi lần gây ${[16,25,36][r-1]} sát thương.`},
+    returnBlade:{maxRank:3,tags:["PROJECTILE","PIERCE","PERIODIC"],rangeBias:.9,meleeBias:.15,desc:r=>`Mỗi ${[5,4.1,3.3][r-1].toFixed(1)} giây ném Hồi Phong Nhận về vị trí đối thủ lúc thi triển rồi quay lại. Mỗi lượt bay ra và bay về có thể trúng đối thủ tối đa 1 lần, mỗi lần gây ${[16,25,36][r-1]} sát thương. Lưỡi đao có vùng va chạm 24px.`},
     frostMirror:{maxRank:3,tags:["ICE","DEFENSE","CONTROL","PERIODIC"],rangeBias:0,meleeBias:.35,defenseBias:1,controlBias:.55,desc:r=>`Sau mỗi ${[9,7.5,6][r-1].toFixed(1)} giây nhận 1 Hàn Kính, tối đa 1. Đòn đánh thường cận chiến tiếp theo tiêu hao Kính, giảm ${[45,60,75][r-1]}% sát thương của đòn đó và làm kẻ tấn công khựng ${[0.25,0.35,0.45][r-1].toFixed(2)} giây. Kính đầu tiên phải chờ đủ hồi chiêu.`},
     timeField:{maxRank:3,tags:["TIME","PERIODIC","RULE"],rangeBias:.3,meleeBias:.25,desc:r=>`Mỗi 14 giây mở Thời Vực trong ${[3,4,5][r-1]} giây. Trong thời gian này, mọi bộ đếm hồi chiêu kỹ năng khác của bạn trôi nhanh thêm ${[35,50,65][r-1]}%; không tăng tốc đòn đánh thường hay lướt.`},
     bloodShield:{maxRank:3,tags:["BLOOD","SHIELD","DEFENSE"],rangeBias:0,meleeBias:.35,defenseBias:.95,desc:r=>`Trong Đấu Trường, bắt đầu mỗi round với ${[8,14,22][r-1]} khiên Huyết Thuẫn. Không có nguồn khiên bổ sung ẩn trong round.`}
@@ -27,13 +27,14 @@
     fireWisp:{cooldown:[2.4,1.9,1.4],damage:[7,11,16],range:520,retry:.5},
     stormTotem:{cooldown:[4,3.2,2.5],damage:[14,23,34],range:420,retry:.5},
     strideShock:{distance:[220,180,145],radius:[90,115,140],damage:[14,24,36],push:[25,40,55]},
-    returnBlade:{cooldown:[5,4.1,3.3],damage:[16,25,36],speed:420},
+    returnBlade:{cooldown:[5,4.1,3.3],damage:[16,25,36],speed:420,hitRadius:24},
     frostMirror:{cooldown:[9,7.5,6],reduction:[.45,.60,.75],stun:[.25,.35,.45]},
     timeField:{cooldown:14,duration:[3,4,5],acceleration:[.35,.50,.65]},
     bloodShield:{shield:[8,14,22]}
   };
   const at=(table,rank)=>table[Math.max(0,Math.min(table.length-1,rank-1))];
   const crossed=(a,b,x)=>x>=Math.min(a,b)&&x<=Math.max(a,b);
+  const segmentNear=(a,b,x,radius)=>x>=Math.min(a,b)-radius&&x<=Math.max(a,b)+radius;
 
   registerDuelSkillBehavior("precision",{
     modifyStats:({stats,rank})=>{stats.critMultiplier+=at(VALUES.precision.critDamage,rank);}
@@ -106,19 +107,36 @@
     onCreate:({fighter,rank})=>{fighter.skillTimers.returnBlade=at(VALUES.returnBlade.cooldown,rank);fighter.duelEffects.returnBlades=[];},
     update:({round,fighter,other,dt,rank,dealDamage,emit})=>{
       let blades=fighter.duelEffects.returnBlades||[];
-      if((fighter.skillTimers.returnBlade??0)<=0&&other?.hp>0){fighter.skillTimers.returnBlade=at(VALUES.returnBlade.cooldown,rank);blades.push({x:fighter.x,targetX:other.x,phase:"out",outHit:false,returnHit:false,until:round.time+3});emit("cast",{side:fighter.side,skill:"returnBlade",x:fighter.x,y:fighter.y-78});}
+      if((fighter.skillTimers.returnBlade??0)<=0&&other?.hp>0){
+        fighter.skillTimers.returnBlade=at(VALUES.returnBlade.cooldown,rank);
+        blades.push({x:fighter.x,targetX:other.x,phase:"out",outHit:false,returnHit:false,until:round.time+3});
+        emit("cast",{side:fighter.side,skill:"returnBlade",x:fighter.x,y:fighter.y-78});
+      }
       const kept=[];
       for(const blade of blades){
         if(round.time>=blade.until)continue;
         const oldX=blade.x;
         if(blade.phase==="out"){
-          const dir=Math.sign(blade.targetX-blade.x)||fighter.facing;blade.x+=dir*VALUES.returnBlade.speed*dt;
-          if(!blade.outHit&&other?.hp>0&&crossed(oldX,blade.x,other.x)){blade.outHit=true;dealDamage(fighter,other,at(VALUES.returnBlade.damage,rank),{source:"returnBlade",canCrit:true,dodgeable:true});}
-          if(crossed(oldX,blade.x,blade.targetX)||Math.abs(blade.x-blade.targetX)<8){blade.x=blade.targetX;blade.phase="return";}
+          const dir=Math.sign(blade.targetX-blade.x)||fighter.facing;
+          const rawNext=blade.x+dir*VALUES.returnBlade.speed*dt;
+          const reached=dir>0?rawNext>=blade.targetX:rawNext<=blade.targetX;
+          blade.x=reached?blade.targetX:rawNext;
+          if(!blade.outHit&&other?.hp>0&&segmentNear(oldX,blade.x,other.x,VALUES.returnBlade.hitRadius)){
+            blade.outHit=true;
+            dealDamage(fighter,other,at(VALUES.returnBlade.damage,rank),{source:"returnBlade",canCrit:true,dodgeable:true});
+          }
+          if(reached)blade.phase="return";
         }else{
-          const tx=fighter.x,dir=Math.sign(tx-blade.x)||-fighter.facing;blade.x+=dir*VALUES.returnBlade.speed*dt;
-          if(!blade.returnHit&&other?.hp>0&&crossed(oldX,blade.x,other.x)){blade.returnHit=true;dealDamage(fighter,other,at(VALUES.returnBlade.damage,rank),{source:"returnBlade",canCrit:true,dodgeable:true});}
-          if(crossed(oldX,blade.x,tx)||Math.abs(blade.x-tx)<8)continue;
+          const tx=fighter.x;
+          const dir=Math.sign(tx-blade.x)||-fighter.facing;
+          const rawNext=blade.x+dir*VALUES.returnBlade.speed*dt;
+          const reached=dir>0?rawNext>=tx:rawNext<=tx;
+          blade.x=reached?tx:rawNext;
+          if(!blade.returnHit&&other?.hp>0&&segmentNear(oldX,blade.x,other.x,VALUES.returnBlade.hitRadius)){
+            blade.returnHit=true;
+            dealDamage(fighter,other,at(VALUES.returnBlade.damage,rank),{source:"returnBlade",canCrit:true,dodgeable:true});
+          }
+          if(reached)continue;
         }
         kept.push(blade);
       }
