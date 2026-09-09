@@ -40,9 +40,9 @@ Current Thần Bí Kỹ:
 - Hư Thực
 - Thế Mệnh
 
-## V0.16 run-system changes already live
+## V0.16 run systems
 ### Multiple rare rules per run
-The old one-rare-per-run limit is removed. Different Thần Kỹ/Thần Bí Kỹ can coexist; duplicates cannot.
+Different Thần Kỹ/Thần Bí Kỹ can coexist; duplicates cannot.
 
 ### Rare chance scales with level
 Per normal level-up roll:
@@ -62,10 +62,8 @@ Every starter/level-up screen has exactly one **XOAY LẠI**:
 - cannot be refreshed on the same screen
 - does not carry over
 
-The exact current rare chance is shown on the level-up screen and documented in Cách chơi.
-
 ### Vô Hạn guaranteed starting rare
-Every Vô Hạn run now:
+Every Vô Hạn run:
 1. uniformly grants exactly one random rare from the full 20-skill pool
 2. shows a dedicated reveal with tier/icon/name/exact description
 3. continues to exactly one normal starter Kỹ Năng after acknowledgement
@@ -85,7 +83,7 @@ The Vô Hạn mode card and Cách chơi disclose this rule.
 - Choice-card relation hints only appear when that exact choice immediately completes a Hợp Đạo Kỹ or Siêu Cấp.
 - Executable test harnesses stay under `tests/`; Pages deploys only `index.html`, `css/`, `js/`.
 
-## V0.16 completed development
+## V0.16 completed content
 ### 16 new base Kỹ Năng — COMPLETE
 A1: Dư Ảnh, Địa Lôi Phù, Huyết Liên, Linh Châu.  
 A2: Bộ Pháp Chấn, Trói Hồn, Hồi Phong Nhận, Tinh Vẫn.  
@@ -105,7 +103,7 @@ B2:
 - Thiên Hỏa Tinh Vẫn
 - Hộ Pháp Phản Chấn
 
-The combined registry is CI-gated at exactly **28 unique Hợp Đạo Kỹ** and both B modules load before Codex.
+The combined registry is CI-gated at exactly **28 unique Hợp Đạo Kỹ**.
 
 ### 4 new Siêu Cấp — COMPLETE
 - Vạn Ảnh Phân Thân
@@ -113,23 +111,39 @@ The combined registry is CI-gated at exactly **28 unique Hợp Đạo Kỹ** and
 - Huyết Võng
 - Tinh Hà Trụy Lạc
 
-The public registry is CI-gated at exactly **12 Siêu Cấp**. The new evolutions preserve their already-unlocked Hợp Đạo interactions and have dedicated live/Codex identities.
+The public registry is CI-gated at exactly **12 Siêu Cấp**. Matching Hợp Đạo interactions remain active after evolution.
 
-### Rare System V2 — COMPLETE at mechanic level
+### Rare System V2 — COMPLETE
 - 20 unique rare rules are implemented and registered before Codex.
 - Current public script chain is tested to produce exactly 10 Thần Kỹ + 10 Thần Bí Kỹ.
 - Reroll, level-scaled rare chance, duplicate prevention and multi-rare ownership are CI-gated.
 
-Dedicated visual polish for every new rare remains part of the final V0.16 VFX/Codex audit.
+## V0.16 final automated audit — COMPLETE
+### Codex / rare VFX
+`js/v016-rare-vfx.js` gives all 20 rare rules dedicated Codex preview coverage and live feedback coverage. The original four retain their V0.13 bespoke live cues; the 16 V0.16 additions receive dedicated trigger/persistent feedback in the final audit layer.
 
-## Immediate next checkpoint
-Full V0.16 audit and release validation:
-- Codex count/representation audit
-- dedicated VFX/live feedback audit for all 20 rare rules
-- mechanical-truth audit for cooldowns/caps/stack/target limits
-- repeated rare-rate and Vô Hạn-start simulations
-- dense late-game stress test
-- phone + desktop real-device verification
+### Mechanical truth
+A hidden generic failed-rare retry interval was found during audit and removed. Failed periodic rare activations now wait the stated normal cooldown unless that specific rare explicitly declares a retry cooldown. Thế Mệnh explicitly declares `retryCooldown: 1.25`, matching its Vietnamese description.
+
+### Automated balance / stress
+Deterministic CI currently reports:
+- synthetic one-roll-per-level Lv8–60 model: **4.58 rare successes/run average** before duplicate/pool exhaustion
+- 400,000 Vô Hạn starting-rare samples: **1.07% maximum slot-frequency drift** across 20 slots
+- all 20 dedicated rare previews execute through their own preview path
+- live/persistent rare VFX passes a 360-frame synthetic stress/pruning test
+
+These are implementation-consistency checks, not final fun/difficulty judgments.
+
+## Remaining V0.16 release gate
+Only hands-on browser/device validation remains before changing the visible/runtime label from `V0.16 DEV` to final `V0.16`:
+- desktop playtest
+- phone/tablet playtest
+- dense late-game FPS/readability judgment
+- actual touch/layout judgment
+- visual inspection of all 140 Codex entries and 20 rare previews
+- difficult layered-mechanic spot checks
+
+Use `V016_RELEASE_VALIDATION.md` for the exact checklist.
 
 ## CI
 Before every Pages deploy, GitHub Actions checks:
@@ -143,10 +157,14 @@ Before every Pages deploy, GitHub Actions checks:
 - Hợp Đạo B1/B2 mechanics and combined registry = 28
 - Siêu Cấp C1 mechanics and combined registry = 12
 - Vô Hạn guaranteed starting rare flow and public script order
+- final 140-entry content/mechanical-truth audit
+- deterministic rare-rate balance simulation
+- 20-rare VFX runtime stress
 
 ## Project continuity
 - `PROJECT_HANDOFF.md`
 - `ROADMAP.md`
+- `V016_RELEASE_VALIDATION.md`
 - `V015_STATUS.md`
 - `V016_SKILL_DESIGN.md`
 - `V016_RARE_SYSTEM_V2.md`
