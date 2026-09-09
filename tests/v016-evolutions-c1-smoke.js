@@ -77,7 +77,9 @@ for(let i=0;i<9;i++){player.x=i*10;skills.runeMine.periodic.execute(5);}
 assert.strictEqual(state.v016A1.mines.length,8,'Heaven Net active mine cap must be exactly 8');
 
 const oldMine={x:0,y:0,level:5,createdAt:9,armedAt:9,expiresAt:30,dead:false};
-state.v016A1.mines=[oldMine,{x:80,y:0,level:5,createdAt:9.1,armedAt:9,expiresAt:30,dead:false,heavenNet:true,chainAt:null,chainScale:1}];
+// 110px stays inside the 120px chain radius but outside this Lv5 rune's natural
+// 75px trigger radius + 10px enemy radius, so the test isolates the 0.12s chain path.
+state.v016A1.mines=[oldMine,{x:110,y:0,level:5,createdAt:9.1,armedAt:9,expiresAt:30,dead:false,heavenNet:true,chainAt:null,chainScale:1}];
 context.emitSkillEvent('build_unlock',{kind:'evolution',item:{id:'heavenNet'}});
 assert.strictEqual(oldMine.chainAt,null,'Pre-evolution mine must be normalized into the chain system');
 const triggerEnemy={x:20,y:0,r:10,hp:1000,dead:false};state.enemies=[triggerEnemy];hitLog.length=0;
