@@ -54,6 +54,9 @@ jobs:
       - name: V0.16 12-rare content smoke test
         run: node tests/v016-rare-content-smoke.js
 
+      - name: V0.16 final 20-rare mechanics smoke test
+        run: node tests/v016-rare-final-smoke.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
