@@ -1,6 +1,6 @@
 # V0.16 Release Validation
 
-GitHub `main` is canonical. This document separates automated/code evidence, exact Pages-artifact browser validation, and the final physical-device judgment still required before changing the visible/runtime label from `V0.16 DEV` to final `V0.16`.
+GitHub `main` is canonical. V0.16 has passed automated/code validation, exact Pages-artifact browser validation, and final hands-on user sign-off.
 
 ## Release content target — PASS
 - 80 Kỹ Năng
@@ -10,7 +10,7 @@ GitHub `main` is canonical. This document separates automated/code evidence, exa
 - 140 Codex entries
 
 ## Automated CI — PASS
-The Pages workflow currently gates all of the following before deployment:
+The Pages workflow gates all of the following before deployment:
 - JavaScript syntax across `js/` and `tests/`
 - A1/A2/A3/A4 mechanics
 - 80-skill public integration
@@ -34,7 +34,7 @@ Latest audited deterministic sample:
 
 These figures validate implementation consistency, not final difficulty or fun balance.
 
-## Mechanical-truth audit — PASS at code/CI level
+## Mechanical-truth audit — PASS
 - no global hidden rare retry interval remains
 - failed periodic rare activations use their stated cooldown unless the rare explicitly declares a retry cooldown
 - Thế Mệnh explicitly declares and describes its 1.25s retry when no valid target exists
@@ -42,29 +42,29 @@ These figures validate implementation consistency, not final difficulty or fun b
 - partial build progress remains in `BỘ KỸ NĂNG & LIÊN KẾT`
 - V0.8 Strategic Movement AI remains untouched
 
-### Layered rare ordering now locked by CI
+### Layered rare ordering locked by CI
 The integration test uses the real public rare-module order and confirms:
 - Mua Chuộc ally is ignored by Thời Đình while hostile enemies freeze, then reverts after the 5s allied window
 - Thiên Ấn checks dodge before consuming its per-enemy 12s block cooldown
 - armed Đảo Nhân Quả resolves before Nợ Máu, Ký Sinh and Thế Mệnh, so an inverted hit creates no debt/redirect/scapegoat consumption
 - with Nợ Máu + Ký Sinh + Thế Mệnh, shield resolves first, Ký Sinh redirects 30% of remaining HP damage, Nợ Máu defers half of the remainder, then Thế Mệnh intercepts lethal immediate damage
-- if Thế Mệnh dies in that interaction, its death legitimately counts as an enemy kill and therefore clears 15% of the current Nợ Máu, exactly as Nợ Máu's description states
+- if Thế Mệnh dies in that interaction, its death counts as an enemy kill and clears 15% of the current Nợ Máu, matching Nợ Máu's description
 - Bất Tử Nhất Tức remains the final once-per-run lethal safety net when no earlier rule prevents death
 
 ## Rare visual audit — PASS in actual browser runtime
 A headless Chromium run against the **exact generated GitHub Pages artifact** found one real integration bug that static CI had missed: the old V0.12 Visual Bridge loaded after the first V0.16 rare preview wrapper and replaced it, causing many new rare entries to fall back to the generic purple-star preview.
 
-That runtime-order bug is fixed. `js/v016-rare-vfx.js?v=016dev-audit-r2` now loads as the final visual wrapper after Codex definitions, Visual Bridge and V0.13 rule feedback. The CI audit now enforces this exact order.
+That runtime-order bug is fixed. `js/v016-rare-vfx.js?v=016dev-audit-r2` loads as the final visual wrapper after Codex definitions, Visual Bridge and V0.13 rule feedback. The CI audit enforces this exact order.
 
 Post-fix browser verification:
 - **140** actual Codex cards/canvases present
 - exact split: 80 skill / 28 Hợp Đạo / 12 Siêu Cấp / 10 Thần Kỹ / 10 Thần Bí Kỹ
 - all **20 rare previews produce 20 distinct rendered pixel hashes** at the same timestamp
 - visual contact-sheet inspection shows each rare uses a recognizable mechanic-specific composition rather than the old generic-star fallback
-- zero JavaScript page exceptions and zero console errors during the tested flows
+- zero JavaScript page exceptions and zero console errors during tested flows
 
 ## Exact Pages-artifact browser validation — PASS
-Chromium executed the generated Pages artifact itself (not a separate development bundle).
+Chromium executed the generated Pages artifact itself.
 
 ### Desktop viewport 1440×1000
 - main menu starts correctly; runtime registry = 80 / 28 / 12 / 20
@@ -81,7 +81,7 @@ Two draw-only stress scenes were used to isolate rendering cost from AI/combat s
 - 350 shipped enemy objects: about **3.99 ms/draw** over 120 draws in the headless environment
 - 240 enemies deliberately positioned on-screen + 199 representative combat VFX + all 20 rare rules owned: about **3.46 ms/draw** over 120 draws
 
-These times are **not real-device FPS claims**. They are only regression indicators showing the current draw path remains comfortably below a 16.7ms/frame budget in this headless environment.
+These times are **not real-device FPS claims**.
 
 ### Mobile portrait viewport 390×844
 - main menu: no page-level horizontal overflow
@@ -98,33 +98,14 @@ These times are **not real-device FPS claims**. They are only regression indicat
 - pause modal remains fully inside the viewport
 - pause controls stay visible
 
-Again, viewport emulation validates layout/runtime behavior but is not a substitute for physical touch ergonomics, browser chrome/safe-area variation or hardware FPS.
+## Hands-on user sign-off — PASS
+The user tested the current public release candidate and reported it was stable/acceptable with no blocking issue. This closes the final human/device release gate.
 
-## Remaining physical-device validation — REQUIRED BEFORE V0.16 RELEASE
-Only the human/physical-device judgment remains. Automated and headless-browser checks cannot fully judge feel, actual touch comfort, hardware-specific emoji/font rendering, browser safe areas or real-device FPS.
+The release is promoted from `V0.16 DEV` to final **V0.16**.
 
-### Desktop / PC
-- Play at least one normal run long enough to judge late-game readability and pacing, ideally a 10-minute run.
-- Confirm movement still feels like the accepted V0.8 behavior.
-- Check whether dense damage/status/VFX information feels readable rather than merely technically renderable.
-- Spot-check a few rare previews in the live Bách Khoa to confirm they look good on the actual display/font stack.
+## Release decision — PASS
+V0.16 is released.
 
-### Phone / tablet
-- Open the current GitHub Pages build on one real phone/tablet.
-- Check portrait; landscape too if the browser allows rotation.
-- Tap main menu, mode menu, Bách Khoa, Vô Hạn reveal, starter cards, reroll, pause and result screen.
-- Confirm touch targets feel comfortable and no control sits under browser chrome/safe areas.
-- Play into a reasonably dense wave and judge hardware FPS/VFX coverage.
-- Confirm no remaining emoji/font renders as a square/tofu box on that device.
+Any future issue found in normal play should be handled as a post-release bug/balance fix rather than reopening the completed V0.16 content milestone.
 
-### Mechanics spot-check already covered by CI
-The highest-risk rule ordering is now automated:
-- Mua Chuộc conversion/reversion + Thời Đình ally exclusion
-- Thiên Ấn dodge-before-block
-- Đảo Nhân Quả priority over later HP rules
-- Nợ Máu + Ký Sinh + Thế Mệnh combined defensive ordering
-- Bất Tử Nhất Tức lethal interception
-- all four new Siêu Cấp retain their matching Hợp Đạo interactions in C1 CI tests
-
-## Release decision
-Do not rename the public build from `V0.16 DEV` to final `V0.16` until the short physical-device check above has no blocking issue. If a visual/readability problem appears, prefer VFX frequency/alpha/layout tuning over mechanic changes unless the mechanic itself is wrong.
+Next phase: run the focused balance pass defined in `ROADMAP.md` before another major content expansion.
