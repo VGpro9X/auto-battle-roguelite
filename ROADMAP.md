@@ -14,6 +14,7 @@ Read before V0.16 work:
 1. `PROJECT_HANDOFF.md`
 2. `V016_SKILL_DESIGN.md`
 3. `V016_RARE_SYSTEM_V2.md`
+4. `V016_RELEASE_VALIDATION.md`
 
 ---
 
@@ -22,7 +23,7 @@ Responsive phone/tablet/desktop UI was accepted by the user on GitHub Pages.
 
 ---
 
-# V0.16 — ACTIVE, CONTENT COMPLETE
+# V0.16 — ACTIVE, CONTENT + AUTOMATED AUDIT COMPLETE
 ## Final quality target
 - Base Kỹ Năng: **64 → 80** ✅
 - Hợp Đạo Kỹ: **20 → 28** ✅
@@ -74,8 +75,8 @@ All are behavior-changing interactions with explicit source routing, live/Codex 
 
 C1 mechanics preserve the matching Hợp Đạo interactions and are CI-gated. Public integration asserts exactly **12 Siêu Cấp**.
 
-## Checkpoint 5 — 20 rare rules — COMPLETE at mechanic level
-Original 4 + 16 new rare rules are implemented. Dedicated bespoke visual audit remains in Checkpoint 7.
+## Checkpoint 5 — 20 rare rules — COMPLETE
+Original 4 + 16 new rare rules are implemented. Rare mechanics, multi-rare ownership and public 10+10 registry are CI-gated.
 
 ## Checkpoint 6 — Vô Hạn guaranteed starting rare — COMPLETE
 Vô Hạn now:
@@ -87,22 +88,40 @@ Vô Hạn now:
 
 The mode card and Cách chơi disclose the rule. CI validates equal interval mapping across all 20 candidates, reveal-before-starter ordering and public script order.
 
-## Checkpoint 7 — Codex / VFX / mechanical-truth audit — ACTIVE NEXT
-- all 140 entries represented
-- every rare has dedicated preview/live feedback
-- every cooldown/cap/stack/target limit disclosed
-- cross-platform icon audit
-- final-piece-only relation-hint regression check
+## Checkpoint 7 — Codex / VFX / mechanical-truth audit — COMPLETE at code/CI level
+- all 140 entries represented ✅
+- all 20 rare rules have dedicated Codex preview coverage ✅
+- all 20 rare rules have live feedback coverage ✅
+- original four rare live cues remain from V0.13; V0.16 additions use `js/v016-rare-vfx.js` ✅
+- hidden generic rare retry timing removed ✅
+- only explicitly disclosed retry rules are allowed; Thế Mệnh declares `retryCooldown: 1.25` matching its description ✅
+- public script order/cache keys audited ✅
+- tests are excluded from Pages artifact ✅
+- final-piece-only relation-hint regression gate passes ✅
 
-## Checkpoint 8 — Balance / stress / device validation
-- repeated rare-rate simulations
-- repeated Vô Hạn starts
-- dense VFX on phone and desktop
-- reroll flow on starter and normal level-ups
-- final GitHub Pages real-device test
+## Checkpoint 8 — Balance / stress / device validation — AUTOMATED PART COMPLETE, HANDS-ON PENDING
+Automated release gates now include:
+- deterministic rare-rate simulation ✅
+- 400,000-sample Vô Hạn 20-way uniformity simulation ✅
+- 20 dedicated rare preview runtime stress ✅
+- rare live/persistent VFX 360-frame stress/pruning test ✅
+- full Pages deployment after every gate ✅
+
+Latest deterministic sample reported:
+- Lv8–60 synthetic one-roll-per-level model: **4.58 rare successes/run average** before duplicate/pool exhaustion
+- Vô Hạn 20-way starting rare: **1.07% maximum slot-frequency drift**
+
+Remaining before renaming `V0.16 DEV` to final `V0.16`:
+- desktop browser hands-on playtest
+- phone/tablet hands-on playtest
+- dense late-game visual/FPS judgment
+- real touch/layout judgment
+- spot-check difficult layered mechanics
+
+Exact checklist: `V016_RELEASE_VALIDATION.md`.
 
 ## V0.16 release gate
-Every shipped mechanic needs truthful Vietnamese description, live feedback, Codex representation where applicable, syntax/runtime validation and at least one mechanic exercise.
+Do not rename the public build to final `V0.16` until the hands-on checklist is clear. Every shipped mechanic needs truthful Vietnamese description, live feedback, Codex representation where applicable, syntax/runtime validation and at least one mechanic exercise.
 
 ---
 
