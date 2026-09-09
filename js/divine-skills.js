@@ -145,30 +145,8 @@ damagePlayer=function(amount,meta={}){
   return dealt;
 };
 
-// Movement uses the same threat math as V0.8, but ignores temporarily allied enemies.
-getEnemyDangerAt=function(x,y){
-  let danger=0,nearest=Infinity,closeCount=0;
-  for(const enemy of state.enemies){
-    if(!isEnemyHostile(enemy))continue;
-    const d=Math.hypot(x-enemy.x,y-enemy.y);nearest=Math.min(nearest,d);
-    if(d<85)closeCount++;
-    if(d<42)danger+=2.8+(42-d)/14;
-    else if(d<82)danger+=1.35*(1-(d-42)/40);
-    else if(d<145)danger+=.48*(1-(d-82)/63);
-  }
-  return{danger,nearest,closeCount};
-};
-getLocalThreat=function(){
-  let nearest=Infinity,close80=0,close125=0,cx=0,cy=0,weightSum=0;
-  for(const enemy of state.enemies){
-    if(!isEnemyHostile(enemy))continue;
-    const dx=enemy.x-player.x,dy=enemy.y-player.y,d=Math.hypot(dx,dy);nearest=Math.min(nearest,d);
-    if(d<80)close80++;if(d<125)close125++;
-    if(d<240){const w=1/(35+d);cx+=enemy.x*w;cy+=enemy.y*w;weightSum+=w;}
-  }
-  return{nearest,close80,close125,centroid:weightSum?{x:cx/weightSum,y:cy/weightSum}:null};
-};
-
+// Each rare waits its stated cooldown after a failed activation unless it explicitly
+// declares a retryCooldown. This prevents hidden global retry timing.
 function runDivineSkillEngine(dt){
   for(const id of getOwnedDivineSkillIds()){
     const item=DIVINE_SKILLS[id];
@@ -177,7 +155,7 @@ function runDivineSkillEngine(dt){
     skillRuntime.divineTimers[id]-=dt;
     if(skillRuntime.divineTimers[id]<=0){
       const fired=item.execute()!==false;
-      skillRuntime.divineTimers[id]=fired?item.cooldown:Math.min(1.25,item.cooldown*.18);
+      skillRuntime.divineTimers[id]=fired?item.cooldown:(item.retryCooldown??item.cooldown);
       if(fired)emitSkillEvent("divine_trigger",{id,item});
     }
   }
