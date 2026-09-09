@@ -94,9 +94,9 @@ for(const key of d6d){
   p.x=300;o.x=500;p.hitStun=10;o.hitStun=10;p.skillTimers.returnBlade=0;
   updateDuelRound(match,.033);
   let guard=0;
-  while(p.duelEffects.returnBlades[0]?.phase!=='return'&&guard<30){updateDuelRound(match,.033);guard++;}
+  while(!p.duelEffects.returnBlades[0]?.outHit&&guard<20){updateDuelRound(match,.033);guard++;}
   const blade=p.duelEffects.returnBlades[0];
-  assert.ok(blade&&blade.phase==='return'&&blade.outHit,'Return Blade never completed its outbound leg');
+  assert.ok(blade&&blade.outHit&&blade.phase==='return','Return Blade never completed its outbound hit');
   approx(o.hp,64);
   // Put the stationary target directly on the return path so the return-hit branch is exercised deterministically.
   o.x=450;
