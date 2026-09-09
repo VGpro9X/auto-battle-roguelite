@@ -24,10 +24,10 @@ Read first:
 - Current main/Pages content:
   - **80 base Kỹ Năng**
   - **28 Hợp Đạo Kỹ**
-  - **8 Siêu Cấp**
+  - **12 Siêu Cấp**
   - **20 rare rules = 10 Thần Kỹ + 10 Thần Bí Kỹ**
-  - **136 Codex entries**
-- V0.16 final target: 80 + 28 + 12 + 20 = **140 Codex entries**.
+  - **140 Codex entries**
+- V0.16 content target is fully reached; remaining work is audit/balance/device validation before release.
 - Movement baseline remains **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
 
 ## Locked terminology / truth rules
@@ -63,16 +63,27 @@ New B2 module `js/v016-synergies-b2.js`:
 7. Thiên Hỏa Tinh Vẫn (`heavenfallBurn`)
 8. Hộ Pháp Phản Chấn (`guardianRetaliation`)
 
-Important exact rules:
-- Trọng Lực Phù Trận pulls enemy centers in 105px inward exactly 36px (or to center if nearer) before the normal rune blast; pull deals no damage.
-- Huyết Mạch Cộng Sinh heals 10% of actual mirrored Huyết Liên damage.
-- Linh Dưỡng actual healing counts ×2 toward Linh Châu; pearl hit heals exactly 0.5 HP.
-- Phong Lôi Bộ follows max 2 living stride-shock-hit targets at 50% current Lôi Kích base damage.
-- Phong Hồn Tử Ấn prioritizes marked targets, adds +1s bind before elite halving, and bound+marked target takes +20% damage.
-- Thiên Hỏa Tinh Vẫn checks the exact selected meteor target immediately before impact; if alive and burning, second same-radius no-proc blast occurs 0.25s later for 55% base Tinh Vẫn damage.
-- Hộ Pháp Phản Chấn uses current Phản Chấn radius/damage centered on Hộ Pháp, max once per 0.6s per guardian.
+CI exercises B1/B2 mechanics and asserts exactly **28 unique Hợp Đạo Kỹ** in the public chain.
 
-CI exercises B1/B2 mechanics and asserts the combined public Hợp Đạo registry contains exactly 28 unique entries. Both modules load after A1–A4 and before Codex. Final Hợp Đạo integration + Pages deploy passed.
+## 12 Siêu Cấp — COMPLETE
+New C1 layer:
+1. Vạn Ảnh Phân Thân (`phantomLegion`) — base Dư Ảnh
+2. Thiên La Địa Võng (`heavenNet`) — base Địa Lôi Phù
+3. Huyết Võng (`bloodWeb`) — base Huyết Liên
+4. Tinh Hà Trụy Lạc (`starfallCataclysm`) — base Tinh Vẫn
+
+Implementation:
+- `js/v016-evolutions-c1.js`
+- `js/v016-evolutions-c1-compat.js`
+
+Important exact rules:
+- Vạn Ảnh Phân Thân creates 3 active clones; each fires 2 evolved shots at 70% of the current Lv-based Dư Ảnh shot damage.
+- Thiên La Địa Võng raises active-rune cap to 8; detonation chains armed runes within 120px after 0.12s; chained runes deal 75% normal rune damage and can propagate the chain.
+- Huyết Võng links the 4 nearest enemies for 5s; one target taking damage copies 25% actual damage to each other living web target with no recursion/procs.
+- Tinh Hà Trụy Lạc creates 3 meteors spaced by 0.18s; side impacts are offset 38px and deal 70% of the first meteor while preserving burn.
+- Existing B1/B2 Hợp Đạo interactions remain active after evolution.
+
+CI validates C1 mechanics and the combined public evolution registry at exactly **12 Siêu Cấp**.
 
 ## Cross-platform icon compatibility — COMPLETE
 `js/v016-run-systems.js` replaces unsupported newer emoji with stable symbols. Remaining U+1FA70..U+1FAFF icons fall back to `◆`.
@@ -85,6 +96,20 @@ CI exercises B1/B2 mechanics and asserts the combined public Hợp Đạo regist
 - One `XOAY LẠI` per choice screen rerolls all three cards and rare roll.
 - Current public rare chain and difficult rare mechanics are CI-gated.
 
+## Vô Hạn guaranteed starting rare — COMPLETE
+Module: `js/v016-endless-starting-rare.js`.
+
+Flow:
+1. fresh Vô Hạn run resets normally
+2. selects one of all 20 rare rules uniformly
+3. grants it immediately
+4. shows a dedicated tier/icon/name/exact-description reveal
+5. after acknowledgement, opens exactly one normal starter Kỹ Năng choice
+6. the granted rare is excluded from later offers only as an owned duplicate
+7. the other 19 rare rules remain available through the normal level-scaled offer curve
+
+The mode card and Cách chơi disclose the rule. CI checks all 20 equal probability intervals, reveal-before-starter order, later rare availability, and public script order.
+
 ## Current CI gate
 Before Pages deploy:
 1. syntax-check `js/*.js` + `tests/*.js`
@@ -93,23 +118,21 @@ Before Pages deploy:
 4. rare curve / multi-rare / reroll / icon compatibility
 5. actual rare chain = 20 total / 10+10
 6. rare mechanic smoke
-7. Hợp Đạo B1 smoke
-8. Hợp Đạo B2 smoke
-9. Hợp Đạo registry/script-order integration = 28
+7. Hợp Đạo B1/B2 smoke + registry = 28
+8. Siêu Cấp C1 smoke + registry = 12
+9. Vô Hạn guaranteed starting rare smoke + public integration
 
-# Immediate next checkpoint — 4 new Siêu Cấp
-From `V016_SKILL_DESIGN.md`:
-1. **Vạn Ảnh Phân Thân** — base Dư Ảnh
-2. **Thiên La Địa Võng** — base Địa Lôi Phù
-3. **Huyết Võng** — base Huyết Liên
-4. **Tinh Hà Trụy Lạc** — base Tinh Vẫn
+# Immediate next checkpoint — final V0.16 audit
+1. Codex representation/count = 140
+2. dedicated preview/live feedback audit for all 20 rare rules
+3. mechanical-truth audit: every cooldown/cap/stack/target limit disclosed
+4. cross-platform icon audit
+5. repeated rare-rate simulation
+6. repeated Vô Hạn start simulation
+7. dense VFX/late-game stress validation
+8. phone + desktop real-device check
 
-Then:
-- Vô Hạn guaranteed starting rare reveal using full 20-skill pool
-- full Codex/VFX/mechanical-truth/balance/device audit
-
-# Vô Hạn revised rule — PENDING IMPLEMENTATION
-V0.16 Vô Hạn must begin with exactly one uniformly random rare before the normal starter Kỹ Năng and show a dedicated reveal. The starting rare does not block later rare offers; later level-ups use the normal level-scaled curve, and the starting rare is excluded only as an owned duplicate.
+No new content expansion should begin until this audit is complete.
 
 ## Recommended continuation prompt
-`Tiếp tục VGpro9X/auto-battle-roguelite. GitHub main là master. Đọc README.md, PROJECT_HANDOFF.md, ROADMAP.md, V016_SKILL_DESIGN.md và V016_RARE_SYSTEM_V2.md. V0.16 DEV hiện có 80 Kỹ Năng, 28 Hợp Đạo, 8 Siêu Cấp và 20 rare = 136 Codex entries. Checkpoint Hợp Đạo B1/B2 đã CI + Pages pass. Tiếp tục 4 Siêu Cấp mới. Fetch file trước khi sửa, giữ Movement V0.8, mechanical truth và final-piece-only hints.`
+`Tiếp tục VGpro9X/auto-battle-roguelite. GitHub main là master. Đọc README.md, PROJECT_HANDOFF.md và ROADMAP.md. V0.16 DEV đã đạt đủ 80 Kỹ Năng + 28 Hợp Đạo + 12 Siêu Cấp + 20 rare = 140 Codex entries. Vô Hạn đã có guaranteed starting rare và CI pass. Tiếp tục final Codex/VFX/mechanical-truth/balance/device audit. Fetch file trước khi sửa, giữ Movement V0.8 và mechanical truth.`
