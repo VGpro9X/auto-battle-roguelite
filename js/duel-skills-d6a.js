@@ -29,6 +29,7 @@
     poison:{chance:[.20,.35,.50],duration:4,dps:[1.5,3,5.5]}
   };
   const at=(table,rank)=>table[Math.max(0,Math.min(table.length-1,rank-1))];
+  const ELEMENTAL_SOURCES=new Set(["fire","lightning","burn","poison"]);
 
   registerDuelSkillBehavior("execution",{
     modifyOutgoingDamage:({value,rank,target})=>{
@@ -98,9 +99,13 @@
       poison.tick-=dt;
       while(poison.tick<=0&&other.hp>0){
         poison.tick+=.5;
-        dealDamage(fighter,other,poison.dps*.5,{source:"poison",canCrit:false,dodgeable:false,reactive:false});
+        dealDamage(fighter,other,poison.dps*.5,{source:"poison",elemental:true,canCrit:false,dodgeable:false,reactive:false});
       }
     }
+  });
+
+  registerDuelSkillBehavior("elementalMastery",{
+    modifyOutgoingDamage:({value,rank,meta})=>(meta?.elemental===true||ELEMENTAL_SOURCES.has(meta?.source))?value*(1+[.08,.16,.26][rank-1]):value
   });
 
   root.DUEL_D6A_VALUES=VALUES;
