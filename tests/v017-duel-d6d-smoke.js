@@ -88,12 +88,19 @@ for(const key of d6d){
   approx(p.duelEffects.strideShock.distance,35);
 }
 
-// Hồi Phong Nhận may hit once outbound and once returning.
+// Hồi Phong Nhận has independent one-hit caps on outbound and return legs.
 {
   const {match,round,p,o}=duel({returnBlade:3});
   p.x=300;o.x=500;p.hitStun=10;o.hitStun=10;p.skillTimers.returnBlade=0;
   updateDuelRound(match,.033);
-  tick(match,34);
+  let guard=0;
+  while(p.duelEffects.returnBlades[0]?.phase!=='return'&&guard<30){updateDuelRound(match,.033);guard++;}
+  const blade=p.duelEffects.returnBlades[0];
+  assert.ok(blade&&blade.phase==='return'&&blade.outHit,'Return Blade never completed its outbound leg');
+  approx(o.hp,64);
+  // Put the stationary target directly on the return path so the return-hit branch is exercised deterministically.
+  o.x=450;
+  tick(match,8);
   approx(o.hp,28);
   assert.ok(round.events.filter(event=>event.type==='cast'&&event.skill==='returnBlade').length===1);
 }
