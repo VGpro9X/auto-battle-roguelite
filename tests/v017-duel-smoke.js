@@ -6,18 +6,21 @@ function load(path){vm.runInThisContext(fs.readFileSync(path,'utf8'),{filename:p
 function makeRng(seed=0x5eed1234){let v=seed>>>0;return()=>{v=(Math.imul(v,1664525)+1013904223)>>>0;return v/0x100000000;};}
 function approx(actual,expected,epsilon=1e-9){assert.ok(Math.abs(actual-expected)<=epsilon,`expected ${actual} ≈ ${expected}`);}
 function duel(buildA,buildB={},rng=()=>.99){const match=createDuelMatch({id:'player',name:'BẠN',build:buildA},{id:'opponent',name:'ĐỐI THỦ',build:buildB},{rng});const round=startDuelRound(match);return{match,round};}
+function tick(match,count,dt=.033){let round=match.currentRound;for(let i=0;i<count&&!round.ended;i++)round=updateDuelRound(match,dt);return round;}
 
 load('js/duel-skills.js');
 load('js/duel-tournament.js');
 load('js/duel-engine.js');
 load('js/duel-skills-d6a.js');
 load('js/duel-skills-d6b.js');
+load('js/duel-skills-d6c.js');
 
 assert.strictEqual(DUEL_MAX_RANK,3,'Duel skills must cap at Rank III');
-assert.strictEqual(DUEL_SKILL_KEYS.length,32,'V0.17 D6B must expose exactly 32 Duel skill adapters');
+assert.strictEqual(DUEL_SKILL_KEYS.length,40,'V0.17 D6C must expose exactly 40 Duel skill adapters');
 const d6a=['execution','berserk','glassCannon','retaliate','thorns','lastStand','deathMark','poison'];
 const d6b=['echoShot','pointBlank','elementalMastery','shieldPulse','sacrifice','blackHole','luckyStar','secondWind'];
-for(const key of [...d6a,...d6b]){assert.ok(DUEL_SKILL_KEYS.includes(key),`missing Duel skill ${key}`);assert.ok(getDuelSkillBehavior(key),`missing Duel behavior ${key}`);}
+const d6c=['afterimage','runeMine','meteorSeal','focusMind','sevenStarStrike','staticField','armorBreak','vampiricTouch'];
+for(const key of [...d6a,...d6b,...d6c]){assert.ok(DUEL_SKILL_KEYS.includes(key),`missing Duel skill ${key}`);assert.ok(getDuelSkillBehavior(key),`missing Duel behavior ${key}`);}
 
 const starterBuild={};
 const choices=getDuelChoices(starterBuild,{starter:true,count:3,rng:makeRng(1)});
@@ -37,8 +40,9 @@ assert.strictEqual(tournament.championId,'player');assert.strictEqual(tournament
 
 const naked=computeDuelStats({build:{}});assert.strictEqual(naked.critChance,0);
 {
-  const {round}=duel({fire:1,deathMark:3,retaliate:3,blackHole:3,luckyStar:3,sacrifice:3});
+  const {round}=duel({fire:1,deathMark:3,retaliate:3,blackHole:3,luckyStar:3,sacrifice:3,afterimage:3,runeMine:3,meteorSeal:3,staticField:3});
   approx(round.fighters.player.skillTimers.fire,4.2);approx(round.fighters.player.skillTimers.deathMark,6);approx(round.fighters.player.skillTimers.blackHole,4);approx(round.fighters.player.skillTimers.luckyStar,4.6);approx(round.fighters.player.skillTimers.sacrifice,5);
+  approx(round.fighters.player.skillTimers.afterimage,3.6);approx(round.fighters.player.skillTimers.runeMine,2.9);approx(round.fighters.player.skillTimers.meteorSeal,3.8);approx(round.fighters.player.skillTimers.staticField,5.2);
   assert.strictEqual(round.fighters.player.skillTimers.retaliate,0);assert.strictEqual(round.fighters.player.attackTimer,0);assert.strictEqual(round.fighters.player.dashTimer,0);
 }
 approx(duelPressureDamageMultiplier({time:0}),1);approx(duelPressureDamageMultiplier({time:45}),1);approx(duelPressureDamageMultiplier({time:52.5}),1.375);approx(duelPressureDamageMultiplier({time:60}),2);
@@ -85,17 +89,66 @@ approx(computeDuelStats({build:{glassCannon:3}}).maxHp,76);
   const {match,round}=duel({luckyStar:3},{},()=>.5);round.fighters.player.skillTimers.luckyStar=0;updateDuelRound(match,.033);assert.ok(round.fighters.player.shield>=24);
 }
 
-const match=createDuelMatch({id:'player',name:'BẠN',build:{power:3,rapid:3,fire:3,lightning:3,crit:3,execution:2,echoShot:2}},{id:'opponent',name:'ĐỐI THỦ',build:{vitality:1,armor:1,lastStand:1,secondWind:1}},{rng:makeRng(99)});
+// D6C mechanics.
+{
+  const {match,round}=duel({afterimage:3},{vitality:3});const p=round.fighters.player,o=round.fighters.opponent;
+  p.x=300;o.x=700;p.hitStun=10;o.hitStun=10;p.skillTimers.afterimage=0;updateDuelRound(match,.033);p.x=500;tick(match,5);
+  const spawn=round.events.find(event=>event.type==='projectile_spawn'&&event.source==='afterimage');
+  assert.ok(spawn,'Afterimage did not fire');approx(spawn.x,340,1e-6);
+}
+{
+  const {match,round}=duel({runeMine:3});const p=round.fighters.player,o=round.fighters.opponent;
+  p.x=450;o.x=500;p.hitStun=10;o.hitStun=10;p.skillTimers.runeMine=0;updateDuelRound(match,.033);tick(match,15);
+  assert.ok(o.hp<=32.000001,`Rune Mine did not deal Rank III damage: ${o.hp}`);assert.ok(o.x>500,'Rune Mine did not push target away');
+}
+{
+  const {match,round}=duel({meteorSeal:3},{},()=>.99);const p=round.fighters.player,o=round.fighters.opponent;
+  p.x=300;o.x=500;p.hitStun=20;o.hitStun=20;p.skillTimers.meteorSeal=0;updateDuelRound(match,.033);tick(match,25);
+  assert.ok(o.hp<=22.000001,`Meteor Seal did not land delayed hit: ${o.hp}`);assert.ok(o.duelEffects.meteorBurn?.until>round.time,'Meteor burn was not applied');
+}
+{
+  const {match,round}=duel({focusMind:3,crit:3});const p=round.fighters.player,o=round.fighters.opponent;
+  p.x=300;o.x=700;p.hitStun=20;o.hitStun=20;tick(match,123);
+  assert.ok(p.duelEffects.focusMind.active,'Focus Mind did not activate after four safe seconds');approx(p.stats.critChance,.44,1e-6);approx(p.stats.critMultiplier,2.1,1e-6);
+  p.x=450;o.x=500;p.hitStun=20;o.hitStun=0;o.attackTimer=0;updateDuelRound(match,.033);
+  assert.ok(!p.duelEffects.focusMind.active,'Focus Mind did not break on damage');approx(p.stats.critChance,.24,1e-6);approx(p.stats.critMultiplier,1.6,1e-6);
+}
+{
+  const {match,round}=duel({sevenStarStrike:3},{vitality:3});const p=round.fighters.player,o=round.fighters.opponent;
+  p.x=450;o.x=500;o.hitStun=10;
+  for(let i=0;i<3;i++){p.attackTimer=0;updateDuelRound(match,.033);}
+  assert.strictEqual(p.duelEffects.sevenStarHits,0,'Seven Star counter did not reset');assert.ok(round.events.some(event=>event.type==='area'&&event.skill==='sevenStarStrike'),'Seven Star strike did not trigger');
+}
+{
+  const {match,round}=duel({staticField:3,elementalMastery:3});const p=round.fighters.player,o=round.fighters.opponent;
+  p.x=450;o.x=500;p.hitStun=10;o.hitStun=10;p.skillTimers.staticField=0;updateDuelRound(match,.033);tick(match,16);
+  approx(o.hp,78.58,1e-6);
+}
+{
+  const {match,round}=duel({armorBreak:3},{vitality:3});const p=round.fighters.player,o=round.fighters.opponent;
+  p.x=450;o.x=500;o.hitStun=10;
+  for(let i=0;i<3;i++){p.attackTimer=0;updateDuelRound(match,.033);}
+  assert.strictEqual(o.duelEffects.armorBreak?.stacks,3,'Armor Break did not stack on basic hits');approx(o.duelEffects.armorBreak.perStack,.04);
+  assert.ok(o.hp<129,'Armor Break did not amplify follow-up damage');
+}
+{
+  const {match,round}=duel({vampiricTouch:3},{},()=>0);const p=round.fighters.player,o=round.fighters.opponent;
+  p.x=450;o.x=500;p.hp=50;o.hitStun=10;updateDuelRound(match,.033);approx(p.hp,57,1e-6);
+}
+
+const match=createDuelMatch({id:'player',name:'BẠN',build:{power:3,rapid:3,fire:3,lightning:3,crit:3,execution:2,echoShot:2,armorBreak:2}},{id:'opponent',name:'ĐỐI THỦ',build:{vitality:1,armor:1,lastStand:1,secondWind:1,focusMind:1}},{rng:makeRng(99)});
 startDuelRound(match);let ticks=0;
 while(!match.over&&ticks<40000){const round=updateDuelRound(match,.033);if(round?.ended)settleDuelRound(match);ticks++;}
 assert.ok(match.over);assert.ok(match.winner==='player'||match.winner==='opponent');assert.strictEqual(match.wins[match.winner],2);assert.ok(match.wins[match.loser]<=1);
 
 const index=fs.readFileSync('index.html','utf8');
-for(const required of ['css/v017-duel.css','js/duel-skills.js','js/duel-tournament.js','js/duel-engine.js','js/duel-skills-d6a.js','js/duel-skills-d6b.js','js/duel-renderer.js','js/duel-ui.js','js/duel-ui-sync.js'])assert.ok(index.includes(required),`index.html missing ${required}`);
+for(const required of ['css/v017-duel.css','js/duel-skills.js','js/duel-tournament.js','js/duel-engine.js','js/duel-skills-d6a.js','js/duel-skills-d6b.js','js/duel-skills-d6c.js','js/duel-renderer.js','js/duel-ui.js','js/duel-ui-sync.js'])assert.ok(index.includes(required),`index.html missing ${required}`);
 assert.ok(index.indexOf('js/duel-engine.js')<index.indexOf('js/duel-skills-d6a.js'));
 assert.ok(index.indexOf('js/duel-skills-d6a.js')<index.indexOf('js/duel-skills-d6b.js'));
-assert.ok(index.indexOf('js/duel-skills-d6b.js')<index.indexOf('js/duel-ui.js'));
+assert.ok(index.indexOf('js/duel-skills-d6b.js')<index.indexOf('js/duel-skills-d6c.js'));
+assert.ok(index.indexOf('js/duel-skills-d6c.js')<index.indexOf('js/duel-ui.js'));
 const engine=fs.readFileSync('js/duel-engine.js','utf8');
 assert.ok(!engine.includes('burn-lite'));assert.ok(engine.includes('registerDuelSkillBehavior'));assert.ok(engine.includes('onFatalDamage'));assert.ok(engine.includes('spawnProjectile'));
+const d6bSource=fs.readFileSync('js/duel-skills-d6b.js','utf8');assert.ok(d6bSource.includes('meta?.elemental===true'),'Elemental Mastery must recognize generic elemental metadata');
 
 console.log('V0.17 Duel smoke test passed:',{skillAdapters:DUEL_SKILL_KEYS.length,championWins:tournament.matchWins,rewardCount:tournament.rewardCount,deterministicWinner:match.winner,ticks});
