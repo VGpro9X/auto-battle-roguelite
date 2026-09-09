@@ -28,7 +28,8 @@ Read first:
   - **12 Siêu Cấp**
   - **20 rare rules = 10 Thần Kỹ + 10 Thần Bí Kỹ**
   - **140 Codex entries**
-- V0.16 content and automated audit are complete. Remaining release gate is hands-on desktop + phone/device validation.
+- V0.16 content, CI audit, exact Pages-artifact Chromium validation and synthetic desktop/mobile viewport checks are complete.
+- Remaining release gate is a **short physical-device feel check** before changing the visible/runtime label from `V0.16 DEV` to final `V0.16`.
 - Movement baseline remains **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
 
 ## Locked terminology / truth rules
@@ -109,22 +110,63 @@ Flow:
 6. granted rare is excluded later only as an owned duplicate
 7. other 19 rares remain available through normal level-scaled offers
 
-## Final rare VFX/Codex audit — COMPLETE at code/CI level
+The mode card and Cách chơi disclose the rule.
+
+# Final V0.16 audit status
+
+## Rare VFX/Codex — PASS in actual browser runtime
 Module: `js/v016-rare-vfx.js`.
-- all 20 rare IDs have dedicated Codex preview coverage
-- all 20 rare IDs have live feedback coverage
-- original four keep V0.13 bespoke live feedback
-- 16 V0.16 additions receive trigger/persistent feedback in the new module
-- public script order loads this wrapper before Codex initialization
-- 360-frame synthetic live/persistent VFX stress passes and transient effects prune correctly
+
+Important integration fix:
+- A headless Chromium run against the **exact generated GitHub Pages artifact** found that the old V0.12 Visual Bridge could overwrite the first V0.16 rare preview wrapper.
+- Symptom: many new rare entries fell back to the generic purple-star preview despite static coverage tests passing.
+- Fix: `js/v016-rare-vfx.js?v=016dev-audit-r2` now loads as the **final visual wrapper after `skill-codex.js`, `visual-bridge.js`, `v013-summon-power-feedback.js` and `v013-rule-feedback.js`**.
+- `tests/v016-final-audit-smoke.js` now enforces this exact order.
+
+Post-fix browser evidence:
+- 140 actual Codex cards/canvases
+- split = 80 skill / 28 Hợp Đạo / 12 Siêu Cấp / 10 Thần Kỹ / 10 Thần Bí Kỹ
+- all 20 rare previews produce 20 distinct rendered pixel hashes at the same timestamp
+- visual contact-sheet inspection confirms mechanic-specific compositions rather than the old generic fallback
+- zero page exceptions / console errors during tested flows
+
+## Layered rare ordering — CI LOCKED
+New integration test: `tests/v016-layering-smoke.js`.
+
+It uses the real public rare-module order and locks:
+- Mua Chuộc ally is excluded from Thời Đình freeze and later reverts normally
+- Thiên Ấn checks dodge before consuming its 12s per-enemy block cooldown
+- armed Đảo Nhân Quả resolves before Nợ Máu / Ký Sinh / Thế Mệnh
+- Nợ Máu + Ký Sinh + Thế Mệnh exact ordering after shield handling
+- when Thế Mệnh dies, that death legitimately counts as a kill and therefore clears 15% of current Nợ Máu
+- Bất Tử Nhất Tức remains the final once-per-run lethal safety net when earlier rules do not prevent death
 
 ## Automated balance/release validation — COMPLETE
 `tests/v016-balance-simulation.js` uses deterministic PRNG samples.
-Latest CI result:
+Latest audited result:
 - synthetic one-roll-per-level Lv8–60: **4.58 rare successes/run average** before duplicate/pool exhaustion
 - 400,000 Vô Hạn starting-rare samples across 20 slots: **1.07% maximum slot-frequency drift**
 
 These are implementation-consistency checks, not a final fun/difficulty judgment.
+
+## Exact Pages-artifact Chromium validation — PASS
+Desktop 1440×1000:
+- registry 80 / 28 / 12 / 20
+- Bách Khoa = 140 cards
+- Vô Hạn reveal → starter → gameplay works
+- starter and normal-level reroll each work once independently
+- 10 repeated Vô Hạn starts all reached gameplay with exactly one starting rare
+- no page-level horizontal overflow
+
+Synthetic rendering regression indicators:
+- 240 deliberately visible enemies + 199 representative combat VFX + all 20 rares owned: ~3.46 ms/draw over 120 draws in headless Chromium
+- mobile portrait 390×844 with 120 deliberately visible enemies: ~1.64 ms/draw over 120 draws
+
+Mobile viewport checks:
+- portrait 390×844: main menu, Bách Khoa, Vô Hạn reveal, starter modal, reroll and gameplay stay within page width
+- landscape 844×390: gameplay and pause modal stay within page width and controls remain visible
+
+These draw timings are **not physical-device FPS claims**.
 
 ## Current CI gate
 Before Pages deploy:
@@ -134,27 +176,22 @@ Before Pages deploy:
 4. rare curve / multi-rare / reroll / icon compatibility
 5. actual rare chain = 20 total / 10+10
 6. rare mechanic smoke
-7. Hợp Đạo B1/B2 + registry = 28
-8. Siêu Cấp C1 + registry = 12
-9. Vô Hạn guaranteed starting rare + public integration
-10. final content/truth audit = 140
-11. deterministic rare-rate balance simulation
-12. 20-rare Codex/live VFX stress
+7. layered rare ordering smoke
+8. Hợp Đạo B1/B2 + registry = 28
+9. Siêu Cấp C1 + registry = 12
+10. Vô Hạn guaranteed starting rare + public integration
+11. final content/truth audit = 140 + final visual wrapper order
+12. deterministic rare-rate balance simulation
+13. 20-rare Codex/live VFX stress
 
-Latest full gate passed and GitHub Pages deployed successfully.
+# Immediate next checkpoint — physical-device V0.16 release check
+Do not start another major content expansion yet.
 
-# Immediate next checkpoint — hands-on V0.16 release validation
-Do not start another content expansion yet. Use `V016_RELEASE_VALIDATION.md`.
+Only a short human/physical-device judgment remains before renaming `V0.16 DEV` to final `V0.16`:
+- one desktop run long enough to judge pacing/readability and confirm V0.8 movement still feels unchanged
+- one real phone/tablet check for touch comfort, browser safe areas, actual emoji/font rendering and hardware FPS
 
-Required before renaming `V0.16 DEV` to final `V0.16`:
-- desktop browser hands-on run
-- phone/tablet hands-on run
-- all 140 Codex entries visually inspectable
-- all 20 rare previews visually distinct enough in practice
-- Vô Hạn reveal → starter flow feel test
-- reroll starter + normal level-up touch/mouse test
-- dense late-game VFX/FPS/readability judgment
-- difficult interaction spot-checks, especially Nợ Máu + Ký Sinh + Thế Mệnh and four new Siêu Cấp + matching Hợp Đạo
+Exact evidence/checklist: `V016_RELEASE_VALIDATION.md`.
 
 ## Recommended continuation prompt
-`Tiếp tục VGpro9X/auto-battle-roguelite. GitHub main là master. Đọc README.md, PROJECT_HANDOFF.md, ROADMAP.md và V016_RELEASE_VALIDATION.md. V0.16 DEV đã đạt 80 Kỹ Năng + 28 Hợp Đạo + 12 Siêu Cấp + 20 rare = 140 Codex entries. Final content/truth audit, rare VFX stress, balance simulation và Pages deploy đều pass. Chỉ còn hands-on desktop/phone release validation trước khi đổi nhãn thành V0.16 final. Fetch file trước khi sửa, giữ Movement V0.8 và mechanical truth.`
+`Tiếp tục VGpro9X/auto-battle-roguelite. GitHub main là master. Đọc README.md, PROJECT_HANDOFF.md, ROADMAP.md và V016_RELEASE_VALIDATION.md. V0.16 DEV đã đạt đủ 80 Kỹ Năng + 28 Hợp Đạo + 12 Siêu Cấp + 20 rare = 140 Codex entries. Final CI, layered rare ordering, exact Pages-artifact Chromium validation, 20 distinct rare previews và desktop/mobile viewport stress đều pass. Chỉ còn physical-device feel check trước khi đổi nhãn thành V0.16 final. Fetch file trước khi sửa, giữ Movement V0.8 và mechanical truth.`
