@@ -1,4 +1,4 @@
-const GAME_VERSION="V0.16 DEV";
+const GAME_VERSION="V0.16";
 const versionLabel=document.getElementById("version");
 if(versionLabel)versionLabel.textContent=`Auto Battle Roguelite ${GAME_VERSION}`;
 document.title=`Auto Battle Roguelite ${GAME_VERSION}`;
