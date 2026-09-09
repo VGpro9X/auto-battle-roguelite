@@ -4,7 +4,7 @@ GitHub `main` is canonical.
 
 ## Current baseline
 - Released baseline: **V0.15 – Responsive & Mobile/Desktop Readability**.
-- Active public development label: **V0.16 DEV**.
+- Active public development label: **V0.16 DEV — RELEASE CANDIDATE**.
 - Current main/Pages content: **80 Kỹ Năng + 28 Hợp Đạo Kỹ + 12 Siêu Cấp + 20 rare = 140 Codex entries**.
 - Movement baseline remains **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
 - Player-facing language remains Vietnamese.
@@ -23,7 +23,7 @@ Responsive phone/tablet/desktop UI was accepted by the user on GitHub Pages.
 
 ---
 
-# V0.16 — ACTIVE, CONTENT + AUTOMATED AUDIT COMPLETE
+# V0.16 — RELEASE CANDIDATE
 ## Final quality target
 - Base Kỹ Năng: **64 → 80** ✅
 - Hợp Đạo Kỹ: **20 → 28** ✅
@@ -88,40 +88,61 @@ Vô Hạn now:
 
 The mode card and Cách chơi disclose the rule. CI validates equal interval mapping across all 20 candidates, reveal-before-starter ordering and public script order.
 
-## Checkpoint 7 — Codex / VFX / mechanical-truth audit — COMPLETE at code/CI level
-- all 140 entries represented ✅
-- all 20 rare rules have dedicated Codex preview coverage ✅
-- all 20 rare rules have live feedback coverage ✅
-- original four rare live cues remain from V0.13; V0.16 additions use `js/v016-rare-vfx.js` ✅
-- hidden generic rare retry timing removed ✅
-- only explicitly disclosed retry rules are allowed; Thế Mệnh declares `retryCooldown: 1.25` matching its description ✅
-- public script order/cache keys audited ✅
-- tests are excluded from Pages artifact ✅
-- final-piece-only relation-hint regression gate passes ✅
+## Checkpoint 7 — Codex / VFX / mechanical-truth audit — COMPLETE
+Code/CI and the exact generated Pages artifact have both been validated.
 
-## Checkpoint 8 — Balance / stress / device validation — AUTOMATED PART COMPLETE, HANDS-ON PENDING
-Automated release gates now include:
+- all 140 entries represented ✅
+- all 20 rare rules have dedicated Codex preview and live-feedback coverage ✅
+- hidden generic rare retry timing removed ✅
+- only explicitly disclosed retry rules allowed; Thế Mệnh declares `retryCooldown: 1.25` matching its description ✅
+- final-piece-only relation-hint regression gate passes ✅
+- test harnesses excluded from Pages artifact ✅
+- zero JavaScript page exceptions / console errors in tested browser flows ✅
+
+A real browser integration bug was found and fixed during this checkpoint: V0.12 Visual Bridge could overwrite the V0.16 rare preview wrapper, causing generic purple-star previews. `js/v016-rare-vfx.js?v=016dev-audit-r2` now loads as the final visual wrapper after Codex/Visual Bridge/V0.13 feedback, and CI enforces that order. Post-fix Chromium rendering produced **20 distinct pixel hashes for the 20 rare previews** at the same timestamp. ✅
+
+## Checkpoint 8 — Balance / stress / device validation — BROWSER/AUTOMATED COMPLETE, PHYSICAL DEVICE PENDING
+Automated and exact Pages-artifact validation now includes:
 - deterministic rare-rate simulation ✅
 - 400,000-sample Vô Hạn 20-way uniformity simulation ✅
 - 20 dedicated rare preview runtime stress ✅
 - rare live/persistent VFX 360-frame stress/pruning test ✅
-- full Pages deployment after every gate ✅
+- layered rare ordering integration test ✅
+- 10 repeated browser Vô Hạn starts: reveal → starter → gameplay ✅
+- starter and normal-level reroll each independently limited to one use ✅
+- desktop 1440×1000 browser layout/runtime ✅
+- mobile portrait 390×844 viewport layout/runtime ✅
+- mobile landscape 844×390 viewport layout/runtime ✅
+- synthetic dense visible rendering on desktop/mobile ✅
 
-Latest deterministic sample reported:
+Latest deterministic sample:
 - Lv8–60 synthetic one-roll-per-level model: **4.58 rare successes/run average** before duplicate/pool exhaustion
-- Vô Hạn 20-way starting rare: **1.07% maximum slot-frequency drift**
+- Vô Hạn 20-way starting rare: **1.07% maximum slot-frequency drift** over 400,000 samples
 
-Remaining before renaming `V0.16 DEV` to final `V0.16`:
-- desktop browser hands-on playtest
-- phone/tablet hands-on playtest
-- dense late-game visual/FPS judgment
-- real touch/layout judgment
-- spot-check difficult layered mechanics
+Headless Chromium draw regression indicators:
+- desktop: 240 deliberately visible enemies + 199 representative VFX + all 20 rares owned ≈ **3.46 ms/draw** over 120 draws
+- mobile portrait viewport: 120 deliberately visible enemies ≈ **1.64 ms/draw** over 120 draws
 
-Exact checklist: `V016_RELEASE_VALIDATION.md`.
+These timings are not physical-device FPS claims.
+
+### Layered mechanics now CI-locked
+- Mua Chuộc ally exclusion/reversion with Thời Đình
+- Thiên Ấn dodge-before-block ordering
+- Đảo Nhân Quả priority over Nợ Máu / Ký Sinh / Thế Mệnh
+- Nợ Máu + Ký Sinh + Thế Mệnh exact post-shield ordering
+- Thế Mệnh proxy death correctly counts as a kill and therefore clears 15% current Nợ Máu
+- Bất Tử Nhất Tức remains the final once-per-run lethal safety net
+- all four new Siêu Cấp preserve their matching Hợp Đạo interactions
+
+### Only remaining release gate
+Before renaming the visible/runtime build from `V0.16 DEV` to final `V0.16`, perform a short physical-device/human feel check:
+- one desktop play session long enough to judge pacing, readability and accepted V0.8 movement feel
+- one real phone/tablet session to judge touch ergonomics, browser chrome/safe areas, actual emoji/font rendering and hardware FPS
+
+Exact checklist/evidence: `V016_RELEASE_VALIDATION.md`.
 
 ## V0.16 release gate
-Do not rename the public build to final `V0.16` until the hands-on checklist is clear. Every shipped mechanic needs truthful Vietnamese description, live feedback, Codex representation where applicable, syntax/runtime validation and at least one mechanic exercise.
+Do not rename the public build to final `V0.16` until the physical-device check has no blocking issue. Runtime/content/CI/browser-artifact validation is otherwise release-candidate complete.
 
 ---
 
