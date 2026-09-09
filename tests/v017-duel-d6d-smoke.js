@@ -93,13 +93,13 @@ for(const key of d6d){
   const {match,round,p,o}=duel({returnBlade:3});
   p.x=300;o.x=500;p.hitStun=10;o.hitStun=10;p.skillTimers.returnBlade=0;
   updateDuelRound(match,.033); // frame 1
-  tick(match,13); // frame 14: blade is still just before the cast target.
-  approx(o.hp,100);
-  updateDuelRound(match,.033); // frame 15: crosses 500, deals outbound hit and switches to return.
+  tick(match,13); // frame 14: 24px blade radius already allows the outbound hit near the destination.
+  approx(o.hp,64);
+  updateDuelRound(match,.033); // frame 15: reaches cast destination and switches to return without a second outbound hit.
   approx(o.hp,64);
   const blade=p.duelEffects.returnBlades[0];
   assert.ok(blade&&blade.phase==='return'&&blade.outHit,'Return Blade did not switch to return after its outbound hit');
-  o.x=490; // next return step goes 500 -> 486.14 and must cross this point.
+  o.x=490; // next return step goes 500 -> 486.14 and intersects the 24px hit radius.
   updateDuelRound(match,.033);
   approx(o.hp,28);
   assert.ok(p.duelEffects.returnBlades[0]?.returnHit,'Return Blade did not record its return-leg hit');
