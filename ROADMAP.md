@@ -3,9 +3,10 @@
 GitHub `main` is the canonical source.
 
 ## Current baseline
-- Released baseline: **V0.15 – Responsive & Mobile/Desktop Readability**
+- Released/visible baseline: **V0.15 – Responsive & Mobile/Desktop Readability**
 - V0.15 real-phone GitHub Pages test was accepted by the user.
-- V0.16 development is active on `main`; release label stays V0.15 until V0.16 is complete.
+- V0.16 development is active on `main`; the release label stays V0.15 until V0.16 passes its full release gate.
+- Current `main` / Pages development content: **80 base Kỹ Năng**, 20 Hợp Đạo Kỹ, 8 Siêu Cấp, 4 rare rule skills = **112 Codex entries**.
 - Movement baseline remains **V0.8 Strategic Movement AI** and must not be rewritten unless explicitly requested.
 - Player-facing language remains Vietnamese.
 - Mechanical truth, no-hidden-cap and final-piece-only level-up hint rules remain locked.
@@ -26,7 +27,7 @@ Completed:
 - `visualViewport` / `visibilitychange` polish
 - real-phone user acceptance through GitHub Pages
 
-V0.15 did not change movement, combat balance or skill mechanics.
+V0.15 did not change combat balance or V0.8 movement AI.
 
 ---
 
@@ -36,7 +37,7 @@ V0.15 did not change movement, combat balance or skill mechanics.
 Implementation contract: `V016_SKILL_DESIGN.md`.
 
 ### Release target, subject to quality
-- Base Kỹ Năng: **64 → 80** (+16)
+- Base Kỹ Năng: **64 → 80** (+16) ✅
 - Hợp Đạo Kỹ: **20 → 28** (+8)
 - Siêu Cấp: **8 → 12** (+4)
 - Rare rule skills: **4 → 12** (+8)
@@ -49,64 +50,74 @@ Targets are not quotas; weak/duplicated content should be cut or redesigned.
 ## Checkpoint 1 — Design lock — COMPLETE
 All proposed additions have exact names/keys, Vietnamese mechanic contracts, cooldowns/limits, tags, visual intent and interaction roles in `V016_SKILL_DESIGN.md`.
 
-## Checkpoint 2 — Base skill implementation — ACTIVE
+## Checkpoint 2 — Base skill implementation — COMPLETE
 
 ### Batch A1 — COMPLETE
-Implemented in `js/v016-skills-a1.js`:
+`js/v016-skills-a1.js`
 - Dư Ảnh
 - Địa Lôi Phù
 - Huyết Liên
 - Linh Châu
 
-A1 completion gate passed:
-- mechanics implemented
-- truthful Vietnamese descriptions
-- dedicated live Canvas feedback
-- dedicated Codex visual profiles/scenes
-- normal dynamic level-up/Codex integration
-- full JavaScript syntax gate passed
-- non-shipping `tests/v016-a1-smoke.js` passed
-- Pages deployment passed
-- V0.8 movement untouched
-- final-piece-only hint logic re-audited
+### Batch A2 — COMPLETE
+`js/v016-skills-a2.js`
+- Bộ Pháp Chấn
+- Trói Hồn
+- Hồi Phong Nhận
+- Tinh Vẫn
 
-CI now syntax-checks source and runs A1 smoke tests before every Pages deployment. `tests/` is not copied into the Pages artifact.
-
-### Batch A2 — ACTIVE NEXT
-Implement:
-- **Bộ Pháp Chấn (`strideShock`)**
-- **Trói Hồn (`soulBind`)**
-- **Hồi Phong Nhận (`returnBlade`)**
-- **Tinh Vẫn (`meteorSeal`)**
-
-A2 requires mechanics + truthful descriptions + live visual identity + Codex identity + syntax checks + non-shipping smoke tests before completion.
-
-### Batch A3
+### Batch A3 — COMPLETE
+`js/v016-skills-a3.js`
 - Hộ Pháp Mộc Nhân
 - Hàn Kính
 - Tĩnh Tâm
 - Thất Tinh Kích
 
-### Batch A4
+A3 introduced only a narrow hostile combat-target hook in `game.js` for Hộ Pháp. Player V0.8 movement logic remains unchanged.
+
+### Batch A4 — COMPLETE
+`js/v016-skills-a4.js`
 - Lôi Trường
 - Hồn Đăng
 - Phá Giáp
 - Thời Vực
 
-## Checkpoint 3 — 8 Hợp Đạo Kỹ
-- Vạn Ảnh Xạ
-- Trọng Lực Phù Trận
-- Huyết Mạch Cộng Sinh
-- Linh Châu Dưỡng Mệnh
-- Phong Lôi Bộ
-- Phong Hồn Tử Ấn
-- Thiên Hỏa Tinh Vẫn
-- Hộ Pháp Phản Chấn
+### Checkpoint 2 validation
+All four batches include:
+- implemented mechanics
+- truthful Vietnamese descriptions
+- live Canvas feedback
+- dedicated Codex visual profile/scene identity
+- normal dynamic level-up/Codex integration
+- non-shipping smoke tests under `tests/`
+
+CI before every Pages deploy now performs:
+1. JavaScript syntax checks across `js/` and `tests/`
+2. A1 smoke
+3. A2 smoke
+4. A3 smoke
+5. A4 smoke
+
+The A4-loaded build passed all checks and Pages deployment successfully. Test files do not ship because Pages copies only `index.html`, `css/`, and `js/`.
+
+## Checkpoint 3 — 8 Hợp Đạo Kỹ — ACTIVE NEXT
+Implement:
+1. **Vạn Ảnh Xạ (`afterimageEcho`)** — Dư Ảnh + Ảnh Xạ
+2. **Trọng Lực Phù Trận (`gravityRune`)** — Địa Lôi Phù + Hắc Vực
+3. **Huyết Mạch Cộng Sinh (`bloodSymbiosis`)** — Huyết Liên + Huyết Chạm
+4. **Linh Châu Dưỡng Mệnh (`nourishingPearls`)** — Linh Châu + Linh Dưỡng
+5. **Phong Lôi Bộ** — Bộ Pháp Chấn + Lôi Kích
+6. **Phong Hồn Tử Ấn** — Trói Hồn + Tử Ấn
+7. **Thiên Hỏa Tinh Vẫn** — Tinh Vẫn + Hỏa Cầu Định Kỳ
+8. **Hộ Pháp Phản Chấn** — Hộ Pháp Mộc Nhân + Phản Chấn
 
 Requirements:
-- behavior-changing interactions, not flat filler buffs
+- each must change interaction/behavior rather than add a filler flat percentage
 - explicit source routing
-- preserve final-piece-only level-up hints
+- ordinary base effects must not visually masquerade as Hợp Đạo effects
+- preserve final-piece-only choice hints
+- add readable live signature and Codex visibility
+- add non-shipping mechanic exercises to CI
 
 ## Checkpoint 4 — 4 Siêu Cấp
 - Vạn Ảnh Phân Thân
