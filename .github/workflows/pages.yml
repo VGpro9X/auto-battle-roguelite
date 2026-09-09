@@ -75,6 +75,9 @@ jobs:
       - name: V0.16 Endless starting rare smoke test
         run: node tests/v016-endless-starting-rare-smoke.js
 
+      - name: V0.16 final content/truth audit smoke test
+        run: node tests/v016-final-audit-smoke.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
