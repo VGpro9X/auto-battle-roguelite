@@ -15,9 +15,10 @@ Read first:
 1. `README.md`
 2. `PROJECT_HANDOFF.md`
 3. `ROADMAP.md`
-4. `V016_RELEASE_VALIDATION.md`
-5. `V016_SKILL_DESIGN.md`
-6. `V016_RARE_SYSTEM_V2.md`
+4. `BALANCE_BASELINE_V016.md`
+5. `V016_RELEASE_VALIDATION.md`
+6. `V016_SKILL_DESIGN.md`
+7. `V016_RARE_SYSTEM_V2.md`
 
 ## Current state
 - Released baseline: **V0.16 – Skill Expansion & Rare System V2**.
@@ -29,7 +30,8 @@ Read first:
   - **20 rare rules = 10 Thần Kỹ + 10 Thần Bí Kỹ**
   - **140 Codex entries**
 - V0.16 content, CI audit, exact Pages-artifact Chromium validation and hands-on user sign-off are complete.
-- Next development phase is a **focused balance pass** before another major content expansion.
+- Post-release **focused balance pass** is active; B1.1 environmental pressure baseline is complete and CI-gated. No gameplay balance numbers have been changed yet.
+- Next checkpoint: B1.2 reproducible fixed-build measurement scenarios.
 - Movement baseline remains **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
 
 ## Locked terminology / truth rules
@@ -147,8 +149,6 @@ Latest audited result:
 - synthetic one-roll-per-level Lv8–60: **4.58 rare successes/run average** before duplicate/pool exhaustion
 - 400,000 Vô Hạn starting-rare samples across 20 slots: **1.07% maximum slot-frequency drift**
 
-These are implementation-consistency checks, not a final fun/difficulty judgment.
-
 ## Exact Pages-artifact Chromium validation — PASS
 Desktop 1440×1000:
 - registry 80 / 28 / 12 / 20
@@ -169,35 +169,45 @@ Mobile viewport checks:
 These draw timings are **not physical-device FPS claims**.
 
 ## Hands-on release sign-off
-The user accepted the current GitHub Pages release candidate after hands-on testing and reported no blocking issue. The `V0.16 DEV` release gate is closed; runtime/public label is final **V0.16**.
+The user accepted the current GitHub Pages release candidate after hands-on testing and reported no blocking issue. Runtime/public label is final **V0.16**.
+
+# Post-release balance pass
+
+## B1.1 Environmental pressure baseline — COMPLETE
+Files:
+- `BALANCE_BASELINE_V016.md`
+- `tests/balance-baseline-v016.js`
+
+CI now freezes the released V0.16 environment baseline before any tuning.
+
+Key facts:
+- timed-mode expected total spawns = **662.3 / 1324.7 / 1987.0 / 2649.4** for 5/10/15/20 minutes
+- timed modes share the same normalized spawn-density curve; pressure changes HP/damage
+- timed end-state nominal spawn pressure = **361.4 enemies/min**, 20% elites, 0.27s spawn cooldown
+- Endless reaches 0.20s spawn cooldown + 72% extra-spawn cap around 20m, producing ~**606.7 enemies/min** while HP/damage continue increasing
+
+These are model expectations, not real player clear counts.
+
+## B1.2 — NEXT
+Create reproducible fixed-build scenarios for offense, defense, summon/control and rare-heavy builds. Measure build-vs-pressure metrics before any balance number changes.
+
+Required metrics:
+- kills/minute and clear percentage
+- player level progression
+- incoming HP damage / shield absorption
+- survival time
+- active enemy/projectile/VFX density
+- build outliers across base/Hợp Đạo/Siêu Cấp/rare layers
 
 ## Current CI gate
 Before Pages deploy:
 1. syntax-check `js/*.js` + `tests/*.js`
-2. A1/A2/A3/A4 smoke
-3. base80 + public script-order integration
-4. rare curve / multi-rare / reroll / icon compatibility
-5. actual rare chain = 20 total / 10+10
-6. rare mechanic smoke
-7. layered rare ordering smoke
-8. Hợp Đạo B1/B2 + registry = 28
-9. Siêu Cấp C1 + registry = 12
-10. Vô Hạn guaranteed starting rare + public integration
-11. final content/truth audit = 140 + final visual wrapper order
-12. deterministic rare-rate balance simulation
-13. 20-rare Codex/live VFX stress
-
-# Immediate next checkpoint — focused balance pass
-Do not start another major content expansion yet.
-
-Balance-pass goals:
-- measure mode pacing and enemy pressure across 5/10/15/20/Vô Hạn
-- identify base-skill, Hợp Đạo, Siêu Cấp and rare outliers using reproducible scenarios
-- inspect survival/death timing rather than tuning from intuition alone
-- check whether late-game VFX remains readable when strong builds are active
-- preserve V0.8 movement behavior unless explicitly requested otherwise
-
-Prefer small, evidence-backed tuning commits over broad rewrites.
+2. V0.16 content/mechanic suites
+3. layered rare ordering smoke
+4. 140-content/final visual wrapper audit
+5. rare-rate/VFX stress
+6. **released V0.16 pressure baseline**
+7. Pages artifact/deploy
 
 ## Recommended continuation prompt
-`Tiếp tục VGpro9X/auto-battle-roguelite. GitHub main là master. Đọc README.md, PROJECT_HANDOFF.md và ROADMAP.md. V0.16 đã release chính thức với 80 Kỹ Năng + 28 Hợp Đạo + 12 Siêu Cấp + 20 rare = 140 Codex entries. CI, browser-artifact validation và hands-on sign-off đều pass. Bước tiếp theo là focused balance pass; đo lường trước khi chỉnh, giữ Movement V0.8 và mechanical truth.`
+`Tiếp tục VGpro9X/auto-battle-roguelite. GitHub main là master. Đọc README.md, PROJECT_HANDOFF.md, ROADMAP.md và BALANCE_BASELINE_V016.md. V0.16 đã release chính thức. Focused Balance Pass B1.1 environmental pressure baseline đã complete và CI-gated, chưa đổi gameplay numbers. Tiếp tục B1.2 fixed-build scenarios; đo lường trước khi chỉnh, giữ Movement V0.8 và mechanical truth.`
