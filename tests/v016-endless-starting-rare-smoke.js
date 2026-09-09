@@ -97,12 +97,10 @@ const rareIds=vm.runInContext('Object.keys(DIVINE_SKILLS)',context);
 assert.strictEqual(rareIds.length,20,'Endless starting pool must use the full 20-rare registry');
 assert.strictEqual(context.state.v016EndlessRare.getStartingRareCandidates().length,20,'Fresh run must expose all 20 rares as eligible starting candidates');
 
-// Non-Endless must remain on the existing startRun path and grant no automatic rare.
 context.startRun('normal');
 assert.strictEqual(baseStartCalls,1,'Non-Endless modes must delegate to the existing startRun implementation');
 assert.strictEqual(context.getOwnedDivineCount(),0,'Non-Endless modes must not receive a guaranteed starting rare');
 
-// Every equal-width random interval must map to exactly one of the 20 candidates.
 const selected=[];
 for(let i=0;i<rareIds.length;i++){
   randomQueue.push((i+.5)/rareIds.length);
@@ -113,7 +111,6 @@ for(let i=0;i<rareIds.length;i++){
 }
 assert.deepStrictEqual(selected,rareIds,'Uniform index mapping must cover each rare exactly once across the 20 equal probability intervals');
 
-// Verify the dedicated reveal occurs before exactly one normal starter screen.
 randomQueue.push(.31);
 timers.length=0;starterCalls.length=0;
 context.startRun('endless');
@@ -135,18 +132,16 @@ assert.deepStrictEqual(timers.map(t=>t.ms),[60],'Acknowledgement must schedule t
 timers.shift().fn();
 assert.deepStrictEqual(starterCalls,[true],'Acknowledgement must lead to exactly one normal starter Kỹ Năng screen');
 
-// Starting rare is excluded only as an owned duplicate; the other 19 remain eligible later.
 const availableAfterStart=vm.runInContext('getAvailableDivineSkillIds()',context);
 assert.strictEqual(availableAfterStart.length,19,'After the guaranteed rare, exactly 19 other rares must remain offerable');
 assert.ok(!availableAfterStart.includes(startingId),'The already-owned starting rare must be excluded from future offers');
 player.level=40;
-randomQueue.push(0,.5); // pass the 12% chance roll, then select uniformly from the remaining pool
+randomQueue.push(0,.5);
 const laterOffer=context.rollDivineOffer();
 assert.ok(laterOffer&&laterOffer!==startingId,'Later normal rare rolls must remain enabled and cannot duplicate the starting rare');
 
-// Public integration: the Endless layer must see the full rare registry and wrap startRun before Codex initializes.
 const index=fs.readFileSync('index.html','utf8');
-const r4='js/v016-rares-r4.js?v=016dev-r3';
+const r4='js/v016-rares-r4.js?v=016dev-audit-r1';
 const endless='js/v016-endless-starting-rare.js?v=016dev-endless-r1';
 const codex='js/skill-codex.js?v=016dev-evol12-r1';
 assert.ok(index.includes(endless),'Public build must load the Endless starting rare module with its current cache key');
