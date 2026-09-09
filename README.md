@@ -118,32 +118,48 @@ The public registry is CI-gated at exactly **12 Siêu Cấp**. Matching Hợp Đ
 - Current public script chain is tested to produce exactly 10 Thần Kỹ + 10 Thần Bí Kỹ.
 - Reroll, level-scaled rare chance, duplicate prevention and multi-rare ownership are CI-gated.
 
-## V0.16 final automated audit — COMPLETE
+## V0.16 automated + browser audit — COMPLETE
 ### Codex / rare VFX
-`js/v016-rare-vfx.js` gives all 20 rare rules dedicated Codex preview coverage and live feedback coverage. The original four retain their V0.13 bespoke live cues; the 16 V0.16 additions receive dedicated trigger/persistent feedback in the final audit layer.
+All 20 rare rules have dedicated Codex preview and live-feedback coverage. During exact Pages-artifact Chromium testing, a real runtime-order bug was found: V0.12 Visual Bridge could replace the first V0.16 preview wrapper and make new rare entries fall back to a generic purple-star preview.
+
+That bug is fixed. `js/v016-rare-vfx.js?v=016dev-audit-r2` now loads as the **final visual wrapper after Codex definitions, Visual Bridge and V0.13 rule feedback**, and CI enforces that order.
+
+Post-fix browser validation confirms:
+- 140 actual Codex cards/canvases
+- 80 skill / 28 Hợp Đạo / 12 Siêu Cấp / 10 Thần Kỹ / 10 Thần Bí Kỹ
+- all 20 rare previews produce **20 distinct rendered pixel hashes** at the same timestamp
+- zero JavaScript page exceptions / console errors in tested flows
 
 ### Mechanical truth
 A hidden generic failed-rare retry interval was found during audit and removed. Failed periodic rare activations now wait the stated normal cooldown unless that specific rare explicitly declares a retry cooldown. Thế Mệnh explicitly declares `retryCooldown: 1.25`, matching its Vietnamese description.
+
+A dedicated layered-rule CI test now locks the highest-risk ordering, including:
+- Mua Chuộc + Thời Đình ally exclusion/reversion
+- Thiên Ấn dodge-before-block
+- Đảo Nhân Quả priority over later HP rules
+- Nợ Máu + Ký Sinh + Thế Mệnh combined ordering
+- Bất Tử Nhất Tức final lethal interception
 
 ### Automated balance / stress
 Deterministic CI currently reports:
 - synthetic one-roll-per-level Lv8–60 model: **4.58 rare successes/run average** before duplicate/pool exhaustion
 - 400,000 Vô Hạn starting-rare samples: **1.07% maximum slot-frequency drift** across 20 slots
-- all 20 dedicated rare previews execute through their own preview path
 - live/persistent rare VFX passes a 360-frame synthetic stress/pruning test
 
-These are implementation-consistency checks, not final fun/difficulty judgments.
+Exact Pages-artifact Chromium validation additionally passed:
+- 10 repeated Vô Hạn starts: reveal → starter → gameplay every time
+- one reroll on starter and one independent reroll on normal level-up
+- desktop 1440×1000 and mobile 390×844 / 844×390 with no document-level horizontal overflow
+- synthetic dense on-screen rendering: ~3.46 ms/draw for 240 visible enemies + 199 representative VFX on desktop, ~1.64 ms/draw for 120 visible enemies on the mobile viewport in the headless environment
+
+The timing figures are regression indicators only, **not real-device FPS claims**.
 
 ## Remaining V0.16 release gate
-Only hands-on browser/device validation remains before changing the visible/runtime label from `V0.16 DEV` to final `V0.16`:
-- desktop playtest
-- phone/tablet playtest
-- dense late-game FPS/readability judgment
-- actual touch/layout judgment
-- visual inspection of all 140 Codex entries and 20 rare previews
-- difficult layered-mechanic spot checks
+The runtime/content/browser-artifact side is now release-candidate quality. Only a short **physical-device feel check** remains before changing `V0.16 DEV` to final `V0.16`:
+- one desktop run long enough to judge pacing/readability
+- one real phone/tablet check for touch ergonomics, browser safe areas, emoji/font rendering and hardware FPS
 
-Use `V016_RELEASE_VALIDATION.md` for the exact checklist.
+Use `V016_RELEASE_VALIDATION.md` for the exact final checklist and recorded evidence.
 
 ## CI
 Before every Pages deploy, GitHub Actions checks:
@@ -154,6 +170,7 @@ Before every Pages deploy, GitHub Actions checks:
 - reroll and icon compatibility
 - actual public 20-rare chain = 10 + 10
 - final rare mechanic smoke suite
+- layered rare ordering smoke suite
 - Hợp Đạo B1/B2 mechanics and combined registry = 28
 - Siêu Cấp C1 mechanics and combined registry = 12
 - Vô Hạn guaranteed starting rare flow and public script order
