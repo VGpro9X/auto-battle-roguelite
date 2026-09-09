@@ -31,9 +31,44 @@
     phantomStep:{dodge:[.05,.10,.16],move:[.04,.08,.12]}
   };
 
+  // Extensible behavior registry for Duel-only skill mechanics. New skill batches
+  // register hooks here instead of wrapping the Duel loop or Survival functions.
+  const SKILL_BEHAVIORS={};
+  function registerDuelSkillBehavior(key,behavior){
+    if(!key||!behavior||typeof behavior!=="object")return false;
+    SKILL_BEHAVIORS[key]=behavior;
+    return true;
+  }
+  function getDuelSkillBehavior(key){return SKILL_BEHAVIORS[key]||null;}
+
   function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
   function rankOf(build,key){return typeof getDuelSkillRank==="function"?getDuelSkillRank(build,key):Math.max(0,Math.min(3,Number(build?.[key]||0)));}
   function rankValue(key,field,rank){return rank>0?SKILL_VALUES[key]?.[field]?.[rank-1]:undefined;}
+  function forEachBehavior(build,callback){
+    if(!build)return;
+    for(const [key,behavior] of Object.entries(SKILL_BEHAVIORS)){
+      const rank=rankOf(build,key);
+      if(rank>0)callback(behavior,rank,key);
+    }
+  }
+  function runBehaviorHook(fighter,hook,context={}){
+    if(!fighter)return;
+    forEachBehavior(fighter.build,(behavior,rank,key)=>{
+      const fn=behavior?.[hook];
+      if(typeof fn==="function")fn({...context,fighter,rank,key,clamp,rankOf,rankValue});
+    });
+  }
+  function applyBehaviorModifier(fighter,hook,value,context={}){
+    let result=value;
+    if(!fighter)return result;
+    forEachBehavior(fighter.build,(behavior,rank,key)=>{
+      const fn=behavior?.[hook];
+      if(typeof fn!=="function")return;
+      const next=fn({...context,fighter,rank,key,value:result,clamp,rankOf,rankValue});
+      if(Number.isFinite(next))result=next;
+    });
+    return result;
+  }
 
   function computeDuelStats(entry){
     const build=entry?.build||{};
@@ -43,7 +78,7 @@
     const maxHp=100+(rankValue("vitality","hp",vitality)||0);
     const moveMultiplier=1+(rankValue("speed","move",speed)||0)+(rankValue("phantomStep","move",phantom)||0);
     const profile=typeof getDuelBuildProfile==="function"?getDuelBuildProfile(build):{preferredDistance:82,style:"Hỗn hợp"};
-    return{
+    const stats={
       maxHp,
       baseDamage:12+(rankValue("power","bonus",power)||0),
       moveSpeed:118*moveMultiplier,
@@ -57,6 +92,15 @@
       preferredDistance:profile.preferredDistance,
       style:profile.style
     };
+    forEachBehavior(build,(behavior,rank,key)=>{
+      if(typeof behavior.modifyStats==="function")behavior.modifyStats({entry,build,stats,rank,key,clamp,rankOf,rankValue});
+    });
+    stats.maxHp=Math.max(1,stats.maxHp);
+    stats.attackCooldown=Math.max(.12,stats.attackCooldown);
+    stats.armor=clamp(stats.armor,0,.80);
+    stats.critChance=clamp(stats.critChance,0,.75);
+    stats.dodgeChance=clamp(stats.dodgeChance,0,.65);
+    return stats;
   }
 
   function initialSkillTimers(build){
@@ -73,7 +117,7 @@
   function createRoundFighter(entry,side,arena){
     const stats=computeDuelStats(entry);
     const left=side==="player";
-    return{
+    const fighter={
       side,
       id:entry.id,
       name:entry.name,
@@ -94,11 +138,14 @@
       actionUntil:0,
       skillTimers:initialSkillTimers(entry.build),
       statuses:{burnUntil:0,burnDps:0,burnTickTimer:.5},
+      duelEffects:{},
       damageDealt:0,
       damageTaken:0,
       totalHealing:0,
       totalShieldGained:0
     };
+    runBehaviorHook(fighter,"onCreate",{arena});
+    return fighter;
   }
 
   function createDuelMatch(playerEntry,opponentEntry,{arena=DUEL_ARENA_FLAT,rng=Math.random}={}){
@@ -137,6 +184,9 @@
       }
     };
     match.currentRound=round;
+    round.matchRng=match.rng;round.arena=match.arena;
+    runBehaviorHook(round.fighters.player,"onRoundStart",{round,self:round.fighters.player,other:round.fighters.opponent,emit:(type,data)=>emitDuelEvent(round,type,data)});
+    runBehaviorHook(round.fighters.opponent,"onRoundStart",{round,self:round.fighters.opponent,other:round.fighters.player,emit:(type,data)=>emitDuelEvent(round,type,data)});
     emitDuelEvent(round,"round_start",{round:round.number});
     return round;
   }
@@ -185,6 +235,16 @@
     emitDuelEvent(round,"knockback",{side:target.side,distance,direction,x:target.x,y:target.y});
   }
 
+  function behaviorHelpers(round){
+    return{
+      emit:(type,data)=>emitDuelEvent(round,type,data),
+      dealDamage:(attacker,target,amount,meta={})=>duelDealDamage(round,attacker,target,amount,meta),
+      heal:(fighter,amount,source)=>duelHeal(round,fighter,amount,source),
+      addShield:(fighter,amount,source)=>duelAddShield(round,fighter,amount,source),
+      knockback:(target,distance,direction)=>duelApplyKnockback(round,target,distance,direction)
+    };
+  }
+
   function duelDealDamage(round,attacker,target,amount,meta={}){
     if(!round||!target||target.hp<=0||amount<=0)return 0;
     const rng=round.matchRng||Math.random;
@@ -193,21 +253,32 @@
       emitDuelEvent(round,"dodge",{side:target.side,source:meta.source||"damage",x:target.x,y:target.y-65});
       return 0;
     }
-    let damage=amount*duelPressureDamageMultiplier(round);
+    let damage=amount;
+    if(attacker)damage=applyBehaviorModifier(attacker,"modifyOutgoingDamage",damage,{round,attacker,target,meta});
+    if(meta.ignorePressure!==true)damage*=duelPressureDamageMultiplier(round);
     let critical=false;
     if(attacker&&meta.canCrit!==false&&rng()<attacker.stats.critChance){damage*=attacker.stats.critMultiplier;critical=true;}
-    damage*=Math.max(.1,1-target.stats.armor);
+    if(meta.ignoreArmor!==true)damage*=Math.max(.1,1-target.stats.armor);
+    damage=applyBehaviorModifier(target,"modifyIncomingDamage",damage,{round,attacker,target,meta});
+    damage=Math.max(0,damage);
     const beforeShield=target.shield;
     if(target.shield>0){const absorbed=Math.min(target.shield,damage);target.shield-=absorbed;damage-=absorbed;}
+    const shieldDamage=Math.max(0,beforeShield-target.shield);
     const hpDamage=Math.max(0,Math.min(target.hp,damage));
     target.hp-=hpDamage;
     target.damageTaken+=hpDamage;
-    if(attacker)attacker.damageDealt+=hpDamage+(beforeShield-target.shield);
+    const totalDamage=hpDamage+shieldDamage;
+    if(attacker)attacker.damageDealt+=totalDamage;
     target.action=target.hp<=0?"ko":"hit";target.actionUntil=round.time+(target.hp<=0?.9:.16);
     emitDuelEvent(round,"hit",{
       source:meta.source||"attack",attacker:attacker?.side||null,target:target.side,
-      amount:hpDamage,shieldDamage:beforeShield-target.shield,critical,x:target.x,y:target.y-72
+      amount:hpDamage,shieldDamage,critical,x:target.x,y:target.y-72
     });
+    if(totalDamage>0&&meta.reactive!==false){
+      const helpers=behaviorHelpers(round);
+      runBehaviorHook(target,"onDamageTaken",{round,self:target,other:attacker,attacker,target,meta,hpDamage,shieldDamage,totalDamage,...helpers});
+      if(attacker)runBehaviorHook(attacker,"onDamageDealt",{round,self:attacker,other:target,attacker,target,meta,hpDamage,shieldDamage,totalDamage,...helpers});
+    }
     if(target.hp<=0)emitDuelEvent(round,"ko",{side:target.side,source:meta.source||"attack",x:target.x,y:target.y});
     return hpDamage;
   }
@@ -248,7 +319,7 @@
       if(status.burnTickTimer<=0){
         status.burnTickTimer+=.5;
         const source=status.burnSource==="player"?round.fighters.player:round.fighters.opponent;
-        duelDealDamage(round,source,self,status.burnDps*.5,{source:"burn",canCrit:false,dodgeable:false});
+        duelDealDamage(round,source,self,status.burnDps*.5,{source:"burn",canCrit:false,dodgeable:false,reactive:false});
       }
     }else{status.burnDps=0;status.burnSource=null;status.burnTickTimer=.5;}
   }
@@ -260,6 +331,8 @@
     const build=self.build;
     for(const key of Object.keys(self.skillTimers))self.skillTimers[key]-=dt;
     if(self.stats.regen>0)duelHeal(round,self,self.stats.regen*dt,"heal");
+    const helpers=behaviorHelpers(round);
+    runBehaviorHook(self,"update",{round,self,other,dt,...helpers});
     const distance=Math.abs(other.x-self.x);
     if(self.hitStun>0)return;
 
@@ -323,7 +396,9 @@
 
   function moveFighter(round,self,other,direction,dt,speedMultiplier=1){
     if(!direction)return;
-    const speed=self.stats.moveSpeed*getMovementSlow(self,other)*speedMultiplier;
+    let behaviorMove=applyBehaviorModifier(self,"modifyMoveMultiplier",1,{round,self,other});
+    behaviorMove=Math.max(.1,behaviorMove);
+    const speed=self.stats.moveSpeed*getMovementSlow(self,other)*speedMultiplier*behaviorMove;
     self.x=clamp(self.x+direction*speed*dt,round.arena.leftBound,round.arena.rightBound);
     if(self.action==="idle"||self.action==="walk"||self.action==="run"){
       self.action=Math.abs(speed)>145?"run":"walk";self.actionUntil=round.time+.12;
@@ -341,12 +416,15 @@
 
   function doBasicAttack(round,self,other){
     if(self.attackTimer>0||Math.abs(other.x-self.x)>self.stats.attackRange)return false;
-    self.attackTimer=self.stats.attackCooldown;
+    let cooldown=applyBehaviorModifier(self,"modifyBasicAttackCooldown",self.stats.attackCooldown,{round,self,other});
+    self.attackTimer=Math.max(.12,cooldown);
     self.action="melee";self.actionUntil=round.time+.22;
     const dealt=duelDealDamage(round,self,other,self.stats.baseDamage,{source:"basic",canCrit:true,dodgeable:true});
     if(dealt>0){
       const burn=rankOf(self.build,"burn");
       if(burn&&(round.matchRng||Math.random)()<(rankValue("burn","chance",burn)||0))applyBurn(round,self,other,burn);
+      const helpers=behaviorHelpers(round);
+      runBehaviorHook(self,"onBasicHit",{round,self,other,attacker:self,target:other,damage:dealt,...helpers});
     }
     emitDuelEvent(round,"attack_melee",{side:self.side,target:other.side,x:self.x+self.facing*48,y:self.y-70});
     return true;
@@ -444,6 +522,9 @@
 
   root.DUEL_ARENA_FLAT=DUEL_ARENA_FLAT;
   root.DUEL_SKILL_VALUES=SKILL_VALUES;
+  root.DUEL_SKILL_BEHAVIORS=SKILL_BEHAVIORS;
+  root.registerDuelSkillBehavior=registerDuelSkillBehavior;
+  root.getDuelSkillBehavior=getDuelSkillBehavior;
   root.computeDuelStats=computeDuelStats;
   root.createDuelMatch=createDuelMatch;
   root.startDuelRound=startDuelRound;
