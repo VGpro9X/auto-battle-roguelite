@@ -95,8 +95,8 @@ assert.strictEqual(state.v016A3.frostMirrorCharge,1,'Hàn Kính charge cap must 
 const contactEnemy={x:120,y:100,r:12,hp:100,speed:40,dead:false};
 state.enemies=[contactEnemy];
 const reduced=sandbox.damagePlayer(100,{source:contactEnemy,type:'contact'});
-assert.strictEqual(reduced,55,'Level 1 Hàn Kính must reduce contact damage by 45%');
-assert.strictEqual(damageLog.at(-1).amount,55,'Reduced amount passed into the normal damage pipeline must be 55');
+assert(Math.abs(reduced-55)<1e-9,'Level 1 Hàn Kính must reduce contact damage by 45%');
+assert(Math.abs(damageLog.at(-1).amount-55)<1e-9,'Reduced amount passed into the normal damage pipeline must be 55');
 assert.strictEqual(state.v016A3.frostMirrorCharge,0,'Hàn Kính charge must be consumed');
 assert.strictEqual(contactEnemy.chillUntil,3,'Contacting enemy must be chilled for exactly 3 seconds');
 
