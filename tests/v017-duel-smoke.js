@@ -19,10 +19,15 @@ function approx(actual,expected,epsilon=1e-9){
 load('js/duel-skills.js');
 load('js/duel-tournament.js');
 load('js/duel-engine.js');
+load('js/duel-skills-d6a.js');
 
 // Duel content contract.
 assert.strictEqual(DUEL_MAX_RANK,3,'Duel skills must cap at Rank III');
-assert.strictEqual(DUEL_SKILL_KEYS.length,16,'V0.17 prototype must expose exactly 16 Duel skill adapters');
+assert.strictEqual(DUEL_SKILL_KEYS.length,24,'V0.17 D6A must expose exactly 24 Duel skill adapters');
+for(const key of ['execution','berserk','glassCannon','retaliate','thorns','lastStand','deathMark','poison']){
+  assert.ok(DUEL_SKILL_KEYS.includes(key),`missing D6A skill ${key}`);
+  assert.ok(getDuelSkillBehavior(key),`missing D6A behavior ${key}`);
+}
 const starterBuild={};
 const starterChoices=getDuelChoices(starterBuild,{starter:true,count:3,rng:makeRng(1)});
 assert.strictEqual(starterChoices.length,3,'starter screen must offer three choices');
@@ -35,7 +40,7 @@ assert.strictEqual(getDuelSkillRank(starterBuild,rankKey),3);
 assert.strictEqual(addDuelSkillRank(starterBuild,rankKey),false,'Rank III must be a hard visible maximum');
 
 // Defensive builds must not be interpreted as ranged builds just because they avoid melee offense.
-const defensiveProfile=getDuelBuildProfile({vitality:2,armor:2,heal:1,barrier:1});
+const defensiveProfile=getDuelBuildProfile({vitality:2,armor:2,heal:1,barrier:1,lastStand:1});
 assert.ok(defensiveProfile.preferredDistance<120,`defensive build drifted too far: ${defensiveProfile.preferredDistance}px`);
 assert.ok(!defensiveProfile.style.includes('Tầm xa'),`defensive build was mislabeled as ranged: ${defensiveProfile.style}`);
 
@@ -66,12 +71,14 @@ assert.strictEqual(tournament.rewardCount,5,'there are five build rewards before
 const nakedStats=computeDuelStats({build:{}});
 assert.strictEqual(nakedStats.critChance,0,'Duel must not grant hidden base crit');
 const timerMatch=createDuelMatch(
-  {id:'player',name:'BẠN',build:{fire:1}},
+  {id:'player',name:'BẠN',build:{fire:1,deathMark:3,retaliate:3}},
   {id:'opponent',name:'ĐỐI THỦ',build:{}},
   {rng:makeRng(21)}
 );
 const timerRound=startDuelRound(timerMatch);
 approx(timerRound.fighters.player.skillTimers.fire,4.2);
+approx(timerRound.fighters.player.skillTimers.deathMark,6);
+assert.strictEqual(timerRound.fighters.player.skillTimers.retaliate,0,'reactive cooldown must start ready');
 assert.strictEqual(timerRound.fighters.player.attackTimer,0,'basic attack may be ready immediately');
 assert.strictEqual(timerRound.fighters.player.dashTimer,0,'dash may be ready immediately');
 approx(duelPressureDamageMultiplier({time:0}),1);
@@ -82,10 +89,82 @@ approx(duelSustainMultiplier({time:45}),1);
 approx(duelSustainMultiplier({time:52.5}),.75);
 approx(duelSustainMultiplier({time:60}),0);
 
+// D6A behavior checks.
+approx(computeDuelStats({build:{glassCannon:3}}).maxHp,76);
+{
+  const match=createDuelMatch(
+    {id:'player',name:'BẠN',build:{execution:3}},
+    {id:'opponent',name:'ĐỐI THỦ',build:{}},
+    {rng:()=>.99}
+  );
+  const round=startDuelRound(match);
+  round.fighters.player.x=450;round.fighters.opponent.x=500;round.fighters.opponent.hp=40;
+  updateDuelRound(match,.033);
+  approx(round.fighters.opponent.hp,22.6,1e-6);
+}
+{
+  const match=createDuelMatch(
+    {id:'player',name:'BẠN',build:{lastStand:3}},
+    {id:'opponent',name:'ĐỐI THỦ',build:{}},
+    {rng:()=>.99}
+  );
+  const round=startDuelRound(match);
+  round.fighters.player.x=450;round.fighters.opponent.x=500;round.fighters.player.hp=20;
+  updateDuelRound(match,.033);
+  approx(round.fighters.player.hp,10.4,1e-6);
+}
+{
+  const match=createDuelMatch(
+    {id:'player',name:'BẠN',build:{thorns:3}},
+    {id:'opponent',name:'ĐỐI THỦ',build:{}},
+    {rng:()=>.99}
+  );
+  const round=startDuelRound(match);
+  round.fighters.player.x=450;round.fighters.opponent.x=500;
+  updateDuelRound(match,.033);
+  approx(round.fighters.opponent.hp,80,1e-6);
+}
+{
+  const match=createDuelMatch(
+    {id:'player',name:'BẠN',build:{retaliate:3}},
+    {id:'opponent',name:'ĐỐI THỦ',build:{}},
+    {rng:()=>.99}
+  );
+  const round=startDuelRound(match);
+  round.fighters.player.x=450;round.fighters.opponent.x=500;
+  updateDuelRound(match,.033);
+  approx(round.fighters.opponent.hp,64,1e-6);
+  assert.ok(round.fighters.player.skillTimers.retaliate>2.4,'retaliate cooldown was not consumed');
+}
+{
+  const match=createDuelMatch(
+    {id:'player',name:'BẠN',build:{poison:3}},
+    {id:'opponent',name:'ĐỐI THỦ',build:{}},
+    {rng:()=>0}
+  );
+  const round=startDuelRound(match);
+  round.fighters.player.x=450;round.fighters.opponent.x=500;
+  updateDuelRound(match,.033);
+  assert.ok(round.fighters.opponent.duelEffects.poison,'poison did not apply on deterministic basic hit');
+  approx(round.fighters.opponent.duelEffects.poison.dps,5.5);
+}
+{
+  const match=createDuelMatch(
+    {id:'player',name:'BẠN',build:{deathMark:3}},
+    {id:'opponent',name:'ĐỐI THỦ',build:{}},
+    {rng:()=>.99}
+  );
+  const round=startDuelRound(match);
+  round.fighters.player.skillTimers.deathMark=0;
+  updateDuelRound(match,.033);
+  assert.ok(round.fighters.opponent.duelEffects.deathMark?.until>round.time,'death mark did not activate');
+  approx(round.fighters.opponent.duelEffects.deathMark.bonus,.30);
+}
+
 // A real deterministic best-of-3 must terminate through the Duel engine.
 const match=createDuelMatch(
-  {id:'player',name:'BẠN',build:{power:3,rapid:3,fire:3,lightning:3,crit:3}},
-  {id:'opponent',name:'ĐỐI THỦ',build:{vitality:1,armor:1}},
+  {id:'player',name:'BẠN',build:{power:3,rapid:3,fire:3,lightning:3,crit:3,execution:2}},
+  {id:'opponent',name:'ĐỐI THỦ',build:{vitality:1,armor:1,lastStand:1}},
   {rng:makeRng(99)}
 );
 startDuelRound(match);
@@ -100,18 +179,23 @@ assert.ok(match.winner==='player'||match.winner==='opponent');
 assert.strictEqual(match.wins[match.winner],2,'winner must reach two round wins');
 assert.ok(match.wins[match.loser]<=1,'loser cannot exceed one round win in best-of-3');
 
-// Public artifact wiring must include the replaceable Duel renderer layer.
+// Public artifact wiring must include the replaceable Duel renderer and D6 modules.
 const index=fs.readFileSync('index.html','utf8');
 for(const required of [
   'css/v017-duel.css',
   'js/duel-skills.js',
   'js/duel-tournament.js',
   'js/duel-engine.js',
+  'js/duel-skills-d6a.js',
   'js/duel-renderer.js',
-  'js/duel-ui.js'
+  'js/duel-ui.js',
+  'js/duel-ui-sync.js'
 ])assert.ok(index.includes(required),`index.html missing ${required}`);
+assert.ok(index.indexOf('js/duel-engine.js')<index.indexOf('js/duel-skills-d6a.js'),'D6 behavior module must load after registry engine');
+assert.ok(index.indexOf('js/duel-skills-d6a.js')<index.indexOf('js/duel-ui.js'),'D6 skills must exist before Duel UI builds choices');
 const engineSource=fs.readFileSync('js/duel-engine.js','utf8');
 assert.ok(!engineSource.includes('burn-lite'),'Hỏa Cầu must not carry an undocumented burn effect');
+assert.ok(engineSource.includes('registerDuelSkillBehavior'),'Duel engine behavior registry is missing');
 
 console.log('V0.17 Duel smoke test passed:',{
   skillAdapters:DUEL_SKILL_KEYS.length,
