@@ -12,9 +12,9 @@ GitHub `main` is canonical.
 ## Current main / Pages content
 - **80 base Kỹ Năng**
 - **28 Hợp Đạo Kỹ**
-- **8 Siêu Cấp**
+- **12 Siêu Cấp**
 - **20 rare rules**: 10 Thần Kỹ + 10 Thần Bí Kỹ
-- **136 current Codex entries** = 80 + 28 + 8 + 20
+- **140 Codex entries** = 80 + 28 + 12 + 20
 
 Current Thần Kỹ:
 - Bất Tử Nhất Tức
@@ -64,29 +64,18 @@ Every starter/level-up screen has exactly one **XOAY LẠI**:
 
 The exact current rare chance is shown on the level-up screen and documented in Cách chơi.
 
+### Vô Hạn guaranteed starting rare
+Every Vô Hạn run now:
+1. uniformly grants exactly one random rare from the full 20-skill pool
+2. shows a dedicated reveal with tier/icon/name/exact description
+3. continues to exactly one normal starter Kỹ Năng after acknowledgement
+4. excludes only the granted rare from later offers as an owned duplicate
+5. still allows later rare offers through the normal level-scaled curve
+
+The Vô Hạn mode card and Cách chơi disclose this rule.
+
 ### Cross-platform icon compatibility
 `js/v016-run-systems.js` replaces newer emoji that may render as square boxes on older Windows/Android emoji fonts with stable symbols.
-
-## V0.16 final content target
-- base Kỹ Năng: **80** ✅
-- Hợp Đạo Kỹ: **28** ✅
-- Siêu Cấp: **12**
-- rare rules: **20** ✅
-- final Codex target: **140 entries** = 80 + 28 + 12 + 20
-
-The older `124` target was an arithmetic error and is obsolete.
-
-Rare-system V2 design: `V016_RARE_SYSTEM_V2.md`.  
-Base/Hợp Đạo/Siêu Cấp contract: `V016_SKILL_DESIGN.md`.
-
-## Game modes
-- 5 minutes — 3 starter skill picks
-- 10 minutes — 2 starter skill picks
-- 15 minutes — 1 starter skill pick
-- 20 minutes — 1 starter skill pick
-- Vô Hạn — currently normal starter flow; V0.16 will additionally guarantee one random rare reveal before the starter choice
-
-The revised Vô Hạn rule will still allow later rare offers through the normal level-scaled curve; the guaranteed starting rare only becomes ineligible as a duplicate.
 
 ## Locked development rules
 - Movement baseline: **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
@@ -116,7 +105,15 @@ B2:
 - Thiên Hỏa Tinh Vẫn
 - Hộ Pháp Phản Chấn
 
-The combined registry is CI-gated at exactly **28 unique Hợp Đạo Kỹ** and both B modules load before Codex. Each new Hợp Đạo changes interaction behavior rather than adding a filler flat stat.
+The combined registry is CI-gated at exactly **28 unique Hợp Đạo Kỹ** and both B modules load before Codex.
+
+### 4 new Siêu Cấp — COMPLETE
+- Vạn Ảnh Phân Thân
+- Thiên La Địa Võng
+- Huyết Võng
+- Tinh Hà Trụy Lạc
+
+The public registry is CI-gated at exactly **12 Siêu Cấp**. The new evolutions preserve their already-unlocked Hợp Đạo interactions and have dedicated live/Codex identities.
 
 ### Rare System V2 — COMPLETE at mechanic level
 - 20 unique rare rules are implemented and registered before Codex.
@@ -125,14 +122,14 @@ The combined registry is CI-gated at exactly **28 unique Hợp Đạo Kỹ** and
 
 Dedicated visual polish for every new rare remains part of the final V0.16 VFX/Codex audit.
 
-## Immediate next content checkpoint
-4 new Siêu Cấp:
-- Vạn Ảnh Phân Thân
-- Thiên La Địa Võng
-- Huyết Võng
-- Tinh Hà Trụy Lạc
-
-Then: Vô Hạn guaranteed starting rare reveal → full Codex/VFX/mechanical-truth/balance/device audit.
+## Immediate next checkpoint
+Full V0.16 audit and release validation:
+- Codex count/representation audit
+- dedicated VFX/live feedback audit for all 20 rare rules
+- mechanical-truth audit for cooldowns/caps/stack/target limits
+- repeated rare-rate and Vô Hạn-start simulations
+- dense late-game stress test
+- phone + desktop real-device verification
 
 ## CI
 Before every Pages deploy, GitHub Actions checks:
@@ -143,9 +140,9 @@ Before every Pages deploy, GitHub Actions checks:
 - reroll and icon compatibility
 - actual public 20-rare chain = 10 + 10
 - final rare mechanic smoke suite
-- Hợp Đạo B1 mechanics
-- Hợp Đạo B2 mechanics
-- combined public Hợp Đạo registry = 28
+- Hợp Đạo B1/B2 mechanics and combined registry = 28
+- Siêu Cấp C1 mechanics and combined registry = 12
+- Vô Hạn guaranteed starting rare flow and public script order
 
 ## Project continuity
 - `PROJECT_HANDOFF.md`
