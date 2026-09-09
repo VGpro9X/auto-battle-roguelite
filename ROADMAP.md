@@ -12,9 +12,10 @@ GitHub `main` is canonical.
 
 Read before work:
 1. `PROJECT_HANDOFF.md`
-2. `V016_RELEASE_VALIDATION.md`
-3. `V016_SKILL_DESIGN.md`
-4. `V016_RARE_SYSTEM_V2.md`
+2. `BALANCE_BASELINE_V016.md`
+3. `V016_RELEASE_VALIDATION.md`
+4. `V016_SKILL_DESIGN.md`
+5. `V016_RARE_SYSTEM_V2.md`
 
 ---
 
@@ -121,12 +122,32 @@ Do **not** begin another major content expansion yet.
 ## Goal
 Use reproducible scenarios and run data to identify actual outliers before changing numbers. Preserve the feel of accepted systems unless evidence shows a problem.
 
-## Checkpoint B1 — Baseline measurement — NEXT
-- establish reproducible fixed-build scenarios for offense, defense, summon/control and rare-heavy builds
-- sample 5/10/15/20-minute and Vô Hạn enemy pressure
-- record kill rate, incoming damage, survival time, level progression and late-game entity/VFX density
-- identify top/bottom base-skill outliers without balancing from description alone
-- do not change numbers during this measurement checkpoint
+## Checkpoint B1 — Baseline measurement — ACTIVE
+### B1.1 Environment/pressure baseline — COMPLETE
+Frozen in:
+- `BALANCE_BASELINE_V016.md`
+- `tests/balance-baseline-v016.js`
+
+The test is now part of the Pages CI gate. No gameplay number was changed.
+
+Released V0.16 pressure anchors:
+- timed-mode expected total spawns: **662.3 / 1324.7 / 1987.0 / 2649.4** for 5/10/15/20 minutes
+- all timed modes share the same normalized spawn-density curve; mode pressure changes HP/damage rather than spawn density
+- timed modes end at nominal **361.4 spawns/min**, 20% elite chance and 0.27s spawn cooldown
+- Endless reaches the **0.20s spawn-cooldown floor** and **72% extra-spawn cap** around 20 minutes, giving a nominal **606.7 spawns/min** thereafter while HP/damage continue scaling
+
+These are pressure-model expectations, not actual player kill counts.
+
+### B1.2 Fixed-build scenarios — NEXT
+Establish reproducible offense, defense, summon/control and rare-heavy scenarios against the frozen pressure baseline and record:
+- kills/minute and clear percentage
+- player level progression
+- incoming HP damage / shield absorption
+- survival time
+- active enemy/projectile/VFX density
+- major base/Hợp Đạo/Siêu Cấp/rare outliers
+
+Do not change balance numbers until these scenarios produce evidence.
 
 ## Checkpoint B2 — Targeted tuning
 Only after B1 evidence:
