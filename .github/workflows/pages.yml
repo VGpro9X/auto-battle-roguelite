@@ -90,6 +90,9 @@ jobs:
       - name: V0.16 released pressure baseline
         run: node tests/balance-baseline-v016.js
 
+      - name: V0.17 Duel tournament and combat smoke test
+        run: node tests/v017-duel-smoke.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
