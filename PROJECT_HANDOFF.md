@@ -6,7 +6,7 @@ Use this file as the starting context when continuing development in a new chat.
 - Repository: `VGpro9X/auto-battle-roguelite`
 - Default branch: `main`
 - Repository is public; GitHub `main` is canonical.
-- Public test URL: `https://vgpro9x.github.io/auto-battle-roguelite/`
+- Public URL: `https://vgpro9x.github.io/auto-battle-roguelite/`
 - Pages workflow: `.github/workflows/pages.yml`
 - Before editing an existing file, fetch current GitHub content + blob SHA.
 - Commit after each meaningful checkpoint.
@@ -20,16 +20,16 @@ Read first:
 6. `V016_RARE_SYSTEM_V2.md`
 
 ## Current state
-- Released baseline: **V0.15** responsive/mobile work accepted by user.
-- Public development label: **V0.16 DEV**.
+- Released baseline: **V0.16 – Skill Expansion & Rare System V2**.
+- Runtime/public label: **V0.16**.
 - Current main/Pages content:
   - **80 base Kỹ Năng**
   - **28 Hợp Đạo Kỹ**
   - **12 Siêu Cấp**
   - **20 rare rules = 10 Thần Kỹ + 10 Thần Bí Kỹ**
   - **140 Codex entries**
-- V0.16 content, CI audit, exact Pages-artifact Chromium validation and synthetic desktop/mobile viewport checks are complete.
-- Remaining release gate is a **short physical-device feel check** before changing the visible/runtime label from `V0.16 DEV` to final `V0.16`.
+- V0.16 content, CI audit, exact Pages-artifact Chromium validation and hands-on user sign-off are complete.
+- Next development phase is a **focused balance pass** before another major content expansion.
 - Movement baseline remains **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
 
 ## Locked terminology / truth rules
@@ -42,7 +42,7 @@ Read first:
 - Choice cards only show relation hints when that exact pick immediately completes the unlock.
 - Test harnesses live only under `tests/`; Pages deploys only `index.html`, `css/`, `js/`.
 
-# V0.16 completed content
+# V0.16 released content
 
 ## 80 base Kỹ Năng — COMPLETE
 A1: Dư Ảnh, Địa Lôi Phù, Huyết Liên, Linh Châu.  
@@ -112,16 +112,16 @@ Flow:
 
 The mode card and Cách chơi disclose the rule.
 
-# Final V0.16 audit status
+# V0.16 validation status — RELEASED
 
 ## Rare VFX/Codex — PASS in actual browser runtime
 Module: `js/v016-rare-vfx.js`.
 
 Important integration fix:
-- A headless Chromium run against the **exact generated GitHub Pages artifact** found that the old V0.12 Visual Bridge could overwrite the first V0.16 rare preview wrapper.
+- A headless Chromium run against the exact generated GitHub Pages artifact found that the old V0.12 Visual Bridge could overwrite the first V0.16 rare preview wrapper.
 - Symptom: many new rare entries fell back to the generic purple-star preview despite static coverage tests passing.
-- Fix: `js/v016-rare-vfx.js?v=016dev-audit-r2` now loads as the **final visual wrapper after `skill-codex.js`, `visual-bridge.js`, `v013-summon-power-feedback.js` and `v013-rule-feedback.js`**.
-- `tests/v016-final-audit-smoke.js` now enforces this exact order.
+- Fix: `js/v016-rare-vfx.js?v=016dev-audit-r2` loads as the final visual wrapper after `skill-codex.js`, `visual-bridge.js`, `v013-summon-power-feedback.js` and `v013-rule-feedback.js`.
+- `tests/v016-final-audit-smoke.js` enforces this exact order.
 
 Post-fix browser evidence:
 - 140 actual Codex cards/canvases
@@ -131,7 +131,7 @@ Post-fix browser evidence:
 - zero page exceptions / console errors during tested flows
 
 ## Layered rare ordering — CI LOCKED
-New integration test: `tests/v016-layering-smoke.js`.
+Integration test: `tests/v016-layering-smoke.js`.
 
 It uses the real public rare-module order and locks:
 - Mua Chuộc ally is excluded from Thời Đình freeze and later reverts normally
@@ -168,6 +168,9 @@ Mobile viewport checks:
 
 These draw timings are **not physical-device FPS claims**.
 
+## Hands-on release sign-off
+The user accepted the current GitHub Pages release candidate after hands-on testing and reported no blocking issue. The `V0.16 DEV` release gate is closed; runtime/public label is final **V0.16**.
+
 ## Current CI gate
 Before Pages deploy:
 1. syntax-check `js/*.js` + `tests/*.js`
@@ -184,14 +187,17 @@ Before Pages deploy:
 12. deterministic rare-rate balance simulation
 13. 20-rare Codex/live VFX stress
 
-# Immediate next checkpoint — physical-device V0.16 release check
+# Immediate next checkpoint — focused balance pass
 Do not start another major content expansion yet.
 
-Only a short human/physical-device judgment remains before renaming `V0.16 DEV` to final `V0.16`:
-- one desktop run long enough to judge pacing/readability and confirm V0.8 movement still feels unchanged
-- one real phone/tablet check for touch comfort, browser safe areas, actual emoji/font rendering and hardware FPS
+Balance-pass goals:
+- measure mode pacing and enemy pressure across 5/10/15/20/Vô Hạn
+- identify base-skill, Hợp Đạo, Siêu Cấp and rare outliers using reproducible scenarios
+- inspect survival/death timing rather than tuning from intuition alone
+- check whether late-game VFX remains readable when strong builds are active
+- preserve V0.8 movement behavior unless explicitly requested otherwise
 
-Exact evidence/checklist: `V016_RELEASE_VALIDATION.md`.
+Prefer small, evidence-backed tuning commits over broad rewrites.
 
 ## Recommended continuation prompt
-`Tiếp tục VGpro9X/auto-battle-roguelite. GitHub main là master. Đọc README.md, PROJECT_HANDOFF.md, ROADMAP.md và V016_RELEASE_VALIDATION.md. V0.16 DEV đã đạt đủ 80 Kỹ Năng + 28 Hợp Đạo + 12 Siêu Cấp + 20 rare = 140 Codex entries. Final CI, layered rare ordering, exact Pages-artifact Chromium validation, 20 distinct rare previews và desktop/mobile viewport stress đều pass. Chỉ còn physical-device feel check trước khi đổi nhãn thành V0.16 final. Fetch file trước khi sửa, giữ Movement V0.8 và mechanical truth.`
+`Tiếp tục VGpro9X/auto-battle-roguelite. GitHub main là master. Đọc README.md, PROJECT_HANDOFF.md và ROADMAP.md. V0.16 đã release chính thức với 80 Kỹ Năng + 28 Hợp Đạo + 12 Siêu Cấp + 20 rare = 140 Codex entries. CI, browser-artifact validation và hands-on sign-off đều pass. Bước tiếp theo là focused balance pass; đo lường trước khi chỉnh, giữ Movement V0.8 và mechanical truth.`
