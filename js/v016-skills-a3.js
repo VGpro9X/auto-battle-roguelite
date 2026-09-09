@@ -143,7 +143,7 @@
     if(key==="focusMind"){
       const level=skillLevel("focusMind");
       if(runtime.focusActive)activateFocus(level);
-      else if(state.t-runtime.lastDamageAt>=4)activateFocus(level);
+      else if(state.t-runtime.lastDamageAt>=4-1e-9)activateFocus(level);
     }
   });
 
@@ -233,7 +233,7 @@
       if(runtime.focusActive)deactivateFocus();
       return;
     }
-    if(!runtime.focusActive&&state.t-runtime.lastDamageAt>=4)activateFocus(level);
+    if(!runtime.focusActive&&state.t-runtime.lastDamageAt>=4-1e-9)activateFocus(level);
   }
 
   const baseUpdateA3=update;
