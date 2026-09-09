@@ -62,13 +62,19 @@ function update(dt){
       continue;
     }
 
-    const dx=player.x-enemy.x,dy=player.y-enemy.y,magnitude=Math.hypot(dx,dy)||1;
-    const auraChilled=frostLevel&&magnitude<=frostRadius;
+    const combatTarget=typeof getEnemyCombatTarget==="function"?(getEnemyCombatTarget(enemy)||player):player;
+    const dx=combatTarget.x-enemy.x,dy=combatTarget.y-enemy.y,magnitude=Math.hypot(dx,dy)||1;
+    const playerDistance=Math.hypot(player.x-enemy.x,player.y-enemy.y);
+    const auraChilled=frostLevel&&playerDistance<=frostRadius;
     enemy.chilled=Boolean(auraChilled||enemy.chillUntil>state.t);
     const speedFactor=enemy.chilled?frostSpeedFactor:1;
     enemy.x+=dx/magnitude*enemy.speed*speedFactor*dt;
     enemy.y+=dy/magnitude*enemy.speed*speedFactor*dt;
-    if(magnitude<player.r+enemy.r+3)damagePlayer(enemy.dmg*dt,{source:enemy,type:"contact"});
+    const targetRadius=combatTarget.r||player.r;
+    if(magnitude<targetRadius+enemy.r+3){
+      if(combatTarget!==player&&typeof damageEnemyCombatTarget==="function")damageEnemyCombatTarget(combatTarget,enemy.dmg*dt,{source:enemy,type:"contact"});
+      else damagePlayer(enemy.dmg*dt,{source:enemy,type:"contact"});
+    }
   }
 
   const orbitBase=skillLevel("orbit");
