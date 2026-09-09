@@ -61,11 +61,12 @@
 
   function initialSkillTimers(build){
     const timers={};
-    for(const key of Object.keys(SKILL_VALUES)){
-      if(!rankOf(build,key))continue;
-      if(["fire","knock","lightning","nova","barrier"].includes(key))timers[key]=1.15;
+    for(const key of ["fire","knock","lightning","nova","barrier"]){
+      const rank=rankOf(build,key);
+      if(rank)timers[key]=rankValue(key,"cooldown",rank);
     }
-    if(rankOf(build,"orbit"))timers.orbitHit=.45;
+    const orbit=rankOf(build,"orbit");
+    if(orbit)timers.orbitHit=rankValue("orbit","interval",orbit);
     return timers;
   }
 
@@ -85,8 +86,8 @@
       hp:stats.maxHp,
       maxHp:stats.maxHp,
       shield:0,
-      attackTimer:.35,
-      dashTimer:1.2,
+      attackTimer:0,
+      dashTimer:0,
       decisionTimer:0,
       hitStun:0,
       action:"idle",
