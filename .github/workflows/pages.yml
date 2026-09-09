@@ -63,6 +63,9 @@ jobs:
       - name: V0.16 Hợp Đạo B2 smoke test
         run: node tests/v016-synergies-b2-smoke.js
 
+      - name: V0.16 28-Hợp-Đạo integration smoke test
+        run: node tests/v016-synergy28-integration.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
