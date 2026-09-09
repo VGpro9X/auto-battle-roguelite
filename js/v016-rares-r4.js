@@ -40,7 +40,7 @@
   DIVINE_SKILLS.scapegoatFate={
     id:"scapegoatFate",tier:"mystic",name:"Thế Mệnh",icon:"☯✕",
     desc:"Cứ mỗi 28 giây, đánh dấu một kẻ địch thường ngẫu nhiên làm Thế Mệnh. Nếu phần sát thương tức thời còn lại sau các phòng thủ khác đủ hạ bạn khi Thế Mệnh còn sống, kẻ đó chết thay và HP của bạn được giữ ở 1. Nếu Thế Mệnh chết trước, dấu mất và phải chờ lần đánh dấu tiếp theo. Tinh Anh không thể làm Thế Mệnh. Nếu lúc kích hoạt không có mục tiêu hợp lệ, kỹ năng thử lại sau tối đa 1.25 giây.",
-    cooldown:28,preview:"scapegoatFate",
+    cooldown:28,retryCooldown:1.25,preview:"scapegoatFate",
     execute:()=>{
       const candidates=state.enemies.filter(enemy=>isEnemyHostile(enemy)&&!enemy.elite);
       if(!candidates.length)return false;
