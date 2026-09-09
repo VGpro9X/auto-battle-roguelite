@@ -35,11 +35,14 @@ assert(position('js/v016-skills-a4.js?v=016dev-base80-r1')<position('js/skill-co
 assert(position('js/v016-run-systems.js?v=016dev-')<position('js/v016-rares-r3.js?v=016dev-'),'Run systems must load before rare R3');
 assert(position('js/v016-rares-r3.js?v=016dev-')<position('js/v016-rares-r4.js?v=016dev-'),'Rare R3 must load before rare R4');
 assert(position('js/v016-rares-r4.js?v=016dev-')<position('js/skill-codex.js?v=016dev-'),'All rare definitions must register before Codex loads');
-assert(index.includes('Auto Battle Roguelite V0.16'),'Visible HTML must identify the final V0.16 build');
-assert(!index.includes('Auto Battle Roguelite V0.16 DEV'),'Final HTML must not retain the DEV label');
-assert(index.includes('js/core.js?v=016final-r1'),'Final build must cache-bust the runtime core version');
-assert(core.includes('const GAME_VERSION="V0.16";'),'Runtime version must identify final V0.16');
-assert(!core.includes('V0.16 DEV'),'Runtime core must not retain the DEV label');
+
+// This gate protects the released V0.16 content baseline even while a later DEV shell is active.
+// The shell version is owned by core.js; HTML must visibly agree with it and cache-bust core.
+const versionMatch=core.match(/const GAME_VERSION="([^"]+)";/);
+assert(versionMatch,'Runtime core must declare GAME_VERSION');
+const runtimeVersion=versionMatch[1];
+assert(index.includes(`Auto Battle Roguelite ${runtimeVersion}`),'Visible HTML must match the runtime GAME_VERSION');
+assert(/js\/core\.js\?v=[^"']+/.test(index),'Public HTML must cache-bust the runtime core script');
 
 const codexSource=fs.readFileSync('js/skill-codex.js','utf8');
 assert(codexSource.includes('Object.entries(skills)'),'Codex base entries must be generated from the live skills registry');
