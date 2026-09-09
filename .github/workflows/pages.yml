@@ -51,6 +51,9 @@ jobs:
       - name: V0.16 rare curve and reroll smoke test
         run: node tests/v016-rare-reroll-smoke.js
 
+      - name: V0.16 12-rare content smoke test
+        run: node tests/v016-rare-content-smoke.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
