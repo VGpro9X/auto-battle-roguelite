@@ -15,8 +15,9 @@ Read first:
 1. `README.md`
 2. `PROJECT_HANDOFF.md`
 3. `ROADMAP.md`
-4. `V016_SKILL_DESIGN.md`
-5. `V016_RARE_SYSTEM_V2.md`
+4. `V016_RELEASE_VALIDATION.md`
+5. `V016_SKILL_DESIGN.md`
+6. `V016_RARE_SYSTEM_V2.md`
 
 ## Current state
 - Released baseline: **V0.15** responsive/mobile work accepted by user.
@@ -27,7 +28,7 @@ Read first:
   - **12 Siêu Cấp**
   - **20 rare rules = 10 Thần Kỹ + 10 Thần Bí Kỹ**
   - **140 Codex entries**
-- V0.16 content target is fully reached; remaining work is audit/balance/device validation before release.
+- V0.16 content and automated audit are complete. Remaining release gate is hands-on desktop + phone/device validation.
 - Movement baseline remains **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
 
 ## Locked terminology / truth rules
@@ -40,7 +41,7 @@ Read first:
 - Choice cards only show relation hints when that exact pick immediately completes the unlock.
 - Test harnesses live only under `tests/`; Pages deploys only `index.html`, `css/`, `js/`.
 
-# V0.16 completed work
+# V0.16 completed content
 
 ## 80 base Kỹ Năng — COMPLETE
 A1: Dư Ảnh, Địa Lôi Phù, Huyết Liên, Linh Châu.  
@@ -51,13 +52,13 @@ A4: Lôi Trường, Hồn Đăng, Phá Giáp, Thời Vực.
 All 16 additions have mechanics, truthful Vietnamese descriptions, live VFX/Codex identities and CI smoke tests. Hộ Pháp uses only a narrow hostile combat-target hook; V0.8 player movement remains untouched.
 
 ## 28 Hợp Đạo Kỹ — COMPLETE
-New B1 module `js/v016-synergies-b1.js`:
+B1 module `js/v016-synergies-b1.js`:
 1. Vạn Ảnh Xạ (`afterimageEcho`)
 2. Trọng Lực Phù Trận (`gravityRune`)
 3. Huyết Mạch Cộng Sinh (`bloodSymbiosis`)
 4. Linh Châu Dưỡng Mệnh (`nourishingPearls`)
 
-New B2 module `js/v016-synergies-b2.js`:
+B2 module `js/v016-synergies-b2.js`:
 5. Phong Lôi Bộ (`thunderStride`)
 6. Phong Hồn Tử Ấn (`sealedSoul`)
 7. Thiên Hỏa Tinh Vẫn (`heavenfallBurn`)
@@ -66,7 +67,7 @@ New B2 module `js/v016-synergies-b2.js`:
 CI exercises B1/B2 mechanics and asserts exactly **28 unique Hợp Đạo Kỹ** in the public chain.
 
 ## 12 Siêu Cấp — COMPLETE
-New C1 layer:
+C1:
 1. Vạn Ảnh Phân Thân (`phantomLegion`) — base Dư Ảnh
 2. Thiên La Địa Võng (`heavenNet`) — base Địa Lôi Phù
 3. Huyết Võng (`bloodWeb`) — base Huyết Liên
@@ -76,63 +77,84 @@ Implementation:
 - `js/v016-evolutions-c1.js`
 - `js/v016-evolutions-c1-compat.js`
 
-Important exact rules:
-- Vạn Ảnh Phân Thân creates 3 active clones; each fires 2 evolved shots at 70% of the current Lv-based Dư Ảnh shot damage.
-- Thiên La Địa Võng raises active-rune cap to 8; detonation chains armed runes within 120px after 0.12s; chained runes deal 75% normal rune damage and can propagate the chain.
-- Huyết Võng links the 4 nearest enemies for 5s; one target taking damage copies 25% actual damage to each other living web target with no recursion/procs.
-- Tinh Hà Trụy Lạc creates 3 meteors spaced by 0.18s; side impacts are offset 38px and deal 70% of the first meteor while preserving burn.
-- Existing B1/B2 Hợp Đạo interactions remain active after evolution.
+Exact rules:
+- Vạn Ảnh Phân Thân creates 3 active clones; each fires 2 evolved shots at 70% of current Lv-based Dư Ảnh shot damage.
+- Thiên La Địa Võng raises active-rune cap to 8; armed rune chain within 120px after 0.12s; chained runes deal 75% normal rune damage and propagate.
+- Huyết Võng links 4 nearest enemies for 5s; 25% actual damage copies to each other living web target with no recursion/procs.
+- Tinh Hà Trụy Lạc creates 3 meteors spaced by 0.18s; side impacts offset 38px and deal 70% of the first while preserving burn.
+- Matching B1/B2 Hợp Đạo interactions remain active after evolution.
 
-CI validates C1 mechanics and the combined public evolution registry at exactly **12 Siêu Cấp**.
-
-## Cross-platform icon compatibility — COMPLETE
-`js/v016-run-systems.js` replaces unsupported newer emoji with stable symbols. Remaining U+1FA70..U+1FAFF icons fall back to `◆`.
-
-## Rare System V2 — COMPLETE at mechanic level
+## Rare System V2 — COMPLETE
 - **20 rare rules = 10 Thần Kỹ + 10 Thần Bí Kỹ**.
 - Multiple different rares can coexist; duplicates are forbidden.
 - Offer curve: Lv1–7 0%; Lv8 1%; +0.35 percentage point/level; cap 12%.
-- Maximum one rare card in one 3-card roll; uniform among unowned rares.
+- Maximum one rare card per 3-card roll; uniform among unowned rares.
 - One `XOAY LẠI` per choice screen rerolls all three cards and rare roll.
-- Current public rare chain and difficult rare mechanics are CI-gated.
+- Current public rare chain and difficult mechanics are CI-gated.
+
+### Mechanical-truth audit correction
+A hidden generic failed-activation retry rule used to retry conditional periodic rare skills at <=1.25s. It has been removed.
+- Failed activation now waits the rare's stated normal cooldown unless that rare explicitly declares `retryCooldown`.
+- Thế Mệnh is the explicit exception: `retryCooldown: 1.25`, matching its Vietnamese description.
 
 ## Vô Hạn guaranteed starting rare — COMPLETE
 Module: `js/v016-endless-starting-rare.js`.
 
 Flow:
-1. fresh Vô Hạn run resets normally
-2. selects one of all 20 rare rules uniformly
-3. grants it immediately
-4. shows a dedicated tier/icon/name/exact-description reveal
-5. after acknowledgement, opens exactly one normal starter Kỹ Năng choice
-6. the granted rare is excluded from later offers only as an owned duplicate
-7. the other 19 rare rules remain available through the normal level-scaled offer curve
+1. fresh Vô Hạn reset
+2. select one of all 20 rare rules uniformly
+3. grant immediately
+4. dedicated tier/icon/name/exact-description reveal
+5. acknowledgement opens exactly one normal starter Kỹ Năng choice
+6. granted rare is excluded later only as an owned duplicate
+7. other 19 rares remain available through normal level-scaled offers
 
-The mode card and Cách chơi disclose the rule. CI checks all 20 equal probability intervals, reveal-before-starter order, later rare availability, and public script order.
+## Final rare VFX/Codex audit — COMPLETE at code/CI level
+Module: `js/v016-rare-vfx.js`.
+- all 20 rare IDs have dedicated Codex preview coverage
+- all 20 rare IDs have live feedback coverage
+- original four keep V0.13 bespoke live feedback
+- 16 V0.16 additions receive trigger/persistent feedback in the new module
+- public script order loads this wrapper before Codex initialization
+- 360-frame synthetic live/persistent VFX stress passes and transient effects prune correctly
+
+## Automated balance/release validation — COMPLETE
+`tests/v016-balance-simulation.js` uses deterministic PRNG samples.
+Latest CI result:
+- synthetic one-roll-per-level Lv8–60: **4.58 rare successes/run average** before duplicate/pool exhaustion
+- 400,000 Vô Hạn starting-rare samples across 20 slots: **1.07% maximum slot-frequency drift**
+
+These are implementation-consistency checks, not a final fun/difficulty judgment.
 
 ## Current CI gate
 Before Pages deploy:
 1. syntax-check `js/*.js` + `tests/*.js`
 2. A1/A2/A3/A4 smoke
-3. base80 + script-order integration
+3. base80 + public script-order integration
 4. rare curve / multi-rare / reroll / icon compatibility
 5. actual rare chain = 20 total / 10+10
 6. rare mechanic smoke
-7. Hợp Đạo B1/B2 smoke + registry = 28
-8. Siêu Cấp C1 smoke + registry = 12
-9. Vô Hạn guaranteed starting rare smoke + public integration
+7. Hợp Đạo B1/B2 + registry = 28
+8. Siêu Cấp C1 + registry = 12
+9. Vô Hạn guaranteed starting rare + public integration
+10. final content/truth audit = 140
+11. deterministic rare-rate balance simulation
+12. 20-rare Codex/live VFX stress
 
-# Immediate next checkpoint — final V0.16 audit
-1. Codex representation/count = 140
-2. dedicated preview/live feedback audit for all 20 rare rules
-3. mechanical-truth audit: every cooldown/cap/stack/target limit disclosed
-4. cross-platform icon audit
-5. repeated rare-rate simulation
-6. repeated Vô Hạn start simulation
-7. dense VFX/late-game stress validation
-8. phone + desktop real-device check
+Latest full gate passed and GitHub Pages deployed successfully.
 
-No new content expansion should begin until this audit is complete.
+# Immediate next checkpoint — hands-on V0.16 release validation
+Do not start another content expansion yet. Use `V016_RELEASE_VALIDATION.md`.
+
+Required before renaming `V0.16 DEV` to final `V0.16`:
+- desktop browser hands-on run
+- phone/tablet hands-on run
+- all 140 Codex entries visually inspectable
+- all 20 rare previews visually distinct enough in practice
+- Vô Hạn reveal → starter flow feel test
+- reroll starter + normal level-up touch/mouse test
+- dense late-game VFX/FPS/readability judgment
+- difficult interaction spot-checks, especially Nợ Máu + Ký Sinh + Thế Mệnh and four new Siêu Cấp + matching Hợp Đạo
 
 ## Recommended continuation prompt
-`Tiếp tục VGpro9X/auto-battle-roguelite. GitHub main là master. Đọc README.md, PROJECT_HANDOFF.md và ROADMAP.md. V0.16 DEV đã đạt đủ 80 Kỹ Năng + 28 Hợp Đạo + 12 Siêu Cấp + 20 rare = 140 Codex entries. Vô Hạn đã có guaranteed starting rare và CI pass. Tiếp tục final Codex/VFX/mechanical-truth/balance/device audit. Fetch file trước khi sửa, giữ Movement V0.8 và mechanical truth.`
+`Tiếp tục VGpro9X/auto-battle-roguelite. GitHub main là master. Đọc README.md, PROJECT_HANDOFF.md, ROADMAP.md và V016_RELEASE_VALIDATION.md. V0.16 DEV đã đạt 80 Kỹ Năng + 28 Hợp Đạo + 12 Siêu Cấp + 20 rare = 140 Codex entries. Final content/truth audit, rare VFX stress, balance simulation và Pages deploy đều pass. Chỉ còn hands-on desktop/phone release validation trước khi đổi nhãn thành V0.16 final. Fetch file trước khi sửa, giữ Movement V0.8 và mechanical truth.`
