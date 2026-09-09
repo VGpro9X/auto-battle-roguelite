@@ -152,7 +152,7 @@ Locked core direction:
 - desktop/mobile hands-on visual/play feel sign-off: pending
 
 ## D6 Skill expansion — ACTIVE
-Current Duel base-skill coverage: **32 / 80**.
+Current Duel base-skill coverage: **40 / 80**.
 
 Batch D6A added:
 - Đoạt Mệnh (`execution`)
@@ -174,6 +174,23 @@ Batch D6B added:
 - Thiên Vận (`luckyStar`)
 - Hồi Mệnh (`secondWind`)
 
+Batch D6C added:
+- Dư Ảnh (`afterimage`)
+- Địa Lôi Phù (`runeMine`)
+- Tinh Vẫn (`meteorSeal`)
+- Tĩnh Tâm (`focusMind`)
+- Thất Tinh Kích (`sevenStarStrike`)
+- Lôi Trường (`staticField`)
+- Phá Giáp (`armorBreak`)
+- Huyết Chạm (`vampiricTouch`)
+
+D6C validation/fixes:
+- 40 adapters are locked in the Duel smoke test ✅
+- Dư Ảnh projectiles originate from the stored clone position rather than the fighter's later position ✅
+- Ngũ Hành now recognizes generic `elemental` metadata, so future elemental Duel skills do not need a hard-coded source whitelist ✅
+- delayed Tinh Vẫn, armed Địa Lôi, Tĩnh Tâm activation/break, Thất Tinh Kích counter, Lôi Trường ticks, Phá Giáp stacks and Huyết Chạm healing are mechanically tested ✅
+- all V0.16 CI remains green and the exact 40-skill snapshot deploys successfully to Pages ✅
+
 Architecture notes:
 - Duel has a dedicated **skill behavior registry/hook layer** inside `duel-engine.js`.
 - New skill batches register mechanics without wrapping the Duel loop or touching Survival functions.
@@ -181,7 +198,7 @@ Architecture notes:
 - Prototype skill count in lobby is synchronized from the actual Duel registry rather than hard-coded.
 
 Next D6 targets:
-- 40 base Duel skills
+- 50 base Duel skills
 - 60 base Duel skills
 - all 80 base Duel skills
 - then 28 Hợp Đạo, 12 Siêu Cấp and 20 rare Duel adaptations
@@ -194,4 +211,4 @@ Next D6 targets:
 - optional future air/jump mechanics only after explicit design
 
 # PROJECT STATUS
-**V0.17 Duel Arena is playable as a deployed prototype; D6 skill expansion is active at 32/80 base skills. V0.16 Survival/Endless remains the stable released baseline.**
+**V0.17 Duel Arena is playable as a deployed prototype; D6 skill expansion is active at 40/80 base skills. V0.16 Survival/Endless remains the stable released baseline.**
