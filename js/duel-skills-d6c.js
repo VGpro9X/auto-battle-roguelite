@@ -41,7 +41,8 @@
       }
       for(const clone of clones){
         while(clone.fired<2&&round.time>=clone.shots[clone.fired]&&round.time<clone.until&&other?.hp>0){
-          spawnProjectile(fighter,{damage:fighter.stats.baseDamage*at(VALUES.afterimage.ratio,rank),speed:410,radius:5,source:"afterimage",colorHint:"echo"});
+          const cloneOwner={side:fighter.side,facing:fighter.facing,x:clone.x,y:fighter.y};
+          spawnProjectile(cloneOwner,{damage:fighter.stats.baseDamage*at(VALUES.afterimage.ratio,rank),speed:410,radius:5,source:"afterimage",colorHint:"echo"});
           clone.fired++;
         }
       }
