@@ -1,123 +1,88 @@
 # Auto Battle Roguelite — Roadmap
 
-GitHub `main` is the canonical source.
+GitHub `main` is canonical.
 
 ## Current baseline
-- Released/visible baseline: **V0.15 – Responsive & Mobile/Desktop Readability**
-- V0.15 real-phone GitHub Pages test was accepted by the user.
-- V0.16 development is active on `main`; the release label stays V0.15 until V0.16 passes its full release gate.
-- Current `main` / Pages development content: **80 base Kỹ Năng**, 20 Hợp Đạo Kỹ, 8 Siêu Cấp, 4 rare rule skills = **112 Codex entries**.
-- Movement baseline remains **V0.8 Strategic Movement AI** and must not be rewritten unless explicitly requested.
+- Released baseline: **V0.15 – Responsive & Mobile/Desktop Readability**.
+- Active public development label: **V0.16 DEV**.
+- Current main/Pages content: **80 Kỹ Năng + 20 Hợp Đạo Kỹ + 8 Siêu Cấp + 4 rare = 112 Codex entries**.
+- Movement baseline remains **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
 - Player-facing language remains Vietnamese.
-- Mechanical truth, no-hidden-cap and final-piece-only level-up hint rules remain locked.
+- Mechanical truth, no-hidden-cap and final-piece-only Hợp Đạo/Siêu Cấp hint rules remain locked.
+
+Read before V0.16 work:
+1. `PROJECT_HANDOFF.md`
+2. `V016_SKILL_DESIGN.md`
+3. `V016_RARE_SYSTEM_V2.md`
 
 ---
 
 # V0.15 — COMPLETE
-Detailed release record: `V015_STATUS.md`.
-
-Completed:
-- safe-area / `dvh` / `svh` responsive foundation
-- complete mobile HUD
-- mobile build-tracker drawer instead of feature removal
-- responsive level-up, pause, settings, result and mode screens
-- leaderboard preserves all fields
-- touch-first mobile Codex catalog → detail flow
-- portrait + landscape handling
-- `visualViewport` / `visibilitychange` polish
-- real-phone user acceptance through GitHub Pages
-
-V0.15 did not change combat balance or V0.8 movement AI.
+Responsive phone/tablet/desktop UI was accepted by the user on GitHub Pages.
 
 ---
 
 # V0.16 — ACTIVE
-## Skill Expansion & Rare Rule Expansion
+## Final quality target
+- Base Kỹ Năng: **64 → 80** ✅
+- Hợp Đạo Kỹ: **20 → 28**
+- Siêu Cấp: **8 → 12**
+- Rare rule skills: **4 → 20**
+  - Thần Kỹ: **2 → 10**
+  - Thần Bí Kỹ: **2 → 10**
+- Correct final Codex target: **140 entries** = 80 + 28 + 12 + 20.
 
-Implementation contract: `V016_SKILL_DESIGN.md`.
-
-### Release target, subject to quality
-- Base Kỹ Năng: **64 → 80** (+16) ✅
-- Hợp Đạo Kỹ: **20 → 28** (+8)
-- Siêu Cấp: **8 → 12** (+4)
-- Rare rule skills: **4 → 12** (+8)
-  - Thần Kỹ: 2 → 6
-  - Thần Bí Kỹ: 2 → 6
-- Codex: **96 → 124** if all targets pass quality gates
-
-Targets are not quotas; weak/duplicated content should be cut or redesigned.
+The old `124` target was an arithmetic error and is obsolete.
 
 ## Checkpoint 1 — Design lock — COMPLETE
-All proposed additions have exact names/keys, Vietnamese mechanic contracts, cooldowns/limits, tags, visual intent and interaction roles in `V016_SKILL_DESIGN.md`.
+Base/Hợp Đạo/Siêu Cấp design contract: `V016_SKILL_DESIGN.md`.
+Rare-system V2 and expanded 20-rare target: `V016_RARE_SYSTEM_V2.md`.
 
-## Checkpoint 2 — Base skill implementation — COMPLETE
+## Checkpoint 2 — 16 new base Kỹ Năng — COMPLETE
+A1 through A4 are implemented, live and CI-gated:
+- A1: Dư Ảnh, Địa Lôi Phù, Huyết Liên, Linh Châu
+- A2: Bộ Pháp Chấn, Trói Hồn, Hồi Phong Nhận, Tinh Vẫn
+- A3: Hộ Pháp Mộc Nhân, Hàn Kính, Tĩnh Tâm, Thất Tinh Kích
+- A4: Lôi Trường, Hồn Đăng, Phá Giáp, Thời Vực
 
-### Batch A1 — COMPLETE
-`js/v016-skills-a1.js`
-- Dư Ảnh
-- Địa Lôi Phù
-- Huyết Liên
-- Linh Châu
+All 80 base skills are in the dynamic level-up/Codex pool. V0.8 player movement remains unchanged.
 
-### Batch A2 — COMPLETE
-`js/v016-skills-a2.js`
-- Bộ Pháp Chấn
-- Trói Hồn
-- Hồi Phong Nhận
-- Tinh Vẫn
+## Checkpoint 2.5 — Run-system polish — COMPLETE, awaiting user feel test
+### Cross-platform icon compatibility
+`js/v016-run-systems.js` replaces newer U+1FAxx emoji that render as square boxes on some Windows/Android font stacks with stable symbols. Known mappings include Xuyên Phá, Tham Lam, Trói Hồn, Hồi Phong Nhận, Hộ Pháp Mộc Nhân, Hàn Kính and wing-like icons.
 
-### Batch A3 — COMPLETE
-`js/v016-skills-a3.js`
-- Hộ Pháp Mộc Nhân
-- Hàn Kính
-- Tĩnh Tâm
-- Thất Tinh Kích
+### Multiple rare acquisition + level-scaled chance
+The old one-rare-per-run rule is removed.
+- Lv.1–7: 0%
+- Lv.8: 1%
+- +0.35 percentage point each level
+- cap 12% per roll
+- one rare card maximum per three-card roll
+- only unowned rares are eligible
+- no maximum number of different rares per run
 
-A3 introduced only a narrow hostile combat-target hook in `game.js` for Hộ Pháp. Player V0.8 movement logic remains unchanged.
+### One reroll per choice screen
+Every starter/level-up choice screen has exactly one **XOAY LẠI**.
+- refreshes all three cards
+- performs a fresh rare roll
+- allowance does not carry over
+- using reroll consumes it for that screen only
 
-### Batch A4 — COMPLETE
-`js/v016-skills-a4.js`
-- Lôi Trường
-- Hồn Đăng
-- Phá Giáp
-- Thời Vực
+The exact rare chance is displayed on level-up screens and documented in Cách chơi.
 
-### Checkpoint 2 validation
-All four batches include:
-- implemented mechanics
-- truthful Vietnamese descriptions
-- live Canvas feedback
-- dedicated Codex visual profile/scene identity
-- normal dynamic level-up/Codex integration
-- non-shipping smoke tests under `tests/`
+CI covers syntax, A1–A4, base80 integration and rare/reroll rules before Pages deploy.
 
-CI before every Pages deploy now performs:
-1. JavaScript syntax checks across `js/` and `tests/`
-2. A1 smoke
-3. A2 smoke
-4. A3 smoke
-5. A4 smoke
+## Checkpoint 3 — 8 Hợp Đạo Kỹ — NEXT
+1. Vạn Ảnh Xạ
+2. Trọng Lực Phù Trận
+3. Huyết Mạch Cộng Sinh
+4. Linh Châu Dưỡng Mệnh
+5. Phong Lôi Bộ
+6. Phong Hồn Tử Ấn
+7. Thiên Hỏa Tinh Vẫn
+8. Hộ Pháp Phản Chấn
 
-The A4-loaded build passed all checks and Pages deployment successfully. Test files do not ship because Pages copies only `index.html`, `css/`, and `js/`.
-
-## Checkpoint 3 — 8 Hợp Đạo Kỹ — ACTIVE NEXT
-Implement:
-1. **Vạn Ảnh Xạ (`afterimageEcho`)** — Dư Ảnh + Ảnh Xạ
-2. **Trọng Lực Phù Trận (`gravityRune`)** — Địa Lôi Phù + Hắc Vực
-3. **Huyết Mạch Cộng Sinh (`bloodSymbiosis`)** — Huyết Liên + Huyết Chạm
-4. **Linh Châu Dưỡng Mệnh (`nourishingPearls`)** — Linh Châu + Linh Dưỡng
-5. **Phong Lôi Bộ** — Bộ Pháp Chấn + Lôi Kích
-6. **Phong Hồn Tử Ấn** — Trói Hồn + Tử Ấn
-7. **Thiên Hỏa Tinh Vẫn** — Tinh Vẫn + Hỏa Cầu Định Kỳ
-8. **Hộ Pháp Phản Chấn** — Hộ Pháp Mộc Nhân + Phản Chấn
-
-Requirements:
-- each must change interaction/behavior rather than add a filler flat percentage
-- explicit source routing
-- ordinary base effects must not visually masquerade as Hợp Đạo effects
-- preserve final-piece-only choice hints
-- add readable live signature and Codex visibility
-- add non-shipping mechanic exercises to CI
+Requirements: behavior-changing interactions, explicit source routing, final-piece-only choice hints, live/Codex identity and CI mechanic coverage.
 
 ## Checkpoint 4 — 4 Siêu Cấp
 - Vạn Ảnh Phân Thân
@@ -125,55 +90,57 @@ Requirements:
 - Huyết Võng
 - Tinh Hà Trụy Lạc
 
-Each must be a visible power spike stronger than one ordinary Hợp Đạo Kỹ and receive dedicated live/Codex feedback.
-
-## Checkpoint 5 — 8 new rare rule skills
-New Thần Kỹ:
+## Checkpoint 5 — Implement 16 new rare rules
+### New Thần Kỹ
 - Thiên Mệnh
 - Phán Quyết
 - Thiên Hộ
 - Thần Vực
+- Thiên Tứ
+- Thời Đình
+- Thiên Lệnh
+- Thiên Ấn
 
-New Thần Bí Kỹ:
+### New Thần Bí Kỹ
 - Hoán Vị
 - Nghịch Lưu
 - Đảo Nhân Quả
 - Đồng Giá
+- Nợ Máu
+- Ký Sinh
+- Hư Thực
+- Thế Mệnh
 
-Rare skills remain level-less, unique and rule-like. Current one-owned-rare-per-run rule remains unless explicitly redesigned later.
+Together with the original 4, this yields **10 Thần Kỹ + 10 Thần Bí Kỹ**.
 
-## Checkpoint 6 — Vô Hạn starting rare rule
-When a Vô Hạn run begins:
-1. uniformly choose exactly one rare skill from the full valid pool
-2. grant it before the normal starter Kỹ Năng choice
-3. show dedicated tier/icon/name/description reveal
-4. after acknowledgement, continue to exactly one normal starter choice
-5. starting rare consumes the run's rare slot
-6. no later rare offer in that Vô Hạn run
-7. timed modes retain the existing rare-offer system
+## Checkpoint 6 — Vô Hạn guaranteed starting rare
+Vô Hạn must:
+1. uniformly grant exactly one random rare from the full valid 20-skill pool before the normal starter choice
+2. show a dedicated reveal overlay with tier/icon/name/exact description
+3. continue to exactly one normal starter Kỹ Năng after acknowledgement
+4. exclude the granted rare from future offers because duplicates are forbidden
+5. **still allow later rare offers** through the normal level-scaled curve
 
 No hidden weighting.
 
-## Checkpoint 7 — Codex / visuals / mechanical-truth audit
-- all shipped entries represented
-- counts and filters correct
-- every rare gets a dedicated preview
-- descriptions match source exactly
-- every cap/cooldown/stack limit disclosed
+## Checkpoint 7 — Codex / VFX / mechanical-truth audit
+- all entries represented
+- count must equal shipped content
+- every rare has dedicated preview/live feedback
+- every cooldown/cap/stack/target limit disclosed
+- cross-platform icon audit
 
 ## Checkpoint 8 — Balance / stress / device validation
-Test all new base skills, Hợp Đạo, Siêu Cấp and rare rules; repeated Vô Hạn starts; dense VFX on phone/desktop; count consistency; final GitHub Pages phone playtest.
+- repeated rare-rate simulations
+- repeated Vô Hạn starts
+- dense VFX on phone and desktop
+- reroll flow on starter and normal level-ups
+- final GitHub Pages real-device test
 
 ## V0.16 release gate
-Every shipped skill needs:
-1. implemented mechanics
-2. truthful Vietnamese description
-3. Codex entry
-4. readable live feedback
-5. syntax/runtime validation
-6. at least one mechanic exercise
+Every shipped mechanic needs truthful Vietnamese description, live feedback, Codex representation where applicable, syntax/runtime validation and at least one mechanic exercise.
 
 ---
 
 # After V0.16
-Run a focused balance pass before another major expansion. Then consider V0.17+ systems such as bosses, advanced/super synergies, additional enemy archetypes, meta progression or expansion toward 100+ base skills.
+Run a focused balance pass before another major expansion; then consider bosses, advanced Hợp Đạo layers, additional enemy archetypes, meta progression or expansion toward 100+ base skills.
