@@ -72,6 +72,9 @@ jobs:
       - name: V0.16 12-Siêu-Cấp integration smoke test
         run: node tests/v016-evolution12-integration.js
 
+      - name: V0.16 Endless starting rare smoke test
+        run: node tests/v016-endless-starting-rare-smoke.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
