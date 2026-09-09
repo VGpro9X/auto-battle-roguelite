@@ -92,13 +92,17 @@ for(const key of d6d){
 {
   const {match,round,p,o}=duel({returnBlade:3});
   p.x=300;o.x=500;p.hitStun=10;o.hitStun=10;p.skillTimers.returnBlade=0;
-  updateDuelRound(match,.033);
-  tick(match,15); // 16 total frames => >200px travel at 420px/s, enough to complete the outbound leg.
+  updateDuelRound(match,.033); // frame 1
+  tick(match,13); // frame 14: blade is still just before the cast target.
+  approx(o.hp,100);
+  updateDuelRound(match,.033); // frame 15: crosses 500, deals outbound hit and switches to return.
   approx(o.hp,64);
-  // Move the stationary target onto the known return path and allow the returning blade to cross it.
-  o.x=450;
-  tick(match,8);
+  const blade=p.duelEffects.returnBlades[0];
+  assert.ok(blade&&blade.phase==='return'&&blade.outHit,'Return Blade did not switch to return after its outbound hit');
+  o.x=490; // next return step goes 500 -> 486.14 and must cross this point.
+  updateDuelRound(match,.033);
   approx(o.hp,28);
+  assert.ok(p.duelEffects.returnBlades[0]?.returnHit,'Return Blade did not record its return-leg hit');
   assert.ok(round.events.filter(event=>event.type==='cast'&&event.skill==='returnBlade').length===1);
 }
 
