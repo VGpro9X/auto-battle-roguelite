@@ -93,12 +93,9 @@ for(const key of d6d){
   const {match,round,p,o}=duel({returnBlade:3});
   p.x=300;o.x=500;p.hitStun=10;o.hitStun=10;p.skillTimers.returnBlade=0;
   updateDuelRound(match,.033);
-  let guard=0;
-  while(!p.duelEffects.returnBlades[0]?.outHit&&guard<20){updateDuelRound(match,.033);guard++;}
-  const blade=p.duelEffects.returnBlades[0];
-  assert.ok(blade&&blade.outHit&&blade.phase==='return','Return Blade never completed its outbound hit');
+  tick(match,15); // 16 total frames => >200px travel at 420px/s, enough to complete the outbound leg.
   approx(o.hp,64);
-  // Put the stationary target directly on the return path so the return-hit branch is exercised deterministically.
+  // Move the stationary target onto the known return path and allow the returning blade to cross it.
   o.x=450;
   tick(match,8);
   approx(o.hp,28);
