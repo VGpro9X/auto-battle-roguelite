@@ -13,14 +13,32 @@ GitHub `main` is canonical.
 - **80 base Kỹ Năng**
 - **20 Hợp Đạo Kỹ**
 - **8 Siêu Cấp**
-- **4 currently implemented rare rules**: 2 Thần Kỹ + 2 Thần Bí Kỹ
-- **112 current Codex entries**
+- **20 rare rules**: 10 Thần Kỹ + 10 Thần Bí Kỹ
+- **128 current Codex entries** = 80 + 20 + 8 + 20
 
-Current implemented rare rules:
-- Mua Chuộc — Thần Bí Kỹ
-- Đổi Mệnh — Thần Bí Kỹ
-- Bất Tử Nhất Tức — Thần Kỹ
-- Thiên Phạt — Thần Kỹ
+Current Thần Kỹ:
+- Bất Tử Nhất Tức
+- Thiên Phạt
+- Thiên Mệnh
+- Phán Quyết
+- Thiên Hộ
+- Thần Vực
+- Thiên Tứ
+- Thời Đình
+- Thiên Lệnh
+- Thiên Ấn
+
+Current Thần Bí Kỹ:
+- Mua Chuộc
+- Đổi Mệnh
+- Hoán Vị
+- Nghịch Lưu
+- Đảo Nhân Quả
+- Đồng Giá
+- Nợ Máu
+- Ký Sinh
+- Hư Thực
+- Thế Mệnh
 
 ## V0.16 run-system changes already live
 ### Multiple rare rules per run
@@ -53,10 +71,8 @@ The exact current rare chance is shown on the level-up screen and documented in 
 - base Kỹ Năng: **80** ✅
 - Hợp Đạo Kỹ: **28**
 - Siêu Cấp: **12**
-- rare rules: **20 total**
-  - 10 Thần Kỹ
-  - 10 Thần Bí Kỹ
-- correct final Codex target: **140 entries** = 80 + 28 + 12 + 20
+- rare rules: **20** ✅
+- final Codex target: **140 entries** = 80 + 28 + 12 + 20
 
 The older `124` target was an arithmetic error and is obsolete.
 
@@ -82,31 +98,20 @@ The revised Vô Hạn rule will still allow later rare offers through the normal
 
 ## V0.16 completed development
 ### 16 new base Kỹ Năng — COMPLETE
-A1:
-- Dư Ảnh
-- Địa Lôi Phù
-- Huyết Liên
-- Linh Châu
-
-A2:
-- Bộ Pháp Chấn
-- Trói Hồn
-- Hồi Phong Nhận
-- Tinh Vẫn
-
-A3:
-- Hộ Pháp Mộc Nhân
-- Hàn Kính
-- Tĩnh Tâm
-- Thất Tinh Kích
-
-A4:
-- Lôi Trường
-- Hồn Đăng
-- Phá Giáp
-- Thời Vực
+A1: Dư Ảnh, Địa Lôi Phù, Huyết Liên, Linh Châu.  
+A2: Bộ Pháp Chấn, Trói Hồn, Hồi Phong Nhận, Tinh Vẫn.  
+A3: Hộ Pháp Mộc Nhân, Hàn Kính, Tĩnh Tâm, Thất Tinh Kích.  
+A4: Lôi Trường, Hồn Đăng, Phá Giáp, Thời Vực.
 
 All have real mechanics, truthful Vietnamese descriptions, live Canvas feedback, Codex identities and CI smoke coverage. A3's Hộ Pháp only uses a narrow hostile combat-target hook; V0.8 player movement remains unchanged.
+
+### Rare System V2 — COMPLETE at mechanic level
+- 20 unique rare rules are implemented and registered before Codex.
+- Current public script chain is tested to produce exactly 10 Thần Kỹ + 10 Thần Bí Kỹ.
+- Reroll, level-scaled rare chance, duplicate prevention and multi-rare ownership are CI-gated.
+- R3/R4 smoke tests exercise the difficult mechanics including Thiên Tứ, Thời Đình, Thiên Ấn, Nợ Máu, Ký Sinh, Hư Thực and Thế Mệnh.
+
+Dedicated visual polish for every new rare remains part of the final V0.16 VFX/Codex audit.
 
 ## Immediate next content checkpoint
 8 new Hợp Đạo Kỹ:
@@ -119,17 +124,17 @@ All have real mechanics, truthful Vietnamese descriptions, live Canvas feedback,
 - Thiên Hỏa Tinh Vẫn
 - Hộ Pháp Phản Chấn
 
-Then: 4 Siêu Cấp → implement 16 new rare rules → Vô Hạn guaranteed starting rare → full Codex/VFX/mechanical-truth/balance/device audit.
+Then: 4 Siêu Cấp → Vô Hạn guaranteed starting rare reveal → full Codex/VFX/mechanical-truth/balance/device audit.
 
 ## CI
-Before every Pages deploy, GitHub Actions currently checks:
+Before every Pages deploy, GitHub Actions checks:
 - syntax across `js/` and `tests/`
 - A1/A2/A3/A4 mechanics
-- 80-skill integration and script order
-- rare chance curve
-- multiple rare ownership
-- reroll system markers
-- icon compatibility markers
+- 80-skill integration and public script order
+- rare chance curve + multiple rare ownership
+- reroll and icon compatibility
+- actual public 20-rare chain = 10 + 10
+- final rare mechanic smoke suite
 
 ## Project continuity
 - `PROJECT_HANDOFF.md`
