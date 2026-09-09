@@ -11,10 +11,10 @@ GitHub `main` is canonical.
 
 ## Current main / Pages content
 - **80 base Kỹ Năng**
-- **20 Hợp Đạo Kỹ**
+- **28 Hợp Đạo Kỹ**
 - **8 Siêu Cấp**
 - **20 rare rules**: 10 Thần Kỹ + 10 Thần Bí Kỹ
-- **128 current Codex entries** = 80 + 20 + 8 + 20
+- **136 current Codex entries** = 80 + 28 + 8 + 20
 
 Current Thần Kỹ:
 - Bất Tử Nhất Tức
@@ -65,18 +65,18 @@ Every starter/level-up screen has exactly one **XOAY LẠI**:
 The exact current rare chance is shown on the level-up screen and documented in Cách chơi.
 
 ### Cross-platform icon compatibility
-`js/v016-run-systems.js` replaces newer emoji that may render as square boxes on older Windows/Android emoji fonts with stable symbols. Known fixes include Xuyên Phá, Tham Lam, Trói Hồn, Hồi Phong Nhận, Hộ Pháp Mộc Nhân and Hàn Kính.
+`js/v016-run-systems.js` replaces newer emoji that may render as square boxes on older Windows/Android emoji fonts with stable symbols.
 
 ## V0.16 final content target
 - base Kỹ Năng: **80** ✅
-- Hợp Đạo Kỹ: **28**
+- Hợp Đạo Kỹ: **28** ✅
 - Siêu Cấp: **12**
 - rare rules: **20** ✅
 - final Codex target: **140 entries** = 80 + 28 + 12 + 20
 
 The older `124` target was an arithmetic error and is obsolete.
 
-Rare-system V2 design: `V016_RARE_SYSTEM_V2.md`.
+Rare-system V2 design: `V016_RARE_SYSTEM_V2.md`.  
 Base/Hợp Đạo/Siêu Cấp contract: `V016_SKILL_DESIGN.md`.
 
 ## Game modes
@@ -103,28 +103,36 @@ A2: Bộ Pháp Chấn, Trói Hồn, Hồi Phong Nhận, Tinh Vẫn.
 A3: Hộ Pháp Mộc Nhân, Hàn Kính, Tĩnh Tâm, Thất Tinh Kích.  
 A4: Lôi Trường, Hồn Đăng, Phá Giáp, Thời Vực.
 
-All have real mechanics, truthful Vietnamese descriptions, live Canvas feedback, Codex identities and CI smoke coverage. A3's Hộ Pháp only uses a narrow hostile combat-target hook; V0.8 player movement remains unchanged.
-
-### Rare System V2 — COMPLETE at mechanic level
-- 20 unique rare rules are implemented and registered before Codex.
-- Current public script chain is tested to produce exactly 10 Thần Kỹ + 10 Thần Bí Kỹ.
-- Reroll, level-scaled rare chance, duplicate prevention and multi-rare ownership are CI-gated.
-- R3/R4 smoke tests exercise the difficult mechanics including Thiên Tứ, Thời Đình, Thiên Ấn, Nợ Máu, Ký Sinh, Hư Thực and Thế Mệnh.
-
-Dedicated visual polish for every new rare remains part of the final V0.16 VFX/Codex audit.
-
-## Immediate next content checkpoint
-8 new Hợp Đạo Kỹ:
+### 8 new Hợp Đạo Kỹ — COMPLETE
+B1:
 - Vạn Ảnh Xạ
 - Trọng Lực Phù Trận
 - Huyết Mạch Cộng Sinh
 - Linh Châu Dưỡng Mệnh
+
+B2:
 - Phong Lôi Bộ
 - Phong Hồn Tử Ấn
 - Thiên Hỏa Tinh Vẫn
 - Hộ Pháp Phản Chấn
 
-Then: 4 Siêu Cấp → Vô Hạn guaranteed starting rare reveal → full Codex/VFX/mechanical-truth/balance/device audit.
+The combined registry is CI-gated at exactly **28 unique Hợp Đạo Kỹ** and both B modules load before Codex. Each new Hợp Đạo changes interaction behavior rather than adding a filler flat stat.
+
+### Rare System V2 — COMPLETE at mechanic level
+- 20 unique rare rules are implemented and registered before Codex.
+- Current public script chain is tested to produce exactly 10 Thần Kỹ + 10 Thần Bí Kỹ.
+- Reroll, level-scaled rare chance, duplicate prevention and multi-rare ownership are CI-gated.
+
+Dedicated visual polish for every new rare remains part of the final V0.16 VFX/Codex audit.
+
+## Immediate next content checkpoint
+4 new Siêu Cấp:
+- Vạn Ảnh Phân Thân
+- Thiên La Địa Võng
+- Huyết Võng
+- Tinh Hà Trụy Lạc
+
+Then: Vô Hạn guaranteed starting rare reveal → full Codex/VFX/mechanical-truth/balance/device audit.
 
 ## CI
 Before every Pages deploy, GitHub Actions checks:
@@ -135,6 +143,9 @@ Before every Pages deploy, GitHub Actions checks:
 - reroll and icon compatibility
 - actual public 20-rare chain = 10 + 10
 - final rare mechanic smoke suite
+- Hợp Đạo B1 mechanics
+- Hợp Đạo B2 mechanics
+- combined public Hợp Đạo registry = 28
 
 ## Project continuity
 - `PROJECT_HANDOFF.md`
