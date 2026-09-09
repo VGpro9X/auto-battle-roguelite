@@ -4,21 +4,21 @@
 
   const adapters={
     rapid:{maxRank:DUEL_MAX_RANK,rangeBias:0,meleeBias:1,desc:r=>`Giảm ${[10,19,28][r-1]}% hồi chiêu đòn đánh thường cận chiến.`},
-    power:{maxRank:DUEL_MAX_RANK,rangeBias:0,meleeBias:1,desc:r=>`Tăng ${[3,7,12][r-1]} sát thương cơ bản cho đòn đánh thường và các kỹ năng dùng sát thương cơ bản.`},
+    power:{maxRank:DUEL_MAX_RANK,rangeBias:0,meleeBias:1,desc:r=>`Tăng ${[3,7,12][r-1]} sát thương cơ bản của đòn đánh thường cận chiến.`},
     vitality:{maxRank:DUEL_MAX_RANK,rangeBias:0,meleeBias:.25,defenseBias:1,desc:r=>`Tăng ${[18,38,65][r-1]} HP tối đa trong mỗi round.`},
-    speed:{maxRank:DUEL_MAX_RANK,rangeBias:.25,meleeBias:.45,mobilityBias:1,desc:r=>`Tăng ${[8,16,26][r-1]}% tốc độ di chuyển.`},
+    speed:{maxRank:DUEL_MAX_RANK,rangeBias:0,meleeBias:.45,mobilityBias:1,desc:r=>`Tăng ${[8,16,26][r-1]}% tốc độ di chuyển.`},
     fire:{maxRank:DUEL_MAX_RANK,rangeBias:1.2,meleeBias:0,desc:r=>`Mỗi ${[4.2,3.5,2.8][r-1].toFixed(1)} giây bắn Hỏa Cầu gây ${[18,27,38][r-1]} sát thương.`},
     knock:{maxRank:DUEL_MAX_RANK,rangeBias:.2,meleeBias:1,controlBias:1,desc:r=>`Mỗi ${[4.0,3.3,2.7][r-1].toFixed(1)} giây, nếu đối thủ trong 140px, Chấn Khí gây ${[12,20,30][r-1]} sát thương và đẩy lùi ${[55,75,100][r-1]}px.`},
-    orbit:{maxRank:DUEL_MAX_RANK,rangeBias:0,meleeBias:1.15,summonBias:1,desc:r=>`Có ${r} Phi Kiếm xoay quanh cơ thể. Khi áp sát, mỗi phi kiếm có thể gây ${[4,6,8][r-1]} sát thương theo nhịp va chạm.`},
-    heal:{maxRank:DUEL_MAX_RANK,rangeBias:.1,meleeBias:.1,defenseBias:1,desc:r=>`Hồi ${[0.6,1.0,1.5][r-1].toFixed(1)} HP mỗi giây. HUYẾT CHIẾN/TỬ CHIẾN giảm hiệu quả đúng theo luật round.`},
+    orbit:{maxRank:DUEL_MAX_RANK,rangeBias:0,meleeBias:1.15,summonBias:1,desc:r=>`Có ${r} Phi Kiếm xoay quanh cơ thể. Khi áp sát, hệ Phi Kiếm gây ${[4,6,8][r-1]} sát thương mỗi nhịp va chạm.`},
+    heal:{maxRank:DUEL_MAX_RANK,rangeBias:0,meleeBias:.1,defenseBias:1,desc:r=>`Hồi ${[0.6,1.0,1.5][r-1].toFixed(1)} HP mỗi giây. HUYẾT CHIẾN/TỬ CHIẾN giảm hiệu quả đúng theo luật round.`},
     armor:{maxRank:DUEL_MAX_RANK,rangeBias:0,meleeBias:.35,defenseBias:1,desc:r=>`Giảm ${[7,13,20][r-1]}% sát thương nhận vào.`},
     crit:{maxRank:DUEL_MAX_RANK,rangeBias:.15,meleeBias:.65,desc:r=>`Tăng ${[8,15,24][r-1]} điểm % tỉ lệ bạo kích. Bạo kích gây ×1,6 sát thương.`},
     lightning:{maxRank:DUEL_MAX_RANK,rangeBias:1,meleeBias:0,desc:r=>`Mỗi ${[5.0,4.1,3.3][r-1].toFixed(1)} giây, nếu đối thủ trong 360px, Lôi Kích gây ${[18,29,42][r-1]} sát thương trực tiếp.`},
     nova:{maxRank:DUEL_MAX_RANK,rangeBias:0,meleeBias:1,controlBias:.5,desc:r=>`Mỗi ${[6.0,5.0,4.0][r-1].toFixed(1)} giây, nếu đối thủ trong ${[130,150,170][r-1]}px, Linh Bạo gây ${[15,25,38][r-1]} sát thương và đẩy nhẹ.`},
     frost:{maxRank:DUEL_MAX_RANK,rangeBias:.25,meleeBias:.65,controlBias:1,desc:r=>`Đối thủ trong ${[150,180,210][r-1]}px bị giảm ${[15,25,35][r-1]}% tốc độ di chuyển.`},
     burn:{maxRank:DUEL_MAX_RANK,rangeBias:0,meleeBias:1,desc:r=>`Đòn đánh thường có ${[25,40,55][r-1]}% cơ hội Thiêu Đốt trong 3 giây, gây ${[2,4,7][r-1]} sát thương mỗi giây.`},
-    barrier:{maxRank:DUEL_MAX_RANK,rangeBias:.15,meleeBias:.1,defenseBias:1,desc:r=>`Mỗi ${[8,7,6][r-1]} giây nhận ${[14,24,38][r-1]} khiên mới.`},
-    phantomStep:{maxRank:DUEL_MAX_RANK,rangeBias:.4,meleeBias:.35,mobilityBias:1,defenseBias:.6,desc:r=>`Tăng ${[5,10,16][r-1]} điểm % né tránh và ${[4,8,12][r-1]}% tốc độ di chuyển.`}
+    barrier:{maxRank:DUEL_MAX_RANK,rangeBias:0,meleeBias:.1,defenseBias:1,desc:r=>`Mỗi ${[8,7,6][r-1]} giây nhận ${[14,24,38][r-1]} khiên mới.`},
+    phantomStep:{maxRank:DUEL_MAX_RANK,rangeBias:0,meleeBias:.35,mobilityBias:1,defenseBias:.6,desc:r=>`Tăng ${[5,10,16][r-1]} điểm % né tránh và ${[4,8,12][r-1]}% tốc độ di chuyển.`}
   };
 
   const keys=Object.keys(adapters);
