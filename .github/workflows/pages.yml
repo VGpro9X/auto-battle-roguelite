@@ -87,6 +87,9 @@ jobs:
       - name: V0.16 rare VFX stress test
         run: node tests/v016-rare-vfx-stress.js
 
+      - name: V0.16 released pressure baseline
+        run: node tests/balance-baseline-v016.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
