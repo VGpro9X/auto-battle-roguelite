@@ -69,6 +69,9 @@ jobs:
       - name: V0.16 Siêu Cấp C1 smoke test
         run: node tests/v016-evolutions-c1-smoke.js
 
+      - name: V0.16 12-Siêu-Cấp integration smoke test
+        run: node tests/v016-evolution12-integration.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
