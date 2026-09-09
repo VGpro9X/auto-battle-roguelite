@@ -45,6 +45,9 @@ jobs:
       - name: V0.16 A4 smoke test
         run: node tests/v016-a4-smoke.js
 
+      - name: V0.16 base80 integration smoke test
+        run: node tests/v016-base80-integration.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
