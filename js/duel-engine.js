@@ -241,7 +241,8 @@
       dealDamage:(attacker,target,amount,meta={})=>duelDealDamage(round,attacker,target,amount,meta),
       heal:(fighter,amount,source)=>duelHeal(round,fighter,amount,source),
       addShield:(fighter,amount,source)=>duelAddShield(round,fighter,amount,source),
-      knockback:(target,distance,direction)=>duelApplyKnockback(round,target,distance,direction)
+      knockback:(target,distance,direction)=>duelApplyKnockback(round,target,distance,direction),
+      spawnProjectile:(owner,options)=>spawnDuelProjectile(round,owner,options)
     };
   }
 
@@ -269,15 +270,20 @@
     target.damageTaken+=hpDamage;
     const totalDamage=hpDamage+shieldDamage;
     if(attacker)attacker.damageDealt+=totalDamage;
+    const helpers=behaviorHelpers(round);
+    if(totalDamage>0&&target.hp<=0){
+      runBehaviorHook(target,"onFatalDamage",{round,self:target,other:attacker,attacker,target,meta,hpDamage,shieldDamage,totalDamage,...helpers});
+    }
     target.action=target.hp<=0?"ko":"hit";target.actionUntil=round.time+(target.hp<=0?.9:.16);
     emitDuelEvent(round,"hit",{
       source:meta.source||"attack",attacker:attacker?.side||null,target:target.side,
       amount:hpDamage,shieldDamage,critical,x:target.x,y:target.y-72
     });
-    if(totalDamage>0&&meta.reactive!==false){
-      const helpers=behaviorHelpers(round);
+    if(totalDamage>0&&target.hp>0&&meta.reactive!==false){
       runBehaviorHook(target,"onDamageTaken",{round,self:target,other:attacker,attacker,target,meta,hpDamage,shieldDamage,totalDamage,...helpers});
-      if(attacker)runBehaviorHook(attacker,"onDamageDealt",{round,self:attacker,other:target,attacker,target,meta,hpDamage,shieldDamage,totalDamage,...helpers});
+    }
+    if(totalDamage>0&&attacker&&meta.reactive!==false){
+      runBehaviorHook(attacker,"onDamageDealt",{round,self:attacker,other:target,attacker,target,meta,hpDamage,shieldDamage,totalDamage,...helpers});
     }
     if(target.hp<=0)emitDuelEvent(round,"ko",{side:target.side,source:meta.source||"attack",x:target.x,y:target.y});
     return hpDamage;
