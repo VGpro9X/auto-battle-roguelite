@@ -1,4 +1,8 @@
-const GAME_VERSION="V0.15";
+const GAME_VERSION="V0.16 DEV";
+const versionLabel=document.getElementById("version");
+if(versionLabel)versionLabel.textContent=`Auto Battle Roguelite ${GAME_VERSION}`;
+document.title=`Auto Battle Roguelite ${GAME_VERSION}`;
+
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 let W=innerWidth;
