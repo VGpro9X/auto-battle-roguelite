@@ -144,4 +144,15 @@ randomQueue.push(0,.5); // pass the 12% chance roll, then select uniformly from 
 const laterOffer=context.rollDivineOffer();
 assert.ok(laterOffer&&laterOffer!==startingId,'Later normal rare rolls must remain enabled and cannot duplicate the starting rare');
 
+// Public integration: the Endless layer must see the full rare registry and wrap startRun before Codex initializes.
+const index=fs.readFileSync('index.html','utf8');
+const r4='js/v016-rares-r4.js?v=016dev-r3';
+const endless='js/v016-endless-starting-rare.js?v=016dev-endless-r1';
+const codex='js/skill-codex.js?v=016dev-evol12-r1';
+assert.ok(index.includes(endless),'Public build must load the Endless starting rare module with its current cache key');
+assert.ok(index.indexOf(r4)<index.indexOf(endless),'Endless starting rare module must load after all 20 rare definitions');
+assert.ok(index.indexOf(endless)<index.indexOf(codex),'Endless starting rare module must load before Codex initialization');
+assert.ok(index.includes('1 Thần Kỹ/Thần Bí Kỹ ngẫu nhiên + 1 kỹ năng khởi đầu'),'Vô Hạn mode card must disclose the guaranteed rare and starter flow');
+assert.ok(index.includes('Vô Hạn: bắt đầu bằng 1 Thần Kỹ/Thần Bí Kỹ ngẫu nhiên rồi chọn 1 Kỹ Năng khởi đầu'),'Cách chơi must document the Vô Hạn starting rare rule');
+
 console.log('V0.16 Endless starting rare smoke: PASS');
