@@ -5,7 +5,7 @@ GitHub `main` is canonical.
 ## Current baseline
 - Released baseline: **V0.15 – Responsive & Mobile/Desktop Readability**.
 - Active public development label: **V0.16 DEV**.
-- Current main/Pages content: **80 Kỹ Năng + 28 Hợp Đạo Kỹ + 8 Siêu Cấp + 20 rare = 136 Codex entries**.
+- Current main/Pages content: **80 Kỹ Năng + 28 Hợp Đạo Kỹ + 12 Siêu Cấp + 20 rare = 140 Codex entries**.
 - Movement baseline remains **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
 - Player-facing language remains Vietnamese.
 - Mechanical truth, no-hidden-cap and final-piece-only Hợp Đạo/Siêu Cấp hint rules remain locked.
@@ -22,15 +22,15 @@ Responsive phone/tablet/desktop UI was accepted by the user on GitHub Pages.
 
 ---
 
-# V0.16 — ACTIVE
+# V0.16 — ACTIVE, CONTENT COMPLETE
 ## Final quality target
 - Base Kỹ Năng: **64 → 80** ✅
 - Hợp Đạo Kỹ: **20 → 28** ✅
-- Siêu Cấp: **8 → 12**
+- Siêu Cấp: **8 → 12** ✅
 - Rare rule skills: **4 → 20** ✅
   - Thần Kỹ: **2 → 10** ✅
   - Thần Bí Kỹ: **2 → 10** ✅
-- Correct final Codex target: **140 entries** = 80 + 28 + 12 + 20.
+- Codex content target: **140 entries** = 80 + 28 + 12 + 20 ✅
 
 ## Checkpoint 1 — Design lock — COMPLETE
 Base/Hợp Đạo/Siêu Cấp design contract: `V016_SKILL_DESIGN.md`.  
@@ -43,7 +43,7 @@ A1 through A4 are implemented, live and CI-gated:
 - A3: Hộ Pháp Mộc Nhân, Hàn Kính, Tĩnh Tâm, Thất Tinh Kích
 - A4: Lôi Trường, Hồn Đăng, Phá Giáp, Thời Vực
 
-## Checkpoint 2.5 — Run-system / rare expansion — COMPLETE at mechanic level
+## Checkpoint 2.5 — Run-system / rare expansion — COMPLETE
 - icon compatibility
 - multiple different rare rules per run
 - level-scaled rare chance: Lv8 1%, +0.35 percentage point/level, cap 12%
@@ -64,35 +64,35 @@ B2:
 7. Thiên Hỏa Tinh Vẫn
 8. Hộ Pháp Phản Chấn
 
-All are behavior-changing interactions with explicit source routing, live/Codex identity and mechanic smoke tests. CI asserts exactly **28 unique Hợp Đạo Kỹ** in the public chain. Pages deployment passed.
+All are behavior-changing interactions with explicit source routing, live/Codex identity and mechanic smoke tests. CI asserts exactly **28 unique Hợp Đạo Kỹ** in the public chain.
 
-## Checkpoint 4 — 4 Siêu Cấp — ACTIVE NEXT
+## Checkpoint 4 — 4 Siêu Cấp — COMPLETE
 - **Vạn Ảnh Phân Thân** — Dư Ảnh TỐI ĐA + TIME ×3 + SUMMON ×3
 - **Thiên La Địa Võng** — Địa Lôi Phù TỐI ĐA + AREA ×3 + EXPLOSION ×3 + CONTROL ×2
 - **Huyết Võng** — Huyết Liên TỐI ĐA + BLOOD ×3 + CHAIN ×3
 - **Tinh Hà Trụy Lạc** — Tinh Vẫn TỐI ĐA + FIRE ×2 + AREA ×3 + EXPLOSION ×3
 
-Each must be a visible power spike stronger than one ordinary Hợp Đạo, preserve all already-unlocked Hợp Đạo interactions, receive dedicated Codex/live feedback and CI mechanic coverage.
+C1 mechanics preserve the matching Hợp Đạo interactions and are CI-gated. Public integration asserts exactly **12 Siêu Cấp**.
 
 ## Checkpoint 5 — 20 rare rules — COMPLETE at mechanic level
 Original 4 + 16 new rare rules are implemented. Dedicated bespoke visual audit remains in Checkpoint 7.
 
-## Checkpoint 6 — Vô Hạn guaranteed starting rare
-Vô Hạn must:
-1. uniformly grant exactly one random rare from the full valid 20-skill pool before the normal starter choice
-2. show a dedicated reveal overlay with tier/icon/name/exact description
-3. continue to exactly one normal starter Kỹ Năng after acknowledgement
-4. exclude the granted rare from future offers because duplicates are forbidden
-5. still allow later rare offers through the normal level-scaled curve
+## Checkpoint 6 — Vô Hạn guaranteed starting rare — COMPLETE
+Vô Hạn now:
+1. uniformly grants exactly one random rare from the full 20-skill pool before the normal starter choice
+2. shows a dedicated reveal overlay with tier/icon/name/exact description
+3. continues to exactly one normal starter Kỹ Năng after acknowledgement
+4. excludes the granted rare from future offers because duplicates are forbidden
+5. still allows later rare offers through the normal level-scaled curve
 
-No hidden weighting.
+The mode card and Cách chơi disclose the rule. CI validates equal interval mapping across all 20 candidates, reveal-before-starter ordering and public script order.
 
-## Checkpoint 7 — Codex / VFX / mechanical-truth audit
-- all entries represented
-- count must equal shipped content
+## Checkpoint 7 — Codex / VFX / mechanical-truth audit — ACTIVE NEXT
+- all 140 entries represented
 - every rare has dedicated preview/live feedback
 - every cooldown/cap/stack/target limit disclosed
 - cross-platform icon audit
+- final-piece-only relation-hint regression check
 
 ## Checkpoint 8 — Balance / stress / device validation
 - repeated rare-rate simulations
