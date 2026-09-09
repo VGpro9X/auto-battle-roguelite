@@ -78,6 +78,12 @@ jobs:
       - name: V0.16 final content/truth audit smoke test
         run: node tests/v016-final-audit-smoke.js
 
+      - name: V0.16 rare-rate balance simulation
+        run: node tests/v016-balance-simulation.js
+
+      - name: V0.16 rare VFX stress test
+        run: node tests/v016-rare-vfx-stress.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
