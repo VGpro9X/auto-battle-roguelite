@@ -152,7 +152,7 @@ Locked core direction:
 - desktop/mobile hands-on visual/play feel sign-off: pending
 
 ## D6 Skill expansion — ACTIVE
-Current Duel base-skill coverage: **24 / 80**.
+Current Duel base-skill coverage: **32 / 80**.
 
 Batch D6A added:
 - Đoạt Mệnh (`execution`)
@@ -164,13 +164,23 @@ Batch D6A added:
 - Tử Ấn (`deathMark`)
 - Độc Tố (`poison`)
 
-Architecture change:
-- Duel now has a dedicated **skill behavior registry/hook layer** inside `duel-engine.js`.
+Batch D6B added:
+- Ảnh Xạ (`echoShot`)
+- Cận Sát (`pointBlank`)
+- Ngũ Hành (`elementalMastery`)
+- Thuẫn Bạo (`shieldPulse`)
+- Huyết Tế (`sacrifice`)
+- Hắc Vực (`blackHole`)
+- Thiên Vận (`luckyStar`)
+- Hồi Mệnh (`secondWind`)
+
+Architecture notes:
+- Duel has a dedicated **skill behavior registry/hook layer** inside `duel-engine.js`.
 - New skill batches register mechanics without wrapping the Duel loop or touching Survival functions.
+- D6B extends the registry with a fatal-damage hook for revive/fatal interception and a projectile helper for modular skill behaviors.
 - Prototype skill count in lobby is synchronized from the actual Duel registry rather than hard-coded.
 
 Next D6 targets:
-- 32 base Duel skills
 - 40 base Duel skills
 - 60 base Duel skills
 - all 80 base Duel skills
@@ -184,4 +194,4 @@ Next D6 targets:
 - optional future air/jump mechanics only after explicit design
 
 # PROJECT STATUS
-**V0.17 Duel Arena is playable as a deployed prototype; D6 skill expansion is active. V0.16 Survival/Endless remains the stable released baseline.**
+**V0.17 Duel Arena is playable as a deployed prototype; D6 skill expansion is active at 32/80 base skills. V0.16 Survival/Endless remains the stable released baseline.**
