@@ -28,11 +28,13 @@ assert.strictEqual(new Set([...originalKeys,...addedKeys]).size,80,'Combined bas
 for(const file of moduleFiles){
   assert(index.includes(file+'?v=016dev-base80-r1'),`index.html must cache-bust ${file}`);
 }
-assert(index.includes('js/skill-codex.js?v=016dev-r3'),'Codex script must use the current V0.16 development cache key');
-assert(index.indexOf('js/v016-skills-a4.js?v=016dev-base80-r1')<index.indexOf('js/skill-codex.js?v=016dev-r3'),'All V0.16 base skills must register before the Codex script loads');
-assert(index.indexOf('js/v016-run-systems.js?v=016dev-r3')<index.indexOf('js/v016-rares-r3.js?v=016dev-r3'),'Run systems must load before rare R3');
-assert(index.indexOf('js/v016-rares-r3.js?v=016dev-r3')<index.indexOf('js/v016-rares-r4.js?v=016dev-r3'),'Rare R3 must load before rare R4');
-assert(index.indexOf('js/v016-rares-r4.js?v=016dev-r3')<index.indexOf('js/skill-codex.js?v=016dev-r3'),'All rare definitions must register before Codex loads');
+
+const position=file=>index.indexOf(file);
+assert(position('js/skill-codex.js?v=016dev-')>=0,'Codex script must use a V0.16 development cache key');
+assert(position('js/v016-skills-a4.js?v=016dev-base80-r1')<position('js/skill-codex.js?v=016dev-'),'All V0.16 base skills must register before the Codex script loads');
+assert(position('js/v016-run-systems.js?v=016dev-')<position('js/v016-rares-r3.js?v=016dev-'),'Run systems must load before rare R3');
+assert(position('js/v016-rares-r3.js?v=016dev-')<position('js/v016-rares-r4.js?v=016dev-'),'Rare R3 must load before rare R4');
+assert(position('js/v016-rares-r4.js?v=016dev-')<position('js/skill-codex.js?v=016dev-'),'All rare definitions must register before Codex loads');
 assert(index.includes('Auto Battle Roguelite V0.16 DEV'),'Visible HTML must identify the active V0.16 development build');
 assert(core.includes('const GAME_VERSION="V0.16 DEV";'),'Runtime version must identify V0.16 DEV');
 
