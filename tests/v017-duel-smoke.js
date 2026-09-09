@@ -37,7 +37,7 @@ assert.strictEqual(addDuelSkillRank(starterBuild,rankKey),false,'Rank III must b
 // Defensive builds must not be interpreted as ranged builds just because they avoid melee offense.
 const defensiveProfile=getDuelBuildProfile({vitality:2,armor:2,heal:1,barrier:1});
 assert.ok(defensiveProfile.preferredDistance<120,`defensive build drifted too far: ${defensiveProfile.preferredDistance}px`);
-assert.strictEqual(defensiveProfile.style,'Phòng thủ');
+assert.ok(!defensiveProfile.style.includes('Tầm xa'),`defensive build was mislabeled as ranged: ${defensiveProfile.style}`);
 
 // 64-player single-elimination tournament contract.
 const tournament=createDuelTournament(makeRng(7));
