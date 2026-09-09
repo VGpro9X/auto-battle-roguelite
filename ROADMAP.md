@@ -3,18 +3,18 @@
 GitHub `main` is canonical.
 
 ## Current baseline
-- Released baseline: **V0.15 – Responsive & Mobile/Desktop Readability**.
-- Active public development label: **V0.16 DEV — RELEASE CANDIDATE**.
+- Released baseline: **V0.16 – Skill Expansion & Rare System V2**.
+- Current public/runtime label: **V0.16**.
 - Current main/Pages content: **80 Kỹ Năng + 28 Hợp Đạo Kỹ + 12 Siêu Cấp + 20 rare = 140 Codex entries**.
 - Movement baseline remains **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
 - Player-facing language remains Vietnamese.
 - Mechanical truth, no-hidden-cap and final-piece-only Hợp Đạo/Siêu Cấp hint rules remain locked.
 
-Read before V0.16 work:
+Read before work:
 1. `PROJECT_HANDOFF.md`
-2. `V016_SKILL_DESIGN.md`
-3. `V016_RARE_SYSTEM_V2.md`
-4. `V016_RELEASE_VALIDATION.md`
+2. `V016_RELEASE_VALIDATION.md`
+3. `V016_SKILL_DESIGN.md`
+4. `V016_RARE_SYSTEM_V2.md`
 
 ---
 
@@ -23,7 +23,7 @@ Responsive phone/tablet/desktop UI was accepted by the user on GitHub Pages.
 
 ---
 
-# V0.16 — RELEASE CANDIDATE
+# V0.16 — COMPLETE / RELEASED
 ## Final quality target
 - Base Kỹ Năng: **64 → 80** ✅
 - Hợp Đạo Kỹ: **20 → 28** ✅
@@ -79,18 +79,14 @@ C1 mechanics preserve the matching Hợp Đạo interactions and are CI-gated. P
 Original 4 + 16 new rare rules are implemented. Rare mechanics, multi-rare ownership and public 10+10 registry are CI-gated.
 
 ## Checkpoint 6 — Vô Hạn guaranteed starting rare — COMPLETE
-Vô Hạn now:
+Vô Hạn:
 1. uniformly grants exactly one random rare from the full 20-skill pool before the normal starter choice
 2. shows a dedicated reveal overlay with tier/icon/name/exact description
 3. continues to exactly one normal starter Kỹ Năng after acknowledgement
 4. excludes the granted rare from future offers because duplicates are forbidden
 5. still allows later rare offers through the normal level-scaled curve
 
-The mode card and Cách chơi disclose the rule. CI validates equal interval mapping across all 20 candidates, reveal-before-starter ordering and public script order.
-
 ## Checkpoint 7 — Codex / VFX / mechanical-truth audit — COMPLETE
-Code/CI and the exact generated Pages artifact have both been validated.
-
 - all 140 entries represented ✅
 - all 20 rare rules have dedicated Codex preview and live-feedback coverage ✅
 - hidden generic rare retry timing removed ✅
@@ -98,11 +94,10 @@ Code/CI and the exact generated Pages artifact have both been validated.
 - final-piece-only relation-hint regression gate passes ✅
 - test harnesses excluded from Pages artifact ✅
 - zero JavaScript page exceptions / console errors in tested browser flows ✅
+- final rare VFX wrapper ordering fixed and CI-enforced ✅
 
-A real browser integration bug was found and fixed during this checkpoint: V0.12 Visual Bridge could overwrite the V0.16 rare preview wrapper, causing generic purple-star previews. `js/v016-rare-vfx.js?v=016dev-audit-r2` now loads as the final visual wrapper after Codex/Visual Bridge/V0.13 feedback, and CI enforces that order. Post-fix Chromium rendering produced **20 distinct pixel hashes for the 20 rare previews** at the same timestamp. ✅
-
-## Checkpoint 8 — Balance / stress / device validation — BROWSER/AUTOMATED COMPLETE, PHYSICAL DEVICE PENDING
-Automated and exact Pages-artifact validation now includes:
+## Checkpoint 8 — Balance / stress / device validation — COMPLETE FOR RELEASE
+Validation included:
 - deterministic rare-rate simulation ✅
 - 400,000-sample Vô Hạn 20-way uniformity simulation ✅
 - 20 dedicated rare preview runtime stress ✅
@@ -114,37 +109,37 @@ Automated and exact Pages-artifact validation now includes:
 - mobile portrait 390×844 viewport layout/runtime ✅
 - mobile landscape 844×390 viewport layout/runtime ✅
 - synthetic dense visible rendering on desktop/mobile ✅
+- user hands-on sign-off with no blocking issue ✅
 
-Latest deterministic sample:
-- Lv8–60 synthetic one-roll-per-level model: **4.58 rare successes/run average** before duplicate/pool exhaustion
-- Vô Hạn 20-way starting rare: **1.07% maximum slot-frequency drift** over 400,000 samples
-
-Headless Chromium draw regression indicators:
-- desktop: 240 deliberately visible enemies + 199 representative VFX + all 20 rares owned ≈ **3.46 ms/draw** over 120 draws
-- mobile portrait viewport: 120 deliberately visible enemies ≈ **1.64 ms/draw** over 120 draws
-
-These timings are not physical-device FPS claims.
-
-### Layered mechanics now CI-locked
-- Mua Chuộc ally exclusion/reversion with Thời Đình
-- Thiên Ấn dodge-before-block ordering
-- Đảo Nhân Quả priority over Nợ Máu / Ký Sinh / Thế Mệnh
-- Nợ Máu + Ký Sinh + Thế Mệnh exact post-shield ordering
-- Thế Mệnh proxy death correctly counts as a kill and therefore clears 15% current Nợ Máu
-- Bất Tử Nhất Tức remains the final once-per-run lethal safety net
-- all four new Siêu Cấp preserve their matching Hợp Đạo interactions
-
-### Only remaining release gate
-Before renaming the visible/runtime build from `V0.16 DEV` to final `V0.16`, perform a short physical-device/human feel check:
-- one desktop play session long enough to judge pacing, readability and accepted V0.8 movement feel
-- one real phone/tablet session to judge touch ergonomics, browser chrome/safe areas, actual emoji/font rendering and hardware FPS
-
-Exact checklist/evidence: `V016_RELEASE_VALIDATION.md`.
-
-## V0.16 release gate
-Do not rename the public build to final `V0.16` until the physical-device check has no blocking issue. Runtime/content/CI/browser-artifact validation is otherwise release-candidate complete.
+V0.16 was promoted from `V0.16 DEV` to final **V0.16** after this sign-off.
 
 ---
 
-# After V0.16
-Run a focused balance pass before another major expansion; then consider bosses, advanced Hợp Đạo layers, additional enemy archetypes, meta progression or expansion toward 100+ base skills.
+# Next phase — FOCUSED BALANCE PASS
+Do **not** begin another major content expansion yet.
+
+## Goal
+Use reproducible scenarios and run data to identify actual outliers before changing numbers. Preserve the feel of accepted systems unless evidence shows a problem.
+
+## Checkpoint B1 — Baseline measurement — NEXT
+- establish reproducible fixed-build scenarios for offense, defense, summon/control and rare-heavy builds
+- sample 5/10/15/20-minute and Vô Hạn enemy pressure
+- record kill rate, incoming damage, survival time, level progression and late-game entity/VFX density
+- identify top/bottom base-skill outliers without balancing from description alone
+- do not change numbers during this measurement checkpoint
+
+## Checkpoint B2 — Targeted tuning
+Only after B1 evidence:
+- tune clearly over/under-performing base skills
+- tune Hợp Đạo/Siêu Cấp power spikes if needed
+- inspect rare frequency/value versus the current level-scaled curve
+- inspect timed-mode difficulty progression and Vô Hạn scaling separately
+- prefer small isolated changes with CI regression tests
+
+## Checkpoint B3 — Validation
+- rerun the same B1 scenarios after changes
+- compare before/after metrics
+- hands-on Pages check for pacing/readability
+- keep V0.8 player movement unchanged unless explicitly requested
+
+Possible later expansion directions after the balance pass: bosses, advanced Hợp Đạo layers, additional enemy archetypes, meta progression or expansion toward 100+ base skills.
