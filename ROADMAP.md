@@ -4,163 +4,102 @@ GitHub `main` is canonical.
 
 ## Current baseline
 - Released baseline: **V0.16 – Skill Expansion & Rare System V2**.
-- Current public/runtime label: **V0.16**.
-- Current main/Pages content: **80 Kỹ Năng + 28 Hợp Đạo Kỹ + 12 Siêu Cấp + 20 rare = 140 Codex entries**.
-- Movement baseline remains **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
-- Player-facing language remains Vietnamese.
-- Mechanical truth, no-hidden-cap and final-piece-only Hợp Đạo/Siêu Cấp hint rules remain locked.
+- Public/runtime label: **V0.16**.
+- Current content: **80 Kỹ Năng + 28 Hợp Đạo Kỹ + 12 Siêu Cấp + 20 rare = 140 Codex entries**.
+- Movement baseline: **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
+- Player-facing language: Vietnamese.
+- Mechanical-truth, no-hidden-cap and final-piece-only Hợp Đạo/Siêu Cấp hint rules remain locked.
 
-Read before work:
-1. `PROJECT_HANDOFF.md`
-2. `BALANCE_BASELINE_V016.md`
-3. `V016_RELEASE_VALIDATION.md`
-4. `V016_SKILL_DESIGN.md`
-5. `V016_RARE_SYSTEM_V2.md`
+Read before future work:
+1. `README.md`
+2. `PROJECT_HANDOFF.md`
+3. `BALANCE_BASELINE_V016.md`
+4. `BALANCE_FIXED_BUILDS_V016.md`
+5. `V016_RELEASE_VALIDATION.md`
+6. `V016_SKILL_DESIGN.md`
+7. `V016_RARE_SYSTEM_V2.md`
 
 ---
 
 # V0.15 — COMPLETE
-Responsive phone/tablet/desktop UI was accepted by the user on GitHub Pages.
-
----
+Responsive phone/tablet/desktop UI accepted on GitHub Pages.
 
 # V0.16 — COMPLETE / RELEASED
-## Final quality target
+Released content:
 - Base Kỹ Năng: **64 → 80** ✅
 - Hợp Đạo Kỹ: **20 → 28** ✅
 - Siêu Cấp: **8 → 12** ✅
-- Rare rule skills: **4 → 20** ✅
-  - Thần Kỹ: **2 → 10** ✅
-  - Thần Bí Kỹ: **2 → 10** ✅
-- Codex content target: **140 entries** = 80 + 28 + 12 + 20 ✅
+- Rare rules: **4 → 20** ✅
+  - 10 Thần Kỹ
+  - 10 Thần Bí Kỹ
+- Codex: **140 entries** ✅
 
-## Checkpoint 1 — Design lock — COMPLETE
-Base/Hợp Đạo/Siêu Cấp design contract: `V016_SKILL_DESIGN.md`.  
-Rare-system V2 and 20-rare target: `V016_RARE_SYSTEM_V2.md`.
-
-## Checkpoint 2 — 16 new base Kỹ Năng — COMPLETE
-A1 through A4 are implemented, live and CI-gated:
-- A1: Dư Ảnh, Địa Lôi Phù, Huyết Liên, Linh Châu
-- A2: Bộ Pháp Chấn, Trói Hồn, Hồi Phong Nhận, Tinh Vẫn
-- A3: Hộ Pháp Mộc Nhân, Hàn Kính, Tĩnh Tâm, Thất Tinh Kích
-- A4: Lôi Trường, Hồn Đăng, Phá Giáp, Thời Vực
-
-## Checkpoint 2.5 — Run-system / rare expansion — COMPLETE
-- icon compatibility
-- multiple different rare rules per run
-- level-scaled rare chance: Lv8 1%, +0.35 percentage point/level, cap 12%
+Major V0.16 systems completed:
+- 16 new base Kỹ Năng
+- 8 new Hợp Đạo Kỹ
+- 4 new Siêu Cấp
+- Rare System V2 with multiple different rares per run
+- rare offer chance scaling from Lv8, capped at 12%
 - one `XOAY LẠI` per choice screen
-- full 20-rare pool = 10 Thần Kỹ + 10 Thần Bí Kỹ
-- CI coverage for difficult rare mechanics and public rare chain
+- Vô Hạn starts with one uniformly random rare from the full 20-rule pool
+- cross-platform icon compatibility
+- dedicated Codex/live feedback for all 20 rare rules
+- layered rare-mechanic ordering CI
+- exact Pages-artifact Chromium validation
+- real-device user sign-off
 
-## Checkpoint 3 — 8 Hợp Đạo Kỹ — COMPLETE
-B1:
-1. Vạn Ảnh Xạ
-2. Trọng Lực Phù Trận
-3. Huyết Mạch Cộng Sinh
-4. Linh Châu Dưỡng Mệnh
-
-B2:
-5. Phong Lôi Bộ
-6. Phong Hồn Tử Ấn
-7. Thiên Hỏa Tinh Vẫn
-8. Hộ Pháp Phản Chấn
-
-All are behavior-changing interactions with explicit source routing, live/Codex identity and mechanic smoke tests. CI asserts exactly **28 unique Hợp Đạo Kỹ** in the public chain.
-
-## Checkpoint 4 — 4 Siêu Cấp — COMPLETE
-- **Vạn Ảnh Phân Thân** — Dư Ảnh TỐI ĐA + TIME ×3 + SUMMON ×3
-- **Thiên La Địa Võng** — Địa Lôi Phù TỐI ĐA + AREA ×3 + EXPLOSION ×3 + CONTROL ×2
-- **Huyết Võng** — Huyết Liên TỐI ĐA + BLOOD ×3 + CHAIN ×3
-- **Tinh Hà Trụy Lạc** — Tinh Vẫn TỐI ĐA + FIRE ×2 + AREA ×3 + EXPLOSION ×3
-
-C1 mechanics preserve the matching Hợp Đạo interactions and are CI-gated. Public integration asserts exactly **12 Siêu Cấp**.
-
-## Checkpoint 5 — 20 rare rules — COMPLETE
-Original 4 + 16 new rare rules are implemented. Rare mechanics, multi-rare ownership and public 10+10 registry are CI-gated.
-
-## Checkpoint 6 — Vô Hạn guaranteed starting rare — COMPLETE
-Vô Hạn:
-1. uniformly grants exactly one random rare from the full 20-skill pool before the normal starter choice
-2. shows a dedicated reveal overlay with tier/icon/name/exact description
-3. continues to exactly one normal starter Kỹ Năng after acknowledgement
-4. excludes the granted rare from future offers because duplicates are forbidden
-5. still allows later rare offers through the normal level-scaled curve
-
-## Checkpoint 7 — Codex / VFX / mechanical-truth audit — COMPLETE
-- all 140 entries represented ✅
-- all 20 rare rules have dedicated Codex preview and live-feedback coverage ✅
-- hidden generic rare retry timing removed ✅
-- only explicitly disclosed retry rules allowed; Thế Mệnh declares `retryCooldown: 1.25` matching its description ✅
-- final-piece-only relation-hint regression gate passes ✅
-- test harnesses excluded from Pages artifact ✅
-- zero JavaScript page exceptions / console errors in tested browser flows ✅
-- final rare VFX wrapper ordering fixed and CI-enforced ✅
-
-## Checkpoint 8 — Balance / stress / device validation — COMPLETE FOR RELEASE
-Validation included:
-- deterministic rare-rate simulation ✅
-- 400,000-sample Vô Hạn 20-way uniformity simulation ✅
-- 20 dedicated rare preview runtime stress ✅
-- rare live/persistent VFX 360-frame stress/pruning test ✅
-- layered rare ordering integration test ✅
-- 10 repeated browser Vô Hạn starts: reveal → starter → gameplay ✅
-- starter and normal-level reroll each independently limited to one use ✅
-- desktop 1440×1000 browser layout/runtime ✅
-- mobile portrait 390×844 viewport layout/runtime ✅
-- mobile landscape 844×390 viewport layout/runtime ✅
-- synthetic dense visible rendering on desktop/mobile ✅
-- user hands-on sign-off with no blocking issue ✅
-
-V0.16 was promoted from `V0.16 DEV` to final **V0.16** after this sign-off.
+V0.16 runtime and Pages release are final and stable.
 
 ---
 
-# Next phase — FOCUSED BALANCE PASS
-Do **not** begin another major content expansion yet.
+# Post-release focused balance pass — COMPLETE / CLOSED
 
-## Goal
-Use reproducible scenarios and run data to identify actual outliers before changing numbers. Preserve the feel of accepted systems unless evidence shows a problem.
-
-## Checkpoint B1 — Baseline measurement — ACTIVE
-### B1.1 Environment/pressure baseline — COMPLETE
-Frozen in:
+## B1.1 Environment/pressure baseline — COMPLETE
+Files:
 - `BALANCE_BASELINE_V016.md`
 - `tests/balance-baseline-v016.js`
 
-The test is now part of the Pages CI gate. No gameplay number was changed.
+Released pressure anchors are frozen in CI. No gameplay value was changed.
 
-Released V0.16 pressure anchors:
-- timed-mode expected total spawns: **662.3 / 1324.7 / 1987.0 / 2649.4** for 5/10/15/20 minutes
-- all timed modes share the same normalized spawn-density curve; mode pressure changes HP/damage rather than spawn density
-- timed modes end at nominal **361.4 spawns/min**, 20% elite chance and 0.27s spawn cooldown
-- Endless reaches the **0.20s spawn-cooldown floor** and **72% extra-spawn cap** around 20 minutes, giving a nominal **606.7 spawns/min** thereafter while HP/damage continue scaling
+Key structural facts:
+- timed modes share the same normalized spawn-density curve; mode pressure changes HP/damage
+- expected timed-run spawns: ~662 / 1325 / 1987 / 2649 for 5/10/15/20 minutes
+- timed end pressure: ~361 nominal spawns/min, 20% elite chance, 0.27s spawn cooldown
+- Endless reaches its 0.20s spawn cooldown and 72% extra-spawn caps around 20 minutes; HP/damage continue increasing afterward
 
-These are pressure-model expectations, not actual player kill counts.
+## B1.2 Fixed-build scenarios — COMPLETE
+File: `BALANCE_FIXED_BUILDS_V016.md`.
 
-### B1.2 Fixed-build scenarios — NEXT
-Establish reproducible offense, defense, summon/control and rare-heavy scenarios against the frozen pressure baseline and record:
-- kills/minute and clear percentage
-- player level progression
-- incoming HP damage / shield absorption
-- survival time
-- active enemy/projectile/VFX density
-- major base/Hợp Đạo/Siêu Cấp/rare outliers
+Exact final V0.16 Pages artifact was exercised with deterministic offense, defense, summon/control and rare-heavy endpoint builds at 5 and 10 minutes.
 
-Do not change balance numbers until these scenarios produce evidence.
+Main 10-minute observations:
+- offense: ~120.3 kills/min, ~96.3% observed clear, 3/3 complete
+- summon/control: ~114.0 kills/min, ~94.0% observed clear, high output but fragile late
+- rare-heavy defensive hybrid: ~79.7 kills/min, ~64.1% observed clear, 3/3 complete with strong shield survival
+- pure defense: ~11.8 kills/min and ~10.8% observed clear; analysis reaches the 901-living-enemy measurement safety threshold while the player remains alive
 
-## Checkpoint B2 — Targeted tuning
-Only after B1 evidence:
-- tune clearly over/under-performing base skills
-- tune Hợp Đạo/Siêu Cấp power spikes if needed
-- inspect rare frequency/value versus the current level-scaled curve
-- inspect timed-mode difficulty progression and Vô Hạn scaling separately
-- prefer small isolated changes with CI regression tests
+These deliberately extreme fixed-at-time-0 builds show clear archetype trade-offs but do **not** isolate one numeric value that justifies a safe nerf/buff.
 
-## Checkpoint B3 — Validation
-- rerun the same B1 scenarios after changes
-- compare before/after metrics
-- hands-on Pages check for pacing/readability
-- keep V0.8 player movement unchanged unless explicitly requested
+## B2 Targeted tuning — CLOSED, NO CHANGE
+No gameplay number was changed. Tuning an individual skill from these artificial endpoint scenarios would be weaker evidence than the accepted real-run release state.
 
-Possible later expansion directions after the balance pass: bosses, advanced Hợp Đạo layers, additional enemy archetypes, meta progression or expansion toward 100+ base skills.
+## B3 Post-tuning validation — NOT REQUIRED
+No B2 gameplay change exists to compare before/after. Existing V0.16 CI, Pages-artifact browser validation and hands-on sign-off remain valid.
+
+---
+
+# PROJECT STATUS — CLEAN / READY FOR NEW PLAN
+There is currently **no active development checkpoint and no unfinished implementation task**.
+
+V0.16 remains the canonical stable baseline. The focused balance pass is closed without changing released gameplay values.
+
+A future roadmap may start from a clean slate. Possible directions, only as ideas rather than active commitments:
+- bosses
+- additional enemy archetypes
+- advanced Hợp Đạo layers
+- meta progression
+- more base skills
+- deeper Endless systems
+- new game modes
+
+Do not begin any of these until a new plan is explicitly chosen.
