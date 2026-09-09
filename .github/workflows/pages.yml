@@ -66,6 +66,9 @@ jobs:
       - name: V0.16 28-Hợp-Đạo integration smoke test
         run: node tests/v016-synergy28-integration.js
 
+      - name: V0.16 Siêu Cấp C1 smoke test
+        run: node tests/v016-evolutions-c1-smoke.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
