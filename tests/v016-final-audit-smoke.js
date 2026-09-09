@@ -67,4 +67,23 @@ assert(hintFix.includes('if(progress.met===progress.total)'),'Hợp Đạo choic
 assert(hintFix.includes('if(contributes&&effect.ready)'),'Siêu Cấp choice hints must require immediate completion');
 assert(hintFix.includes('getNearBuildUnlocks'),'Partial progress must remain available in the left build tracker');
 
+// Public integration: audited mechanics and dedicated rare VFX must be the files users actually receive.
+const index=fs.readFileSync('index.html','utf8');
+const divineTag='js/divine-skills.js?v=016dev-audit-r1';
+const r4Tag='js/v016-rares-r4.js?v=016dev-audit-r1';
+const endlessTag='js/v016-endless-starting-rare.js?v=016dev-endless-r1';
+const rareVfxTag='js/v016-rare-vfx.js?v=016dev-audit-r1';
+const codexTag='js/skill-codex.js?v=016dev-evol12-r1';
+for(const tag of [divineTag,r4Tag,endlessTag,rareVfxTag,codexTag])assert(index.includes(tag),`Public build must load ${tag}`);
+assert(index.indexOf(r4Tag)<index.indexOf(endlessTag),'All rare definitions must load before Endless chooses from the full pool');
+assert(index.indexOf(endlessTag)<index.indexOf(rareVfxTag),'Endless flow must register before final rare visual audit layer');
+assert(index.indexOf(rareVfxTag)<index.indexOf(codexTag),'Dedicated rare preview wrapper must load before Codex initializes');
+assert(!index.includes('tests/'),'Playable public index must never load executable test harnesses');
+
+const workflow=fs.readFileSync('.github/workflows/pages.yml','utf8');
+assert(workflow.includes('cp index.html _site/index.html'),'Pages artifact must include the playable index');
+assert(workflow.includes('cp -R css _site/css'),'Pages artifact must include CSS');
+assert(workflow.includes('cp -R js _site/js'),'Pages artifact must include runtime JS');
+assert(!workflow.includes('cp -R tests'),'Pages artifact must not ship the tests directory');
+
 console.log('V0.16 final content/truth audit smoke: PASS');
