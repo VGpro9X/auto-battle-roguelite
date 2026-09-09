@@ -48,6 +48,9 @@ jobs:
       - name: V0.16 base80 integration smoke test
         run: node tests/v016-base80-integration.js
 
+      - name: V0.16 rare curve and reroll smoke test
+        run: node tests/v016-rare-reroll-smoke.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
