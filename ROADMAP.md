@@ -105,7 +105,6 @@ Locked core direction:
 - two unrestricted starter skill selections
 - one skill reward after each non-final matchup victory
 - Duel skills use Rank I/II/III instead of Survival levels
-- prototype begins with 16 existing base skill identities, then expands in audited batches
 - one flat prototype arena, architecture ready for more arenas later
 - prototype vector/silhouette graphics must be replaceable by future sprite/skeletal rendering without changing combat logic
 - V0.16 Survival/Endless mechanics are not to be rewritten for this mode
@@ -114,20 +113,75 @@ Locked core direction:
 - `V017_DUEL_ARENA_PLAN.md` created ✅
 - V0.17 marked active in roadmap ✅
 
-## D1 Isolated Duel foundation — ACTIVE
-- Duel mode entry
-- separate side-view canvas/UI
-- 64-fighter tournament state
-- 2 starter selections + one reroll per selection
-- opponent preview
-- best-of-3 round state machine
+## D1 Isolated Duel foundation — COMPLETE
+- Duel mode entry ✅
+- separate side-view canvas/UI ✅
+- 64-fighter tournament state ✅
+- 2 unrestricted starter selections + one reroll per selection ✅
+- opponent preview ✅
+- best-of-3 round state machine ✅
 
-## D2 Combat engine + replaceable renderer — NEXT
-## D3 First 16 Duel skill adapters — NEXT
-## D4 Complete tournament loop — NEXT
-## D5 Prototype validation / CI — NEXT
-## D6 Skill expansion toward all 140 entries — LATER
+## D2 Combat engine + replaceable renderer — COMPLETE
+- isolated Duel combat loop; Survival movement/combat untouched ✅
+- flat side-view arena ✅
+- melee basic attack + move/retreat/hold/dash AI ✅
+- HP/shield/KO/round reset ✅
+- 45s HUYẾT CHIẾN + 60s TỬ CHIẾN rules ✅
+- semantic fighter action states + visual anchor API ✅
+- replaceable vector prototype renderer ✅
+
+## D3 First Duel skill adapters — COMPLETE
+- first 16 base skill identities ported with Rank I/II/III ✅
+- public Duel-specific descriptions/numbers ✅
+- build-derived preferred distance and AI style ✅
+
+## D4 Complete tournament loop — COMPLETE
+- non-player match simulation ✅
+- exact 64→32→16→8→4→2→1 bracket advancement ✅
+- one build reward after each non-final victory ✅
+- player elimination + Champion result flows ✅
+- pre-match build scouting ✅
+
+## D5 Prototype validation — AUTOMATED/PAGES COMPLETE; HANDS-ON SIGN-OFF PENDING
+- JavaScript syntax gate ✅
+- deterministic 64-player tournament smoke test ✅
+- Rank III / selection / mechanical-truth invariants ✅
+- real deterministic best-of-3 engine termination ✅
+- all V0.16 CI remains green ✅
+- GitHub Pages artifact includes Duel modules and deploys successfully ✅
+- desktop/mobile hands-on visual/play feel sign-off: pending
+
+## D6 Skill expansion — ACTIVE
+Current Duel base-skill coverage: **24 / 80**.
+
+Batch D6A added:
+- Đoạt Mệnh (`execution`)
+- Cuồng Huyết (`berserk`)
+- Pháo Thủy Tinh (`glassCannon`)
+- Phản Chấn (`retaliate`)
+- Gai Máu (`thorns`)
+- Tuyệt Lộ (`lastStand`)
+- Tử Ấn (`deathMark`)
+- Độc Tố (`poison`)
+
+Architecture change:
+- Duel now has a dedicated **skill behavior registry/hook layer** inside `duel-engine.js`.
+- New skill batches register mechanics without wrapping the Duel loop or touching Survival functions.
+- Prototype skill count in lobby is synchronized from the actual Duel registry rather than hard-coded.
+
+Next D6 targets:
+- 32 base Duel skills
+- 40 base Duel skills
+- 60 base Duel skills
+- all 80 base Duel skills
+- then 28 Hợp Đạo, 12 Siêu Cấp and 20 rare Duel adaptations
+
 ## D7 Presentation/arena expansion — LATER
+- stronger fighter animation/art
+- richer skill VFX
+- additional arenas
+- camera/hit-feedback polish
+- optional future air/jump mechanics only after explicit design
 
 # PROJECT STATUS
-**V0.17 Duel Arena development is active from the clean V0.16 baseline.**
+**V0.17 Duel Arena is playable as a deployed prototype; D6 skill expansion is active. V0.16 Survival/Endless remains the stable released baseline.**
