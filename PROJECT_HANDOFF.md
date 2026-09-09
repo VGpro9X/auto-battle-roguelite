@@ -5,10 +5,10 @@ Use this file as the starting context when continuing development in a new chat.
 ## Master source
 - Repository: `VGpro9X/auto-battle-roguelite`
 - Default branch: `main`
-- Repository is public; GitHub is canonical.
-- Primary playable test URL: `https://vgpro9x.github.io/auto-battle-roguelite/`
+- Repository is public; GitHub `main` is canonical.
+- Public test URL: `https://vgpro9x.github.io/auto-battle-roguelite/`
 - Pages workflow: `.github/workflows/pages.yml`
-- Before editing an existing file, fetch its current GitHub version and blob SHA.
+- Before editing any existing file, fetch its current GitHub content and blob SHA.
 - Commit after every meaningful checkpoint.
 
 Read before development:
@@ -17,76 +17,116 @@ Read before development:
 3. `ROADMAP.md`
 4. `V016_SKILL_DESIGN.md`
 
-## Current released baseline
-- **V0.15 – Responsive & Mobile/Desktop Readability**
-- V0.15 was tested by the user on a real phone via GitHub Pages and accepted.
-- Movement baseline remains **V0.8 Strategic Movement AI**; do not rewrite it unless explicitly requested.
-- Released V0.15 content was 64 base Kỹ Năng, 20 Hợp Đạo Kỹ, 8 Siêu Cấp and 4 rare rule skills.
-- V0.16 development is active on `main`; the visible/runtime release label remains V0.15 until V0.16 release is finished.
+## Released baseline vs active development
+- Released/visible version label remains **V0.15 – Responsive & Mobile/Desktop Readability** until all V0.16 release gates pass.
+- V0.15 was accepted by the user on a real phone through GitHub Pages.
+- V0.16 is active on `main` and its **base-skill expansion checkpoint is now complete**.
+- Current `main` / Pages content after A4:
+  - **80 base Kỹ Năng**
+  - 20 Hợp Đạo Kỹ
+  - 8 Siêu Cấp
+  - 4 rare rule skills: 2 Thần Kỹ + 2 Thần Bí Kỹ
+  - **112 current Codex entries** before the V0.16 Hợp Đạo/Siêu Cấp/rare additions
+- Movement baseline remains **V0.8 Strategic Movement AI**. Do not rewrite player movement unless explicitly requested.
 
 ## Locked rules
 ### Terminology
-- Base: **Kỹ Năng**
+- Base skill: **Kỹ Năng**
 - Synergy: **Hợp Đạo Kỹ**
 - Evolution: **Siêu Cấp**
-- Rare rule: **Thần Kỹ / Thần Bí Kỹ**
-- MAX: **TỐI ĐA**
-- Do not expose raw English tier labels/tags in player-facing UI.
+- Unique rule skill: **Thần Kỹ / Thần Bí Kỹ**
+- Max: **TỐI ĐA**
+- Player-facing UI remains Vietnamese; do not expose raw internal tags/tier labels.
 
 ### Mechanical truth
-- No silent caps, hidden cooldowns, hidden stack maxima, hidden target limits or undocumented retry rules.
-- Any intentional restriction in code must be stated in the Vietnamese player description.
-- Preserve the V0.12 removal of the old hidden shield cap.
-- Preserve the corrected Săn Ấn description: +25% base XP from marked targets only.
+- No silent caps, hidden cooldowns, undocumented stack maxima, target limits or retry rules.
+- Any intentional restriction must be stated in the Vietnamese description.
+- Preserve the V0.12 hidden-shield-cap removal.
+- Preserve the corrected Săn Ấn truth: +25% base XP from marked targets only.
 
 ### Level-up clarity
-Partial Hợp Đạo/Siêu Cấp progress belongs only in **BỘ KỸ NĂNG & LIÊN KẾT**.
-Choice cards only show a hint when that exact pick immediately completes the unlock:
+Partial progress belongs only in **BỘ KỸ NĂNG & LIÊN KẾT**.
+A choice card only shows a relation hint when that exact choice immediately completes the unlock:
 - `CHỌN → MỞ HỢP ĐẠO KỸ: <Tên>`
 - `CHỌN → ĐẠT SIÊU CẤP: <Tên>`
-Do not restore partial-progress card hints.
+Never restore partial-progress card noise.
 
 ### Test safety
-- Never embed executable validation/test harness code in `index.html`, `css/` or `js/` playable output.
-- CI tests live under `tests/`; the Pages workflow deploys only `index.html`, `css/` and `js/`, so tests do not ship.
+- Never embed executable validation harnesses in the playable build.
+- CI tests live under `tests/`.
+- Pages deploy copies only `index.html`, `css/` and `js/`; `tests/` does not ship.
 
-## Visual / UI milestones already complete
-- V0.12: explicit visual profiles + Codex scenes for original 64 base skills.
-- V0.13: combat readability, hit/crit/status feedback, summon actors, Hợp Đạo/Siêu Cấp and rare-rule live feedback.
-- V0.14: player/enemy/elite Canvas presentation without movement/stat changes.
-- V0.15: safe-area responsive HUD, mobile build drawer, responsive modals, touch-first Codex, portrait/landscape handling and phone acceptance.
-
-## Current rare rule skills shipped before V0.16
-- Mua Chuộc — Thần Bí Kỹ
-- Đổi Mệnh — Thần Bí Kỹ
-- Bất Tử Nhất Tức — Thần Kỹ
-- Thiên Phạt — Thần Kỹ
-
-Known non-blocking detail: Đổi Mệnh emits two `divine_trigger` events on success; only the event carrying `enemy` drives the detailed tether. Do not change unless an observed problem appears.
+## Completed visual/UI milestones
+- V0.12: original 64 skills got explicit visual profiles/Codex scenes.
+- V0.13: combat readability, hit/crit/status feedback, summon actors, Hợp Đạo/Siêu Cấp/rare feedback.
+- V0.14: player/enemy/elite Canvas presentation without player movement/stat rewrite.
+- V0.15: full responsive phone/tablet/desktop UI; phone accepted by user.
 
 # V0.16 — ACTIVE
-Full design contract: `V016_SKILL_DESIGN.md`.
+Design contract: `V016_SKILL_DESIGN.md`.
 
-Target, subject to quality:
-- base Kỹ Năng 64 → 80
+Target if quality gates pass:
+- base Kỹ Năng 64 → 80 ✅
 - Hợp Đạo Kỹ 20 → 28
 - Siêu Cấp 8 → 12
-- rare rule skills 4 → 12 (6 Thần Kỹ + 6 Thần Bí Kỹ total)
+- rare rule skills 4 → 12
 - Codex 96 → 124
 
 ## Checkpoint 1 — COMPLETE: design lock
-All 16 base skills, 8 Hợp Đạo Kỹ, 4 Siêu Cấp and 8 new rare rule skills are specified in `V016_SKILL_DESIGN.md` with exact mechanics/numbers/visual intent.
+All 16 base skills, 8 Hợp Đạo Kỹ, 4 Siêu Cấp and 8 new rare rule skills are design-locked with exact mechanics/numbers/limits/visual intent.
 
-## Batch A1 — COMPLETE
-Integration file: `js/v016-skills-a1.js`
+## Checkpoint 2 — COMPLETE: 16 new base Kỹ Năng
+### A1 — `js/v016-skills-a1.js`
+- Dư Ảnh (`afterimage`)
+- Địa Lôi Phù (`runeMine`)
+- Huyết Liên (`bloodLink`)
+- Linh Châu (`spiritPearl`)
 
-Implemented base skills:
-1. **Dư Ảnh (`afterimage`)** — temporary visible clone, two delayed shots, `allowProcs:false`.
-2. **Địa Lôi Phù (`runeMine`)** — player-position trap, explicit arm/lifetime/trigger/explosion/knockback/active-cap behavior.
-3. **Huyết Liên (`bloodLink`)** — links two nearest hostiles and mirrors the documented percentage of actual dealt damage without recursion.
-4. **Linh Châu (`spiritPearl`)** — actual healing charges stored pearls; stored-cap behavior is disclosed; pearls fire on 2.2s cadence.
+### A2 — `js/v016-skills-a2.js`
+- Bộ Pháp Chấn (`strideShock`)
+- Trói Hồn (`soulBind`)
+- Hồi Phong Nhận (`returnBlade`)
+- Tinh Vẫn (`meteorSeal`)
 
-A1 also provides dedicated live Canvas identities and Codex scene/profile entries for all four skills. Because base skills are read dynamically from `skills`, the four additions enter the normal level-up/Codex pipeline without modifying V0.8 movement.
+A2 notes:
+- Bộ Pháp Chấn observes actual distance moved; it does not influence V0.8 movement decisions.
+- Trói Hồn temporarily makes the selected hostile immobile for its bind window and restores its underlying speed immediately after each wrapped gameplay frame.
+- Hồi Phong Nhận uses separate outward/return hit sets.
+- Tinh Vẫn stores the marked position and impacts there after 0.8s.
+
+### A3 — `js/v016-skills-a3.js`
+- Hộ Pháp Mộc Nhân (`guardianIdol`)
+- Hàn Kính (`frostMirror`)
+- Tĩnh Tâm (`focusMind`)
+- Thất Tinh Kích (`sevenStarStrike`)
+
+A3 integration note:
+- `js/game.js` now has a **narrow hostile combat-target hook** (`getEnemyCombatTarget` / `damageEnemyCombatTarget`) used only when a skill provides an alternate combat target such as Hộ Pháp.
+- Player `chooseMovementDirection()` / V0.8 movement logic was not changed.
+- Hàn Kính performs dodge before consuming its one mirror charge.
+- Tĩnh Tâm uses a tiny floating-point epsilon at the exact 4.0s threshold so the documented timing does not slip one frame.
+
+### A4 — `js/v016-skills-a4.js`
+- Lôi Trường (`staticField`)
+- Hồn Đăng (`soulLantern`)
+- Phá Giáp (`armorBreak`)
+- Thời Vực (`timeField`)
+
+A4 notes:
+- Lôi Trường emits exactly six 0.5s pulses over 3s and disables normal on-hit procs for those pulses.
+- Hồn Đăng caps at 3 active flames and retains completed kill progress while full until a slot opens; this behavior is disclosed in the description.
+- Phá Giáp stacks are target-local, last 4s, refresh together, and affect all player damage after application.
+- Thời Vực speeds the timer advancement of **all owned base periodic skills**, including its own timer, exactly as its description says; it does not duplicate executions directly.
+
+## Base-expansion validation — COMPLETE
+CI currently runs, before every Pages deploy:
+1. syntax-check all `js/*.js` and `tests/*.js`
+2. `tests/v016-a1-smoke.js`
+3. `tests/v016-a2-smoke.js`
+4. `tests/v016-a3-smoke.js`
+5. `tests/v016-a4-smoke.js`
+
+Final A4-loaded build passed all four smoke suites and Pages deployment successfully.
 
 Current late script order:
 1. `js/skill-codex.js`
@@ -96,61 +136,37 @@ Current late script order:
 5. `js/game.js`
 6. `js/v014-character-enemy-presentation.js`
 7. `js/v016-skills-a1.js`
-8. `js/visual-bridge.js`
-9. `js/v013-summon-power-feedback.js`
-10. `js/v013-rule-feedback.js`
+8. `js/v016-skills-a2.js`
+9. `js/v016-skills-a3.js`
+10. `js/v016-skills-a4.js`
+11. `js/visual-bridge.js`
+12. `js/v013-summon-power-feedback.js`
+13. `js/v013-rule-feedback.js`
 
-This places A1 live actors/effects above the V0.14 actor layer and below the V0.13 hit/crit/rule feedback layers.
+Codex is safe with this order because `skill-codex.js` builds its entry list dynamically when the Codex is first opened, after all scripts have loaded.
 
-### A1 validation
-- GitHub Actions now syntax-checks all JavaScript before Pages deployment.
-- `tests/v016-a1-smoke.js` is a non-shipping Node smoke test.
-- Smoke test exercises all four A1 mechanics.
-- Latest A1 CI pass confirmed:
-  - JavaScript syntax check ✅
-  - A1 smoke test ✅
-  - Pages artifact/deploy ✅
-- Movement V0.8 was not modified.
-- Level-up final-piece-only hint logic was re-audited and remains intact in `js/evolution-hint-fix.js`.
-- New A1 tags are already translated by `js/localization.js`.
-
-Important A1 commits:
-- `cad7b9b21f17c4ce4a4d93ce3240d8265b370750` — add A1 module
-- `a1f13b5c6e5247dd9d954465dc49477d2fa2b571` — load A1 module
-- `eecd18cc4b098aa80db4b3ba5cc4e39b43712d25` — add JS syntax gate
-- `6daa38c019664d918e8d1a34102dbbf216add08d` — add non-shipping A1 smoke test
-- `4be9e8b05ba5e6413cc6a198bd3cf2050fde8942` — run smoke test in CI
-- `76da4c64e2ff54e5f67880c34719ce98ac615bb2` — correct test acquisition cadence; final A1 CI/deploy passed
-
-## V0.16 Vô Hạn rule — LOCKED for later checkpoint
-At V0.16, Vô Hạn must:
-1. uniformly select exactly one random Thần Kỹ/Thần Bí Kỹ from the full valid rare pool
-2. grant it before the normal starter Kỹ Năng
-3. show a dedicated reveal overlay with tier/icon/name/exact description
-4. continue to exactly one normal starter choice after acknowledgement
-5. consume the run's one rare slot
-6. never offer another rare in that Vô Hạn run
-Timed modes retain the current rare-offer system. No hidden weighting.
-
-## Immediate next checkpoint — Batch A2
+## Immediate next checkpoint — 8 new Hợp Đạo Kỹ
 Implement from `V016_SKILL_DESIGN.md`:
-- **Bộ Pháp Chấn (`strideShock`)**
-- **Trói Hồn (`soulBind`)**
-- **Hồi Phong Nhận (`returnBlade`)**
-- **Tinh Vẫn (`meteorSeal`)**
+1. Vạn Ảnh Xạ (`afterimageEcho`)
+2. Trọng Lực Phù Trận (`gravityRune`)
+3. Huyết Mạch Cộng Sinh (`bloodSymbiosis`)
+4. Linh Châu Dưỡng Mệnh (`nourishingPearls`)
+5. Phong Lôi Bộ
+6. Phong Hồn Tử Ấn
+7. Thiên Hỏa Tinh Vẫn
+8. Hộ Pháp Phản Chấn
 
-For A2, require mechanics + truthful Vietnamese descriptions + live visual identity + Codex identity + syntax validation + non-shipping smoke tests before calling it complete.
+Requirements:
+- behavior-changing interactions, not flat filler buffs
+- explicit source routing so base effects do not masquerade as Hợp Đạo triggers
+- preserve final-piece-only level-up hints
+- add live signature/Codex visibility
+- extend non-shipping CI smoke tests
 
-After A2: A3 → A4 → 8 Hợp Đạo → 4 Siêu Cấp → 8 rare rules → Vô Hạn reveal/grant → full Codex/VFX/truth/balance audit.
+Then continue: 4 Siêu Cấp → 8 new rare rules → Vô Hạn guaranteed starting rare/reveal → full Codex/VFX/truth/balance/device audit.
 
-## Future-chat rules
-1. Fetch current GitHub source before edits.
-2. Commit frequently.
-3. Keep V0.8 movement unchanged; skill-specific combat-side position/target logic is allowed without rewriting movement AI.
-4. Preserve mechanical truth and final-piece-only hints.
-5. Keep player-facing UI Vietnamese.
-6. Prefer Pages for testing.
-7. Keep all test harnesses outside deployed paths.
+## V0.16 Vô Hạn rule — LOCKED for later
+Vô Hạn must uniformly grant exactly one random Thần Kỹ/Thần Bí Kỹ before the normal starter choice, reveal it explicitly, consume the one-rare slot and prevent later rare offers in that run. Timed modes retain current rare-offer behavior. No hidden weighting.
 
 ## Recommended continuation prompt
-`Tiếp tục VGpro9X/auto-battle-roguelite. GitHub main là master. Đọc README.md, PROJECT_HANDOFF.md, ROADMAP.md và V016_SKILL_DESIGN.md trước. Release baseline là V0.15. V0.16 design lock và Batch A1 đã hoàn tất/CI pass. Tiếp tục Batch A2: Bộ Pháp Chấn, Trói Hồn, Hồi Phong Nhận, Tinh Vẫn. Fetch file trước khi sửa, giữ Movement V0.8, mechanical truth và final-piece-only hints, commit/test sau mỗi checkpoint.`
+`Tiếp tục VGpro9X/auto-battle-roguelite. GitHub main là master. Đọc README.md, PROJECT_HANDOFF.md, ROADMAP.md và V016_SKILL_DESIGN.md. Release label vẫn V0.15 nhưng V0.16 Checkpoint 2 đã hoàn tất: main/Pages hiện có 80 base Kỹ Năng và A1–A4 đều CI pass. Bắt đầu Checkpoint 3: 8 Hợp Đạo Kỹ mới. Fetch file trước khi sửa, giữ Movement V0.8, mechanical truth, final-piece-only hints và test harness ngoài playable build.`
