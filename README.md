@@ -1,7 +1,6 @@
 # Auto Battle Roguelite
 
-Public development version: **V0.16 DEV**  
-Released baseline: **V0.15 – Responsive & Mobile/Desktop Readability**
+Current release: **V0.16 – Skill Expansion & Rare System V2**
 
 Browser-based auto-battle survival roguelite built around unrestricted cross-archetype skill combinations.
 
@@ -9,7 +8,7 @@ Public build: `https://vgpro9x.github.io/auto-battle-roguelite/`
 
 GitHub `main` is canonical.
 
-## Current main / Pages content
+## V0.16 release content
 - **80 base Kỹ Năng**
 - **28 Hợp Đạo Kỹ**
 - **12 Siêu Cấp**
@@ -118,11 +117,11 @@ The public registry is CI-gated at exactly **12 Siêu Cấp**. Matching Hợp Đ
 - Current public script chain is tested to produce exactly 10 Thần Kỹ + 10 Thần Bí Kỹ.
 - Reroll, level-scaled rare chance, duplicate prevention and multi-rare ownership are CI-gated.
 
-## V0.16 automated + browser audit — COMPLETE
+## V0.16 release validation — COMPLETE
 ### Codex / rare VFX
 All 20 rare rules have dedicated Codex preview and live-feedback coverage. During exact Pages-artifact Chromium testing, a real runtime-order bug was found: V0.12 Visual Bridge could replace the first V0.16 preview wrapper and make new rare entries fall back to a generic purple-star preview.
 
-That bug is fixed. `js/v016-rare-vfx.js?v=016dev-audit-r2` now loads as the **final visual wrapper after Codex definitions, Visual Bridge and V0.13 rule feedback**, and CI enforces that order.
+That bug is fixed. `js/v016-rare-vfx.js?v=016dev-audit-r2` loads as the **final visual wrapper after Codex definitions, Visual Bridge and V0.13 rule feedback**, and CI enforces that order.
 
 Post-fix browser validation confirms:
 - 140 actual Codex cards/canvases
@@ -133,7 +132,7 @@ Post-fix browser validation confirms:
 ### Mechanical truth
 A hidden generic failed-rare retry interval was found during audit and removed. Failed periodic rare activations now wait the stated normal cooldown unless that specific rare explicitly declares a retry cooldown. Thế Mệnh explicitly declares `retryCooldown: 1.25`, matching its Vietnamese description.
 
-A dedicated layered-rule CI test now locks the highest-risk ordering, including:
+A dedicated layered-rule CI test locks the highest-risk ordering, including:
 - Mua Chuộc + Thời Đình ally exclusion/reversion
 - Thiên Ấn dodge-before-block
 - Đảo Nhân Quả priority over later HP rules
@@ -141,7 +140,7 @@ A dedicated layered-rule CI test now locks the highest-risk ordering, including:
 - Bất Tử Nhất Tức final lethal interception
 
 ### Automated balance / stress
-Deterministic CI currently reports:
+Deterministic CI reports:
 - synthetic one-roll-per-level Lv8–60 model: **4.58 rare successes/run average** before duplicate/pool exhaustion
 - 400,000 Vô Hạn starting-rare samples: **1.07% maximum slot-frequency drift** across 20 slots
 - live/persistent rare VFX passes a 360-frame synthetic stress/pruning test
@@ -154,12 +153,8 @@ Exact Pages-artifact Chromium validation additionally passed:
 
 The timing figures are regression indicators only, **not real-device FPS claims**.
 
-## Remaining V0.16 release gate
-The runtime/content/browser-artifact side is now release-candidate quality. Only a short **physical-device feel check** remains before changing `V0.16 DEV` to final `V0.16`:
-- one desktop run long enough to judge pacing/readability
-- one real phone/tablet check for touch ergonomics, browser safe areas, emoji/font rendering and hardware FPS
-
-Use `V016_RELEASE_VALIDATION.md` for the exact final checklist and recorded evidence.
+### Hands-on sign-off
+The user accepted the current public release candidate after hands-on testing and reported no blocking issue. V0.16 is therefore promoted from `V0.16 DEV` to final **V0.16**.
 
 ## CI
 Before every Pages deploy, GitHub Actions checks:
@@ -177,6 +172,16 @@ Before every Pages deploy, GitHub Actions checks:
 - final 140-entry content/mechanical-truth audit
 - deterministic rare-rate balance simulation
 - 20-rare VFX runtime stress
+
+## Next development phase
+Run a **focused balance pass** before another major content expansion. Measure and tune only where evidence shows an outlier:
+- mode pacing and enemy pressure
+- player survival/death timing
+- skill and rare outliers
+- Hợp Đạo/Siêu Cấp power spikes
+- Vô Hạn scaling and late-game readability
+
+Do not rewrite V0.8 movement during this pass.
 
 ## Project continuity
 - `PROJECT_HANDOFF.md`
