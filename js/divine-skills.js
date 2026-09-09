@@ -1,8 +1,8 @@
-// V0.12: Unique rule skills. They have no levels and at most one can be owned per run.
+// V0.16: Unique rule skills. They have no levels, cannot be duplicated,
+// and may be collected multiple times per run as different rare skills.
 
 if(!skillRuntime.divineSkills)skillRuntime.divineSkills=new Set();
 if(!skillRuntime.divineTimers)skillRuntime.divineTimers={};
-if(skillRuntime.divineOffers===undefined)skillRuntime.divineOffers=0;
 
 const DIVINE_SKILLS={
   bribery:{
@@ -54,7 +54,7 @@ function getDivineTierLabel(item){return DIVINE_TIER_LABELS[item?.tier]||"THẦN
 
 function grantDivineSkill(id){
   const item=DIVINE_SKILLS[id];
-  if(!item||hasDivineSkill(id)||getOwnedDivineCount()>=1)return false;
+  if(!item||hasDivineSkill(id))return false;
   skillRuntime.divineSkills.add(id);
   skillRuntime.divineTimers[id]=item.cooldown||0;
   emitSkillEvent("build_unlock",{kind:item.tier==="mystic"?"mystic":"divine",item});
@@ -62,18 +62,26 @@ function grantDivineSkill(id){
   return true;
 }
 
-function canOfferDivineSkill(){
-  return getOwnedDivineCount()<1&&player.level>=8&&skillRuntime.divineOffers<2;
+// Public V0.16 rare-offer curve:
+// level 1-7: 0%; level 8: 1%; +0.35 percentage point per level; cap 12%.
+function getDivineOfferChance(level=player.level){
+  if(level<8)return 0;
+  return Math.min(.12,.01+(level-8)*.0035);
 }
 
-function rollDivineOffer(){
+function getAvailableDivineSkillIds(excluded=new Set()){
+  return Object.keys(DIVINE_SKILLS).filter(id=>!hasDivineSkill(id)&&!excluded.has(id));
+}
+
+function canOfferDivineSkill(){
+  return player.level>=8&&getAvailableDivineSkillIds().length>0;
+}
+
+function rollDivineOffer(excluded=new Set()){
   if(!canOfferDivineSkill())return null;
-  const progress=typeof getRunProgress==="function"?getRunProgress():0;
-  const chance=clamp(.025+player.level*.0015+progress*.018,.03,.085);
-  if(Math.random()>=chance)return null;
-  const candidates=Object.keys(DIVINE_SKILLS).filter(id=>!hasDivineSkill(id));
+  if(Math.random()>=getDivineOfferChance())return null;
+  const candidates=getAvailableDivineSkillIds(excluded);
   if(!candidates.length)return null;
-  skillRuntime.divineOffers++;
   return candidates[(Math.random()*candidates.length)|0];
 }
 
@@ -182,7 +190,6 @@ resetSkillEngine=function(){
   baseResetSkillEngineForDivine();
   skillRuntime.divineSkills=new Set();
   skillRuntime.divineTimers={};
-  skillRuntime.divineOffers=0;
 };
 
 onSkillEvent("kill",()=>{
