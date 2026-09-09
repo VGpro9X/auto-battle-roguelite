@@ -5,7 +5,7 @@
   const additions={
     echoShot:{maxRank:3,tags:["ATTACK","TIME","PROJECTILE"],rangeBias:.25,meleeBias:.8,desc:r=>`Mỗi ${[5,4,3][r-1]} đòn đánh thường trúng mục tiêu, bắn một Ảnh Xạ gây ${[55,75,95][r-1]}% sát thương cơ bản. Ảnh Xạ không kích hoạt hiệu ứng đòn đánh thường.`},
     pointBlank:{maxRank:3,tags:["ATTACK","DAMAGE","RISK"],rangeBias:0,meleeBias:1.05,desc:r=>`Mọi sát thương gây thêm tối đa ${[12,24,36][r-1]}% khi cách đối thủ không quá 80px; bonus giảm tuyến tính về 0 ở 180px.`},
-    elementalMastery:{maxRank:3,tags:["ELEMENTAL","FIRE","ICE","LIGHTNING","POISON"],rangeBias:.45,meleeBias:.35,desc:r=>`Tăng ${[8,16,26][r-1]}% sát thương Hỏa Cầu, Lôi Kích, Thiêu Đốt và Độc Tố trong Đấu Trường.`},
+    elementalMastery:{maxRank:3,tags:["ELEMENTAL","FIRE","ICE","LIGHTNING","POISON"],rangeBias:.45,meleeBias:.35,desc:r=>`Tăng ${[8,16,26][r-1]}% sát thương nguyên tố trong Đấu Trường, gồm Hỏa, Sét, Độc và các kỹ năng được đánh dấu nguyên tố như Tinh Vẫn hoặc Lôi Trường.`},
     shieldPulse:{maxRank:3,tags:["SHIELD","EXPLOSION","DAMAGE_TAKEN"],rangeBias:0,meleeBias:.65,defenseBias:.8,desc:r=>`Khi một đòn phá hết khiên hiện có, Thuẫn Bạo gây ${[16,28,42][r-1]} sát thương trong bán kính ${[130,150,170][r-1]}px. Không có hồi chiêu ẩn.`},
     sacrifice:{maxRank:3,tags:["BLOOD","RISK","PERIODIC","EXPLOSION"],rangeBias:0,meleeBias:.85,desc:r=>`Mỗi ${[7.5,6.2,5.0][r-1].toFixed(1)} giây, nếu đối thủ trong ${[155,180,205][r-1]}px và bạn còn đủ HP, mất ${[4,5,6][r-1]}% HP tối đa để gây ${[26,42,62][r-1]} sát thương. Ngoài tầm sẽ thử lại sau 0,5 giây.`},
     blackHole:{maxRank:3,tags:["CONTROL","AREA","PERIODIC"],rangeBias:.35,meleeBias:.45,controlBias:1.2,desc:r=>`Mỗi ${[6,5,4][r-1].toFixed(1)} giây, nếu đối thủ trong ${[260,300,340][r-1]}px, gây ${[8,14,22][r-1]} sát thương và kéo họ ${[70,95,125][r-1]}px về phía bạn. Ngoài tầm sẽ thử lại sau 0,5 giây.`},
@@ -54,7 +54,7 @@
   });
 
   registerDuelSkillBehavior("elementalMastery",{
-    modifyOutgoingDamage:({value,rank,meta})=>ELEMENTAL_SOURCES.has(meta?.source)?value*(1+at(VALUES.elementalMastery.bonus,rank)):value
+    modifyOutgoingDamage:({value,rank,meta})=>(meta?.elemental===true||ELEMENTAL_SOURCES.has(meta?.source))?value*(1+at(VALUES.elementalMastery.bonus,rank)):value
   });
 
   registerDuelSkillBehavior("shieldPulse",{
