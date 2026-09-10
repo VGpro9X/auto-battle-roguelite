@@ -152,7 +152,10 @@ Locked core direction:
 - desktop/mobile hands-on visual/play feel sign-off: pending
 
 ## D6 Skill expansion — ACTIVE
-Current Duel base-skill coverage: **70 / 80**.
+Base Kỹ Năng Duel coverage: **80 / 80 COMPLETE** ✅
+Hợp Đạo Kỹ Duel coverage: **0 / 28**.
+Siêu Cấp Duel coverage: **0 / 12**.
+Rare Duel coverage: **0 / 20**.
 
 Batch D6A added:
 - Đoạt Mệnh (`execution`)
@@ -220,6 +223,18 @@ Batch D6F added:
 - Hộ Pháp Mộc Nhân (`guardianIdol`)
 - Hồn Đăng (`soulLantern`)
 
+Batch D6G added:
+- Linh Hấp (`magnet`)
+- Huyết Khí (`blood`)
+- Ngộ Tính (`wisdom`)
+- Thực Hồn (`soulHarvest`)
+- Thi Bạo (`corpseBurst`)
+- Linh Triều (`xpStorm`)
+- Ấn Lan (`markSpread`)
+- Linh Dưỡng (`xpHeal`)
+- Phá Cảnh (`levelBurst`)
+- Thưởng Săn (`bountyMark`)
+
 D6C validation/fixes:
 - 40 adapters are locked in the original Duel smoke test ✅
 - Dư Ảnh projectiles originate from the stored clone position rather than the fighter's later position ✅
@@ -259,17 +274,28 @@ D6F validation:
 - Hồn Đăng converts kill charge into real damage-dealt charge, preserves overflow and can interact with Summon/Area modifiers ✅
 - all V0.16 CI plus 40/50/60/70 Duel gates pass together and the exact 70-skill snapshot deploys successfully to GitHub Pages ✅
 
+D6G validation:
+- all **80/80** base Kỹ Năng are locked by `v017-duel-d6g-smoke.js` ✅
+- Linh Hấp performs real positional pull; Huyết Khí uses actual damage charge and real healing; Ngộ Tính accelerates skill timers without silently accelerating basic attacks ✅
+- Thực Hồn uses visible per-round damage thresholds and a visible stack cap; Thi Bạo triggers only once per listed HP threshold and cannot cascade from its own explosion ✅
+- Linh Triều converts XP charge into real movement-distance charge with overflow preserved ✅
+- Ấn Lan extends each newly-created owned Tử Ấn exactly once and never creates a hidden standalone mark ✅
+- Linh Dưỡng, Phá Cảnh and Thưởng Săn have explicit Duel-only periodic/round/bounty rules with no fake XP or kill economy ✅
+- Dội Thời Gian recognizes the final automatic timers (Linh Hấp, Linh Dưỡng, Thưởng Săn) ✅
+- all V0.16 CI plus 40/50/60/70/**80** Duel gates pass together and the exact 80-skill snapshot deploys successfully to GitHub Pages ✅
+
 Architecture notes:
 - Duel has a dedicated **skill behavior registry/hook layer** inside `duel-engine.js`.
 - New skill batches register mechanics without wrapping the Duel loop or touching Survival functions.
 - D6B extends the registry with a fatal-damage hook for revive/fatal interception and a projectile helper for modular skill behaviors.
 - D6F extends the engine with generic projectile metadata, a projectile-modifier hook and per-hit target-armor modifier; these are Duel-only primitives.
 - Prototype skill count in lobby is synchronized from the actual Duel registry rather than hard-coded.
-- D6 checkpoints are layered: the 40-skill test remains frozen while 50/60/70/etc. receive separate gates.
+- Base-skill checkpoints remain layered and frozen at 40/50/60/70/80.
 
 Next D6 targets:
-- all 80 base Duel skills
-- then 28 Hợp Đạo, 12 Siêu Cấp and 20 rare Duel adaptations
+- build Duel Hợp Đạo unlock/runtime foundation
+- adapt all 28 Hợp Đạo Kỹ
+- then 12 Siêu Cấp and 20 rare Duel adaptations
 
 ## D7 Presentation/arena expansion — LATER
 - stronger fighter animation/art
@@ -279,4 +305,4 @@ Next D6 targets:
 - optional future air/jump mechanics only after explicit design
 
 # PROJECT STATUS
-**V0.17 Duel Arena is playable as a deployed prototype; D6 skill expansion is active at 70/80 base skills. V0.16 Survival/Endless remains the stable released baseline.**
+**V0.17 Duel Arena is deployed with all 80/80 base Kỹ Năng adapted. D6 now moves to Hợp Đạo Kỹ (0/28). V0.16 Survival/Endless remains the stable released baseline.**
