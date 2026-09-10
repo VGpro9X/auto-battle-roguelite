@@ -254,13 +254,18 @@
       emitDuelEvent(round,"dodge",{side:target.side,source:meta.source||"damage",x:target.x,y:target.y-65});
       return 0;
     }
+    const helpers=behaviorHelpers(round);
     let damage=amount;
-    if(attacker)damage=applyBehaviorModifier(attacker,"modifyOutgoingDamage",damage,{round,attacker,target,meta});
+    if(attacker)damage=applyBehaviorModifier(attacker,"modifyOutgoingDamage",damage,{round,attacker,target,meta,...helpers});
     if(meta.ignorePressure!==true)damage*=duelPressureDamageMultiplier(round);
     let critical=false;
     if(attacker&&meta.canCrit!==false&&rng()<attacker.stats.critChance){damage*=attacker.stats.critMultiplier;critical=true;}
-    if(meta.ignoreArmor!==true)damage*=Math.max(.1,1-target.stats.armor);
-    damage=applyBehaviorModifier(target,"modifyIncomingDamage",damage,{round,attacker,target,meta});
+    if(meta.ignoreArmor!==true){
+      let effectiveArmor=target.stats.armor;
+      if(attacker)effectiveArmor=applyBehaviorModifier(attacker,"modifyTargetArmor",effectiveArmor,{round,attacker,target,meta,...helpers});
+      damage*=Math.max(.1,1-clamp(effectiveArmor,0,.90));
+    }
+    damage=applyBehaviorModifier(target,"modifyIncomingDamage",damage,{round,attacker,target,meta,...helpers});
     damage=Math.max(0,damage);
     const beforeShield=target.shield;
     if(target.shield>0){const absorbed=Math.min(target.shield,damage);target.shield-=absorbed;damage-=absorbed;}
@@ -270,7 +275,6 @@
     target.damageTaken+=hpDamage;
     const totalDamage=hpDamage+shieldDamage;
     if(attacker)attacker.damageDealt+=totalDamage;
-    const helpers=behaviorHelpers(round);
     if(totalDamage>0&&target.hp<=0){
       runBehaviorHook(target,"onFatalDamage",{round,self:target,other:attacker,attacker,target,meta,hpDamage,shieldDamage,totalDamage,...helpers});
     }
@@ -289,8 +293,9 @@
     return hpDamage;
   }
 
-  function spawnDuelProjectile(round,owner,{damage,speed=360,radius=10,source="projectile",effect=null,colorHint=null}={}){
+  function spawnDuelProjectile(round,owner,{damage,speed=360,radius=10,source="projectile",effect=null,colorHint=null,meta={}}={}){
     const dir=owner.facing;
+    const combatOwner=owner?.build?owner:(owner?.side&&round.fighters?.[owner.side])||owner;
     const projectile={
       id:`p-${round.time}-${round.projectiles.length}-${Math.floor(Math.random()*1e6)}`,
       owner:owner.side,
@@ -302,8 +307,10 @@
       source,
       effect,
       colorHint,
+      meta:{...meta,projectile:true},
       life:2.2
     };
+    runBehaviorHook(combatOwner,"modifyProjectile",{round,self:combatOwner,projectile,originOwner:owner});
     round.projectiles.push(projectile);
     emitDuelEvent(round,"projectile_spawn",{side:owner.side,source,x:projectile.x,y:projectile.y});
     return projectile;
@@ -325,7 +332,7 @@
       if(status.burnTickTimer<=0){
         status.burnTickTimer+=.5;
         const source=status.burnSource==="player"?round.fighters.player:round.fighters.opponent;
-        duelDealDamage(round,source,self,status.burnDps*.5,{source:"burn",canCrit:false,dodgeable:false,reactive:false});
+        duelDealDamage(round,source,self,status.burnDps*.5,{source:"burn",elemental:true,canCrit:false,dodgeable:false,reactive:false});
       }
     }else{status.burnDps=0;status.burnSource=null;status.burnTickTimer=.5;}
   }
@@ -346,7 +353,7 @@
     if(fire&&skillReady(self,"fire")&&distance<=560){
       setSkillCooldown(self,"fire",fire);
       self.action="cast";self.actionUntil=round.time+.24;
-      spawnDuelProjectile(round,self,{damage:rankValue("fire","damage",fire),speed:355,radius:11,source:"fire",colorHint:"fire"});
+      spawnDuelProjectile(round,self,{damage:rankValue("fire","damage",fire),speed:355,radius:11,source:"fire",colorHint:"fire",meta:{elemental:true}});
       emitDuelEvent(round,"cast",{side:self.side,skill:"fire",x:self.x,y:self.y-80});
     }
 
@@ -354,7 +361,7 @@
     if(lightning&&skillReady(self,"lightning")&&distance<=360){
       setSkillCooldown(self,"lightning",lightning);
       self.action="cast";self.actionUntil=round.time+.20;
-      duelDealDamage(round,self,other,rankValue("lightning","damage",lightning),{source:"lightning",canCrit:true,dodgeable:true});
+      duelDealDamage(round,self,other,rankValue("lightning","damage",lightning),{source:"lightning",elemental:true,chain:true,canCrit:true,dodgeable:true});
       emitDuelEvent(round,"cast",{side:self.side,skill:"lightning",target:other.side,x:other.x,y:other.y-90});
     }
 
@@ -372,7 +379,7 @@
     if(nova&&skillReady(self,"nova")&&distance<=novaRadius){
       setSkillCooldown(self,"nova",nova);
       self.action="cast";self.actionUntil=round.time+.22;
-      duelDealDamage(round,self,other,rankValue("nova","damage",nova),{source:"nova",canCrit:true,dodgeable:true});
+      duelDealDamage(round,self,other,rankValue("nova","damage",nova),{source:"nova",area:true,canCrit:true,dodgeable:true});
       duelApplyKnockback(round,other,25,self.facing);
       emitDuelEvent(round,"area",{side:self.side,skill:"nova",x:self.x,y:self.y-25,radius:novaRadius});
     }
@@ -472,7 +479,7 @@
       if(target.hp<=0)continue;
       if(Math.abs(projectile.x-target.x)<=projectile.radius+24&&Math.abs(projectile.y-(target.y-70))<=80){
         const owner=projectile.owner==="player"?player:opponent;
-        duelDealDamage(round,owner,target,projectile.damage,{source:projectile.source,canCrit:true,dodgeable:true});
+        duelDealDamage(round,owner,target,projectile.damage,{source:projectile.source,canCrit:true,dodgeable:true,...projectile.meta,projectile:true});
         projectile.life=0;
       }
     }
