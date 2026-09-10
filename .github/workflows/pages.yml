@@ -96,6 +96,9 @@ jobs:
       - name: V0.17 D6D 50-skill Duel smoke test
         run: node tests/v017-duel-d6d-smoke.js
 
+      - name: V0.17 D6E 60-skill Duel smoke test
+        run: node tests/v017-duel-d6e-smoke.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
