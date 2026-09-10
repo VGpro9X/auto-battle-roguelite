@@ -152,7 +152,7 @@ Locked core direction:
 - desktop/mobile hands-on visual/play feel sign-off: pending
 
 ## D6 Skill expansion — ACTIVE
-Current Duel base-skill coverage: **50 / 80**.
+Current Duel base-skill coverage: **60 / 80**.
 
 Batch D6A added:
 - Đoạt Mệnh (`execution`)
@@ -196,6 +196,18 @@ Batch D6D added:
 - Thời Vực (`timeField`)
 - Huyết Thuẫn (`bloodShield`)
 
+Batch D6E added:
+- Quá Tải Thời Gian (`overclock`)
+- Ngự Linh (`summonMastery`)
+- Trói Hồn (`soulBind`)
+- Linh Châu (`spiritPearl`)
+- Hàn Thấu (`frostbite`)
+- Băng Toái (`shatter`)
+- Độc Dẫn (`conductiveVenom`)
+- Hỏa Táng (`combustion`)
+- Dội Thời Gian (`timeEcho`)
+- Tham Lam (`greed`)
+
 D6C validation/fixes:
 - 40 adapters are locked in the original Duel smoke test ✅
 - Dư Ảnh projectiles originate from the stored clone position rather than the fighter's later position ✅
@@ -215,6 +227,16 @@ D6D validation/fixes:
 - all V0.16 CI, the frozen 40-skill checkpoint and the 50-skill D6D gate pass together ✅
 - exact 50-skill snapshot deploys successfully to GitHub Pages ✅
 
+D6E validation:
+- 60 adapters are locked in a separate `v017-duel-d6e-smoke.js` gate ✅
+- Quá Tải Thời Gian reduces Duel max HP while accelerating automatic skill timers without silently accelerating basic attacks ✅
+- Ngự Linh only amplifies damage explicitly tagged as summon ✅
+- Trói Hồn range/damage/stagger, Linh Châu real-heal charging, Hàn Thấu frost-radius condition and Băng Toái hit counter are mechanically tested ✅
+- Độc Dẫn and Hỏa Táng require the owner's active poison/burn state rather than any generic enemy status ✅
+- Dội Thời Gian is tested against an actual automatic cooldown restart and does not rely on a hidden duplicate-cast shortcut ✅
+- Tham Lam exposes both its Duel damage bonus and opponent-HP risk from round start ✅
+- all V0.16 CI plus 40/50/60 Duel gates pass together and the exact 60-skill snapshot deploys successfully to GitHub Pages ✅
+
 Architecture notes:
 - Duel has a dedicated **skill behavior registry/hook layer** inside `duel-engine.js`.
 - New skill batches register mechanics without wrapping the Duel loop or touching Survival functions.
@@ -223,7 +245,7 @@ Architecture notes:
 - D6 checkpoints are layered: the 40-skill test remains frozen while 50/60/etc. receive separate gates.
 
 Next D6 targets:
-- 60 base Duel skills
+- 70 base Duel skills
 - all 80 base Duel skills
 - then 28 Hợp Đạo, 12 Siêu Cấp and 20 rare Duel adaptations
 
@@ -235,4 +257,4 @@ Next D6 targets:
 - optional future air/jump mechanics only after explicit design
 
 # PROJECT STATUS
-**V0.17 Duel Arena is playable as a deployed prototype; D6 skill expansion is active at 50/80 base skills. V0.16 Survival/Endless remains the stable released baseline.**
+**V0.17 Duel Arena is playable as a deployed prototype; D6 skill expansion is active at 60/80 base skills. V0.16 Survival/Endless remains the stable released baseline.**
