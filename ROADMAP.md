@@ -152,7 +152,7 @@ Locked core direction:
 - desktop/mobile hands-on visual/play feel sign-off: pending
 
 ## D6 Skill expansion — ACTIVE
-Current Duel base-skill coverage: **60 / 80**.
+Current Duel base-skill coverage: **70 / 80**.
 
 Batch D6A added:
 - Đoạt Mệnh (`execution`)
@@ -208,6 +208,18 @@ Batch D6E added:
 - Dội Thời Gian (`timeEcho`)
 - Tham Lam (`greed`)
 
+Batch D6F added:
+- Song Tiễn (`multishot`)
+- Xuyên Phá (`pierce`)
+- Nảy Đạn (`ricochet`)
+- Đạn Nổ (`explosive`)
+- Khuếch Vực (`areaMastery`)
+- Lưu Quang (`velocity`)
+- Liên Kết (`chainMastery`)
+- Huyết Liên (`bloodLink`)
+- Hộ Pháp Mộc Nhân (`guardianIdol`)
+- Hồn Đăng (`soulLantern`)
+
 D6C validation/fixes:
 - 40 adapters are locked in the original Duel smoke test ✅
 - Dư Ảnh projectiles originate from the stored clone position rather than the fighter's later position ✅
@@ -237,15 +249,25 @@ D6E validation:
 - Tham Lam exposes both its Duel damage bonus and opponent-HP risk from round start ✅
 - all V0.16 CI plus 40/50/60 Duel gates pass together and the exact 60-skill snapshot deploys successfully to GitHub Pages ✅
 
+D6F validation:
+- 70 adapters are locked in a separate `v017-duel-d6f-smoke.js` gate ✅
+- generic Duel projectile metadata now supports projectile speed/lifetime modification and projectile-only armor penetration ✅
+- Song Tiễn, Xuyên Phá, Nảy Đạn and Đạn Nổ are mechanically tested as real projectile interactions rather than cosmetic adapters ✅
+- Khuếch Vực and Liên Kết consume explicit Area/Chain metadata; Lôi Kích and Độc Dẫn expose Chain truthfully ✅
+- Huyết Liên converts the two-enemy Survival link into a visible 1v1 HP-loss retaliation window without recursion ✅
+- Hộ Pháp Mộc Nhân absorbs post-armor damage before fighter shield/HP and does not attack ✅
+- Hồn Đăng converts kill charge into real damage-dealt charge, preserves overflow and can interact with Summon/Area modifiers ✅
+- all V0.16 CI plus 40/50/60/70 Duel gates pass together and the exact 70-skill snapshot deploys successfully to GitHub Pages ✅
+
 Architecture notes:
 - Duel has a dedicated **skill behavior registry/hook layer** inside `duel-engine.js`.
 - New skill batches register mechanics without wrapping the Duel loop or touching Survival functions.
 - D6B extends the registry with a fatal-damage hook for revive/fatal interception and a projectile helper for modular skill behaviors.
+- D6F extends the engine with generic projectile metadata, a projectile-modifier hook and per-hit target-armor modifier; these are Duel-only primitives.
 - Prototype skill count in lobby is synchronized from the actual Duel registry rather than hard-coded.
-- D6 checkpoints are layered: the 40-skill test remains frozen while 50/60/etc. receive separate gates.
+- D6 checkpoints are layered: the 40-skill test remains frozen while 50/60/70/etc. receive separate gates.
 
 Next D6 targets:
-- 70 base Duel skills
 - all 80 base Duel skills
 - then 28 Hợp Đạo, 12 Siêu Cấp and 20 rare Duel adaptations
 
@@ -257,4 +279,4 @@ Next D6 targets:
 - optional future air/jump mechanics only after explicit design
 
 # PROJECT STATUS
-**V0.17 Duel Arena is playable as a deployed prototype; D6 skill expansion is active at 60/80 base skills. V0.16 Survival/Endless remains the stable released baseline.**
+**V0.17 Duel Arena is playable as a deployed prototype; D6 skill expansion is active at 70/80 base skills. V0.16 Survival/Endless remains the stable released baseline.**
