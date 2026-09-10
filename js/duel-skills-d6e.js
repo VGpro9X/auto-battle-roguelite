@@ -4,12 +4,12 @@
 
   const additions={
     overclock:{maxRank:3,tags:["TIME","PERIODIC","RISK"],rangeBias:.35,meleeBias:.25,desc:r=>`Mọi bộ đếm hồi chiêu Kỹ Năng tự động trôi nhanh thêm ${[10,20,30][r-1]}%, nhưng HP tối đa của bạn giảm ${[4,8,12][r-1]}%. Không tăng tốc đòn đánh thường hoặc lướt.`},
-    summonMastery:{maxRank:3,tags:["SUMMON","SCALING"],rangeBias:.55,meleeBias:.2,summonBias:1.1,desc:r=>`Tăng ${[10,20,32][r-1]}% sát thương từ kỹ năng được đánh dấu Triệu Hồi trong Duel, hiện gồm Linh Hỏa và Lôi Linh.`},
+    summonMastery:{maxRank:3,tags:["SUMMON","SCALING"],rangeBias:.55,meleeBias:.2,summonBias:1.1,desc:r=>`Tăng ${[10,20,32][r-1]}% sát thương của mọi hit được đánh dấu Summon trong Duel, gồm Linh Hỏa, Lôi Linh và các triệu hồi Duel tương thích như Hồn Đăng.`},
     soulBind:{maxRank:3,tags:["SOUL","CONTROL","PERIODIC"],rangeBias:.35,meleeBias:.4,controlBias:1.1,desc:r=>`Mỗi ${[7,5.8,4.6][r-1].toFixed(1)} giây, nếu đối thủ trong 320px, Trói Hồn gây ${[10,20,32][r-1]} sát thương và làm họ khựng ${[0.4,0.65,0.9][r-1].toFixed(2)} giây. Ngoài tầm sẽ thử lại sau 0,5 giây.`},
     spiritPearl:{maxRank:3,tags:["HEAL","SUMMON","CHARGE","PROJECTILE"],rangeBias:.75,meleeBias:.2,summonBias:.55,defenseBias:.3,desc:r=>`Mỗi 8 HP thực sự được hồi nạp 1 Linh Châu, tối đa ${[1,2,3][r-1]} viên. Cứ mỗi 2,2 giây, nếu có Châu, tiêu hao 1 viên bắn đối thủ gây ${[25,38,52][r-1]} sát thương. Hồi vượt HP tối đa không tích điện.`},
     frostbite:{maxRank:3,tags:["ICE","DAMAGE","CONTROL"],rangeBias:0,meleeBias:.65,controlBias:.45,desc:r=>`Khi đối thủ đang đứng trong Hàn Khí của bạn, mọi sát thương bạn gây tăng ${[10,20,32][r-1]}%. Nếu không sở hữu Hàn Khí hoặc mục tiêu ở ngoài vùng, Hàn Thấu không có bonus.`},
     shatter:{maxRank:3,tags:["ICE","HIT","EXPLOSION"],rangeBias:0,meleeBias:.8,controlBias:.35,desc:r=>`Khi đối thủ đang trong Hàn Khí của bạn, cứ mỗi ${[5,4,3][r-1]} đòn đánh thường trúng sẽ kích Băng Toái gây thêm ${[12,22,34][r-1]} sát thương Băng. Bộ đếm chỉ tăng khi mục tiêu thực sự ở trong vùng Hàn Khí.`},
-    conductiveVenom:{maxRank:3,tags:["POISON","LIGHTNING","ELEMENTAL","DOT"],rangeBias:.25,meleeBias:.55,desc:r=>`Mỗi 1 giây khi Độc Tố của bạn còn hoạt động trên đối thủ, có ${[15,25,40][r-1]}% cơ hội phóng điện gây ${[8,14,22][r-1]} sát thương Sét. Không tự nối chuỗi từ chính tia điện này.`},
+    conductiveVenom:{maxRank:3,tags:["POISON","LIGHTNING","ELEMENTAL","DOT","CHAIN"],rangeBias:.25,meleeBias:.55,desc:r=>`Mỗi 1 giây khi Độc Tố của bạn còn hoạt động trên đối thủ, có ${[15,25,40][r-1]}% cơ hội phóng điện Chain gây ${[8,14,22][r-1]} sát thương Sét. Không tự nối chuỗi từ chính tia điện này.`},
     combustion:{maxRank:3,tags:["FIRE","EXPLOSION","PERIODIC"],rangeBias:.2,meleeBias:.65,desc:r=>`Khi đối thủ đang cháy bởi bạn, cứ mỗi ${[3.5,3.0,2.5][r-1].toFixed(1)} giây Hỏa Táng có thể nổ nếu mục tiêu trong 220px, gây ${[12,22,34][r-1]} sát thương Hỏa. Ngoài tầm không nổ và chờ lần kiểm tra kế tiếp.`},
     timeEcho:{maxRank:3,tags:["TIME","PERIODIC","RANDOM"],rangeBias:.4,meleeBias:.25,desc:r=>`Mỗi khi một Kỹ Năng tự động hợp lệ vừa bắt đầu lại hồi chiêu, có ${[12,22,34][r-1]}% cơ hội Dội Thời Gian đặt bộ đếm đó về 0 để nó có thể kích hoạt thêm một lần. Không áp dụng cho phản đòn, Hàn Kính hoặc chính Dội Thời Gian.`},
     greed:{maxRank:3,tags:["RULE","DAMAGE","RISK"],rangeBias:.2,meleeBias:.45,desc:r=>`Trong Duel, Tham Lam đổi phần thưởng XP thành sức mạnh trực tiếp: bạn gây thêm ${[8,14,22][r-1]}% mọi sát thương, nhưng đối thủ bắt đầu mỗi round với thêm ${[10,18,28][r-1]}% HP tối đa. Cả lợi và hại đều áp dụng ngay từ đầu round.`}
@@ -36,7 +36,7 @@
   const ECHOABLE=new Set([
     "fire","knock","lightning","nova","barrier","deathMark","sacrifice","blackHole","luckyStar",
     "afterimage","runeMine","meteorSeal","staticField","chaosOrb","fireWisp","stormTotem","returnBlade",
-    "timeField","soulBind"
+    "timeField","soulBind","bloodLink","guardianIdol"
   ]);
 
   function frostRadius(fighter){
@@ -91,7 +91,7 @@
       state.fireTimer-=dt;
       if(state.fireTimer>0||state.pearls<=0||!other||other.hp<=0)return;
       state.fireTimer=VALUES.spiritPearl.interval;state.pearls--;
-      spawnProjectile(fighter,{damage:at(VALUES.spiritPearl.damage,rank),speed:430,radius:7,source:"spiritPearl",colorHint:"spirit"});
+      spawnProjectile(fighter,{damage:at(VALUES.spiritPearl.damage,rank),speed:430,radius:7,source:"spiritPearl",colorHint:"spirit",meta:{summon:true}});
       emit("cast",{side:fighter.side,skill:"spiritPearl",x:fighter.x,y:fighter.y-88,pearls:state.pearls});
     }
   });
@@ -121,7 +121,7 @@
       const poison=other?.duelEffects?.poison;
       if(!poison||poison.source!==fighter.side||poison.until<=round.time)return;
       if((round.matchRng||Math.random)()>=at(VALUES.conductiveVenom.chance,rank))return;
-      dealDamage(fighter,other,at(VALUES.conductiveVenom.damage,rank),{source:"conductiveVenom",elemental:true,canCrit:false,dodgeable:false,reactive:false});
+      dealDamage(fighter,other,at(VALUES.conductiveVenom.damage,rank),{source:"conductiveVenom",elemental:true,chain:true,canCrit:false,dodgeable:false,reactive:false});
       emit("cast",{side:fighter.side,skill:"conductiveVenom",x:other.x,y:other.y-92});
     }
   });
