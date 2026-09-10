@@ -36,7 +36,7 @@
   const ECHOABLE=new Set([
     "fire","knock","lightning","nova","barrier","deathMark","sacrifice","blackHole","luckyStar",
     "afterimage","runeMine","meteorSeal","staticField","chaosOrb","fireWisp","stormTotem","returnBlade",
-    "timeField","soulBind","bloodLink","guardianIdol"
+    "timeField","soulBind","bloodLink","guardianIdol","magnet","xpHeal","bountyMark"
   ]);
 
   function frostRadius(fighter){
