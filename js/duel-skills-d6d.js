@@ -33,7 +33,6 @@
     bloodShield:{shield:[8,14,22]}
   };
   const at=(table,rank)=>table[Math.max(0,Math.min(table.length-1,rank-1))];
-  const crossed=(a,b,x)=>x>=Math.min(a,b)&&x<=Math.max(a,b);
   const segmentNear=(a,b,x,radius)=>x>=Math.min(a,b)-radius&&x<=Math.max(a,b)+radius;
 
   registerDuelSkillBehavior("precision",{
@@ -58,11 +57,11 @@
       if((fighter.skillTimers.chaosOrb??0)>0||!other||other.hp<=0)return;
       fighter.skillTimers.chaosOrb=at(VALUES.chaosOrb.cooldown,rank);
       const roll=(round.matchRng||Math.random)();
-      if(roll<.2){dealDamage(fighter,other,at(VALUES.chaosOrb.fire,rank),{source:"chaosFire",elemental:true,canCrit:true,dodgeable:true});emit("cast",{side:fighter.side,skill:"chaosOrb",variant:"fire",x:other.x,y:other.y-82});return;}
-      if(roll<.4){dealDamage(fighter,other,at(VALUES.chaosOrb.ice,rank),{source:"chaosIce",elemental:true,canCrit:true,dodgeable:true});other.hitStun=Math.max(other.hitStun,at(VALUES.chaosOrb.iceStun,rank));emit("cast",{side:fighter.side,skill:"chaosOrb",variant:"ice",x:other.x,y:other.y-82});return;}
-      if(roll<.6){dealDamage(fighter,other,at(VALUES.chaosOrb.lightning,rank),{source:"chaosLightning",elemental:true,canCrit:true,dodgeable:true});emit("cast",{side:fighter.side,skill:"chaosOrb",variant:"lightning",x:other.x,y:other.y-82});return;}
+      if(roll<.2){dealDamage(fighter,other,at(VALUES.chaosOrb.fire,rank),{source:"chaosFire",elemental:true,projectile:true,canCrit:true,dodgeable:true});emit("cast",{side:fighter.side,skill:"chaosOrb",variant:"fire",x:other.x,y:other.y-82});return;}
+      if(roll<.4){dealDamage(fighter,other,at(VALUES.chaosOrb.ice,rank),{source:"chaosIce",elemental:true,projectile:true,canCrit:true,dodgeable:true});other.hitStun=Math.max(other.hitStun,at(VALUES.chaosOrb.iceStun,rank));emit("cast",{side:fighter.side,skill:"chaosOrb",variant:"ice",x:other.x,y:other.y-82});return;}
+      if(roll<.6){dealDamage(fighter,other,at(VALUES.chaosOrb.lightning,rank),{source:"chaosLightning",elemental:true,projectile:true,canCrit:true,dodgeable:true});emit("cast",{side:fighter.side,skill:"chaosOrb",variant:"lightning",x:other.x,y:other.y-82});return;}
       if(roll<.8){other.duelEffects.chaosPoison={source:fighter.side,until:round.time+3,dps:at(VALUES.chaosOrb.poisonDps,rank),tick:.5};emit("status",{side:other.side,status:"chaosPoison",x:other.x,y:other.y-72,duration:3});return;}
-      dealDamage(fighter,other,at(VALUES.chaosOrb.explosion,rank),{source:"chaosExplosion",elemental:true,canCrit:true,dodgeable:true});knockback(other,at(VALUES.chaosOrb.push,rank),fighter.facing);emit("area",{side:fighter.side,skill:"chaosOrb",variant:"explosion",x:other.x,y:other.y-30,radius:80});
+      dealDamage(fighter,other,at(VALUES.chaosOrb.explosion,rank),{source:"chaosExplosion",elemental:true,projectile:true,area:true,canCrit:true,dodgeable:true});knockback(other,at(VALUES.chaosOrb.push,rank),fighter.facing);emit("area",{side:fighter.side,skill:"chaosOrb",variant:"explosion",x:other.x,y:other.y-30,radius:80});
     }
   });
 
@@ -98,7 +97,7 @@
         state.distance-=need;
         const radius=at(VALUES.strideShock.radius,rank);
         emit("area",{side:fighter.side,skill:"strideShock",x:fighter.x,y:fighter.y-22,radius});
-        if(other&&other.hp>0&&Math.abs(other.x-fighter.x)<=radius){dealDamage(fighter,other,at(VALUES.strideShock.damage,rank),{source:"strideShock",canCrit:false,dodgeable:false});knockback(other,at(VALUES.strideShock.push,rank),fighter.facing);}
+        if(other&&other.hp>0&&Math.abs(other.x-fighter.x)<=radius){dealDamage(fighter,other,at(VALUES.strideShock.damage,rank),{source:"strideShock",area:true,canCrit:false,dodgeable:false});knockback(other,at(VALUES.strideShock.push,rank),fighter.facing);}
       }
     }
   });
@@ -123,7 +122,7 @@
           blade.x=reached?blade.targetX:rawNext;
           if(!blade.outHit&&other?.hp>0&&segmentNear(oldX,blade.x,other.x,VALUES.returnBlade.hitRadius)){
             blade.outHit=true;
-            dealDamage(fighter,other,at(VALUES.returnBlade.damage,rank),{source:"returnBlade",canCrit:true,dodgeable:true});
+            dealDamage(fighter,other,at(VALUES.returnBlade.damage,rank),{source:"returnBlade",projectile:true,canCrit:true,dodgeable:true});
           }
           if(reached)blade.phase="return";
         }else{
@@ -134,7 +133,7 @@
           blade.x=reached?tx:rawNext;
           if(!blade.returnHit&&other?.hp>0&&segmentNear(oldX,blade.x,other.x,VALUES.returnBlade.hitRadius)){
             blade.returnHit=true;
-            dealDamage(fighter,other,at(VALUES.returnBlade.damage,rank),{source:"returnBlade",canCrit:true,dodgeable:true});
+            dealDamage(fighter,other,at(VALUES.returnBlade.damage,rank),{source:"returnBlade",projectile:true,canCrit:true,dodgeable:true});
           }
           if(reached)continue;
         }
