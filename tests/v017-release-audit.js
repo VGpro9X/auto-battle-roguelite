@@ -18,9 +18,10 @@ assert.ok(index.includes('<div id="version">Auto Battle Roguelite V0.17</div>'),
 assert.ok(!index.includes('Auto Battle Roguelite V0.17 DEV'),'public shell still carries V0.17 DEV');
 assert.ok(uiSync.includes('V0.17 · ĐẤU TRƯỜNG 1V1'),'Duel release eyebrow missing');
 for(const [name,text] of [['ROADMAP',roadmap],['README',readme],['PROJECT_HANDOFF',handoff],['V017_RELEASE_VALIDATION',validation]])assert.ok(text.includes('V0.17'),`${name} lacks V0.17`);
-assert.ok(roadmap.includes('V0.17 COMPLETE / RELEASED'));
-assert.ok(readme.includes('V0.17 is COMPLETE / RELEASED'));
-assert.ok(handoff.includes('No unfinished V0.17 checkpoint remains'));
+assert.ok(roadmap.includes('V0.17 — DUEL ARENA / ĐẤU TRƯỜNG 1v1 — COMPLETE / RELEASED'),'ROADMAP no longer records V0.17 as released');
+assert.ok(/V0\.17[^\n]*COMPLETE \/ RELEASED/s.test(readme)||readme.includes('V0.17 is **COMPLETE / RELEASED**'),'README no longer records V0.17 release closure');
+assert.ok(handoff.includes('Current released/public baseline: **V0.17')||handoff.includes('Released baseline: **V0.17'),'PROJECT_HANDOFF no longer records V0.17 as released baseline');
+assert.ok(handoff.includes('V0.17 has no unfinished checkpoint')||handoff.includes('No unfinished V0.17 checkpoint remains'),'PROJECT_HANDOFF no longer records V0.17 closure');
 assert.ok(validation.includes('Status: **COMPLETE / RELEASED**'));
 
 load('js/skills.js');
@@ -43,4 +44,4 @@ assert.ok(pages.includes('cp -R css _site/css'));
 assert.ok(pages.includes('cp -R js _site/js'));
 assert.ok(!pages.includes('cp -R tests _site/tests'),'tests must not ship to Pages');
 
-console.log('V0.17 final release audit: PASS · 80 base + 28 Hợp Đạo + 12 Siêu Cấp + 20 Rare · release labels/docs/public order locked');
+console.log('V0.17 final release audit: PASS · 80 base + 28 Hợp Đạo + 12 Siêu Cấp + 20 Rare · release baseline remains locked while newer roadmap docs may advance');
