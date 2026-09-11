@@ -1,154 +1,42 @@
 (()=>{
   const root=typeof window!=="undefined"?window:globalThis;
   const DEFAULT_MANIFEST="assets/duel/fighters/base/manifest.json";
+  const DEFAULT_ARENA_MANIFEST="assets/duel/arenas/ashen-sanctum/manifest.json";
   const createVectorRenderer=root.createDuelRenderer;
 
-  function getDuelRendererMode(){
-    if(root.DUEL_RENDERER_V2_ENABLED===false)return"vector";
-    if(typeof location!=="undefined"){
-      const requested=new URLSearchParams(location.search).get("duelRenderer");
-      if(requested==="vector")return"vector";
-      if(requested==="v2")return"v2";
-    }
-    return"v2";
-  }
+  function getDuelRendererMode(){if(root.DUEL_RENDERER_V2_ENABLED===false)return"vector";if(typeof location!=="undefined"){const requested=new URLSearchParams(location.search).get("duelRenderer");if(requested==="vector")return"vector";if(requested==="v2")return"v2";}return"v2";}
 
-  function createDuelRendererV2(canvas,{manifestUrl=DEFAULT_MANIFEST}={}){
+  function createDuelRendererV2(canvas,{manifestUrl=DEFAULT_MANIFEST,arenaManifestUrl=DEFAULT_ARENA_MANIFEST}={}){
     if(!canvas)throw new Error("Duel Renderer V2 requires a canvas");
     if(typeof createVectorRenderer!=="function")throw new Error("Vector Duel renderer unavailable");
-    const fallback=createVectorRenderer(canvas);
-    const ctx=canvas.getContext("2d");
-    const animationResolver=typeof createDuelAnimationResolver==="function"?createDuelAnimationResolver():null;
-    let manifest=null;
-    let manifestError=null;
-    let ready=false;
-    const images=new Map();
-    const lastFrames=new Map();
+    const fallback=createVectorRenderer(canvas),ctx=canvas.getContext("2d"),animationResolver=typeof createDuelAnimationResolver==="function"?createDuelAnimationResolver():null,camera=typeof createDuelCamera==="function"?createDuelCamera():null;
+    let manifest=null,arenaManifest=null,manifestError=null,arenaError=null,ready=false,arenaReady=false;
+    const images=new Map(),arenaImages=new Map(),lastFrames=new Map();
 
-    const preload=(async()=>{
-      try{
-        manifest=await loadDuelVisualManifest(manifestUrl);
-        const sources=[...new Set(Object.values(manifest.animations||{}).map(item=>item?.src).filter(Boolean))];
-        await Promise.all(sources.map(async src=>{images.set(src,await loadDuelVisualImage(src,manifest.__url));}));
-        ready=true;
-      }catch(error){manifestError=error;ready=false;console.warn("Duel Renderer V2 fallback active:",error);}
-    })();
+    const fighterPreload=(async()=>{try{manifest=await loadDuelVisualManifest(manifestUrl);const sources=[...new Set(Object.values(manifest.animations||{}).map(item=>item?.src).filter(Boolean))];await Promise.all(sources.map(async src=>{images.set(src,await loadDuelVisualImage(src,manifest.__url));}));ready=true;}catch(error){manifestError=error;ready=false;console.warn("Duel Renderer V2 fighter fallback active:",error);}})();
+    const arenaPreload=(async()=>{try{arenaManifest=await loadDuelVisualManifest(arenaManifestUrl);const sources=[...new Set((arenaManifest.layers||[]).map(item=>item?.src).filter(Boolean))];await Promise.all(sources.map(async src=>{arenaImages.set(src,await loadDuelVisualImage(src,arenaManifest.__url));}));arenaReady=true;}catch(error){arenaError=error;arenaReady=false;console.warn("Duel Renderer V2 arena fallback active:",error);}})();
+    const preload=Promise.all([fighterPreload,arenaPreload]);
 
-    function getTransform(match){
-      const rect=canvas.getBoundingClientRect();
-      const width=Math.max(1,rect.width||1),height=Math.max(1,rect.height||1),arena=match.arena;
-      const scale=Math.min(width/arena.width,height/arena.height),ox=(width-arena.width*scale)/2,oy=(height-arena.height*scale)/2;
-      return{scale,ox,oy,x:v=>ox+v*scale,y:v=>oy+v*scale};
-    }
+    function getTransform(match){const rect=canvas.getBoundingClientRect(),width=Math.max(1,rect.width||1),height=Math.max(1,rect.height||1),arena=match.arena,scale=Math.min(width/arena.width,height/arena.height),ox=(width-arena.width*scale)/2,oy=(height-arena.height*scale)/2;return{scale,ox,oy,width,height,centerX:arena.width/2,zoom:1,mobile:width<620,shakeX:0,shakeY:0,x:v=>ox+v*scale,y:v=>oy+v*scale};}
+    function getColumns(image,frameWidth){const width=Number(image?.naturalWidth||image?.width||frameWidth);return Math.max(1,Math.floor(width/frameWidth));}
+    function resolveVisual(fighter,round){if(!ready||!manifest||!animationResolver)return null;const state=typeof normalizeDuelVisualState==="function"?normalizeDuelVisualState(fighter?.action):fighter?.action,animation=typeof getDuelVisualAnimation==="function"?getDuelVisualAnimation(manifest,state):manifest.animations?.[state];if(!animation?.src||!images.get(animation.src))return null;return animationResolver.resolve(fighter,round.time,manifest);}
+    function arenaMatches(match){if(!arenaReady||!arenaManifest)return false;return Number(arenaManifest.logicalWidth)===Number(match.arena.width)&&Number(arenaManifest.logicalHeight)===Number(match.arena.height)&&Number(arenaManifest.floorY)===Number(match.arena.floorY)&&Number(arenaManifest.leftBound)===Number(match.arena.leftBound)&&Number(arenaManifest.rightBound)===Number(match.arena.rightBound);}
+    function drawArenaLayers(match,tr,foreground=false){if(!arenaMatches(match))return false;for(const layer of arenaManifest.layers||[]){if(Boolean(layer.foreground)!==foreground)continue;const image=arenaImages.get(layer.src);if(!image)continue;const lt=camera?.layerTransform?camera.layerTransform(tr,match.arena,layer.parallax):tr;const x=Number(layer.x||0),y=Number(layer.y||0),w=Number(layer.width||match.arena.width),h=Number(layer.height||match.arena.height);ctx.save();ctx.globalAlpha=Math.max(0,Math.min(1,Number(layer.opacity??1)));ctx.drawImage(image,lt.x(x),lt.y(y),w*lt.scale,h*lt.scale);ctx.restore();}return true;}
 
-    function getColumns(image,frameWidth){
-      const width=Number(image?.naturalWidth||image?.width||frameWidth);
-      return Math.max(1,Math.floor(width/frameWidth));
-    }
+    function drawAssetShadow(fighter,tr){const x=tr.x(fighter.x),y=tr.y(fighter.y),s=tr.scale;ctx.save();ctx.fillStyle="rgba(0,0,0,.34)";ctx.beginPath();ctx.ellipse(x,y-2*s,34*s,8*s,0,0,Math.PI*2);ctx.fill();ctx.restore();}
+    function drawSideIdentity(fighter,tr){const x=tr.x(fighter.x),y=tr.y(fighter.y),s=tr.scale;ctx.save();ctx.globalAlpha=.55;ctx.strokeStyle=fighter.side==="player"?"#38bdf8":"#fb7185";ctx.lineWidth=Math.max(1,2*s);ctx.beginPath();ctx.ellipse(x,y-3*s,40*s,10*s,0,0,Math.PI*2);ctx.stroke();ctx.restore();}
+    function drawAssetFighter(fighter,visual,tr){if(!visual?.animation?.src)return false;const image=images.get(visual.animation.src);if(!image)return false;const frameWidth=Number(visual.animation.frameWidth||manifest.frameWidth||256),frameHeight=Number(visual.animation.frameHeight||manifest.frameHeight||256),columns=Math.max(1,Number(visual.animation.columns)||getColumns(image,frameWidth)),sx=(visual.frameIndex%columns)*frameWidth,sy=Math.floor(visual.frameIndex/columns)*frameHeight,displayWorldWidth=Math.max(1,Number(visual.animation.displayWorldWidth||manifest.displayWorldWidth||176)),worldScale=displayWorldWidth/frameWidth,feet=visual.anchors?.feet||{x:frameWidth/2,y:frameHeight},dw=frameWidth*worldScale*tr.scale,dh=frameHeight*worldScale*tr.scale,x=tr.x(fighter.x),y=tr.y(fighter.y);drawAssetShadow(fighter,tr);drawSideIdentity(fighter,tr);ctx.save();ctx.translate(x,y);if((fighter.facing||1)<0)ctx.scale(-1,1);ctx.globalAlpha=fighter.hp<=0?.72:1;ctx.drawImage(image,sx,sy,frameWidth,frameHeight,-feet.x*worldScale*tr.scale,-feet.y*worldScale*tr.scale,dw,dh);ctx.restore();lastFrames.set(fighter.side,{fighter,visual,worldScale});return true;}
+    function drawAssetAttachments(fighter,round,tr){const tracked=lastFrames.get(fighter.side);if(!tracked)return;const chest=getAnchor(fighter,"chest"),feet=getAnchor(fighter,"feet"),cx=tr.x(chest.x),cy=tr.y(chest.y),fx=tr.x(feet.x),fy=tr.y(feet.y),s=tr.scale;if(fighter.shield>0){ctx.save();ctx.strokeStyle="rgba(125,211,252,.78)";ctx.lineWidth=Math.max(1,3*s);ctx.beginPath();ctx.arc(cx,cy,43*s,0,Math.PI*2);ctx.stroke();ctx.restore();}const frost=typeof getDuelSkillRank==="function"?getDuelSkillRank(fighter.build,"frost"):0;if(frost){ctx.save();ctx.strokeStyle="rgba(147,197,253,.24)";ctx.lineWidth=Math.max(1,2*s);ctx.beginPath();ctx.arc(fx,fy-48*s,(52+frost*6)*s,0,Math.PI*2);ctx.stroke();ctx.restore();}const orbit=typeof getDuelSkillRank==="function"?getDuelSkillRank(fighter.build,"orbit"):0;if(orbit){for(let i=0;i<orbit;i++){const a=round.time*3.1+i*Math.PI*2/orbit,bx=cx+Math.cos(a)*48*s,by=cy+10*s+Math.sin(a)*18*s;ctx.save();ctx.translate(bx,by);ctx.rotate(a);ctx.fillStyle="#e2e8f0";ctx.fillRect(-2*s,-11*s,4*s,22*s);ctx.restore();}}}
+    function drawPhasePresentation(round,width,height){if(!round||round.phase==="NORMAL")return;ctx.save();const death=round.phase==="TỬ CHIẾN",g=ctx.createRadialGradient(width/2,height*.56,Math.min(width,height)*.12,width/2,height*.56,Math.max(width,height)*.72);g.addColorStop(0,"rgba(120,18,26,0)");g.addColorStop(1,death?"rgba(155,10,18,.24)":"rgba(120,18,26,.14)");ctx.fillStyle=g;ctx.fillRect(0,0,width,height);ctx.globalAlpha=death?.30:.18;ctx.fillStyle=death?"#ef4444":"#fb7185";ctx.fillRect(0,0,width,Math.max(2,height*.006));ctx.fillRect(0,height-Math.max(2,height*.006),width,Math.max(2,height*.006));ctx.restore();}
 
-    function resolveVisual(fighter,round){
-      if(!ready||!manifest||!animationResolver)return null;
-      const state=typeof normalizeDuelVisualState==="function"?normalizeDuelVisualState(fighter?.action):fighter?.action;
-      const animation=typeof getDuelVisualAnimation==="function"?getDuelVisualAnimation(manifest,state):manifest.animations?.[state];
-      if(!animation?.src||!images.get(animation.src))return null;
-      return animationResolver.resolve(fighter,round.time,manifest);
-    }
+    function consume(events){fallback.consume(events);camera?.consume?.(events);}
+    function render(match,dt=0){fallback.resize();const round=match?.currentRound;if(!round){fallback.render(match,dt);return;}const rect=canvas.getBoundingClientRect(),width=Math.max(1,rect.width||1),height=Math.max(1,rect.height||1),tr=camera?.update?.(match,dt,width,height)||getTransform(match),pVisual=resolveVisual(round.fighters.player,round),oVisual=resolveVisual(round.fighters.opponent,round),covered=[];if(pVisual)covered.push("player");else lastFrames.delete("player");if(oVisual)covered.push("opponent");else lastFrames.delete("opponent");ctx.clearRect(0,0,width,height);const customArena=drawArenaLayers(match,tr,false);fallback.render(match,dt,{skipFighterSides:covered,skipArena:customArena,preserveCanvas:true,transformOverride:tr});if(pVisual){drawAssetFighter(round.fighters.player,pVisual,tr);drawAssetAttachments(round.fighters.player,round,tr);}if(oVisual){drawAssetFighter(round.fighters.opponent,oVisual,tr);drawAssetAttachments(round.fighters.opponent,round,tr);}if(customArena)drawArenaLayers(match,tr,true);drawPhasePresentation(round,width,height);}
 
-    function drawAssetShadow(fighter,tr){
-      const x=tr.x(fighter.x),y=tr.y(fighter.y),s=tr.scale;
-      ctx.save();ctx.fillStyle="rgba(0,0,0,.34)";ctx.beginPath();ctx.ellipse(x,y-2*s,34*s,8*s,0,0,Math.PI*2);ctx.fill();ctx.restore();
-    }
-
-    function drawSideIdentity(fighter,tr){
-      const x=tr.x(fighter.x),y=tr.y(fighter.y),s=tr.scale;
-      ctx.save();
-      ctx.globalAlpha=.55;
-      ctx.strokeStyle=fighter.side==="player"?"#38bdf8":"#fb7185";
-      ctx.lineWidth=Math.max(1,2*s);
-      ctx.beginPath();ctx.ellipse(x,y-3*s,40*s,10*s,0,0,Math.PI*2);ctx.stroke();
-      ctx.restore();
-    }
-
-    function drawAssetFighter(fighter,visual,tr){
-      if(!visual?.animation?.src)return false;
-      const image=images.get(visual.animation.src);if(!image)return false;
-      const frameWidth=Number(visual.animation.frameWidth||manifest.frameWidth||256);
-      const frameHeight=Number(visual.animation.frameHeight||manifest.frameHeight||256);
-      const columns=Math.max(1,Number(visual.animation.columns)||getColumns(image,frameWidth));
-      const sx=(visual.frameIndex%columns)*frameWidth,sy=Math.floor(visual.frameIndex/columns)*frameHeight;
-      const displayWorldWidth=Math.max(1,Number(visual.animation.displayWorldWidth||manifest.displayWorldWidth||176));
-      const worldScale=displayWorldWidth/frameWidth;
-      const feet=visual.anchors?.feet||{x:frameWidth/2,y:frameHeight};
-      const dw=frameWidth*worldScale*tr.scale,dh=frameHeight*worldScale*tr.scale;
-      const x=tr.x(fighter.x),y=tr.y(fighter.y);
-      drawAssetShadow(fighter,tr);
-      drawSideIdentity(fighter,tr);
-      ctx.save();
-      ctx.translate(x,y);
-      if((fighter.facing||1)<0)ctx.scale(-1,1);
-      ctx.globalAlpha=fighter.hp<=0?.72:1;
-      ctx.drawImage(image,sx,sy,frameWidth,frameHeight,-feet.x*worldScale*tr.scale,-feet.y*worldScale*tr.scale,dw,dh);
-      ctx.restore();
-      lastFrames.set(fighter.side,{fighter,visual,worldScale});
-      return true;
-    }
-
-    function drawAssetAttachments(fighter,round,tr){
-      const tracked=lastFrames.get(fighter.side);if(!tracked)return;
-      const chest=getAnchor(fighter,"chest"),feet=getAnchor(fighter,"feet");
-      const cx=tr.x(chest.x),cy=tr.y(chest.y),fx=tr.x(feet.x),fy=tr.y(feet.y),s=tr.scale;
-      if(fighter.shield>0){ctx.save();ctx.strokeStyle="rgba(125,211,252,.78)";ctx.lineWidth=Math.max(1,3*s);ctx.beginPath();ctx.arc(cx,cy,43*s,0,Math.PI*2);ctx.stroke();ctx.restore();}
-      const frost=typeof getDuelSkillRank==="function"?getDuelSkillRank(fighter.build,"frost"):0;
-      if(frost){ctx.save();ctx.strokeStyle="rgba(147,197,253,.24)";ctx.lineWidth=Math.max(1,2*s);ctx.beginPath();ctx.arc(fx,fy-48*s,(52+frost*6)*s,0,Math.PI*2);ctx.stroke();ctx.restore();}
-      const orbit=typeof getDuelSkillRank==="function"?getDuelSkillRank(fighter.build,"orbit"):0;
-      if(orbit){for(let i=0;i<orbit;i++){const a=round.time*3.1+i*Math.PI*2/orbit,bx=cx+Math.cos(a)*48*s,by=cy+10*s+Math.sin(a)*18*s;ctx.save();ctx.translate(bx,by);ctx.rotate(a);ctx.fillStyle="#e2e8f0";ctx.fillRect(-2*s,-11*s,4*s,22*s);ctx.restore();}}
-    }
-
-    function consume(events){fallback.consume(events);}
-
-    function render(match,dt=0){
-      const round=match?.currentRound;
-      if(!round){fallback.render(match,dt);return;}
-      const pVisual=resolveVisual(round.fighters.player,round);
-      const oVisual=resolveVisual(round.fighters.opponent,round);
-      const covered=[];
-      if(pVisual)covered.push("player");else lastFrames.delete("player");
-      if(oVisual)covered.push("opponent");else lastFrames.delete("opponent");
-      fallback.render(match,dt,{skipFighterSides:covered});
-      if(!covered.length)return;
-      const tr=getTransform(match);
-      if(pVisual){drawAssetFighter(round.fighters.player,pVisual,tr);drawAssetAttachments(round.fighters.player,round,tr);}
-      if(oVisual){drawAssetFighter(round.fighters.opponent,oVisual,tr);drawAssetAttachments(round.fighters.opponent,round,tr);}
-    }
-
-    function getAnchor(fighter,name){
-      const tracked=lastFrames.get(fighter?.side);
-      if(!tracked||tracked.fighter!==fighter)return fallback.getAnchor(fighter,name);
-      const anchor=tracked.visual.anchors?.[name],feet=tracked.visual.anchors?.feet;
-      if(!anchor||!feet)return fallback.getAnchor(fighter,name);
-      const facing=fighter.facing||1,scale=tracked.worldScale;
-      return{x:fighter.x+(anchor.x-feet.x)*scale*facing,y:fighter.y+(anchor.y-feet.y)*scale};
-    }
-
-    function getStatus(){return{mode:"v2",ready,error:manifestError?.message||null,manifestId:manifest?.id||null,coveredStates:Object.keys(manifest?.animations||{})};}
-
-    canvas.dataset.duelRenderer="v2";
-    return{resize:fallback.resize,consume,render,effects:fallback.effects,getAnchor,preload,getStatus,fallback};
+    function getAnchor(fighter,name){const tracked=lastFrames.get(fighter?.side);if(!tracked||tracked.fighter!==fighter)return fallback.getAnchor(fighter,name);const anchor=tracked.visual.anchors?.[name],feet=tracked.visual.anchors?.feet;if(!anchor||!feet)return fallback.getAnchor(fighter,name);const facing=fighter.facing||1,scale=tracked.worldScale;return{x:fighter.x+(anchor.x-feet.x)*scale*facing,y:fighter.y+(anchor.y-feet.y)*scale};}
+    function getStatus(){return{mode:"v2",ready,error:manifestError?.message||null,manifestId:manifest?.id||null,coveredStates:Object.keys(manifest?.animations||{}),arenaReady,arenaError:arenaError?.message||null,arenaId:arenaManifest?.id||null,camera:camera?.getState?.()||null};}
+    canvas.dataset.duelRenderer="v2";return{resize:fallback.resize,consume,render,effects:fallback.effects,getAnchor,preload,getStatus,fallback,camera};
   }
 
-  function createConfiguredDuelRenderer(canvas){
-    if(getDuelRendererMode()==="vector"){
-      const renderer=createVectorRenderer(canvas);canvas.dataset.duelRenderer="vector";return renderer;
-    }
-    try{return createDuelRendererV2(canvas);}catch(error){
-      console.warn("Unable to initialize Duel Renderer V2; using vector fallback.",error);
-      const renderer=createVectorRenderer(canvas);canvas.dataset.duelRenderer="vector-fallback";return renderer;
-    }
-  }
-
-  root.createDuelVectorRenderer=createVectorRenderer;
-  root.getDuelRendererMode=getDuelRendererMode;
-  root.createDuelRendererV2=createDuelRendererV2;
-  root.createConfiguredDuelRenderer=createConfiguredDuelRenderer;
-  root.createDuelRenderer=createConfiguredDuelRenderer;
+  function createConfiguredDuelRenderer(canvas){if(getDuelRendererMode()==="vector"){const renderer=createVectorRenderer(canvas);canvas.dataset.duelRenderer="vector";return renderer;}try{return createDuelRendererV2(canvas);}catch(error){console.warn("Unable to initialize Duel Renderer V2; using vector fallback.",error);const renderer=createVectorRenderer(canvas);canvas.dataset.duelRenderer="vector-fallback";return renderer;}}
+  root.createDuelVectorRenderer=createVectorRenderer;root.getDuelRendererMode=getDuelRendererMode;root.createDuelRendererV2=createDuelRendererV2;root.createConfiguredDuelRenderer=createConfiguredDuelRenderer;root.createDuelRenderer=createConfiguredDuelRenderer;
 })();
