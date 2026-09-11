@@ -17,13 +17,11 @@ assert.ok(index.includes('<title>Auto Battle Roguelite V0.17</title>'),'static t
 assert.ok(index.includes('<div id="version">Auto Battle Roguelite V0.17</div>'),'static version badge is not final V0.17');
 assert.ok(!index.includes('Auto Battle Roguelite V0.17 DEV'),'public shell still carries V0.17 DEV');
 assert.ok(uiSync.includes('V0.17 · ĐẤU TRƯỜNG 1V1'),'Duel release eyebrow missing');
-for(const [name,text] of [['ROADMAP',roadmap],['README',readme],['PROJECT_HANDOFF',handoff],['V017_RELEASE_VALIDATION',validation]]){
-  assert.ok(text.includes('V0.17'),`${name} lacks V0.17`);
-  assert.ok(text.includes('COMPLETE')||text.includes('RELEASED')||name==='V017_RELEASE_VALIDATION',`${name} does not describe release closure`);
-}
+for(const [name,text] of [['ROADMAP',roadmap],['README',readme],['PROJECT_HANDOFF',handoff],['V017_RELEASE_VALIDATION',validation]])assert.ok(text.includes('V0.17'),`${name} lacks V0.17`);
 assert.ok(roadmap.includes('V0.17 COMPLETE / RELEASED'));
 assert.ok(readme.includes('V0.17 is COMPLETE / RELEASED'));
 assert.ok(handoff.includes('No unfinished V0.17 checkpoint remains'));
+assert.ok(validation.includes('Status: **COMPLETE / RELEASED**'));
 
 load('js/skills.js');
 for(const file of ['duel-skills','duel-engine','duel-skills-d6a','duel-skills-d6b','duel-skills-d6c','duel-skills-d6d','duel-skills-d6e','duel-skills-d6f','duel-skills-d6g','duel-synergies','duel-synergies-c2a','duel-synergies-c2b','duel-synergies-c2c','duel-synergies-c2d','duel-evolutions','duel-evolutions-c3a','duel-evolutions-c3b','duel-rares','duel-rares-r1','duel-rares-r2','duel-tournament'])load(`js/${file}.js`);
