@@ -17,10 +17,10 @@
           <div><b>Best-of-3</b><small>Thắng 2 round để đi tiếp</small></div>
           <div><b>2 kỹ năng khởi đầu</b><small>Hoàn toàn tự do · không ép offensive</small></div>
           <div><b>Rank I / II / III</b><small>Rank III = TỐI ĐA</small></div>
-          <div><b>80 Kỹ Năng + liên kết</b><small>Hợp Đạo/Siêu Cấp tự mở khi đủ điều kiện</small></div>
+          <div><b>Toàn hệ kỹ năng V0.16</b><small>Hợp Đạo/Siêu Cấp tự mở · Rare xuất hiện theo vòng</small></div>
         </div>
       </div>
-      <div class="duelCombatRules"><b>LUẬT COMBAT PROTOTYPE</b><span>Đòn thường cận chiến: 12 sát thương · tầm 78px · hồi chiêu 0,78 giây. Tốc độ di chuyển cơ bản: 118px/giây.</span><span>Dash AI: 92px + 7px mỗi Rank Thân Pháp/Ảnh Bộ, tối đa +42px; hồi chiêu 4,2 giây − 0,12 giây mỗi Rank đó, tối thiểu 2,8 giây. Dash không có bất tử.</span><span>Round 60 giây. Từ 45–60 giây: HUYẾT CHIẾN tăng sát thương từ ×1,00 → ×1,75 và giảm hồi máu/khiên mới từ ×1,00 → ×0,50. Từ 60 giây: TỬ CHIẾN = sát thương ×2, hồi máu 0, khiên mới 0 cho tới khi có K.O.</span></div><p class="finePrint">Đồ họa hiện là renderer vector thử nghiệm. Combat, AI và skill được tách khỏi renderer để có thể thay bằng sprite/animation chất lượng cao sau này.</p>
+      <div class="duelCombatRules"><b>LUẬT COMBAT PROTOTYPE</b><span>Đòn thường cận chiến: 12 sát thương · tầm 78px · hồi chiêu 0,78 giây. Tốc độ di chuyển cơ bản: 118px/giây.</span><span>Dash AI: 92px + 7px mỗi Rank Thân Pháp/Ảnh Bộ, tối đa +42px; hồi chiêu 4,2 giây − 0,12 giây mỗi Rank đó, tối thiểu 2,8 giây. Dash không có bất tử.</span><span>Round 60 giây. Từ 45–60 giây: HUYẾT CHIẾN tăng sát thương từ ×1,00 → ×1,75 và giảm hồi máu/khiên mới từ ×1,00 → ×0,50. Từ 60 giây: TỬ CHIẾN = sát thương ×2, hồi máu 0, khiên mới 0 cho tới khi có K.O.</span><span>Rare giữa các match: sau thắng 1/2/3/4/5 = 0% / 3% / 6% / 10% / 15%. Tối đa 1 rare trong 3 card; XOAY LẠI roll lại cả rare.</span></div><p class="finePrint">Đồ họa hiện là renderer vector thử nghiệm. Combat, AI và skill được tách khỏi renderer để có thể thay bằng sprite/animation chất lượng cao sau này.</p>
       <div class="resultButtons"><button id="duelStartTournament" class="primary large">BẮT ĐẦU GIẢI 64 NGƯỜI</button></div>
     </div>`;
 
@@ -94,35 +94,46 @@
     showDuelSkillSelection(true);
   }
 
-  function buildHtml(build,{limit=8,empty="Chưa có kỹ năng"}={}){
+  function buildHtml(build,{limit=8,empty="Chưa có kỹ năng",owner=null}={}){
     const entries=listDuelBuild(build);
-    if(!entries.length)return`<div class="duelBuildEmpty">${empty}</div>`;
-    const skillHtml=entries.slice(0,limit).map(({meta,rank})=>`<div class="duelBuildChip"><span>${meta.icon}</span><b>${meta.name}</b><small>${rank>=3?"TỐI ĐA":`Rank ${["","I","II","III"][rank]}`}</small></div>`).join("");
+    const skillHtml=entries.length?entries.slice(0,limit).map(({meta,rank})=>`<div class="duelBuildChip"><span>${meta.icon}</span><b>${meta.name}</b><small>${rank>=3?"TỐI ĐA":`Rank ${["","I","II","III"][rank]}`}</small></div>`).join(""):"";
     const links=[];
     if(typeof listDuelSynergies==="function")for(const{meta}of listDuelSynergies(build,{includeLocked:false,implementedOnly:true}))links.push(`<div class="duelBuildChip duelLinkChip"><span>${meta.icon}</span><b>${meta.name}</b><small>HỢP ĐẠO</small></div>`);
     if(typeof listDuelEvolutions==="function")for(const{meta}of listDuelEvolutions(build,{includeLocked:false,implementedOnly:true}))links.push(`<div class="duelBuildChip duelEvolutionChip"><span>${meta.icon}</span><b>${meta.name}</b><small>SIÊU CẤP</small></div>`);
-    return skillHtml+links.slice(0,8).join("");
+    if(owner&&typeof listDuelRares==="function")for(const meta of listDuelRares(owner))links.push(`<div class="duelBuildChip duelRareChip ${meta.tier}"><span>${meta.icon}</span><b>${meta.name}</b><small>${getDuelRareTierLabel(meta)}</small></div>`);
+    const html=skillHtml+links.slice(0,12).join("");return html||`<div class="duelBuildEmpty">${empty}</div>`;
   }
 
   function showDuelSkillSelection(starter=false){
     if(!duelSession)return;
-    const player=getDuelTournamentPlayer(duelSession.tournament);if(!player)return;
+    const tournament=duelSession.tournament,player=getDuelTournamentPlayer(tournament);if(!player)return;
     let rerollUsed=false;
     const modal=document.getElementById("duelSkillModal"),container=document.getElementById("duelChoices"),reroll=document.getElementById("duelReroll");
     document.getElementById("duelPickEyebrow").textContent=starter?`KHỞI ĐẦU · LƯỢT ${duelSession.starterPick+1}/2`:`THẮNG TRẬN · NÂNG BUILD`;
     document.getElementById("duelPickTitle").textContent=starter?"Chọn kỹ năng khởi đầu":"Chọn một kỹ năng trước trận tiếp theo";
-    document.getElementById("duelPickDesc").textContent=starter?"Ba lựa chọn hoàn toàn tự do. Không có nhóm kỹ năng bắt buộc.":"Kỹ năng đã sở hữu có thể xuất hiện lại để tăng Rank. Rank III là TỐI ĐA; Hợp Đạo và Siêu Cấp tự mở khi đủ điều kiện.";
+    const rareChance=!starter&&typeof getDuelRareOfferChance==="function"?Math.round(getDuelRareOfferChance(tournament.rewardCount)*100):0;
+    document.getElementById("duelPickDesc").textContent=starter?"Ba lựa chọn hoàn toàn tự do. Không có nhóm kỹ năng bắt buộc và không có Rare ở hai lượt khởi đầu.":`Kỹ năng có thể tăng tới Rank III. Hợp Đạo/Siêu Cấp tự mở khi đủ điều kiện. Cơ hội Rare ở phần thưởng này: ${rareChance}%. XOAY LẠI roll mới cả 3 card và Rare.`;
 
     function renderChoices(){
-      const picks=getDuelChoices(player.build,{starter,count:3,rng:Math.random});container.innerHTML="";
-      for(const key of picks){
-        const meta=getDuelSkill(key),current=getDuelSkillRank(player.build,key),next=current+1;
+      const picks=starter
+        ? getDuelChoices(player.build,{starter:true,count:3,rng:Math.random}).map(key=>({kind:"skill",key}))
+        : (typeof getDuelRewardChoices==="function"?getDuelRewardChoices(player,{count:3,rewardIndex:tournament.rewardCount,rng:Math.random}):getDuelChoices(player.build,{starter:false,count:3,rng:Math.random}).map(key=>({kind:"skill",key})));
+      container.innerHTML="";
+      for(const choice of picks){
+        if(choice.kind==="rare"){
+          const meta=getDuelRare(choice.key);if(!meta)continue;
+          const button=document.createElement("button");button.className=`choice duelChoice duelRareChoice ${meta.tier}`;
+          button.innerHTML=`<div class="icon">${meta.icon}</div><h3>${meta.name}</h3><div class="lvl">${getDuelRareTierLabel(meta)} · DUY NHẤT</div><div class="tags"><span class="tagChip">RULE</span><span class="tagChip">KHÔNG CẤP</span></div><div class="desc">${meta.desc}</div>`;
+          button.addEventListener("click",()=>{if(!grantDuelRare(player,choice.key))return;showDuelPreMatch();});container.appendChild(button);continue;
+        }
+        const key=choice.key,meta=getDuelSkill(key),current=getDuelSkillRank(player.build,key),next=current+1;
         const evoHints=typeof getDuelEvolutionChoiceHints==="function"?getDuelEvolutionChoiceHints(player.build,key):[];
         const hintHtml=evoHints.length?`<div class="duelEvolutionHint">✦ MỞ SIÊU CẤP: ${evoHints.map(item=>`${item.icon} ${item.name}`).join(" · ")}</div>`:"";
         const button=document.createElement("button");button.className="choice duelChoice"+(next>=3?" maxNext":"");
         button.innerHTML=`<div class="icon">${meta.icon}</div><h3>${meta.name}</h3><div class="lvl">Rank ${["","I","II","III"][next]} / III${next>=3?" · TỐI ĐA":""}</div><div class="tags">${meta.tags.slice(0,5).map(tag=>`<span class="tagChip">${typeof getTagLabel==="function"?getTagLabel(tag):tag}</span>`).join("")}</div><div class="desc">${meta.desc(next)}</div>${hintHtml}`;
         button.addEventListener("click",()=>{
           if(!addDuelSkillRank(player.build,key))return;
+          if(!starter&&typeof applyDuelDivineGift==="function")applyDuelDivineGift(player,key,Math.random);
           if(starter){duelSession.starterPick++;if(duelSession.starterPick<2){showDuelSkillSelection(true);return;}}
           showDuelPreMatch();
         });
@@ -143,8 +154,8 @@
     document.getElementById("duelPlayerStyle").textContent=`AI: ${ps.style} · cự ly ưu tiên ~${ps.preferredDistance}px`;
     document.getElementById("duelOpponentName").textContent=os.name;
     document.getElementById("duelOpponentStyle").textContent=`AI: ${os.style} · cự ly ưu tiên ~${os.preferredDistance}px`;
-    document.getElementById("duelPlayerBuild").innerHTML=buildHtml(player.build);
-    document.getElementById("duelOpponentBuild").innerHTML=buildHtml(opponent.build);
+    document.getElementById("duelPlayerBuild").innerHTML=buildHtml(player.build,{owner:player});
+    document.getElementById("duelOpponentBuild").innerHTML=buildHtml(opponent.build,{owner:opponent});
     showScreen("duelPreMatchMenu");
   }
 
@@ -163,7 +174,7 @@
     const canvas=document.getElementById("duelCanvas");duelSession.renderer=createDuelRenderer(canvas);
     document.getElementById("duelPlayerNameHud").textContent=player.name;
     document.getElementById("duelOpponentNameHud").textContent=opponent.name;
-    document.getElementById("duelCombatBuilds").innerHTML=`<div>${buildHtml(player.build,{limit:6})}</div><div>${buildHtml(opponent.build,{limit:6})}</div>`;
+    document.getElementById("duelCombatBuilds").innerHTML=`<div>${buildHtml(player.build,{limit:6,owner:player})}</div><div>${buildHtml(opponent.build,{limit:6,owner:opponent})}</div>`;
     duelSession.lastFrame=performance.now();duelSession.raf=requestAnimationFrame(duelFrame);
   }
 
@@ -222,8 +233,8 @@
     document.getElementById("duelResultBadge").textContent=champion?"NHÀ VÔ ĐỊCH":"BỊ LOẠI";
     document.getElementById("duelResultTitle").textContent=champion?"Bạn đã vô địch Đấu Trường!":"Giải đấu kết thúc";
     document.getElementById("duelResultSubtitle").textContent=champion?"Bạn đã vượt qua bracket 64 người và thắng trận chung kết best-of-3.":`Bạn ${getDuelPlacementText(t).toLowerCase()}.`;
-    document.getElementById("duelResultStats").innerHTML=`<div><span>Match thắng</span><b>${t.matchWins}</b></div><div><span>Round thắng</span><b>${player.roundWins}</b></div><div><span>Round thua</span><b>${player.roundLosses}</b></div><div><span>Build</span><b>${listDuelBuild(player.build).length} kỹ năng</b></div>`;
-    document.getElementById("duelFinalBuild").innerHTML=buildHtml(player.build,{limit:20});
+    document.getElementById("duelResultStats").innerHTML=`<div><span>Match thắng</span><b>${t.matchWins}</b></div><div><span>Round thắng</span><b>${player.roundWins}</b></div><div><span>Round thua</span><b>${player.roundLosses}</b></div><div><span>Rare</span><b>${Array.isArray(player.rares)?player.rares.length:0}</b></div>`;
+    document.getElementById("duelFinalBuild").innerHTML=buildHtml(player.build,{limit:20,owner:player});
     showScreen("duelResultMenu");
   }
 
