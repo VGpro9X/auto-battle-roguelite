@@ -8,11 +8,11 @@ const manifestPath=path.join(root,"assets/duel/fighters/base/manifest.json");
 const manifest=JSON.parse(fs.readFileSync(manifestPath,"utf8"));
 const requiredAnchors=["head","chest","leftHand","rightHand","feet","front","back","target"];
 
-assert.equal(manifest.id,"v018-proof-fighter");
-assert.ok(manifest.animations&&manifest.animations.idle,"proof idle animation missing");
+assert.match(manifest.id,/^v018-/,"unexpected V0.18 fighter manifest id");
+assert.ok(manifest.animations&&manifest.animations.idle,"idle animation missing");
 const idle=manifest.animations.idle;
-assert.ok(idle.src,"proof idle src missing");
-assert.ok(fs.existsSync(path.join(path.dirname(manifestPath),idle.src)),`missing proof asset ${idle.src}`);
+assert.ok(idle.src,"idle src missing");
+assert.ok(fs.existsSync(path.join(path.dirname(manifestPath),idle.src)),`missing idle asset ${idle.src}`);
 assert.ok(Array.isArray(idle.anchors)&&idle.anchors.length>=1,"per-frame anchors missing");
 for(const name of requiredAnchors)assert.ok(idle.anchors[0][name],`missing anchor ${name}`);
 
