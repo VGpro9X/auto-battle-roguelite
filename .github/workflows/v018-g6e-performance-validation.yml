@@ -1,0 +1,47 @@
+name: V0.18 G6E performance validation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v018-g6e-performance-validation
+  cancel-in-progress: true
+
+jobs:
+  validate-performance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: V0.18 G6E desktop/mobile/reduced-motion rendered closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4177 >/tmp/v018-g6e-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then
+            echo "Chrome/Chromium not found on runner"
+            exit 1
+          fi
+
+          run_case() {
+            name="$1"
+            size="$2"
+            out="/tmp/v018-g6e-${name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --force-device-scale-factor=2 --window-size="$size" --virtual-time-budget=20000 --dump-dom "http://127.0.0.1:4177/tests/v018-g6e-performance-browser-driver.html?expect=${name}" >"$out"
+            grep -q "V018_G6E_PERF_PASS ${name}" "$out" || { cat "$out"; exit 1; }
+            grep "V018_G6E_PERF_PASS ${name}" "$out"
+          }
+
+          run_case desktop 1440,900
+          run_case mobile 390,844
+          run_case reduced 1440,900
