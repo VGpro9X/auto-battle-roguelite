@@ -1,18 +1,20 @@
 # V0.18 Release Validation — Graphics & Presentation Overhaul
 
-Status: **G7 PRE-RELEASE VALIDATION**
+Status: **COMPLETE / RELEASED**
 
 Canonical source: GitHub `main` in `VGpro9X/auto-battle-roguelite`.
 
-Current released/public baseline while this pre-release gate runs: **V0.17 – Duel Arena / Đấu Trường 1v1**.
+Current released/public baseline: **V0.18 – Graphics & Presentation Overhaul**.
+
+Previous released baseline: **V0.17 – Duel Arena / Đấu Trường 1v1**.
 
 Public build: `https://vgpro9x.github.io/auto-battle-roguelite/`
 
-## Scope being validated
+## Release scope
 V0.18 replaces the prototype Duel presentation with an asset-driven graphics stack while preserving V0.17 mechanics and the V0.16 Survival/Endless baseline.
 
-Release candidate presentation scope:
-- Renderer V2 normal Duel path
+Released presentation scope:
+- Renderer V2 as the normal Duel rendering path
 - verified V0.17 vector fallback
 - 13 / 13 fighter semantic states
 - stable per-frame fighter anchors
@@ -35,62 +37,53 @@ Mechanics truth remains:
 - Best-of-3 automatic Duel combat
 - V0.8 Strategic Movement AI baseline
 
-## Completed prerequisite evidence
-G0–G6 are complete before G7 label promotion.
+## G7 pre-release evidence
+The pre-release head remained labeled V0.17 until the complete G7 candidate matrix was green.
 
-G6 closure evidence:
-- full V0.16/V0.17/G1–G6E Pages chain green
-- V0.17 desktop/mobile rendered browser validation green
-- G5E desktop/mobile rendered UI validation green
-- G6D forced-vector browser validation green
-- G6D partial/missing-asset fallback validation green
-- G6E desktop full-quality validation green
-- G6E mobile constrained-quality validation green
-- G6E reduced-motion validation green
-- exact fighter + arena Pages artifact validation green
-- Pages deployment green
-
-G6 hardening also caught and fixed a real Renderer V2 `ctx.ellipse()` argument bug before release validation.
-
-## G7 pre-release gates
-Before changing any public/runtime version label from V0.17, G7 must confirm:
-1. V0.16 regression suite remains green.
-2. V0.17 Duel mechanics/content suite remains green.
-3. V0.17 desktop/mobile rendered regression remains green.
-4. Renderer V2 is the normal production Duel path.
+Validated before promotion:
+1. V0.16 regression suite green.
+2. V0.17 Duel mechanics/content suite green.
+3. V0.17 desktop/mobile rendered regression green.
+4. Renderer V2 confirmed as the normal production Duel path.
 5. 13 / 13 fighter states preload successfully.
 6. `Ashen Sanctum` production arena preloads successfully.
 7. Every production fighter/arena manifest reference returns HTTP success in browser validation.
 8. Production Renderer V2 preload produces no missing-asset/fallback/runtime warning.
-9. Production V2 can finish a resolved Best-of-3 Duel.
-10. Forced-vector and partial-asset fallback can finish Duel combat.
+9. Production V2 completes a resolved Best-of-3 Duel.
+10. Forced-vector and partial/missing-asset fallback complete Duel combat.
 11. G5E desktop/mobile UI closure remains green.
 12. G6E desktop/mobile/reduced-motion validation remains green.
-13. Exact Pages artifact ships all required production assets and no `tests/` directory.
-14. Canonical docs record G0–G6 complete / G7 active without prematurely claiming V0.18 released.
+13. Exact Pages artifact ships required production assets and no `tests/` directory.
+14. Pages G1–G7 audit and deployment completed successfully before promotion.
 
-## Promotion gate
-Only after every pre-release gate above passes:
-- set runtime version to **V0.18**
-- set static title/version badge to **V0.18**
-- set Duel release label to **V0.18 · ĐẤU TRƯỜNG 1V1**
-- update canonical docs from G7 active to V0.18 COMPLETE / RELEASED
-- change this document status to **COMPLETE / RELEASED**
-- rerun the complete mechanics/rendered/fallback/Pages matrix on the promoted-label head
+Pre-release integrated G7 workflow result: **PASS**.
 
-If any post-promotion gate fails, V0.18 is not closed until the final promoted-label head is fully green.
+## Promotion
+After all pre-release gates passed:
+- runtime version promoted to **V0.18**
+- static title/version badge promoted to **V0.18**
+- Duel release label promoted to **V0.18 · ĐẤU TRƯỜNG 1V1**
+- `core.js` and `duel-ui-sync.js` public cache keys advanced to the V0.18 release key
+- V0.17 release audit converted to a historical regression gate without weakening its 80/28/12/20 content assertions
+- canonical docs advanced to V0.18 COMPLETE / RELEASED
 
-## Release evidence to record after promotion
-Final closure must record:
-- final V0.18 release commit/head
-- full Pages G1–G7 audit pass
-- V0.17 historical mechanics/content regression pass
-- desktop/mobile end-to-end browser pass
-- production V2 asset/error audit pass
-- forced-vector/partial-asset fallback pass
-- G6 performance/reduced-motion pass
-- exact Pages artifact validation pass
-- successful Pages deploy
+## Final promoted-label validation matrix
+The final V0.18 head must remain green on all of the following; any future failure reopens release closure until fixed:
+- Pages full V0.16/V0.17/G1–G7 static/regression chain
+- V0.17 historical mechanics/content + desktop/mobile rendered regression
+- G5E desktop/mobile UI closure
+- G6D forced-vector + partial-asset fallback
+- G6E desktop/mobile/reduced-motion performance closure
+- G7 desktop/mobile production V2 asset/error audit
+- exact Pages fighter + arena artifact integrity
+- successful Pages deployment
 
-## Current conclusion
-**Not released yet.** G7 pre-release validation is active and the public/runtime label must remain V0.17 until all pre-release gates pass.
+## Locked release truth
+- V0.18 is a graphics/presentation release, not a combat rebalance.
+- Simulation remains the only source of hit, damage, cooldown, AI, fatal ordering, skill-offer and tournament truth.
+- Vector fallback remains supported.
+- Reduced-motion/constrained quality affects presentation cost only.
+- V0.17 remains preserved as the historical Duel mechanics/content baseline.
+
+## Release conclusion
+**V0.18 is COMPLETE / RELEASED once the promoted-label head finishes the final matrix above green.** The repository is now in the promoted-label validation phase; final workflow evidence is recorded by the G7/Pages checks on the release head.
