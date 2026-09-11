@@ -30,6 +30,7 @@
 
   function rank(build,key){return typeof root.getDuelSkillRank==="function"?root.getDuelSkillRank(build,key):Math.max(0,Math.min(3,Number(build?.[key]||0)));}
   function at(values,r){return values[Math.max(0,Math.min(values.length-1,r-1))];}
+  function effects(fighter){return fighter.duelSynergyEffects||(fighter.duelSynergyEffects={});}
 
   // 1/8 Lò Luyện Hồn is implemented in the C1 foundation.
 
@@ -53,9 +54,10 @@
     desc:"Huyết Thành tự mở khi có Huyết Thuẫn + Hộ Thể Chu Kỳ. Mỗi lượng HP thực sự bạn vừa hồi sẽ tạo thêm khiên bằng 55% lượng hồi đó; lớp khiên mới vẫn chịu hệ số tạo khiên của HUYẾT CHIẾN/TỬ CHIẾN."
   });
   chainSkillBehavior("bloodShield",{
-    onCreate:({fighter})=>{fighter.duelSynergyEffects.crimsonFortress={healingSeen:fighter.totalHealing||0};},
+    onCreate:({fighter})=>{effects(fighter).crimsonFortress={healingSeen:fighter.totalHealing||0};},
     update:({fighter,addShield})=>{
-      const state=fighter.duelSynergyEffects.crimsonFortress||(fighter.duelSynergyEffects.crimsonFortress={healingSeen:fighter.totalHealing||0});
+      const bag=effects(fighter);
+      const state=bag.crimsonFortress||(bag.crimsonFortress={healingSeen:fighter.totalHealing||0});
       const current=fighter.totalHealing||0,delta=Math.max(0,current-state.healingSeen);state.healingSeen=current;
       if(delta>0&&root.hasDuelSynergy(fighter,"crimsonFortress"))addShield(fighter,delta*.55,"crimsonFortress");
     }
@@ -80,9 +82,10 @@
     desc:"Hồn Thuẫn tự mở khi có Thực Hồn + Huyết Thuẫn. Mỗi tầng Thực Hồn mới nhận trong round tạo thêm 3 / 4 / 5 khiên theo Rank Thực Hồn. Khiên vẫn chịu luật HUYẾT CHIẾN/TỬ CHIẾN."
   });
   chainSkillBehavior("soulHarvest",{
-    onCreate:({fighter})=>{fighter.duelSynergyEffects.soulAegis={stacksSeen:fighter.duelEffects.soulHarvest?.stacks||0};},
+    onCreate:({fighter})=>{effects(fighter).soulAegis={stacksSeen:fighter.duelEffects.soulHarvest?.stacks||0};},
     onDamageDealt:({fighter,rank:skillRank,addShield})=>{
-      const state=fighter.duelSynergyEffects.soulAegis||(fighter.duelSynergyEffects.soulAegis={stacksSeen:0});
+      const bag=effects(fighter);
+      const state=bag.soulAegis||(bag.soulAegis={stacksSeen:0});
       const stacks=fighter.duelEffects.soulHarvest?.stacks||0,gained=Math.max(0,stacks-state.stacksSeen);state.stacksSeen=stacks;
       if(!gained||!root.hasDuelSynergy(fighter,"soulAegis"))return;
       const perStack=at([3,4,5],skillRank);
@@ -111,9 +114,9 @@
   chainSkillBehavior("secondWind",{
     onFatalDamage:({round,fighter,other,rank:skillRank,addShield,dealDamage,emit})=>{
       if(!root.hasDuelSynergy(fighter,"lastBreath")||fighter.hp<=0)return;
-      const marker=`${round.number}:${fighter.duelEffects.secondWindCharges||0}`;
-      if(fighter.duelSynergyEffects.lastBreathMarker===marker)return;
-      fighter.duelSynergyEffects.lastBreathMarker=marker;
+      const bag=effects(fighter),marker=`${round.number}:${fighter.duelEffects.secondWindCharges||0}`;
+      if(bag.lastBreathMarker===marker)return;
+      bag.lastBreathMarker=marker;
       addShield(fighter,fighter.maxHp*.28,"lastBreath");
       emit("area",{side:fighter.side,skill:"lastBreath",x:fighter.x,y:fighter.y-30,radius:150});
       if(other&&other.hp>0&&Math.abs(other.x-fighter.x)<=150)dealDamage(fighter,other,at([30,40,50],skillRank),{source:"lastBreath",area:true,canCrit:false,dodgeable:false,reactive:false});
@@ -124,13 +127,14 @@
     desc:"Huyết Kính tự mở khi có Pháo Thủy Tinh + Huyết Chạm. Nếu bạn ở dưới 50% HP ngay trước đòn đánh thường, lượng hồi thực tế do Huyết Chạm của đòn đó tạo ra được lặp lại thêm một lần qua luật hồi phục hiện tại."
   });
   chainSkillBehavior("vampiricTouch",{
-    onCreate:({fighter})=>{fighter.duelSynergyEffects.glassBlood={healingSeen:fighter.totalHealing||0,low:false};},
+    onCreate:({fighter})=>{effects(fighter).glassBlood={healingSeen:fighter.totalHealing||0,low:false};},
     update:({fighter})=>{
-      const state=fighter.duelSynergyEffects.glassBlood||(fighter.duelSynergyEffects.glassBlood={healingSeen:0,low:false});
+      const bag=effects(fighter);
+      const state=bag.glassBlood||(bag.glassBlood={healingSeen:0,low:false});
       state.healingSeen=fighter.totalHealing||0;state.low=fighter.hp/fighter.maxHp<.5;
     },
     onBasicHit:({fighter,heal})=>{
-      const state=fighter.duelSynergyEffects.glassBlood;
+      const state=effects(fighter).glassBlood;
       if(!state)return;
       const current=fighter.totalHealing||0,gained=Math.max(0,current-state.healingSeen);state.healingSeen=current;
       if(root.hasDuelSynergy(fighter,"glassBlood")&&state.low&&gained>0)heal(fighter,gained,"glassBlood");
