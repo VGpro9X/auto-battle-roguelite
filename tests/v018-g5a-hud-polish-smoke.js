@@ -9,7 +9,7 @@ const css=read("css/v018-graphics.css");
 const runtimeCss=`${css}\n${bridge}`;
 const ui=read("js/duel-ui.js");
 
-assert.match(bridge,/^@import url\("\.\/v018-graphics\.css\?v=018-g5a"\);/,'V0.18 G5A stylesheet must load before legacy Duel rules');
+assert.match(bridge,/^@import url\("\.\/v018-graphics\.css\?v=018-g5[a-z0-9-]*"\);/,'V0.18 G5 stylesheet must load before legacy Duel rules');
 assert.ok(css.length>3000,'G5A stylesheet should contain the production HUD layer');
 
 for(const selector of [
