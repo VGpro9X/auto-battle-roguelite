@@ -1,0 +1,56 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>V0.17 browser driver</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden}#app{border:0;width:100vw;height:100vh;display:block}#result{position:fixed;inset:0;z-index:999999;background:#111;color:#fff;padding:20px;white-space:pre-wrap;font:14px monospace}</style>
+<iframe id="app" src="../index.html"></iframe>
+<script>
+(async()=>{
+  const topDoc=document, frame=topDoc.getElementById('app');
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  async function waitFor(fn,label,timeout=3500){const start=performance.now();while(performance.now()-start<timeout){try{const v=fn();if(v)return v;}catch(_){}await sleep(30);}throw new Error(`timeout: ${label}`);}
+  function check(value,message){if(!value)throw new Error(message);return value;}
+  function visible(el){return !!el&&el.classList.contains('visible');}
+  try{
+    await new Promise((resolve,reject)=>{frame.addEventListener('load',resolve,{once:true});setTimeout(()=>reject(new Error('iframe load timeout')),5000);});
+    const w=frame.contentWindow,d=frame.contentDocument;
+    await waitFor(()=>d.getElementById('duelModeCard'),'duel mode card');
+    const expected=new URLSearchParams(location.search).get('expect')||'desktop';
+    if(expected==='mobile')check(w.innerWidth<=500,`mobile iframe width=${w.innerWidth}`);else check(w.innerWidth>=900,`desktop iframe width=${w.innerWidth}`);
+    check(d.getElementById('duelModeCard').textContent.includes('ĐẤU TRƯỜNG'),'Duel mode card text missing');
+
+    d.getElementById('duelModeCard').click();
+    await waitFor(()=>visible(d.getElementById('duelLobbyMenu')),'duel lobby visible');
+    check(d.getElementById('duelLobbyMenu').textContent.includes('64 đấu sĩ'),'lobby tournament contract missing');
+    check(d.getElementById('duelLobbyMenu').textContent.includes('Best-of-3'),'best-of-3 contract missing');
+
+    d.getElementById('duelStartTournament').click();
+    await waitFor(()=>visible(d.getElementById('duelSkillModal'))&&d.querySelectorAll('#duelChoices .duelChoice').length===3,'starter choice 1');
+    let choices=[...d.querySelectorAll('#duelChoices .duelChoice')];
+    for(const button of choices){const r=button.getBoundingClientRect();check(r.width>90&&r.right<=w.innerWidth+2,`starter card overflows viewport: ${r.width}/${r.right}/${w.innerWidth}`);}
+    choices[0].click();
+    await sleep(80);
+    await waitFor(()=>visible(d.getElementById('duelSkillModal'))&&d.querySelectorAll('#duelChoices .duelChoice').length===3,'starter choice 2');
+    choices=[...d.querySelectorAll('#duelChoices .duelChoice')];choices[0].click();
+
+    await waitFor(()=>visible(d.getElementById('duelPreMatchMenu')),'pre-match preview');
+    check(d.getElementById('duelOpponentName').textContent.trim().length>0,'opponent name missing');
+    check(d.getElementById('duelPlayerBuild').children.length>0,'player build preview missing');
+    check(d.getElementById('duelOpponentBuild').children.length>0,'opponent build preview missing');
+
+    d.getElementById('duelBeginMatch').click();
+    await waitFor(()=>!d.getElementById('duelCombatRoot').classList.contains('hidden'),'combat root visible');
+    await sleep(500);
+    const session=w.duelSession,round=session?.currentMatch?.currentRound;
+    check(round&&round.fighters?.player&&round.fighters?.opponent,'live duel round missing');
+    for(const fighter of [round.fighters.player,round.fighters.opponent]){
+      check(Number.isFinite(fighter.hp)&&Number.isFinite(fighter.x),`${fighter.side} combat state invalid`);
+    }
+    const canvas=d.getElementById('duelCanvas');check(canvas.width>0&&canvas.height>0,'Duel canvas has zero backing size');
+    const rootRect=d.getElementById('duelCombatRoot').getBoundingClientRect();check(rootRect.width>0&&rootRect.height>0,'combat viewport has zero size');
+    check(d.getElementById('duelRoundScore').textContent.includes('·'),'round HUD missing');
+    check(d.getElementById('duelCombatBuilds').children.length===2,'combat build HUD missing');
+
+    topDoc.body.innerHTML=`<pre id="result">V017_BROWSER_PASS ${expected} ${w.innerWidth}x${w.innerHeight} round=${round.number} hp=${Math.round(round.fighters.player.hp)}/${Math.round(round.fighters.opponent.hp)}</pre>`;
+  }catch(error){topDoc.body.innerHTML=`<pre id="result">V017_BROWSER_FAIL ${String(error&&error.stack||error)}</pre>`;}
+})();
+</script>
