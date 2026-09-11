@@ -2,9 +2,41 @@
 
 Current release: **V0.17 – Duel Arena / Đấu Trường 1v1**
 
+Active development: **V0.18 – Graphics & Presentation Overhaul**
+
 Public build: `https://vgpro9x.github.io/auto-battle-roguelite/`
 
 GitHub `main` is canonical.
+
+## Current status
+- V0.17 is **COMPLETE / RELEASED**.
+- V0.18 graphics roadmap is **ACTIVE**.
+- V0.18 G0 planning/architecture lock is complete.
+- Next checkpoint: **G1 — Asset loader + Renderer V2 foundation**.
+- Runtime/public build remains labeled **V0.17** until V0.18 passes its final release gates.
+
+See `V018_GRAPHICS_PLAN.md` for the authoritative V0.18 plan.
+
+## V0.18 direction
+V0.18 upgrades graphics and presentation while preserving V0.17 gameplay truth.
+
+Primary goals:
+- original higher-quality 2D fighter art/animation
+- asset-driven Renderer V2
+- sprite-sheet/image-sequence first, with a skeletal-ready abstraction for later
+- manifest-driven public asset pipeline
+- one production-quality multi-layer Duel arena
+- camera/parallax/impact presentation
+- full Duel VFX readability coverage
+- stronger Hợp Đạo / Siêu Cấp / Rare visual identities
+- Duel HUD/menu polish
+- desktop/mobile rendering quality and performance validation
+
+Core rule: **renderer changes must not change combat outcome, AI, hitboxes, damage timing, tournament progression or balance.**
+
+The V0.17 vector renderer remains a verified fallback during V0.18 development.
+
+Do not mass-produce final art before G1 proves the asset loader, animation metadata, anchors, Renderer V2 and fallback path in-engine.
 
 ## V0.17 release
 V0.17 adds a complete automatic side-view tournament mode while preserving the existing Survival/Endless game.
@@ -12,14 +44,13 @@ V0.17 adds a complete automatic side-view tournament mode while preserving the e
 ### Đấu Trường 1v1
 - **64 fighters** in a single-elimination bracket: `64 → 32 → 16 → 8 → 4 → 2 → Champion`
 - Every matchup is **Best-of-3**; first to 2 round wins advances.
-- Fighters are fully AI-controlled. The player builds the fighter and watches the AI adapt its spacing/action choices to the build.
+- Fighters are fully AI-controlled.
 - Two unrestricted starter skill selections; no forced offensive starter.
 - One reward choice after every non-final match victory.
 - Duel skills use **Rank I / II / III**, with Rank III = **TỐI ĐA**.
 - One `XOAY LẠI` on each choice screen.
 - Pre-match scouting shows opponent build/style before combat.
-- Flat side-view prototype arena with a renderer isolated from combat logic, so fighter art/animation can be replaced later without rewriting the Duel engine.
-- No jump/air combat in V0.17; that is a post-V0.17 feature.
+- Renderer is isolated from combat logic so V0.18 can replace the prototype presentation without rewriting the Duel engine.
 
 ### Complete V0.16 ecosystem in Duel
 - **80 / 80 Kỹ Năng**
@@ -49,8 +80,8 @@ Rules:
 - AI evaluates build-derived preferred distance instead of using rigid classes.
 - Round pressure is explicit:
   - `0–45s`: normal
-  - `45–60s`: **HUYẾT CHIẾN**, damage rises and new healing/shield generation falls
-  - `60s+`: **TỬ CHIẾN**, damage ×2, healing/new shield generation = 0 until K.O.
+  - `45–60s`: **HUYẾT CHIẾN**
+  - `60s+`: **TỬ CHIẾN** until K.O.
 - Round state resets between rounds; tournament build persists.
 
 ## V0.17 validation
@@ -63,13 +94,10 @@ Release gates cover:
 - full-system deterministic matchup simulation
 - defensive mirror termination through TỬ CHIẾN
 - 64-player bracket progression
-- Rare Monte Carlo against the locked 3/6/10/15% curve
 - rendered browser interaction at desktop `1440×900` and mobile `390×844`
 - exact GitHub Pages artifact/deployment
 
-Focused V0.17 balance validation found no release-blocking stalled match or cleanly isolated value requiring a safe buff/nerf, so the release does not include arbitrary balance-number changes.
-
-See `V017_RELEASE_VALIDATION.md` for the frozen release evidence.
+See `V017_RELEASE_VALIDATION.md` for the frozen V0.17 release evidence.
 
 ## Existing Survival/Endless content
 V0.16 Survival/Endless remains intact with:
@@ -83,22 +111,20 @@ V0.16 Survival/Endless remains intact with:
 ## Locked development rules
 - Movement baseline: **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
 - Player-facing UI remains Vietnamese.
-- No hidden caps/cooldowns/stack maxima/target limits/retry rules/weighting.
+- No hidden gameplay caps/cooldowns/stack maxima/target limits/retry rules/weighting.
 - Preserve V0.12 hidden-shield-cap removal.
 - Preserve Survival `Săn Ấn`: marked target gives +25% base XP only.
 - Choice-card relation hints only appear when that exact choice immediately completes the corresponding unlock.
-- Executable tests stay under `tests/`; Pages deploys only `index.html`, `css/`, `js/`.
+- Executable tests stay under `tests/`.
 - Before editing an existing file, fetch the latest GitHub content/blob SHA and commit each meaningful checkpoint.
 
-## Project status
-**V0.17 is COMPLETE / RELEASED. There is no unfinished V0.17 implementation checkpoint.**
-
-High-end fighter art, extra arenas, jump/air combat, additional tournament variants and online/global systems are future-version work, not missing V0.17 scope.
-
-Read before future work:
+## Read before V0.18 work
 1. `README.md`
 2. `PROJECT_HANDOFF.md`
 3. `ROADMAP.md`
-4. `V017_RELEASE_VALIDATION.md`
-5. `V017_DUEL_ARENA_PLAN.md`
-6. `V017_COMPLETION_PLAN.md`
+4. `V018_GRAPHICS_PLAN.md`
+5. `V017_RELEASE_VALIDATION.md`
+6. `V017_DUEL_ARENA_PLAN.md`
+
+## Project status
+**V0.17 is the clean released baseline. V0.18 is active at G0 complete / G1 next.**
