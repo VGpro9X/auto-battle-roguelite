@@ -114,7 +114,6 @@ Delivered incrementally through G4A–G4E:
 - active Rare trigger audit; `divineGift` intentionally reward-only ✅
 - visible `heavenSeal` consumption event ✅
 - transient VFX expiry / no permanent effect wall ✅
-- plain K.O. remains legacy-owned until G5 presentation replaces it safely ✅
 - G4A–G4E gates green ✅
 - V0.16/V0.17/G1–G4 Pages chain green ✅
 - V0.17 desktop/mobile rendered validation green ✅
@@ -122,27 +121,44 @@ Delivered incrementally through G4A–G4E:
 
 **Exit achieved:** visually meaningful Duel combat events have a readable V2 semantic presentation without changing combat truth.
 
-## G5 — Duel UI / HUD / Tournament Presentation Polish — NEXT
+## G5 — Duel UI / HUD / Tournament Presentation Polish — COMPLETE ✅
+Delivered incrementally through G5A–G5E:
+- G5A combat HUD hierarchy: HP / shield / score / timer / round / phase ✅
+- safe-area-aware desktop/mobile HUD ✅
+- pointer-transparent combat HUD except intentional controls ✅
+- G5B Duel mode entry, lobby, VS screen and opponent scouting polish ✅
+- stronger player/opponent presentation identity ✅
+- G5C reward/build cards for base Rank, TỐI ĐA, Siêu Cấp and Rare tiers ✅
+- exact-choice Siêu Cấp hint behavior preserved ✅
+- one-reroll-per-choice-screen behavior preserved ✅
+- G5D semantic `ROUND`, `K.O.`, round result and replay presentation ✅
+- Champion / Bị loại result presentation mirrors existing tournament truth ✅
+- G5D smoke gate verifies outcomes remain simulation-owned ✅
+- G5E dedicated rendered desktop/mobile closure workflow ✅
+- no horizontal-overflow / click-blocking / combat-center occlusion regressions ✅
+- long mobile Duel overlays are scroll-reachable with safe-area padding ✅
+- G5E caught and fixed an unreachable mobile lobby action before closure ✅
+- full V0.16/V0.17/G1–G5 Pages chain green ✅
+- V0.17 desktop/mobile rendered validation green ✅
+- G5E rendered desktop/mobile validation green ✅
+- public Pages deploy green at G5 closure ✅
+
+**Exit achieved:** Duel HUD, lobby/scouting, reward cards and outcome/result presentation are readable and usable on desktop and mobile without altering combat/tournament/skill-selection truth.
+
+## G6 — Performance / Quality / Fallback Hardening — NEXT
 Planned work:
-- G5A: combat HUD hierarchy and responsive readability
-- G5B: lobby / mode entry / opponent scouting presentation
-- G5C: reward choice cards and build readability
-- G5D: round start / K.O. / match win / elimination / Champion presentation
-- G5E: rendered desktop/mobile UI closure audit
+- preload/cache/memory sanity
+- image-cache lifecycle
+- presentation-only transient effect limits
+- mobile/constrained quality reductions
+- reduced-motion path
+- vector fallback hardening
 
 Rules:
-- player-facing text remains Vietnamese
-- no UI layer may block critical combat unintentionally
-- mobile keeps safe-area support and usable touch targets
-- no UI change may alter tournament/combat/skill selection truth
-- keep V0.17 release label until G7
-
-## G6 — Performance / Quality / Fallback Hardening
-- preload/cache/memory sanity
-- presentation-only effect limits
-- mobile reductions
-- reduced-motion option
-- vector fallback hardening
+- presentation caps must never become gameplay caps
+- semantic events remain simulation-owned and must not be dropped before gameplay consumers
+- quality changes may only reduce presentation cost/readability effects, never combat truth
+- keep runtime/public label V0.17 until G7
 
 ## G7 — V0.18 Release Validation
 Required before release:
@@ -160,4 +176,4 @@ Required before release:
 
 # PROJECT STATUS
 
-**V0.17 remains the current released/public baseline. V0.18 is ACTIVE at G0 + G1 + G2 + G3 + G4 complete / G5 next. Continue with Duel UI/HUD/Tournament Presentation Polish; do not change combat/AI/balance.**
+**V0.17 remains the current released/public baseline. V0.18 is ACTIVE at G0 + G1 + G2 + G3 + G4 + G5 complete / G6 next. Continue with performance/quality/fallback hardening; do not change combat/AI/balance.**
