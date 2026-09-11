@@ -40,7 +40,7 @@ assert.equal(api.getDuelVfxFamily({type:"status",status:"soulBind"}),"control");
 assert.equal(api.isDuelVfxV2OwnedEvent({type:"ko",source:"attack"}),false,'plain KO must stay legacy-owned until a dedicated KO override preserves K.O. presentation');
 
 for(const name of ["drawSummon","drawArea","drawChain","drawTime","drawSoul"])assert.match(vfxSource,new RegExp(name),`${name} missing`);
-assert.match(bootstrapSource,/js\/duel-vfx-v2\.js\?v=018-g4c/,'browser bootstrap cache key must expose G4C');
+assert.match(bootstrapSource,/js\/duel-vfx-v2\.js\?v=018-g4[a-z0-9-]*/,'browser bootstrap must keep the G4 VFX module cache-busted as later G4 checkpoints advance');
 
 const vfx=api.createDuelVfxV2();
 vfx.consume(cases.map(([event])=>({...event,x:120,y:120,amount:9})));
