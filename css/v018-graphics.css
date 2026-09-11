@@ -446,6 +446,14 @@
 .duelPreCard .duelRareChip{border-color:rgba(244,114,182,.28)}
 
 @media (max-width:760px){
+  #duelLobbyMenu,#duelPreMatchMenu,#duelSkillModal,#duelResultMenu{
+    align-items:flex-start;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+    padding-top:max(10px,env(safe-area-inset-top));
+    padding-bottom:max(10px,env(safe-area-inset-bottom));
+  }
   .duelCombatHud{
     padding:
       max(9px,env(safe-area-inset-top))
