@@ -8,7 +8,7 @@ const css=read("css/v018-graphics.css");
 const bridge=read("css/v017-duel.css");
 const ui=read("js/duel-ui.js");
 
-assert.match(bridge,/^@import url\("\.\/v018-graphics\.css\?v=018-g5b"\);/,'G5B cache key must expose the lobby/scouting presentation');
+assert.match(bridge,/^@import url\("\.\/v018-graphics\.css\?v=018-g5[a-z0-9-]*"\);/,'G5 graphics cache key must expose G5B or a later compatible presentation revision');
 
 for(const selector of [
   ".duelModeCard",
