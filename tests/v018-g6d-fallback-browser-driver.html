@@ -1,0 +1,68 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>V0.18 G6D fallback browser audit</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden}#app{border:0;width:100vw;height:100vh;display:block}#result{position:fixed;inset:0;z-index:999999;background:#111;color:#fff;padding:20px;white-space:pre-wrap;font:14px monospace}</style>
+<iframe id="app" src="../index.html?duelRenderer=vector"></iframe>
+<script>
+(async()=>{
+  const topDoc=document,frame=topDoc.getElementById('app');
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  async function waitFor(fn,label,timeout=7000){const start=performance.now();while(performance.now()-start<timeout){try{const v=fn();if(v)return v;}catch(_){}await sleep(30);}throw new Error(`timeout: ${label}`);}
+  function check(value,message){if(!value)throw new Error(message);return value;}
+  function makeCanvas(d){const canvas=d.createElement('canvas');canvas.style.cssText='position:fixed;left:-10000px;top:0;width:800px;height:500px';d.body.appendChild(canvas);return canvas;}
+  function makeEntry(id,name,build){return{id,name,build:{...build}};}
+  function runToMatchEnd(w,renderer,label){
+    const player=makeEntry(`${label}-p`,'P',{power:3,rapid:3,vitality:3,speed:3,crit:3});
+    const opponent=makeEntry(`${label}-o`,'O',{});
+    const match=w.createDuelMatch(player,opponent,{rng:()=>.99});
+    w.startDuelRound(match);
+    let ticks=0,rendered=0;
+    while(!match.over&&ticks<14000){
+      const round=match.currentRound;
+      if(round&&!round.ended)w.updateDuelRound(match,.033);
+      const active=match.currentRound;
+      if(active){const events=w.drainDuelEvents(active);renderer.consume(events);renderer.render(match,.033);rendered++;}
+      if(active?.ended&&!match.over)w.settleDuelRound(match);
+      ticks++;
+    }
+    check(match.over,`${label} match did not finish in ${ticks} ticks`);
+    check(match.winner==='player'||match.winner==='opponent',`${label} winner missing`);
+    check(match.roundHistory.length>=2,`${label} match did not settle best-of-3 rounds`);
+    check(rendered>0,`${label} renderer never rendered`);
+    return{ticks,winner:match.winner,rounds:match.roundHistory.length};
+  }
+  try{
+    await new Promise((resolve,reject)=>{frame.addEventListener('load',resolve,{once:true});setTimeout(()=>reject(new Error('iframe load timeout')),7000);});
+    const w=frame.contentWindow,d=frame.contentDocument;
+    await waitFor(()=>w.__V018_DUEL_RENDERER_READY__,'Renderer V2 bootstrap promise');
+    await w.__V018_DUEL_RENDERER_READY__;
+    await waitFor(()=>typeof w.createDuelRendererV2==='function'&&typeof w.createDuelRenderer==='function','configured renderer APIs');
+
+    // 1) Explicit forced-vector mode must be a complete playable renderer path.
+    check(w.getDuelRendererMode()==='vector','duelRenderer=vector query did not force vector mode');
+    const vectorCanvas=makeCanvas(d),vectorRenderer=w.createDuelRenderer(vectorCanvas);
+    check(vectorCanvas.dataset.duelRenderer==='vector',`forced renderer dataset=${vectorCanvas.dataset.duelRenderer}`);
+    const vectorResult=runToMatchEnd(w,vectorRenderer,'forced-vector');
+    check(vectorCanvas.width>0&&vectorCanvas.height>0,'forced vector canvas backing size remained zero');
+
+    // 2) V2 with only idle art and a missing arena manifest must stay alive via per-state/vector fallback.
+    const partialCanvas=makeCanvas(d);
+    const partial=w.createDuelRendererV2(partialCanvas,{
+      manifestUrl:'tests/fixtures/v018-g6d-partial-fighter-manifest.json',
+      arenaManifestUrl:'tests/fixtures/__missing-g6d-arena__.json'
+    });
+    await partial.preload;
+    const partialStatus=partial.getStatus();
+    check(partialStatus.mode==='v2','partial renderer did not stay in V2 shell');
+    check(partialStatus.ready===true,'partial fighter manifest should load successfully');
+    check(partialStatus.coveredStates.length===1&&partialStatus.coveredStates[0]==='idle',`partial covered states=${partialStatus.coveredStates.join(',')}`);
+    check(partialStatus.arenaReady===false,'missing arena manifest should activate arena fallback');
+    check(typeof partialStatus.arenaError==='string'&&partialStatus.arenaError.length>0,'missing arena fallback error should remain observable');
+    const partialResult=runToMatchEnd(w,partial,'partial-v2');
+    check(partialCanvas.width>0&&partialCanvas.height>0,'partial V2 canvas backing size remained zero');
+    check(partial.fallback&&Array.isArray(partial.fallback.effects),'partial V2 must retain live vector fallback instance');
+
+    topDoc.body.innerHTML=`<pre id="result">V018_G6D_FALLBACK_PASS vector=${vectorResult.winner}/${vectorResult.rounds}/${vectorResult.ticks} partial=${partialResult.winner}/${partialResult.rounds}/${partialResult.ticks} arenaFallback=${partialStatus.arenaReady}</pre>`;
+  }catch(error){topDoc.body.innerHTML=`<pre id="result">V018_G6D_FALLBACK_FAIL ${String(error&&error.stack||error)}</pre>`;}
+})();
+</script>
