@@ -65,9 +65,8 @@
     const begin=d.getElementById('duelBeginMatch');await ensureReachable(win,d,begin,preOverlay,'begin match button',vw,vh);
     begin.click();
 
-    await waitFor(()=>!d.getElementById('duelCombatRoot').classList.contains('hidden'),'combat root');
-    await sleep(700);
-    const combat=d.getElementById('duelCombatRoot'),hud=d.querySelector('.duelCombatHud'),abort=d.getElementById('duelAbortButton'),canvas=d.getElementById('duelCanvas');
+    const combat=await waitFor(()=>{const el=d.getElementById('duelCombatRoot');if(!el||el.classList.contains('hidden'))return null;const r=el.getBoundingClientRect();return r.width>0&&r.height>0?el:null;},'sized combat root');
+    const hud=d.querySelector('.duelCombatHud'),abort=d.getElementById('duelAbortButton'),canvas=d.getElementById('duelCanvas');
     rectInside(combat,vw,vh,'combat root');
     check(win.getComputedStyle(hud).pointerEvents==='none','combat HUD must remain pointer-transparent');
     check(win.getComputedStyle(abort).pointerEvents==='auto','abort button must remain interactive');
