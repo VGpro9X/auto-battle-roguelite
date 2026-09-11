@@ -89,7 +89,7 @@ Locked non-goals by default:
 - preserve semantic animation states and anchor API
 - V0.17 vector renderer remains a verified fallback until release
 - sprite/image asset pipeline is first implementation target; keep abstraction open for skeletal animation later
-- Pages must eventually publish `assets/` in addition to `index.html`, `css/`, `js/`
+- Pages publishes `assets/` in addition to `index.html`, `css/`, `js/`
 
 ## G0 — Graphics design + architecture lock — COMPLETE ✅
 - V0.18 scope locked ✅
@@ -99,25 +99,27 @@ Locked non-goals by default:
 - vector fallback strategy locked ✅
 - no-gameplay-change principle locked ✅
 
-## G1 — Asset loader + Renderer V2 foundation — NEXT
-Planned:
-- `assets/` public pipeline
-- manifest loader/cache
-- animation metadata resolver
-- per-frame visual anchors
-- Renderer V2 integration
-- vector fallback on missing assets
-- renderer switch without changing combat outcome
-- Pages asset-integrity validation
+## G1 — Asset loader + Renderer V2 foundation — COMPLETE ✅
+Delivered:
+- public `assets/` pipeline ✅
+- manifest loader/cache ✅
+- animation metadata resolver ✅
+- per-frame visual anchors ✅
+- Renderer V2 integration + internal switch ✅
+- vector fallback on missing state/asset ✅
+- one original proof fighter asset/manifest path ✅
+- exact Pages asset-integrity validation ✅
+- V0.16/V0.17 regression chain remained green ✅
 
-**Exit:** one proof asset path can render safely in live Duel while all V0.17 mechanics/tests stay unchanged.
+**Exit:** one proof asset path can render through Renderer V2 while missing states safely remain on the V0.17 vector fallback.
 
-## G2 — Fighter Visual V2
+## G2 — Fighter Visual V2 — NEXT
 - complete fighter state set: idle/walk/run/dash/melee/ranged/cast/hit/block/knockback/knockdown/recover/ko
 - stable root/feet alignment
 - facing/anchor correctness
 - player/opponent differentiation
 - shield/frost/orbit attachments retained
+- expand one state/batch at a time and validate in-engine before mass-producing the rest
 
 ## G3 — Arena + Camera Presentation V2
 - one original multi-layer arena
@@ -178,4 +180,4 @@ Required before release:
 
 # PROJECT STATUS
 
-**V0.17 remains the current released/public baseline. V0.18 is ACTIVE at G0 complete / G1 next. Start the next development chat by reading `V018_GRAPHICS_PLAN.md` and implementing G1 only before mass-producing final art assets.**
+**V0.17 remains the current released/public baseline. V0.18 is ACTIVE at G0 + G1 complete / G2 next. Continue with Fighter Visual V2 incrementally; do not change combat/AI/balance.**
