@@ -2,7 +2,7 @@
   const root=typeof window!=="undefined"?window:globalThis;
   function getDuelVisualAnchor(fighter,name){const facing=fighter?.facing||1,x=fighter?.x||0,y=fighter?.y||0,anchors={head:{x,y:y-132},chest:{x,y:y-88},leftHand:{x:x-facing*24,y:y-82},rightHand:{x:x+facing*36,y:y-78},feet:{x,y:y-4},front:{x:x+facing*52,y:y-72},back:{x:x-facing*42,y:y-72},target:{x,y:y-76}};return anchors[name]||anchors.chest;}
   function createDuelRenderer(canvas){if(!canvas)throw new Error("Duel renderer requires a canvas");const ctx=canvas.getContext("2d"),effects=[];let width=1,height=1,dpr=1;
-    function resize(){const rect=canvas.getBoundingClientRect();width=Math.max(1,rect.width||innerWidth||1);height=Math.max(1,rect.height||innerHeight||1);dpr=Math.min((typeof devicePixelRatio!=="undefined"?devicePixelRatio:1)||1,2);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);}
+    function resize(){const rect=canvas.getBoundingClientRect();width=Math.max(1,rect.width||innerWidth||1);height=Math.max(1,rect.height||innerHeight||1);dpr=Math.min((typeof devicePixelRatio!=="undefined"?devicePixelRatio:1)||1,2);const nextWidth=Math.round(width*dpr),nextHeight=Math.round(height*dpr);if(canvas.width!==nextWidth||canvas.height!==nextHeight){canvas.width=nextWidth;canvas.height=nextHeight;}ctx.setTransform(dpr,0,0,dpr,0,0);}
     function transform(arena){const scale=Math.min(width/arena.width,height/arena.height),ox=(width-arena.width*scale)/2,oy=(height-arena.height*scale)/2;return{scale,ox,oy,width,height,x:v=>ox+v*scale,y:v=>oy+v*scale};}
     function consume(events){for(const event of events||[]){let life=.45;if(event.type==="area")life=.55;if(event.type==="phase_change")life=1;if(event.type==="ko")life=.9;effects.push({...event,life,maxLife:life});}}
     function updateEffects(dt){for(const e of effects)e.life-=dt;for(let i=effects.length-1;i>=0;i--)if(effects[i].life<=0)effects.splice(i,1);}
@@ -15,13 +15,5 @@
     return{resize,consume,render,effects,getAnchor:getDuelVisualAnchor,getTransform:transform};
   }
   root.getDuelVisualAnchor=getDuelVisualAnchor;root.createDuelRenderer=createDuelRenderer;
-
-  if(typeof document!=="undefined"&&!root.__V018_DUEL_RENDERER_BOOTSTRAP__){
-    root.__V018_DUEL_RENDERER_BOOTSTRAP__=true;
-    const sources=["js/duel-visual-assets.js?v=018-g3a","js/duel-animation.js?v=018-g3a","js/duel-camera.js?v=018-g3a","js/duel-renderer-v2.js?v=018-g3a"];
-    root.__V018_DUEL_RENDERER_READY__=sources.reduce((chain,src)=>chain.then(()=>new Promise((resolve,reject)=>{
-      if(document.querySelector(`script[data-v018-src=\"${src}\"]`)){resolve();return;}
-      const script=document.createElement("script");script.src=src;script.dataset.v018Src=src;script.onload=resolve;script.onerror=()=>reject(new Error(`Failed to load ${src}`));document.head.appendChild(script);
-    })),Promise.resolve()).catch(error=>{console.warn("V0.18 Renderer V2 bootstrap failed; vector renderer remains active.",error);});
-  }
+  if(typeof document!=="undefined"&&!root.__V018_DUEL_RENDERER_BOOTSTRAP__){root.__V018_DUEL_RENDERER_BOOTSTRAP__=true;const sources=["js/duel-visual-assets.js?v=018-g3a","js/duel-animation.js?v=018-g3a","js/duel-camera.js?v=018-g3a","js/duel-renderer-v2.js?v=018-g3a"];root.__V018_DUEL_RENDERER_READY__=sources.reduce((chain,src)=>chain.then(()=>new Promise((resolve,reject)=>{if(document.querySelector(`script[data-v018-src=\"${src}\"]`)){resolve();return;}const script=document.createElement("script");script.src=src;script.dataset.v018Src=src;script.onload=resolve;script.onerror=()=>reject(new Error(`Failed to load ${src}`));document.head.appendChild(script);})),Promise.resolve()).catch(error=>{console.warn("V0.18 Renderer V2 bootstrap failed; vector renderer remains active.",error);});}
 })();
