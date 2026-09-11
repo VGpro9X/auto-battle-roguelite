@@ -141,6 +141,9 @@ jobs:
       - name: V0.18 G2A state replacement smoke test
         run: node tests/v018-g2a-state-replacement-smoke.js
 
+      - name: V0.18 G2B locomotion anchor smoke test
+        run: node tests/v018-g2b-locomotion-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
@@ -156,14 +159,13 @@ jobs:
         run: |
           set -euo pipefail
           test -f _site/assets/duel/fighters/base/manifest.json
-          test -f _site/assets/duel/fighters/base/proof-idle.svg
           node - <<'NODE'
           const fs=require('fs');
           const path=require('path');
           const base='_site/assets/duel/fighters/base';
           const manifest=JSON.parse(fs.readFileSync(path.join(base,'manifest.json'),'utf8'));
-          for(const animation of Object.values(manifest.animations||{})){
-            if(!animation.src)throw new Error('Manifest animation missing src');
+          for(const [state,animation] of Object.entries(manifest.animations||{})){
+            if(!animation.src)throw new Error(`Manifest animation ${state} missing src`);
             const target=path.join(base,animation.src);
             if(!fs.existsSync(target))throw new Error(`Pages artifact missing ${target}`);
           }
