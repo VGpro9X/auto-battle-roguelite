@@ -25,7 +25,14 @@
     rectInside(play,vw,vh,'main CHƠI button');clickableAtCenter(d,play,'main CHƠI button');play.click();
     await waitFor(()=>visible(d.getElementById('modeMenu')),'mode menu');
     noHorizontalOverflow(d,vw,'mode menu');
-    const modeCard=d.getElementById('duelModeCard');rectInside(modeCard,vw,vh,'Duel mode card');clickableAtCenter(d,modeCard,'Duel mode card');
+    const modeGrid=d.querySelector('#modeMenu .modeGrid'),modeCard=d.getElementById('duelModeCard');
+    if(modeCard.getBoundingClientRect().bottom>vh){
+      const gridStyle=w.getComputedStyle(modeGrid);
+      check(gridStyle.overflowY==='auto'||gridStyle.overflowY==='scroll',`off-screen Duel mode card has no scrollable parent: overflow-y=${gridStyle.overflowY}`);
+      check(modeGrid.scrollHeight>modeGrid.clientHeight,`mode grid is not actually scrollable: ${modeGrid.scrollHeight}/${modeGrid.clientHeight}`);
+      modeCard.scrollIntoView({block:'nearest'});await sleep(80);
+    }
+    rectInside(modeCard,vw,vh,'Duel mode card');clickableAtCenter(d,modeCard,'Duel mode card');
     modeCard.click();
     await waitFor(()=>visible(d.getElementById('duelLobbyMenu')),'Duel lobby');
     noHorizontalOverflow(d,vw,'Duel lobby');
