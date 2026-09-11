@@ -17,7 +17,7 @@ assert.match(vectorSource,/!skip\.has\("opponent"\)/,"opponent vector omission m
 assert.match(v2Source,/resolveVisual\(/,"V2 exact-state coverage resolver missing");
 assert.match(v2Source,/covered\.push\("player"\)/,"V2 player clean replacement missing");
 assert.match(v2Source,/covered\.push\("opponent"\)/,"V2 opponent clean replacement missing");
-assert.match(v2Source,/fallback\.render\(match,dt,\{skipFighterSides:covered\}\)/,"V2 must suppress vector only for covered states");
+assert.match(v2Source,/fallback\.render\(match,dt,\{skipFighterSides:covered,skipArena:customArena,preserveCanvas:true,transformOverride:tr\}\)/,"V2 must suppress covered vector fighters while sharing the G3 camera render contract");
 assert.match(v2Source,/lastFrames\.delete\("player"\)/,"stale player asset anchor cleanup missing");
 assert.match(v2Source,/lastFrames\.delete\("opponent"\)/,"stale opponent asset anchor cleanup missing");
 
