@@ -96,28 +96,54 @@ Delivered in incremental G2A–G2F checkpoints:
 - G2A–G2F smoke gates green ✅
 - full V0.16/V0.17 mechanics regression chain remained green through G2F ✅
 
-G2 establishes the complete original fighter animation contract. Artwork can be refined later without altering combat truth or the renderer API.
+## G3 — Arena + Camera Presentation V2 — COMPLETE ✅
+Delivered:
+- original `Ashen Sanctum` canonical arena ✅
+- six manifest-driven layers: sky / far / mid / ambient / floor / foreground ✅
+- parallax transforms ✅
+- richer floor/contact plane ✅
+- atmospheric ambient + safe foreground layers ✅
+- presentation-only camera in `js/duel-camera.js` ✅
+- fighter-pair camera framing with hard bounds ✅
+- desktop/mobile zoom limits ✅
+- mobile-reduced impact shake ✅
+- semantic hit/area/cast/KO/phase impact shake + zoom ✅
+- one shared world→screen transform for V2 fighters and vector fallback projectiles/VFX ✅
+- HUYẾT CHIẾN / TỬ CHIẾN phase presentation ✅
+- G3 smoke gate green ✅
+- exact Pages arena artifact validation green ✅
+- V0.16/V0.17/G1/G2/G3 Pages chain green ✅
+- V0.17 rendered desktop/mobile validation remained green ✅
+- public Pages deploy green ✅
 
-## G3 — Arena + Camera Presentation V2 — NEXT
-Planned:
-- one original multi-layer arena
-- parallax background layers
-- richer floor/contact plane
-- atmospheric ambient layer
-- safe foreground layer
-- camera framing based on both fighters
-- mild impact shake
-- mild attack/cast zoom
-- hard camera bounds
-- mobile-safe camera reduction where appropriate
-- HUYẾT CHIẾN / TỬ CHIẾN phase treatment
+**Exit achieved:** the Duel arena no longer depends on the prototype/debug stage while simulation coordinates remain unchanged.
 
-**Exit:** arena no longer reads as a prototype/debug stage while simulation coordinates remain unchanged.
+## G4 — Full Duel VFX Readability Pass — NEXT
+Planned visual families:
+- physical/melee impact
+- projectile
+- fire
+- frost
+- lightning
+- poison/DOT
+- blood/lifesteal
+- shield/defense
+- heal/recovery
+- control/slow/stun
+- summon/orbit
+- explosion/area
+- chain
+- time/space
+- soul/death
+- divine/mystic Rare rules
 
-## G4 — Full Duel VFX Readability Pass
-- physical/projectile/fire/frost/lightning/poison/blood families
-- shield/heal/control/summon/orbit/explosion/chain/time/space/soul families
+Required:
+- semantic events → shared VFX families
+- anchor-driven impact placement
 - stronger Hợp Đạo / Siêu Cấp / Rare overrides
+- all visually meaningful Duel mechanics readable
+- no permanent full-screen VFX wall
+- no VFX changes hitboxes, damage, targeting or timing
 
 ## G5 — Duel UI / HUD / Tournament Presentation Polish
 - lobby/scouting/reward cards
@@ -148,4 +174,4 @@ Required before release:
 
 # PROJECT STATUS
 
-**V0.17 remains the current released/public baseline. V0.18 is ACTIVE at G0 + G1 + G2 complete / G3 next. Continue with Arena + Camera Presentation V2; do not change combat/AI/balance.**
+**V0.17 remains the current released/public baseline. V0.18 is ACTIVE at G0 + G1 + G2 + G3 complete / G4 next. Continue with the Full Duel VFX Readability Pass; do not change combat/AI/balance.**
