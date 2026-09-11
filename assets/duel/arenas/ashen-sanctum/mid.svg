@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="560" viewBox="0 0 1180 560">
+  <defs>
+    <linearGradient id="stone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3547"/><stop offset="1" stop-color="#111827"/></linearGradient>
+    <radialGradient id="lantern"><stop offset="0" stop-color="#fbbf24" stop-opacity=".72"/><stop offset="1" stop-color="#f97316" stop-opacity="0"/></radialGradient>
+  </defs>
+  <g opacity=".95">
+    <path d="M78 468 L98 168 L132 168 L151 468Z" fill="url(#stone)"/>
+    <path d="M1029 468 L1048 168 L1082 168 L1102 468Z" fill="url(#stone)"/>
+    <path d="M48 177 L181 177 L164 142 L67 142Z" fill="#151d2a"/>
+    <path d="M999 177 L1132 177 L1115 142 L1018 142Z" fill="#151d2a"/>
+    <path d="M218 468 L234 246 L258 246 L274 468Z" fill="#1b2635"/>
+    <path d="M906 468 L922 246 L946 246 L962 468Z" fill="#1b2635"/>
+    <path d="M198 252 L294 252 L281 228 L211 228Z" fill="#121a26"/>
+    <path d="M886 252 L982 252 L969 228 L899 228Z" fill="#121a26"/>
+  </g>
+  <g opacity=".58">
+    <circle cx="162" cy="254" r="58" fill="url(#lantern)"/><rect x="157" y="238" width="10" height="28" rx="4" fill="#f59e0b"/>
+    <circle cx="1018" cy="254" r="58" fill="url(#lantern)"/><rect x="1013" y="238" width="10" height="28" rx="4" fill="#f59e0b"/>
+  </g>
+  <path d="M0 441 C150 421 240 438 352 422 C458 407 533 429 590 423 C690 411 766 431 864 418 C986 402 1074 418 1180 405 L1180 560 L0 560Z" fill="#0c111a" opacity=".65"/>
+</svg>
