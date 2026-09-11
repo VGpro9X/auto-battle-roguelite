@@ -14,7 +14,8 @@ GitHub `main` is canonical.
 - V0.18 G0 architecture lock is complete.
 - V0.18 G1 asset loader + Renderer V2 foundation is complete.
 - V0.18 G2 Fighter Visual V2 is complete at **13 / 13 required semantic states**.
-- Next checkpoint: **G3 — Arena + Camera Presentation V2**.
+- V0.18 G3 Arena + Camera Presentation V2 is complete.
+- Next checkpoint: **G4 — Full Duel VFX Readability Pass**.
 - Runtime/public version label remains **V0.17** until V0.18 passes G7 release validation.
 
 See `V018_GRAPHICS_PLAN.md` for the authoritative V0.18 plan.
@@ -41,18 +42,35 @@ G2 delivered:
 - G2A–G2F automated smoke gates
 - full V0.16/V0.17 regression chain remained green through G2F
 
-The fighter sheets currently establish the complete original asset/animation contract required for V0.18. Later visual polish may improve artwork quality without changing the renderer/simulation contract.
-
-## V0.18 next: G3
-G3 upgrades presentation around the fighters without changing logical arena geometry:
-- one original multi-layer Duel arena
-- background parallax
-- floor/contact presentation
-- atmospheric and foreground layers
-- camera framing based on both fighters
-- mild impact shake and zoom
-- hard camera bounds
+G3 delivered:
+- original `Ashen Sanctum` arena under `assets/duel/arenas/ashen-sanctum/`
+- six manifest-driven layers: sky, far, mid, ambient, floor, foreground
+- parallax background/foreground transforms
+- `js/duel-camera.js` presentation-only camera
+- fighter-pair framing with hard world bounds
+- desktop/mobile-safe zoom behavior
+- semantic-event impact shake/zoom
+- shared camera transform across V2 fighters, vector fallback projectiles and VFX
 - HUYẾT CHIẾN / TỬ CHIẾN phase presentation
+- exact Pages arena asset-integrity validation
+- `tests/v018-g3-arena-camera-smoke.js`
+- full V0.16/V0.17/G1/G2/G3 Pages chain and V0.17 rendered validation green at G3 closure
+
+The fighter and arena assets establish the current original V0.18 presentation contract. Later visual polish may improve artwork/effects without changing simulation truth.
+
+## V0.18 next: G4
+G4 upgrades full Duel VFX readability without changing mechanics:
+- physical / projectile
+- fire / frost / lightning
+- poison / DOT / blood
+- shield / heal / control
+- summon / orbit
+- explosion / area / chain
+- time / space / soul / death
+- divine / mystic Rare identities
+- stronger Hợp Đạo / Siêu Cấp / Rare visual overrides
+- anchor-driven impact placement
+- no effect may change hitboxes, targeting, timing or damage
 
 ## V0.17 release baseline
 V0.17 remains frozen except for bug fixes and includes:
@@ -92,4 +110,4 @@ Survival/Endless V0.16 remains supported and unchanged.
 6. `V017_DUEL_ARENA_PLAN.md`
 
 ## Project status
-**V0.17 remains the released/public baseline. V0.18 is active at G0 + G1 + G2 complete / G3 next.**
+**V0.17 remains the released/public baseline. V0.18 is active at G0 + G1 + G2 + G3 complete / G4 next.**
