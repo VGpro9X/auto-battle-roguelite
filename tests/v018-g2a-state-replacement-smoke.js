@@ -8,8 +8,8 @@ const vectorSource=fs.readFileSync(path.join(root,"js/duel-renderer.js"),"utf8")
 const v2Source=fs.readFileSync(path.join(root,"js/duel-renderer-v2.js"),"utf8");
 const assetSource=fs.readFileSync(path.join(root,"js/duel-visual-assets.js"),"utf8");
 
-assert.ok(manifest.animations.idle,"idle proof coverage missing");
-assert.equal(manifest.animations.melee,undefined,"G2A must not fake unimplemented melee coverage");
+assert.ok(manifest.animations.idle,"idle coverage missing");
+assert.equal(manifest.animations.cast,undefined,"state fallback test requires cast to remain uncovered here");
 assert.match(assetSource,/manifest\.animations\[state\]\|\|null/,"missing-state loader must return null");
 assert.match(vectorSource,/skipFighterSides/,"vector renderer must support per-side omission");
 assert.match(vectorSource,/!skip\.has\("player"\)/,"player vector omission missing");
