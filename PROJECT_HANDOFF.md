@@ -13,11 +13,12 @@ Use this file as the starting context when continuing development in a new chat.
 - Commit every meaningful checkpoint.
 
 ## Current project state
-- Released/public baseline: **V0.17 – Duel Arena / Đấu Trường 1v1**.
+- Current released/public baseline: **V0.17 – Duel Arena / Đấu Trường 1v1**.
 - Runtime/public label remains **V0.17** until V0.18 release closure.
+- V0.17 has no unfinished checkpoint.
 - Active roadmap: **V0.18 – Graphics & Presentation Overhaul**.
 - Authoritative plan: `V018_GRAPHICS_PLAN.md`.
-- V0.18 status: **G0 + G1 + G2 complete, G3 next**.
+- V0.18 status: **G0 + G1 + G2 complete, G3 active**.
 
 ## Read first
 1. `README.md`
@@ -32,15 +33,12 @@ Then fetch latest before editing:
 - `js/duel-renderer-v2.js`
 - `js/duel-visual-assets.js`
 - `js/duel-animation.js`
+- `js/duel-camera.js`
 - `js/duel-engine.js`
 - `js/duel-ui.js`
 - `assets/duel/fighters/base/manifest.json`
+- `assets/duel/arenas/ashen-sanctum/manifest.json`
 - `.github/workflows/pages.yml`
-
-For G3, expected new/next files include:
-- `js/duel-camera.js`
-- arena manifest/assets under `assets/duel/arenas/`
-- optional `css/v018-graphics.css` when presentation styling needs it
 
 ## Frozen gameplay contract
 Do not alter V0.17 gameplay merely to implement V0.18 visuals.
@@ -103,26 +101,27 @@ Incremental checkpoints G2A–G2F delivered:
 
 Important: G2 establishes the complete fighter asset/animation contract. Future artwork refinement must preserve root/anchor/state contracts and must not alter simulation.
 
-## G3 — NEXT: Arena + Camera Presentation V2
-Goal: replace the flat prototype stage presentation without changing the logical arena geometry.
+## G3 — ACTIVE: Arena + Camera Presentation V2
+Current implementation in `main`:
+- original `ashen-sanctum` arena manifest
+- six visual layers: sky / far / mid / ambient / floor / foreground
+- `js/duel-camera.js` presentation-only camera
+- shared camera transform for V2 fighters and vector projectile/VFX fallback
+- camera framing from both fighter positions with hard bounds
+- desktop/mobile zoom limits
+- semantic-event impact shake/zoom
+- HUYẾT CHIẾN / TỬ CHIẾN phase overlay
+- exact Pages arena asset validation added
+- G3 smoke gate added under `tests/v018-g3-arena-camera-smoke.js`
 
-Implement incrementally:
-1. arena manifest + public multi-layer asset pipeline
-2. one original arena with sky/far/mid/floor/foreground layers
-3. `js/duel-camera.js` presentation camera
-4. camera framing based on both fighter positions
-5. hard bounds so fighters never leave view
-6. mild parallax
-7. mild impact shake/zoom driven by semantic visual events only
-8. HUYẾT CHIẾN / TỬ CHIẾN presentation treatment
-9. desktop/mobile camera validation
+G3 remains ACTIVE until the full CI chain and Pages artifact/deploy gates are green.
 
 G3 rules:
 - simulation coordinates do not move because of camera
 - camera cannot affect targeting or timing
 - foreground must never hide critical combat readability
-- mobile shake/zoom may be visually reduced
-- no arena hazards/gameplay geometry changes unless separately promoted to scope
+- mobile shake/zoom is visually reduced
+- no arena hazards/gameplay geometry changes
 
 ## Later checkpoints
 - G4: full Duel VFX readability families + major overrides
@@ -140,8 +139,4 @@ G3 rules:
 - Tests stay under `tests/` and are not shipped publicly.
 
 ## Status for next conversation
-**Start from G3 only. G0, G1 and G2 are complete. Build the arena/camera presentation incrementally, preserve Renderer V2/vector fallback and do not change combat/AI/balance.**
-
-Recommended continuation prompt:
-
-`Tiếp tục VGpro9X/auto-battle-roguelite V0.18 từ G3. GitHub main là canonical. G0/G1/G2 đã complete và fighter Renderer V2 có đủ 13/13 semantic states. Bắt đầu bằng arena manifest + multi-layer asset pipeline và duel-camera.js, giữ logical arena/combat/AI/balance nguyên vẹn, commit sau mỗi checkpoint có ý nghĩa.`
+**G0, G1 and G2 are complete. G3 is active and awaiting full green CI closure before moving to G4. Do not change combat/AI/balance.**
