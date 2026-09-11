@@ -18,7 +18,7 @@ Use this file as the starting context when continuing development in a new chat.
 - V0.17 has no unfinished checkpoint.
 - Active roadmap: **V0.18 – Graphics & Presentation Overhaul**.
 - Authoritative plan: `V018_GRAPHICS_PLAN.md`.
-- V0.18 status: **G0 + G1 + G2 complete, G3 active**.
+- V0.18 status: **G0 + G1 + G2 + G3 complete, G4 next**.
 
 ## Read first
 1. `README.md`
@@ -91,40 +91,75 @@ Incremental checkpoints G2A–G2F delivered:
 - V2 floor/contact shadow
 - shield/frost/orbit attachment parity using V2 anchors
 - vector fallback still works for optional/missing future states/assets
-- `tests/v018-g2a-state-replacement-smoke.js`
-- `tests/v018-g2b-locomotion-smoke.js`
-- `tests/v018-g2c-combat-motion-smoke.js`
-- `tests/v018-g2d-presentation-parity-smoke.js`
-- `tests/v018-g2e-ranged-cast-block-smoke.js`
-- `tests/v018-g2f-full-state-coverage-smoke.js`
-- full V0.16/V0.17 regression chain + exact Pages asset validation green through G2F
+- G2A–G2F smoke gates
+- full V0.16/V0.17 regression chain + exact Pages fighter asset validation green
 
-Important: G2 establishes the complete fighter asset/animation contract. Future artwork refinement must preserve root/anchor/state contracts and must not alter simulation.
-
-## G3 — ACTIVE: Arena + Camera Presentation V2
-Current implementation in `main`:
-- original `ashen-sanctum` arena manifest
-- six visual layers: sky / far / mid / ambient / floor / foreground
+## G3 — COMPLETE ✅: Arena + Camera Presentation V2
+Delivered:
+- original canonical arena: `assets/duel/arenas/ashen-sanctum/`
+- six manifest-driven layers: sky / far / mid / ambient / floor / foreground
+- exact logical geometry match to Duel simulation: `1000×560`, floorY `475`, bounds `54–946`
+- parallax transforms without changing simulation coordinates
+- richer floor/contact plane + atmosphere + safe foreground
 - `js/duel-camera.js` presentation-only camera
-- shared camera transform for V2 fighters and vector projectile/VFX fallback
-- camera framing from both fighter positions with hard bounds
-- desktop/mobile zoom limits
-- semantic-event impact shake/zoom
-- HUYẾT CHIẾN / TỬ CHIẾN phase overlay
-- exact Pages arena asset validation added
-- G3 smoke gate added under `tests/v018-g3-arena-camera-smoke.js`
+- fighter-pair framing with hard camera bounds
+- desktop zoom cap `1.24`; mobile cap `1.10`
+- mobile-reduced impact shake
+- semantic hit/area/cast/KO/phase event camera feedback
+- shared camera transform for V2 fighters, vector fallback projectiles and VFX
+- HUYẾT CHIẾN / TỬ CHIẾN presentation overlay
+- conditional canvas resize so layered rendering is not cleared each frame
+- `tests/v018-g3-arena-camera-smoke.js`
+- Pages workflow validates every referenced arena layer in the exact public artifact
+- V0.16/V0.17/G1/G2/G3 Pages chain green
+- V0.17 rendered desktop/mobile flow green
+- public Pages deploy green at G3 closure
 
-G3 remains ACTIVE until the full CI chain and Pages artifact/deploy gates are green.
-
-G3 rules:
-- simulation coordinates do not move because of camera
-- camera cannot affect targeting or timing
-- foreground must never hide critical combat readability
-- mobile shake/zoom is visually reduced
+G3 rules remain locked:
+- simulation coordinates never move because of camera
+- camera never affects targeting/timing
 - no arena hazards/gameplay geometry changes
+- foreground cannot hide core combat readability
+
+## G4 — NEXT: Full Duel VFX Readability Pass
+Create/upgrade semantic visual families without rewriting mechanics.
+
+Core families:
+- physical/melee
+- projectile
+- fire
+- frost
+- lightning
+- poison/DOT
+- blood/lifesteal
+- shield/defense
+- heal/recovery
+- control/slow/stun
+- summon/orbit
+- explosion/area
+- chain
+- time/space
+- soul/death
+- divine/mystic Rare
+
+G4 implementation rules:
+- semantic combat events map to visual families
+- VFX positions come from stable anchors/world event coordinates
+- Hợp Đạo and Siêu Cấp receive stronger presentation than base families
+- visually meaningful Rare activations receive distinct readable identities
+- projectiles may gain asset-driven presentation but simulation projectile truth stays in `duel-engine.js`
+- no VFX changes hitboxes/damage/cooldowns/targets/fatal ordering
+- no permanent full-screen VFX wall
+- retain vector/V2 fallback safety
+
+Recommended first G4 checkpoint:
+1. audit current Duel event vocabulary and skill visual hints
+2. add `js/duel-vfx-v2.js` semantic event router
+3. implement first shared families: physical/projectile/fire/frost/lightning
+4. make Renderer V2 consume them using the G3 camera transform and fighter anchors
+5. add a dedicated smoke gate before expanding to poison/blood/defense/control/etc.
 
 ## Later checkpoints
-- G4: full Duel VFX readability families + major overrides
 - G5: Duel UI/HUD/tournament polish
 - G6: performance/quality/fallback hardening
 - G7: final V0.18 integration/release validation
@@ -139,4 +174,4 @@ G3 rules:
 - Tests stay under `tests/` and are not shipped publicly.
 
 ## Status for next conversation
-**G0, G1 and G2 are complete. G3 is active and awaiting full green CI closure before moving to G4. Do not change combat/AI/balance.**
+**G0, G1, G2 and G3 are complete. Continue V0.18 from G4 Full Duel VFX Readability Pass. Do not reopen V0.17 content/balance and do not change combat/AI/tournament truth.**
