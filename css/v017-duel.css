@@ -1,3 +1,4 @@
+@import url("./v018-graphics.css?v=018-g5a");
 .duelModeCard{border-color:rgba(124,190,255,.38);background:linear-gradient(145deg,rgba(45,90,145,.22),rgba(90,35,85,.18));}
 .duelModeCard .modeTime{font-size:34px;letter-spacing:.04em;}
 .duelLobbyCard,.duelPreCard{max-width:1080px;}
