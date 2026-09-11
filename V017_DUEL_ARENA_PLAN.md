@@ -1,157 +1,218 @@
 # V0.17 — Duel Arena / Đấu Trường 1v1
 
-Status: **ACTIVE ROADMAP — implementation authorized by the user**.
+Status: **ACTIVE ROADMAP — scope locked**.
 
 GitHub `main` remains canonical. V0.16 Survival/Endless is the stable baseline and must remain playable while V0.17 is developed.
 
-## 1. Product goal
+**Official completion checklist:** `V017_COMPLETION_PLAN.md`.
 
-Add a new **Đấu Trường** mode that keeps the game's core identity — the fighter battles automatically and the player builds the skill set — but changes the battle presentation and run structure:
-
-- side-view 1v1 combat inspired by classic fighting-game staging
-- no direct player movement or attack controls
-- the build determines whether AI wants to fight close, far, or hybrid
-- single-elimination tournament starting with **64 fighters**
-- each matchup is **best-of-3 rounds**
-- the winner advances until one champion remains
-- the existing skill identities are reused through Duel-specific mechanics rather than copied into a second unrelated skill database
-
-The first implementation is intentionally a development-quality prototype visually. The architecture must make a later high-quality graphics replacement straightforward.
+That file is the authoritative Definition of Done for V0.17. If an older note or checkpoint conflicts with it, `V017_COMPLETION_PLAN.md` wins.
 
 ---
 
-# 2. Locked design decisions
+# 1. Product goal
+
+Add a complete **Đấu Trường** mode that keeps the game's core identity — the fighter battles automatically and the player builds the skill set — but changes the battle presentation and run structure:
+
+- side-view 1v1 combat inspired by classic fighting-game staging
+- no direct player movement or attack controls
+- the build determines whether AI wants to fight close, far or hybrid
+- single-elimination tournament starting with **64 fighters**
+- each matchup is **best-of-3 rounds**
+- the winner advances until one Champion remains
+- the full existing V0.16 skill ecosystem is integrated through Duel-specific mechanics instead of copied into a second unrelated skill database
+
+Prototype graphics are intentionally development-quality. The architecture must make a later high-quality graphics replacement straightforward.
+
+---
+
+# 2. V0.17 scope lock
+
+## V0.17 MUST include
+
+V0.17 is only complete when both of these pillars are complete:
+
+### A. Đấu Trường mode
+- 64-fighter tournament
+- best-of-3 combat
+- automatic build-aware AI
+- starter/reward/reroll progression
+- opponent preview, combat HUD, result flow and Champion/elimination flow
+- stable desktop/mobile flow
+
+### B. Full skill-system integration
+- **80 / 80 Kỹ Năng**
+- **28 / 28 Hợp Đạo Kỹ**
+- **12 / 12 Siêu Cấp**
+- **20 / 20 rare rules** = 10 Thần Kỹ + 10 Thần Bí Kỹ
+- AI and player use equivalent unlock/acquisition rules
+- full integration/balance/CI/Pages validation
+
+A playable tournament with incomplete Hợp Đạo/Siêu Cấp/rare support is still **V0.17 DEV**, not a finished V0.17 release.
+
+## Explicitly post-V0.17
+
+The following do not block the V0.17 release:
+
+- high-end final character artwork
+- sprite/skeletal renderer replacement
+- multiple arenas / arena hazards
+- jump or aerial combat
+- manual controls
+- large cinematic camera overhaul
+- server/global leaderboard
+- online PvP/netcode
+- skill content beyond the existing V0.16 ecosystem
+
+Only release-blocking readability or UX fixes may pull presentation work forward.
+
+---
+
+# 3. Locked design decisions
 
 ## Tournament
 - Exactly **64 fighters** at tournament start.
 - Bracket: `64 → 32 → 16 → 8 → 4 → 2 → Champion`.
-- No BYE system is required.
-- Losing one matchup eliminates the player and ends the tournament run.
-- Other matches are simulated; only the player's matchup runs through the real Duel combat simulation/render loop.
+- No BYE system.
+- Losing one matchup eliminates the player and ends the run.
+- Other matches are simulated; only the player's matchup uses the real Duel combat/render loop.
 - AI fighters obey the same build progression rules as the player.
 
 ## Match / round format
-- Every matchup is **best-of-3**: first fighter to 2 round wins advances.
-- Build is frozen for all rounds in one matchup.
-- Between rounds, reset HP, shield, cooldowns, statuses, summons, projectiles and temporary effects.
+- Every matchup is **best-of-3**; first to 2 round wins advances.
+- Build is frozen for all rounds inside one matchup.
+- Between rounds reset HP, shield, cooldowns, statuses, summons, projectiles and temporary effects.
 - Tournament build persists between matchups.
-- Base round clock: **60 seconds**.
-- At 45 seconds, enter visible **HUYẾT CHIẾN** pressure:
-  - outgoing damage ramps linearly from ×1.00 at 45s to ×1.75 at 60s
-  - healing and newly generated shield ramp linearly from ×1.00 at 45s to ×0.50 at 60s
-- If neither fighter is KO at 60s, enter visible **TỬ CHIẾN**:
+- At 45 seconds enter visible **HUYẾT CHIẾN**:
+  - outgoing damage ramps from ×1.00 to ×1.75 by 60s
+  - healing/new shield ramps from ×1.00 to ×0.50 by 60s
+- At 60 seconds enter visible **TỬ CHIẾN**:
   - outgoing damage ×2.00
   - healing = 0
   - new shield generation = 0
-  - continue until a KO, so there is no hidden draw/tiebreak rule
+  - continue until KO; no hidden timeout tiebreak
 
 ## Control model
 - Player fighter is **100% AI controlled** during combat.
 - No manual movement, attack, cast, jump or dodge input.
-- Prototype AI actions: approach, retreat, hold range, pressure, melee attack, cast, dash in, dash out, recover.
-- **No jumping in the first implementation.**
-- Basic dash exists as an AI action; it is not initially an invulnerability move.
+- Core AI actions: approach, retreat, hold range, pressure, melee attack, cast, dash in, dash out, recover.
+- **No jumping in V0.17.**
+- Basic dash is not initially an invulnerability move.
 
 ## Basic attack / distance identity
-- Every fighter always has a simple melee basic attack so a non-offensive starting build can still finish a fight.
+- Every fighter always has a simple melee basic attack so non-offensive builds can still finish a fight.
 - There is no free universal ranged basic attack.
 - Ranged offense comes from owned skills.
-- AI derives preferred fighting distance from the current build, so projectile/control builds naturally keep more space while melee/defense builds close distance.
-- Hybrid builds can alternate between ranges based on cooldowns, threat and opportunity.
+- AI derives preferred distance from the build.
+- Hybrid builds can change spacing based on threat, cooldowns and opportunity.
 
 ## Build progression
-- Before the tournament, the player receives **2 independent free starter selections**.
+- Before the tournament: **2 unrestricted starter selections**.
 - Each starter screen offers 3 random supported Duel skills.
-- Starter choice #2 excludes the already owned starter skill so the player begins with two different skills.
-- No forced offensive category or forced class/archetype.
-- Every selection screen has exactly **1 XOAY LẠI**, consistent with the existing V0.16 build philosophy.
-- After each matchup win except the final, receive **1 skill selection** before the next opponent.
-- Therefore the player has 2 starter selections plus up to 5 inter-match selections before the final: **7 build decisions before the championship match**.
+- Starter #2 excludes the already owned starter so the fighter begins with two different skills.
+- No forced offensive category or class/archetype.
+- Every selection screen has exactly **1 XOAY LẠI**.
+- After each matchup win except the final, receive **1 skill selection**.
+- Maximum before the final: 2 starter decisions + 5 inter-match decisions = **7 build decisions**.
 
 ## Duel skill ranks
-- Duel uses **Rank I / II / III**, with Rank III = `TỐI ĐA`.
-- This is separate from Survival's existing per-skill max level.
-- Same skill identity/key/name/icon/tags are reused.
-- Duel values are stored in Duel adapters, not by mutating Survival values.
-- No separate `skillNamePvP` clone database.
+- Duel uses **Rank I / II / III**, Rank III = `TỐI ĐA`.
+- Same skill key/name/icon/tags are reused from the shared identity.
+- Duel values/mechanics live in Duel adapters and never mutate Survival values.
 
-Conceptual structure:
+Conceptually:
 
 ```text
 Skill Identity
-  ├─ Survival rules (existing)
-  └─ Duel rules (V0.17 adapter, maxRank 3)
+  ├─ Survival rules
+  └─ Duel rules (maxRank 3)
 ```
 
-## Hợp Đạo / Siêu Cấp
-- Architecture must support Duel-specific Hợp Đạo and Siêu Cấp conditions.
-- Hợp Đạo remains an automatic build unlock and does not consume a selection.
-- Siêu Cấp requires its main skill at Duel Rank III plus its Duel support requirement.
-- Initial prototype may ship with base Duel skills first; Hợp Đạo/Siêu Cấp are expanded after the combat foundation is stable.
+---
+
+# 4. Skill-system contract
+
+## Base Kỹ Năng
+- All **80 / 80** base skills must have functional Duel mechanics.
+- Any Survival trigger that does not exist in 1v1 (XP economy, enemy-population kill trigger, multi-target-only rule, etc.) receives an explicit Duel reinterpretation.
+- Duel descriptions must state the actual rule and numbers.
+
+Current status: **80 / 80 COMPLETE**.
+
+## Hợp Đạo Kỹ
+- Hợp Đạo is an automatic build unlock and never consumes a reward selection.
+- Same Hợp Đạo identity/relationship is preserved.
+- Duel uses a dedicated synergy registry/requirement evaluator, not Survival runtime hooks.
+- Player and AI use identical unlock requirements.
+- Multi-target/XP/kill-specific effects receive explicit Duel behavior when needed.
+
+Release target: **28 / 28**.
+
+## Siêu Cấp
+- Main/base skill must reach **Duel Rank III / TỐI ĐA**.
+- Duel support/tag requirement must also be satisfied.
+- Unlock is automatic and consumes no reward selection.
+- Once converted, the base skill must not continue appearing as a normal upgrade choice.
+- Choice-card evolution hint appears only when that exact choice immediately completes the unlock.
+
+Release target: **12 / 12**.
 
 ## Rare rules
-- Thần Kỹ/Thần Bí Kỹ remain unique and level-less when ported to Duel.
-- No duplicate rare in one tournament build.
-- Rare rollout is a later checkpoint after normal Duel combat is validated.
-- Planned rare chance by inter-match reward count:
+- Thần Kỹ/Thần Bí Kỹ are unique and level-less.
+- No duplicate rare in one tournament build; different rares may coexist.
+- Starter screens contain no rare.
+- Inter-match rare chance:
   - after first win: 0%
   - after second win: 3%
   - after third win: 6%
   - after fourth win: 10%
   - after fifth win / before final: 15%
 - At most one rare card in a 3-card reward roll.
-- AI uses the same rare chance and ownership rules.
+- Reroll rerolls the full reward screen including the rare roll.
+- AI uses the same stage-based chance and ownership rules.
+- Rare rules whose Survival meaning is invalid in 1v1 must receive an explicit Duel mechanic rather than silently doing nothing.
+
+Release target: **20 / 20**.
 
 ---
 
-# 3. Architecture lock — gameplay and graphics must be separable
+# 5. Architecture lock — gameplay and graphics stay separable
 
-This is the most important technical rule for V0.17.
+This remains the most important technical rule for V0.17.
 
-## DuelSimulation / Duel Engine
-Owns only mechanics and state:
-- fighter positions and facing
+## Duel Engine
+Owns mechanics/state only:
+- fighter positions/facing
 - HP/shield/stats
 - timers/cooldowns
 - AI intentions
-- attacks, projectiles, areas, statuses and summons
+- attacks, projectiles, areas, statuses, summons
 - damage/healing/knockback
-- round state and result
-- semantic visual events such as `attack_melee`, `cast`, `hit`, `projectile_spawn`, `shield_break`, `ko`
+- round state/result
+- semantic visual events
 
-The Duel Engine must **not draw directly**.
+The Duel Engine does **not** draw directly.
 
 ## DuelRenderer
-Consumes Duel state + semantic visual events and draws them.
+Consumes Duel state + semantic events.
 
-Prototype renderer:
+Current renderer may use:
 - vector/silhouette fighters
 - procedural/simple animation
 - geometric VFX
-- one basic flat arena
+- one flat arena
 
-Future renderer may replace this with:
-- sprite sheets
-- frame animation
-- skeletal/Spine-style characters
-- authored particles and backgrounds
-- higher-quality hit/cast/KO animations
+Future renderer may replace it with sprites/skeletal animation without changing tournament, AI or skill mechanics.
 
-Changing renderer assets must not require rewriting tournament, AI or skill mechanics.
-
-## Standard fighter animation contract
-Prototype and future renderers use shared semantic states:
+## Semantic fighter states
 
 `idle`, `walk`, `run`, `dash`, `melee`, `ranged`, `cast`, `hit`, `block`, `knockback`, `knockdown`, `recover`, `ko`.
 
-Standard attachment/anchor names:
+Standard anchors:
 
 `head`, `chest`, `leftHand`, `rightHand`, `feet`, `front`, `back`, `target`.
 
-Skills request an anchor; they never hard-code artwork-specific hand coordinates.
-
-## Arena data contract
-First arena is a flat stage only, but the engine uses an arena definition from day one:
+## Arena contract
 
 ```js
 {
@@ -165,203 +226,139 @@ First arena is a flat stage only, but the engine uses an arena definition from d
 }
 ```
 
-This leaves room for future arenas without changing combat logic.
+V0.17 only requires one functional flat arena.
 
 ---
 
-# 4. Duel AI design
+# 6. Duel AI contract
 
-AI is deterministic in intent structure but retains tactical variation.
-
-Every decision tick evaluates:
-- current distance
-- preferred distance derived from build
+Every decision tick may evaluate:
+- distance and preferred distance
 - own/opponent HP and shield
-- available melee attack
-- available skill cooldowns
-- opponent cast/action state
-- projectiles/areas that threaten current position
+- available basic attack/skills
+- opponent action/cast state
+- projectile/area threat
 - dash availability
-- control/status windows
+- statuses/control windows
 
-Possible intents:
-- `CHASE`
-- `PRESSURE`
-- `HOLD_RANGE`
-- `RETREAT`
-- `ATTACK`
-- `CAST`
-- `DASH_IN`
-- `DASH_OUT`
-- `RECOVER`
+Possible intents include:
 
-AI build profile is derived from owned skill tags and Duel adapter hints rather than a locked class.
+`CHASE`, `PRESSURE`, `HOLD_RANGE`, `RETREAT`, `ATTACK`, `CAST`, `DASH_IN`, `DASH_OUT`, `RECOVER`.
 
-Tournament AI may receive a soft preference seed such as melee, projectile, elemental, control, summon, defense or hybrid. This changes selection weights only; it never prevents cross-class skill choices.
+AI build profile is derived from skill tags/adapter hints, never a locked class.
+
+Tournament AI may use a soft preference seed such as melee/projectile/elemental/control/summon/defense/hybrid. It changes weighting only and never prevents cross-class choices.
 
 ---
 
-# 5. Tournament UX
+# 7. Tournament UX contract
 
 ## Pre-tournament
 - mode introduction
 - 2 starter selection screens
-- then tournament bracket/run begins
+- tournament begins
 
-## Pre-match opponent preview
+## Opponent preview
 Show at minimum:
 - tournament stage
 - opponent name
 - opponent build summary
-- notable owned Duel skills and ranks
-- coarse AI style derived from build (`Áp sát`, `Tầm xa`, `Khống chế`, `Phòng thủ`, `Hỗn hợp`, etc.)
+- notable Duel skills/ranks
+- unlocked Hợp Đạo/Siêu Cấp/rare when relevant
+- coarse AI style
 - player's current build
 
 ## Combat HUD
-- player/opponent names
+- fighter names
 - HP + shield
 - round score
-- round timer
-- current tournament stage
-- clear `HUYẾT CHIẾN` / `TỬ CHIẾN` state when active
+- round time
+- tournament stage
+- clear HUYẾT CHIẾN/TỬ CHIẾN state
 
 ## Match result
-On win:
-- resolve/simulate the rest of the bracket stage
-- if not final: offer one build selection, then preview next opponent
-- if final: show Champion result
+Win:
+- resolve rest of bracket stage
+- if not final: one build reward then next preview
+- if final: Champion result
 
-On loss:
-- show final placement/stage reached
-- match wins
-- round record if available
+Loss:
+- final placement/stage
+- match/round result summary
 - final build
-- return/restart options
+- restart/menu options
 
 ---
 
-# 6. Initial Duel skill slice
+# 8. Remaining canonical checkpoints
 
-Do **not** attempt 140 entries before validating the core combat.
+Detailed acceptance criteria live in `V017_COMPLETION_PLAN.md`.
 
-Initial target: **16 existing base skill identities**, chosen to cover the major mechanics needed by the engine:
+From the current 80/80-base checkpoint:
 
-1. `rapid` — Nhanh Tay
-2. `power` — Cường Kích
-3. `vitality` — Sinh Lực
-4. `speed` — Thân Pháp
-5. `fire` — Hỏa Cầu Định Kỳ
-6. `knock` — Chấn Khí
-7. `orbit` — Phi Kiếm Hộ Thể
-8. `heal` — Hồi Linh
-9. `armor` — Hộ Giáp
-10. `crit` — Bạo Kích
-11. `lightning` — Lôi Kích
-12. `nova` — Linh Bạo
-13. `frost` — Hàn Khí
-14. `burn` — Thiêu Đốt
-15. `barrier` — Hộ Thể Chu Kỳ
-16. `phantomStep` — Ảnh Bộ
+## C1 — Hợp Đạo foundation
+- Duel synergy registry
+- requirement evaluator
+- automatic unlock
+- player/AI parity
+- first real mechanically tested synergy
 
-This slice exercises:
-- stats
-- melee attack modification
-- periodic ranged attacks
-- direct cast damage
-- area damage
-- knockback
-- aura/control
-- DOT
-- regen
-- shield
-- armor
-- dodge
-- movement
-- summon/orbit-style pressure
+## C2 — 28/28 Hợp Đạo
+Recommended audited batches: 8 → 16 → 22 → 28.
 
-After this foundation works, expand in small audited batches toward all 80 base skills, then 28 Hợp Đạo, 12 Siêu Cấp and 20 rare rules.
+## C3 — 12/12 Siêu Cấp
+- evolution requirement framework
+- Rank III + support rule
+- automatic conversion/unlock
+- truthful final-piece hints
+- all 12 adaptations
 
----
+## C4 — 20/20 rare rules
+- tournament rare offer framework
+- first 10
+- all 20
+- ordering/conflict tests
 
-# 7. Implementation checkpoints
+## C5 — Full integration + focused balance
+- complete 80 + 28 + 12 + 20 ecosystem
+- archetype/matchup/tournament simulations
+- no stalled matches or broken dominant mechanics
+- no hidden balancing bonuses
 
-## D0 — Plan/design lock
-- add this document
-- mark V0.17 active in `ROADMAP.md`
-- preserve V0.16 stable systems
-
-## D1 — Isolated Duel foundation
-- add Duel mode entry
-- side-view canvas/UI separate from Survival canvas loop
-- Duel arena data model
-- tournament model with 64 fighters
-- 2 starter selections + reroll
-- pre-match opponent preview
-- best-of-3 round state machine
-- no existing Survival/Endless behavior changes
-
-## D2 — Combat engine + renderer separation
-- semantic Duel combat state/events
-- vector prototype renderer
-- standard animation states/anchors
-- flat arena
-- melee basic attack
-- move/retreat/hold/dash AI
-- HP/shield/KO and round reset
-- 60s clock + Huyết Chiến + Tử Chiến
-
-## D3 — First 16 Duel skill adapters
-- Rank I/II/III
-- adapter values/descriptions visible in selection UI
-- build-derived preferred distance
-- projectile/area/DOT/aura/shield/heal/dodge interactions
-- AI weighted selection for supported skills
-
-## D4 — Tournament completion loop
-- simulate non-player matches
-- advance bracket correctly through 64/32/16/8/4/2
-- award one build choice after each non-final victory
-- player elimination flow
-- Champion flow
-- run summary
-
-## D5 — Prototype validation
-- syntax and smoke tests in CI
-- deterministic tournament-structure tests
-- Duel rank/selection/reroll tests
-- best-of-3 reset tests
-- timeout pressure tests
-- ensure Survival/Endless V0.16 CI remains green
-- browser validation on desktop and responsive layout
-
-## D6 — Skill expansion
-Small batches toward:
-- 40 base Duel skills
-- 60 base Duel skills
-- all 80 base Duel skills
-- 28 Hợp Đạo Duel adaptations
-- 12 Siêu Cấp Duel adaptations
-- 20 rare Duel adaptations
-
-Every port must preserve the skill's identity while documenting any Duel-specific numeric/mechanical difference.
-
-## D7 — Presentation expansion
-Only after the mode is mechanically solid:
-- stronger fighter animations
-- richer VFX
-- authored character art/sprites
-- additional arenas
-- more camera impact and hit feedback
-- optional future jump/air mechanics only if explicitly designed later
+## C6 — Final release validation
+- full V0.16 + V0.17 CI
+- exact Pages artifact/deploy
+- desktop/mobile hands-on validation
+- docs/runtime closure
+- `V0.17 DEV` → **V0.17**
+- mark **V0.17 COMPLETE / RELEASED**
 
 ---
 
-# 8. Non-regression rules
+# 9. Non-regression rules
 
-- V0.16 Survival and Vô Hạn remain available and mechanically unchanged unless a separate change is explicitly approved.
-- Do not reuse/modify Movement V0.8 for Duel. Duel has its own side-view AI controller.
-- Duel code should prefer new isolated modules over another chain of wrappers around the existing Survival `update()` / `damagePlayer()` stack.
+- V0.16 Survival/Vô Hạn stay mechanically stable unless a separate change is explicitly approved.
+- Do not modify Movement V0.8 for Duel.
+- Prefer isolated Duel modules over wrappers around Survival `update()` / `damagePlayer()`.
 - Player-facing Duel UI remains Vietnamese.
-- No hidden caps, weighting, cooldowns, timeout modifiers or tiebreak rules.
-- Duel-specific numbers must be present in adapter descriptions or this implementation contract.
-- Commit after each meaningful checkpoint and keep GitHub `main` as the canonical source.
+- No hidden caps, weighting, cooldowns, stack maxima, target limits, retry rules or timeout modifiers.
+- Duel-specific rules/numbers must be visible in adapter descriptions or the completion contract.
+- Player and AI follow equivalent tournament build rules.
+- Commit after each meaningful checkpoint and gate it in CI before starting the next content batch.
+- GitHub `main` remains canonical.
+
+---
+
+# 10. Post-V0.17 roadmap
+
+Only after V0.17 is `COMPLETE / RELEASED` should a later version plan the non-blocking presentation expansion:
+
+- stronger fighter animation/art
+- richer VFX/camera impact
+- sprite/skeletal renderer replacement
+- additional arenas
+- optional jump/air mechanics
+- new tournament variants
+- further content beyond the existing skill ecosystem
+
+These are **future features, not unfinished V0.17 work**.
