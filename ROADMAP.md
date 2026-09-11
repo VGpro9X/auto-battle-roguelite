@@ -3,23 +3,10 @@
 GitHub `main` is canonical.
 
 ## Current baseline
-- Released baseline: **V0.16 – Skill Expansion & Rare System V2**.
-- Stable Survival/Endless release: **V0.16**.
-- Active development roadmap: **V0.17 – Duel Arena / Đấu Trường 1v1**.
-- V0.16 content: **80 Kỹ Năng + 28 Hợp Đạo Kỹ + 12 Siêu Cấp + 20 rare = 140 Codex entries**.
-- Movement baseline: **V0.8 Strategic Movement AI**; do not rewrite for Duel.
+- Released baseline: **V0.17 – Duel Arena / Đấu Trường 1v1**.
+- Survival/Endless V0.16 systems remain supported inside V0.17.
+- Movement baseline: **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
 - Player-facing language: Vietnamese.
-
-Read before future V0.17 work:
-1. `README.md`
-2. `PROJECT_HANDOFF.md`
-3. `V017_DUEL_ARENA_PLAN.md`
-4. `V017_COMPLETION_PLAN.md` ← authoritative V0.17 Definition of Done
-5. `BALANCE_BASELINE_V016.md`
-6. `BALANCE_FIXED_BUILDS_V016.md`
-7. `V016_RELEASE_VALIDATION.md`
-8. `V016_SKILL_DESIGN.md`
-9. `V016_RARE_SYSTEM_V2.md`
 
 ---
 
@@ -27,214 +14,150 @@ Read before future V0.17 work:
 Responsive phone/tablet/desktop UI accepted on GitHub Pages.
 
 # V0.16 — COMPLETE / RELEASED
+- 80 base Kỹ Năng ✅
+- 28 Hợp Đạo Kỹ ✅
+- 12 Siêu Cấp ✅
+- 20 Rare rules ✅
+- 140 Codex entries ✅
+- post-release focused balance pass CLOSED with no gameplay-number change required ✅
 
-Released content:
-- Base Kỹ Năng: **80** ✅
-- Hợp Đạo Kỹ: **28** ✅
-- Siêu Cấp: **12** ✅
-- Rare rules: **20** ✅
-  - 10 Thần Kỹ
-  - 10 Thần Bí Kỹ
-- Codex: **140 entries** ✅
-
-V0.16 Survival/Endless remains the stable baseline while V0.17 is developed.
-Post-release V0.16 focused balance pass is **COMPLETE / CLOSED** with no gameplay-number change required.
-
----
-
-# V0.17 — DUEL ARENA / ĐẤU TRƯỜNG 1v1 — ACTIVE
+# V0.17 — DUEL ARENA / ĐẤU TRƯỜNG 1v1 — COMPLETE / RELEASED ✅
 
 Design contract: `V017_DUEL_ARENA_PLAN.md`.
 Completion contract: `V017_COMPLETION_PLAN.md`.
+Release evidence: `V017_RELEASE_VALIDATION.md`.
 
-## V0.17 scope lock
-
-**V0.17 = complete Đấu Trường mode + complete integration of the existing V0.16 skill ecosystem.**
-
-V0.17 may be marked `COMPLETE / RELEASED` only when all of the following are complete:
+## Released scope
 - 64-fighter tournament ✅
-- best-of-3 automatic Duel combat ✅
-- build-aware side-view AI ✅
-- starter/reward/reroll progression ✅
+- exact `64 → 32 → 16 → 8 → 4 → 2 → Champion` advancement ✅
+- Best-of-3 automatic Duel combat ✅
+- side-view build-aware AI ✅
+- separate Duel movement/combat; Survival Movement V0.8 untouched ✅
+- two unrestricted starter choices ✅
+- one reroll on every choice screen ✅
+- one reward after each non-final match victory ✅
+- opponent preview/scouting ✅
+- Duel Rank I/II/III, Rank III = TỐI ĐA ✅
 - **80 / 80 Kỹ Năng Duel** ✅
 - **28 / 28 Hợp Đạo Kỹ Duel** ✅
-- **12 / 12 Siêu Cấp Duel**
-- **20 / 20 rare Duel rules**
-- full-content integration/balance pass
-- full V0.16 + V0.17 CI
-- public Pages validation
-- desktop/mobile hands-on release validation
-- final runtime/docs changed from `V0.17 DEV` to **V0.17**
+- **12 / 12 Siêu Cấp Duel** ✅
+- **20 / 20 Rare Duel rules** ✅
+- full integration/focused balance gate ✅
+- full V0.16 + V0.17 CI ✅
+- rendered desktop/mobile browser validation ✅
+- public GitHub Pages deployment ✅
+- runtime/public label promoted from `V0.17 DEV` to **V0.17** ✅
 
-High-end art, extra arenas and jump/air combat are explicitly **post-V0.17** and do not block this release.
+## D0 — Plan/design lock — COMPLETE ✅
+- original V0.17 design contract
+- release Definition of Done
 
----
+## D1 — Isolated Duel foundation — COMPLETE ✅
+- Duel entry and separate UI/canvas
+- 64-fighter tournament state
+- two unrestricted starter choices
+- opponent preview
+- Best-of-3 state machine
 
-## Completed V0.17 foundation
+## D2 — Combat engine + replaceable renderer — COMPLETE ✅
+- isolated Duel combat loop
+- flat prototype arena
+- build-aware approach/hold/retreat/dash behavior
+- HP/shield/KO/round reset
+- 45s HUYẾT CHIẾN + 60s TỬ CHIẾN
+- semantic combat events / replaceable vector renderer
 
-### D0 — Plan/design lock — COMPLETE
-- original V0.17 design contract ✅
-- completion Definition of Done locked ✅
+## D3/D4 — Tournament gameplay loop — COMPLETE ✅
+- build-derived fighting distance/style
+- non-player bracket simulation
+- elimination/Champion flows
+- reward progression and reroll
+- scouting
 
-### D1 — Isolated Duel foundation — COMPLETE
-- Duel mode entry ✅
-- separate side-view canvas/UI ✅
-- 64-fighter tournament state ✅
-- 2 unrestricted starter selections + one reroll per selection ✅
-- opponent preview ✅
-- best-of-3 state machine ✅
+## D5 — Prototype automated/Pages validation — COMPLETE ✅
+- deterministic tournament/combat tests
+- V0.16 regression suite remains green
+- Pages deployment
 
-### D2 — Combat engine + replaceable renderer — COMPLETE
-- isolated Duel combat loop; Survival untouched ✅
-- flat prototype arena ✅
-- melee basic attack + move/retreat/hold/dash AI ✅
-- HP/shield/KO/round reset ✅
-- 45s HUYẾT CHIẾN + 60s TỬ CHIẾN ✅
-- semantic fighter action/anchor API ✅
-- replaceable vector renderer ✅
+## D6 — Full skill ecosystem integration — COMPLETE ✅
 
-### D3/D4 — Tournament gameplay loop — COMPLETE
-- build-derived fighting distance/style ✅
-- non-player match simulation ✅
-- exact `64 → 32 → 16 → 8 → 4 → 2 → Champion` advancement ✅
-- one build reward after each non-final victory ✅
-- player elimination and Champion flows ✅
-- pre-match scouting ✅
+### Base Kỹ Năng — 80 / 80 COMPLETE ✅
+Frozen expansion checkpoints: 40 / 50 / 60 / 70 / 80.
 
-### D5 — Prototype automated/Pages validation — COMPLETE
-- deterministic tournament/combat tests ✅
-- all V0.16 CI remains green ✅
-- GitHub Pages Duel artifact deploys ✅
+### C1/C2 — Hợp Đạo — 28 / 28 COMPLETE ✅
+- dedicated Duel registry/evaluator
+- automatic unlock; no reward slot consumed
+- player/AI parity
+- C2A `0→8` ✅
+- C2B `8→16` ✅
+- C2C `16→22` ✅
+- C2D `22→28` ✅
+- all-28 mechanics gate ✅
 
-Hands-on final release sign-off remains part of C6 because content integration is not finished yet.
-
----
-
-# D6 — Full skill ecosystem integration — ACTIVE
-
-Current status:
-- Base Kỹ Năng Duel: **80 / 80 COMPLETE** ✅
-- Hợp Đạo Kỹ Duel: **28 / 28 COMPLETE** ✅
-- Siêu Cấp Duel: **0 / 12**
-- Rare Duel: **0 / 20**
-
-Base-skill expansion is CLOSED except for bugs/regressions. Frozen CI checkpoints exist at 40/50/60/70/80.
-
-## C1 — Hợp Đạo foundation — COMPLETE ✅
-- dedicated Duel synergy catalog/registry for all 28 identities ✅
-- Duel requirement evaluator from current build ranks ✅
-- automatic unlock without consuming reward choices ✅
-- player/AI parity ✅
-- round state receives unlocked synergies ✅
-- semantic `synergy_unlock` events ✅
-- first real end-to-end Hợp Đạo (`soulFurnace` / Lò Luyện Hồn) ✅
-- dedicated C1 CI + Pages validation ✅
-
-## C2 — 28 / 28 Hợp Đạo Kỹ — COMPLETE ✅
-Audited checkpoints:
-- C2A: `0 → 8` ✅
-- C2B: `8 → 16` ✅
-- C2C: `16 → 22` ✅
-- C2D: `22 → 28` ✅
-
-All 28 Hợp Đạo have explicit Duel descriptions and real mechanics. Hợp Đạo unlock automatically from build requirements and never consume a reward selection. The all-28 gate runs together with all V0.16 tests, all 80 base Duel tests and Pages deployment. ✅
-
-## C3 — 12 / 12 Siêu Cấp — NEXT
-- evolution requirement foundation
+### C3 — Siêu Cấp — 12 / 12 COMPLETE ✅
 - base skill must be Duel Rank III / TỐI ĐA
-- support/tag requirement must be satisfied
+- support/tag requirements
 - automatic unlock; no reward slot consumed
 - exact-final-piece hint truth
-- batches to `6 / 12` then `12 / 12`
+- C3A `0→6` ✅
+- C3B `6→12` ✅
+- all-12 CI gate ✅
 
-**Exit:** all 12 mechanics + unlock/hint CI.
+### C4 — Rare — 20 / 20 COMPLETE ✅
+Tournament chance after wins 1/2/3/4/5:
+`0% / 3% / 6% / 10% / 15%`.
 
-## C4 — 20 / 20 Rare rules
-Tournament rare curve:
-- after first win: `0%`
-- after second win: `3%`
-- after third win: `6%`
-- after fourth win: `10%`
-- after fifth win / before final: `15%`
+Locked rules:
+- no starter Rare
+- at most one Rare in a reward roll
+- unique/level-less; no duplicate ownership
+- reroll rerolls the Rare roll
+- AI and player use the same stage chance/ownership rules
+- deterministic defensive ordering is tested
+- all-20 mechanics/acquisition gate ✅
 
-Rules:
-- no starter rare
-- at most one rare card in a reward roll
-- unique/level-less; no duplicates
-- reroll rerolls the rare roll
-- AI uses same stage-based chance/ownership rules
+### C5 — Full integration + focused balance — COMPLETE ✅
+Validated together:
+`80 base + 28 Hợp Đạo + 12 Siêu Cấp + 20 Rare`.
 
-Recommended checkpoints:
-- rare framework
-- `10 / 20`
-- `20 / 20`
-- final rare ordering/conflict gate
+Release evidence includes:
+- melee/ranged/elemental/defense matchup termination
+- defense-v-defense reaches TỬ CHIẾN and still terminates
+- 24-seed mirrored hybrid side sanity
+- all 12 Siêu Cấp attainable within the short tournament selection budget
+- Rare Monte Carlo close to locked 3/6/10/15% curve
+- complete 64-player bracket simulation
 
-**Exit:** all 20 mechanics + deterministic ordering/acquisition CI.
+No release-blocking stalled match or cleanly isolated numeric outlier was found; no arbitrary gameplay-number patch was selected.
 
-## C5 — Full integration + focused balance
-Validate the complete system together:
-
-`80 base + 28 Hợp Đạo + 12 Siêu Cấp + 20 rare`
-
-Required coverage:
-- melee/ranged/hybrid
-- defense/control/summon
-- elemental/DOT/projectile/area/chain
-- late-build AI spacing
-- Hợp Đạo/Siêu Cấp attainability in the short tournament
-- rare frequency by stage
-- revive/fatal/shield/heal ordering
-- defense-vs-defense TỬ CHIẾN termination
-- offscreen bracket simulation sanity
-
-Goal is release stability and removal of broken/dead/dominant outliers, not perfect esport-level balance.
-
-**Exit:** no release blocker, no stalled match, no known broken dominant interaction.
-
-## C6 — Final release validation and closure
-
-Automated:
-- all V0.16 CI green
-- all V0.17 skill-system CI green
-- deterministic 64-player tournaments complete
-- elimination + Champion paths work
-- exact Pages artifact contains all Duel modules
-- public deploy succeeds
-
-Hands-on:
-- desktop tournament flow
-- mobile/responsive tournament flow
-- readable/tappable skill choices
-- readable preview/build/HUD/result UI
-- no major visual-mechanical desync
-- no blocking navigation bug
-
-Closure:
-- fix release blockers
-- update `README.md`, `ROADMAP.md`, `PROJECT_HANDOFF.md`
-- change `V0.17 DEV` → **V0.17**
-- mark **V0.17 COMPLETE / RELEASED**
-- freeze V0.17 baseline
+### C6 — Final release validation and closure — COMPLETE ✅
+- full V0.16 CI green
+- full V0.17 skill-system CI green
+- rendered Chrome tournament flow on desktop `1440×900` ✅
+- rendered Chrome tournament flow on mobile `390×844` ✅
+- skill choices, preview, combat canvas/HUD/build state verified in browser ✅
+- exact Pages artifact contains all Duel modules ✅
+- public deploy succeeds ✅
+- README / ROADMAP / PROJECT_HANDOFF updated ✅
+- runtime/static label = **V0.17** ✅
 
 ---
 
 # After V0.17 — NOT RELEASE BLOCKERS
-
-Future roadmap may include:
+Potential future roadmap:
 - higher-quality fighter art and animation
 - sprite/skeletal renderer replacement
 - richer VFX/camera impact
-- more arenas / hazards
-- jump and aerial combat
+- more arenas/hazards
+- jump/aerial combat
 - new tournament variants
 - online/global systems
-- new content beyond the V0.16 skill ecosystem
+- new content beyond the V0.16 ecosystem
 
-These are new-version goals, not unfinished V0.17 tasks.
+These are future-version goals, not unfinished V0.17 work.
 
 ---
 
 # PROJECT STATUS
 
-**V0.17 Duel Arena foundation is complete and deployed. 80/80 base Kỹ Năng and 28/28 Hợp Đạo are complete with CI/Pages green. Next locked checkpoint: C3 Siêu Cấp 0→6→12.**
+**V0.17 COMPLETE / RELEASED. No unfinished V0.17 checkpoint remains. Wait for the user's next roadmap before starting new feature work or balance tuning.**
