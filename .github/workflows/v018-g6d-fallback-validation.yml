@@ -1,0 +1,37 @@
+name: V0.18 G6D fallback validation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v018-g6d-fallback-validation
+  cancel-in-progress: true
+
+jobs:
+  validate-fallback:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: V0.18 G6D forced-vector and partial-asset fallback browser audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4176 >/tmp/v018-g6d-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then
+            echo "Chrome/Chromium not found on runner"
+            exit 1
+          fi
+          "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1280,800 --virtual-time-budget=15000 --dump-dom "http://127.0.0.1:4176/tests/v018-g6d-fallback-browser-driver.html" >/tmp/v018-g6d.html
+          grep -q 'V018_G6D_FALLBACK_PASS' /tmp/v018-g6d.html || { cat /tmp/v018-g6d.html; exit 1; }
+          grep 'V018_G6D_FALLBACK_PASS' /tmp/v018-g6d.html
