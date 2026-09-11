@@ -17,11 +17,14 @@
     await new Promise((resolve,reject)=>{frame.addEventListener('load',resolve,{once:true});setTimeout(()=>reject(new Error('iframe load timeout')),6000);});
     const w=frame.contentWindow,d=frame.contentDocument,expected=new URLSearchParams(location.search).get('expect')||'desktop';
     await waitFor(()=>d.getElementById('duelModeCard'),'duel mode card');
-    await waitFor(()=>w.getComputedStyle(d.getElementById('duelModeCard')).display!=='none','duel mode style');
     if(expected==='mobile')check(w.innerWidth<=500,`mobile iframe width=${w.innerWidth}`);else check(w.innerWidth>=900,`desktop iframe width=${w.innerWidth}`);
     const vw=w.innerWidth,vh=w.innerHeight;
 
     noHorizontalOverflow(d,vw,'main menu');
+    const play=d.querySelector('#mainMenu [data-screen="modeMenu"]');
+    rectInside(play,vw,vh,'main CHƠI button');clickableAtCenter(d,play,'main CHƠI button');play.click();
+    await waitFor(()=>visible(d.getElementById('modeMenu')),'mode menu');
+    noHorizontalOverflow(d,vw,'mode menu');
     const modeCard=d.getElementById('duelModeCard');rectInside(modeCard,vw,vh,'Duel mode card');clickableAtCenter(d,modeCard,'Duel mode card');
     modeCard.click();
     await waitFor(()=>visible(d.getElementById('duelLobbyMenu')),'Duel lobby');
