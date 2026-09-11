@@ -186,6 +186,9 @@ jobs:
       - name: V0.18 G5D outcome and result presentation smoke test
         run: node tests/v018-g5d-outcome-presentation-smoke.js
 
+      - name: V0.18 G6A visual quality policy smoke test
+        run: node tests/v018-g6a-quality-policy-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
