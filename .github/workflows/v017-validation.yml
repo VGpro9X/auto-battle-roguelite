@@ -1,0 +1,31 @@
+name: V0.17 validation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v017-validation
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Syntax-check V0.17 JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in js/duel-*.js tests/v017-*.js; do
+            node --check "$file"
+          done
+
+      - name: V0.17 C4 all-20 Duel rare mechanics/acquisition smoke test
+        run: node tests/v017-duel-c4-all20-rare-smoke.js
