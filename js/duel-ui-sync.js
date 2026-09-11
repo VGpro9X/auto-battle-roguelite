@@ -10,7 +10,7 @@
       }
     }
     const eyebrow=document.querySelector("#duelLobbyMenu .screenHeader .eyebrow");
-    if(eyebrow)eyebrow.textContent="V0.17 · ĐẤU TRƯỜNG 1V1";
+    if(eyebrow)eyebrow.textContent="V0.18 · ĐẤU TRƯỜNG 1V1";
   }
   syncDuelReleaseUi();
   window.syncDuelPrototypeCount=syncDuelReleaseUi;
