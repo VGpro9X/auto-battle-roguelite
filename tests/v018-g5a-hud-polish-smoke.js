@@ -6,6 +6,7 @@ const root=path.resolve(__dirname,"..");
 const read=file=>fs.readFileSync(path.join(root,file),"utf8");
 const bridge=read("css/v017-duel.css");
 const css=read("css/v018-graphics.css");
+const runtimeCss=`${css}\n${bridge}`;
 const ui=read("js/duel-ui.js");
 
 assert.match(bridge,/^@import url\("\.\/v018-graphics\.css\?v=018-g5a"\);/,'V0.18 G5A stylesheet must load before legacy Duel rules');
@@ -31,7 +32,8 @@ assert.match(css,/@media \(max-width:760px\)/,'tablet/mobile HUD breakpoint miss
 assert.match(css,/@media \(max-width:480px\)/,'phone HUD breakpoint missing');
 assert.match(css,/@media \(prefers-reduced-motion:reduce\)/,'reduced-motion presentation path missing');
 assert.match(css,/\.duelCombatRoot::after[\s\S]*pointer-events:none/,'presentation vignette must not block combat controls');
-assert.match(css,/\.duelAbortButton[\s\S]*pointer-events:auto/,'abort control must remain interactive');
+assert.match(runtimeCss,/\.duelAbortButton\{[^}]*pointer-events:auto/,'abort control must remain interactive in the combined runtime CSS contract');
+assert.doesNotMatch(css,/\.duelAbortButton\{[^}]*pointer-events:none/,'G5A must not disable the abort control');
 assert.match(css,/\.duelHealthBar em[\s\S]*repeating-linear-gradient/,'shield must remain visually distinct from HP');
 assert.match(css,/\.duelFighterHud\.left[\s\S]*duel-player|\.duelFighterHud\.left[\s\S]*96,165,250/,'player side identity styling missing');
 assert.match(css,/\.duelFighterHud\.right[\s\S]*251,113,133/,'opponent side identity styling missing');
