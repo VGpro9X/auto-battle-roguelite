@@ -6,20 +6,20 @@ GitHub `main` is canonical.
 - Released baseline: **V0.16 – Skill Expansion & Rare System V2**.
 - Stable Survival/Endless release: **V0.16**.
 - Active development roadmap: **V0.17 – Duel Arena / Đấu Trường 1v1**.
-- Current V0.16 content: **80 Kỹ Năng + 28 Hợp Đạo Kỹ + 12 Siêu Cấp + 20 rare = 140 Codex entries**.
-- Movement baseline: **V0.8 Strategic Movement AI**; do not rewrite for Duel. Duel receives a separate side-view AI controller.
+- V0.16 content: **80 Kỹ Năng + 28 Hợp Đạo Kỹ + 12 Siêu Cấp + 20 rare = 140 Codex entries**.
+- Movement baseline: **V0.8 Strategic Movement AI**; do not rewrite for Duel.
 - Player-facing language: Vietnamese.
-- Mechanical-truth, no-hidden-cap and final-piece-only Hợp Đạo/Siêu Cấp hint rules remain locked for existing modes.
 
-Read before future work:
+Read before future V0.17 work:
 1. `README.md`
 2. `PROJECT_HANDOFF.md`
 3. `V017_DUEL_ARENA_PLAN.md`
-4. `BALANCE_BASELINE_V016.md`
-5. `BALANCE_FIXED_BUILDS_V016.md`
-6. `V016_RELEASE_VALIDATION.md`
-7. `V016_SKILL_DESIGN.md`
-8. `V016_RARE_SYSTEM_V2.md`
+4. `V017_COMPLETION_PLAN.md` ← authoritative V0.17 Definition of Done
+5. `BALANCE_BASELINE_V016.md`
+6. `BALANCE_FIXED_BUILDS_V016.md`
+7. `V016_RELEASE_VALIDATION.md`
+8. `V016_SKILL_DESIGN.md`
+9. `V016_RARE_SYSTEM_V2.md`
 
 ---
 
@@ -27,282 +27,220 @@ Read before future work:
 Responsive phone/tablet/desktop UI accepted on GitHub Pages.
 
 # V0.16 — COMPLETE / RELEASED
+
 Released content:
-- Base Kỹ Năng: **64 → 80** ✅
-- Hợp Đạo Kỹ: **20 → 28** ✅
-- Siêu Cấp: **8 → 12** ✅
-- Rare rules: **4 → 20** ✅
+- Base Kỹ Năng: **80** ✅
+- Hợp Đạo Kỹ: **28** ✅
+- Siêu Cấp: **12** ✅
+- Rare rules: **20** ✅
   - 10 Thần Kỹ
   - 10 Thần Bí Kỹ
 - Codex: **140 entries** ✅
 
-Major V0.16 systems completed:
-- 16 new base Kỹ Năng
-- 8 new Hợp Đạo Kỹ
-- 4 new Siêu Cấp
-- Rare System V2 with multiple different rares per run
-- rare offer chance scaling from Lv8, capped at 12%
-- one `XOAY LẠI` per choice screen
-- Vô Hạn starts with one uniformly random rare from the full 20-rule pool
-- cross-platform icon compatibility
-- dedicated Codex/live feedback for all 20 rare rules
-- layered rare-mechanic ordering CI
-- exact Pages-artifact Chromium validation
-- real-device user sign-off
-
 V0.16 Survival/Endless remains the stable baseline while V0.17 is developed.
 
----
-
-# Post-release V0.16 focused balance pass — COMPLETE / CLOSED
-
-## B1.1 Environment/pressure baseline — COMPLETE
-Files:
-- `BALANCE_BASELINE_V016.md`
-- `tests/balance-baseline-v016.js`
-
-Released pressure anchors are frozen in CI. No gameplay value was changed.
-
-Key structural facts:
-- timed modes share the same normalized spawn-density curve; mode pressure changes HP/damage
-- expected timed-run spawns: ~662 / 1325 / 1987 / 2649 for 5/10/15/20 minutes
-- timed end pressure: ~361 nominal spawns/min, 20% elite chance, 0.27s spawn cooldown
-- Endless reaches its 0.20s spawn cooldown and 72% extra-spawn caps around 20 minutes; HP/damage continue increasing afterward
-
-## B1.2 Fixed-build scenarios — COMPLETE
-File: `BALANCE_FIXED_BUILDS_V016.md`.
-
-Exact final V0.16 Pages artifact was exercised with deterministic offense, defense, summon/control and rare-heavy endpoint builds at 5 and 10 minutes.
-
-Main 10-minute observations:
-- offense: ~120.3 kills/min, ~96.3% observed clear, 3/3 complete
-- summon/control: ~114.0 kills/min, ~94.0% observed clear, high output but fragile late
-- rare-heavy defensive hybrid: ~79.7 kills/min, ~64.1% observed clear, 3/3 complete with strong shield survival
-- pure defense: ~11.8 kills/min and ~10.8% observed clear; analysis reaches the 901-living-enemy measurement safety threshold while the player remains alive
-
-These deliberately extreme fixed-at-time-0 builds show clear archetype trade-offs but do **not** isolate one numeric value that justifies a safe nerf/buff.
-
-## B2 Targeted tuning — CLOSED, NO CHANGE
-No gameplay number was changed.
-
-## B3 Post-tuning validation — NOT REQUIRED
-No B2 gameplay change exists to compare before/after.
+Post-release V0.16 focused balance pass is **COMPLETE / CLOSED** with no gameplay-number change required.
 
 ---
 
 # V0.17 — DUEL ARENA / ĐẤU TRƯỜNG 1v1 — ACTIVE
 
-Full implementation contract: `V017_DUEL_ARENA_PLAN.md`.
+Design contract: `V017_DUEL_ARENA_PLAN.md`.
 
-Locked core direction:
-- 64-fighter single-elimination tournament
-- `64 → 32 → 16 → 8 → 4 → 2 → Champion`
-- side-view combat with a separate Duel engine and renderer
-- player fighter remains fully automatic
-- best-of-3 matchups
-- no jump in the first version
-- build-driven close/ranged/hybrid AI behavior
-- two unrestricted starter skill selections
-- one skill reward after each non-final matchup victory
-- Duel skills use Rank I/II/III instead of Survival levels
-- one flat prototype arena, architecture ready for more arenas later
-- prototype vector/silhouette graphics must be replaceable by future sprite/skeletal rendering without changing combat logic
-- V0.16 Survival/Endless mechanics are not to be rewritten for this mode
+Completion contract: `V017_COMPLETION_PLAN.md`.
 
-## D0 Plan/design lock — COMPLETE
-- `V017_DUEL_ARENA_PLAN.md` created ✅
-- V0.17 marked active in roadmap ✅
+## V0.17 scope lock
 
-## D1 Isolated Duel foundation — COMPLETE
+**V0.17 = complete Đấu Trường mode + complete integration of the existing V0.16 skill ecosystem.**
+
+V0.17 may be marked `COMPLETE / RELEASED` only when all of the following are complete:
+
+- 64-fighter tournament ✅/required
+- best-of-3 automatic Duel combat ✅/required
+- build-aware side-view AI ✅/required
+- starter/reward/reroll progression ✅/required
+- **80 / 80 Kỹ Năng Duel**
+- **28 / 28 Hợp Đạo Kỹ Duel**
+- **12 / 12 Siêu Cấp Duel**
+- **20 / 20 rare Duel rules**
+- full-content integration/balance pass
+- full V0.16 + V0.17 CI
+- public Pages validation
+- desktop/mobile hands-on release validation
+- final runtime/docs changed from `V0.17 DEV` to **V0.17**
+
+High-end art, extra arenas and jump/air combat are explicitly **post-V0.17** and do not block this release.
+
+---
+
+## Completed V0.17 foundation
+
+### D0 — Plan/design lock — COMPLETE
+- original V0.17 design contract ✅
+- completion Definition of Done locked ✅
+
+### D1 — Isolated Duel foundation — COMPLETE
 - Duel mode entry ✅
 - separate side-view canvas/UI ✅
 - 64-fighter tournament state ✅
 - 2 unrestricted starter selections + one reroll per selection ✅
 - opponent preview ✅
-- best-of-3 round state machine ✅
+- best-of-3 state machine ✅
 
-## D2 Combat engine + replaceable renderer — COMPLETE
-- isolated Duel combat loop; Survival movement/combat untouched ✅
-- flat side-view arena ✅
+### D2 — Combat engine + replaceable renderer — COMPLETE
+- isolated Duel combat loop; Survival untouched ✅
+- flat prototype arena ✅
 - melee basic attack + move/retreat/hold/dash AI ✅
 - HP/shield/KO/round reset ✅
-- 45s HUYẾT CHIẾN + 60s TỬ CHIẾN rules ✅
-- semantic fighter action states + visual anchor API ✅
-- replaceable vector prototype renderer ✅
+- 45s HUYẾT CHIẾN + 60s TỬ CHIẾN ✅
+- semantic fighter action/anchor API ✅
+- replaceable vector renderer ✅
 
-## D3 First Duel skill adapters — COMPLETE
-- first 16 base skill identities ported with Rank I/II/III ✅
-- public Duel-specific descriptions/numbers ✅
-- build-derived preferred distance and AI style ✅
-
-## D4 Complete tournament loop — COMPLETE
+### D3/D4 — Tournament gameplay loop — COMPLETE
+- build-derived fighting distance/style ✅
 - non-player match simulation ✅
-- exact 64→32→16→8→4→2→1 bracket advancement ✅
+- exact `64 → 32 → 16 → 8 → 4 → 2 → Champion` advancement ✅
 - one build reward after each non-final victory ✅
-- player elimination + Champion result flows ✅
-- pre-match build scouting ✅
+- player elimination and Champion flows ✅
+- pre-match scouting ✅
 
-## D5 Prototype validation — AUTOMATED/PAGES COMPLETE; HANDS-ON SIGN-OFF PENDING
-- JavaScript syntax gate ✅
-- deterministic 64-player tournament smoke test ✅
-- Rank III / selection / mechanical-truth invariants ✅
-- real deterministic best-of-3 engine termination ✅
+### D5 — Prototype automated/Pages validation — COMPLETE
+- deterministic tournament/combat tests ✅
 - all V0.16 CI remains green ✅
-- GitHub Pages artifact includes Duel modules and deploys successfully ✅
-- desktop/mobile hands-on visual/play feel sign-off: pending
+- GitHub Pages Duel artifact deploys ✅
 
-## D6 Skill expansion — ACTIVE
-Base Kỹ Năng Duel coverage: **80 / 80 COMPLETE** ✅
-Hợp Đạo Kỹ Duel coverage: **0 / 28**.
-Siêu Cấp Duel coverage: **0 / 12**.
-Rare Duel coverage: **0 / 20**.
+Hands-on final release sign-off remains part of C6 because content integration is not finished yet.
 
-Batch D6A added:
-- Đoạt Mệnh (`execution`)
-- Cuồng Huyết (`berserk`)
-- Pháo Thủy Tinh (`glassCannon`)
-- Phản Chấn (`retaliate`)
-- Gai Máu (`thorns`)
-- Tuyệt Lộ (`lastStand`)
-- Tử Ấn (`deathMark`)
-- Độc Tố (`poison`)
+---
 
-Batch D6B added:
-- Ảnh Xạ (`echoShot`)
-- Cận Sát (`pointBlank`)
-- Ngũ Hành (`elementalMastery`)
-- Thuẫn Bạo (`shieldPulse`)
-- Huyết Tế (`sacrifice`)
-- Hắc Vực (`blackHole`)
-- Thiên Vận (`luckyStar`)
-- Hồi Mệnh (`secondWind`)
+# D6 — Full skill ecosystem integration — ACTIVE
 
-Batch D6C added:
-- Dư Ảnh (`afterimage`)
-- Địa Lôi Phù (`runeMine`)
-- Tinh Vẫn (`meteorSeal`)
-- Tĩnh Tâm (`focusMind`)
-- Thất Tinh Kích (`sevenStarStrike`)
-- Lôi Trường (`staticField`)
-- Phá Giáp (`armorBreak`)
-- Huyết Chạm (`vampiricTouch`)
+Current status:
 
-Batch D6D added:
-- Tâm Nhãn (`precision`)
-- Săn Cự Thú (`giantSlayer`)
-- Quả Cầu Hỗn Mang (`chaosOrb`)
-- Linh Hỏa (`fireWisp`)
-- Lôi Linh (`stormTotem`)
-- Bộ Pháp Chấn (`strideShock`)
-- Hồi Phong Nhận (`returnBlade`)
-- Hàn Kính (`frostMirror`)
-- Thời Vực (`timeField`)
-- Huyết Thuẫn (`bloodShield`)
+- Base Kỹ Năng Duel: **80 / 80 COMPLETE** ✅
+- Hợp Đạo Kỹ Duel: **0 / 28**
+- Siêu Cấp Duel: **0 / 12**
+- Rare Duel: **0 / 20**
 
-Batch D6E added:
-- Quá Tải Thời Gian (`overclock`)
-- Ngự Linh (`summonMastery`)
-- Trói Hồn (`soulBind`)
-- Linh Châu (`spiritPearl`)
-- Hàn Thấu (`frostbite`)
-- Băng Toái (`shatter`)
-- Độc Dẫn (`conductiveVenom`)
-- Hỏa Táng (`combustion`)
-- Dội Thời Gian (`timeEcho`)
-- Tham Lam (`greed`)
+Base-skill expansion is CLOSED except for bugs/regressions. Frozen CI checkpoints exist at 40/50/60/70/80.
 
-Batch D6F added:
-- Song Tiễn (`multishot`)
-- Xuyên Phá (`pierce`)
-- Nảy Đạn (`ricochet`)
-- Đạn Nổ (`explosive`)
-- Khuếch Vực (`areaMastery`)
-- Lưu Quang (`velocity`)
-- Liên Kết (`chainMastery`)
-- Huyết Liên (`bloodLink`)
-- Hộ Pháp Mộc Nhân (`guardianIdol`)
-- Hồn Đăng (`soulLantern`)
+## C1 — Hợp Đạo foundation — NEXT
+- dedicated Duel synergy registry
+- Duel requirement evaluator
+- automatic unlock after build changes
+- player/AI parity
+- round state receives unlocked synergies
+- first real end-to-end tested Hợp Đạo
 
-Batch D6G added:
-- Linh Hấp (`magnet`)
-- Huyết Khí (`blood`)
-- Ngộ Tính (`wisdom`)
-- Thực Hồn (`soulHarvest`)
-- Thi Bạo (`corpseBurst`)
-- Linh Triều (`xpStorm`)
-- Ấn Lan (`markSpread`)
-- Linh Dưỡng (`xpHeal`)
-- Phá Cảnh (`levelBurst`)
-- Thưởng Săn (`bountyMark`)
+**Exit:** synergy framework stable.
 
-D6C validation/fixes:
-- 40 adapters are locked in the original Duel smoke test ✅
-- Dư Ảnh projectiles originate from the stored clone position rather than the fighter's later position ✅
-- Ngũ Hành recognizes generic `elemental` metadata so later elemental Duel skills do not need a hard-coded source whitelist ✅
-- delayed Tinh Vẫn, armed Địa Lôi, Tĩnh Tâm activation/break, Thất Tinh Kích counter, Lôi Trường ticks, Phá Giáp stacks and Huyết Chạm healing are mechanically tested ✅
+## C2 — 28 / 28 Hợp Đạo Kỹ
+Recommended audited batches:
+- C2A: `0 → 8`
+- C2B: `8 → 16`
+- C2C: `16 → 22`
+- C2D: `22 → 28`
 
-D6D validation/fixes:
-- 50 adapters are locked in a separate `v017-duel-d6d-smoke.js` gate ✅
-- Tâm Nhãn changes crit damage without silently changing crit chance ✅
-- Săn Cự Thú is deliberately reinterpreted for 1v1 as an anti-higher-max-HP rule ✅
-- Linh Hỏa/Lôi Linh expose their 0.5s out-of-range retry rule ✅
-- Bộ Pháp Chấn counts real movement and preserves excess distance ✅
-- Hồi Phong Nhận uses an explicit 24px collision radius and independent outbound/return hit caps, avoiding frame-step misses ✅
-- Hàn Kính first waits its visible cooldown and restarts cooldown only after consumption ✅
-- Thời Vực accelerates other skill timers only; basic attack/dash remain unchanged ✅
-- Huyết Thuẫn is deliberately converted from a kill trigger to a visible round-start shield because a single-opponent Duel round has no normal kill economy ✅
-- all V0.16 CI, the frozen 40-skill checkpoint and the 50-skill D6D gate pass together ✅
-- exact 50-skill snapshot deploys successfully to GitHub Pages ✅
+Every Duel reinterpretation must be explicit in its description. Hợp Đạo never consumes a reward selection.
 
-D6E validation:
-- 60 adapters are locked in a separate `v017-duel-d6e-smoke.js` gate ✅
-- Quá Tải Thời Gian reduces Duel max HP while accelerating automatic skill timers without silently accelerating basic attacks ✅
-- Ngự Linh only amplifies damage explicitly tagged as summon ✅
-- Trói Hồn range/damage/stagger, Linh Châu real-heal charging, Hàn Thấu frost-radius condition and Băng Toái hit counter are mechanically tested ✅
-- Độc Dẫn and Hỏa Táng require the owner's active poison/burn state rather than any generic enemy status ✅
-- Dội Thời Gian is tested against an actual automatic cooldown restart and does not rely on a hidden duplicate-cast shortcut ✅
-- Tham Lam exposes both its Duel damage bonus and opponent-HP risk from round start ✅
-- all V0.16 CI plus 40/50/60 Duel gates pass together and the exact 60-skill snapshot deploys successfully to GitHub Pages ✅
+**Exit:** all 28 mechanics + all-28 CI gate.
 
-D6F validation:
-- 70 adapters are locked in a separate `v017-duel-d6f-smoke.js` gate ✅
-- generic Duel projectile metadata now supports projectile speed/lifetime modification and projectile-only armor penetration ✅
-- Song Tiễn, Xuyên Phá, Nảy Đạn and Đạn Nổ are mechanically tested as real projectile interactions rather than cosmetic adapters ✅
-- Khuếch Vực and Liên Kết consume explicit Area/Chain metadata; Lôi Kích and Độc Dẫn expose Chain truthfully ✅
-- Huyết Liên converts the two-enemy Survival link into a visible 1v1 HP-loss retaliation window without recursion ✅
-- Hộ Pháp Mộc Nhân absorbs post-armor damage before fighter shield/HP and does not attack ✅
-- Hồn Đăng converts kill charge into real damage-dealt charge, preserves overflow and can interact with Summon/Area modifiers ✅
-- all V0.16 CI plus 40/50/60/70 Duel gates pass together and the exact 70-skill snapshot deploys successfully to GitHub Pages ✅
+## C3 — 12 / 12 Siêu Cấp
+- evolution requirement foundation
+- base skill must be Duel Rank III / TỐI ĐA
+- support/tag requirement must be satisfied
+- automatic unlock; no reward slot consumed
+- exact-final-piece hint truth
+- batches to `6 / 12` then `12 / 12`
 
-D6G validation:
-- all **80/80** base Kỹ Năng are locked by `v017-duel-d6g-smoke.js` ✅
-- Linh Hấp performs real positional pull; Huyết Khí uses actual damage charge and real healing; Ngộ Tính accelerates skill timers without silently accelerating basic attacks ✅
-- Thực Hồn uses visible per-round damage thresholds and a visible stack cap; Thi Bạo triggers only once per listed HP threshold and cannot cascade from its own explosion ✅
-- Linh Triều converts XP charge into real movement-distance charge with overflow preserved ✅
-- Ấn Lan extends each newly-created owned Tử Ấn exactly once and never creates a hidden standalone mark ✅
-- Linh Dưỡng, Phá Cảnh and Thưởng Săn have explicit Duel-only periodic/round/bounty rules with no fake XP or kill economy ✅
-- Dội Thời Gian recognizes the final automatic timers (Linh Hấp, Linh Dưỡng, Thưởng Săn) ✅
-- all V0.16 CI plus 40/50/60/70/**80** Duel gates pass together and the exact 80-skill snapshot deploys successfully to GitHub Pages ✅
+**Exit:** all 12 mechanics + unlock/hint CI.
 
-Architecture notes:
-- Duel has a dedicated **skill behavior registry/hook layer** inside `duel-engine.js`.
-- New skill batches register mechanics without wrapping the Duel loop or touching Survival functions.
-- D6B extends the registry with a fatal-damage hook for revive/fatal interception and a projectile helper for modular skill behaviors.
-- D6F extends the engine with generic projectile metadata, a projectile-modifier hook and per-hit target-armor modifier; these are Duel-only primitives.
-- Prototype skill count in lobby is synchronized from the actual Duel registry rather than hard-coded.
-- Base-skill checkpoints remain layered and frozen at 40/50/60/70/80.
+## C4 — 20 / 20 Rare rules
+Tournament rare curve:
+- after first win: `0%`
+- after second win: `3%`
+- after third win: `6%`
+- after fourth win: `10%`
+- after fifth win / before final: `15%`
 
-Next D6 targets:
-- build Duel Hợp Đạo unlock/runtime foundation
-- adapt all 28 Hợp Đạo Kỹ
-- then 12 Siêu Cấp and 20 rare Duel adaptations
+Rules:
+- no starter rare
+- at most one rare card in a reward roll
+- unique/level-less; no duplicates
+- reroll rerolls the rare roll
+- AI uses same stage-based chance/ownership rules
 
-## D7 Presentation/arena expansion — LATER
-- stronger fighter animation/art
-- richer skill VFX
-- additional arenas
-- camera/hit-feedback polish
-- optional future air/jump mechanics only after explicit design
+Recommended checkpoints:
+- rare framework
+- `10 / 20`
+- `20 / 20`
+- final rare ordering/conflict gate
+
+**Exit:** all 20 mechanics + deterministic ordering/acquisition CI.
+
+## C5 — Full integration + focused balance
+Validate the complete system together:
+
+`80 base + 28 Hợp Đạo + 12 Siêu Cấp + 20 rare`
+
+Required coverage:
+- melee/ranged/hybrid
+- defense/control/summon
+- elemental/DOT/projectile/area/chain
+- late-build AI spacing
+- Hợp Đạo/Siêu Cấp attainability in the short tournament
+- rare frequency by stage
+- revive/fatal/shield/heal ordering
+- defense-vs-defense TỬ CHIẾN termination
+- offscreen bracket simulation sanity
+
+Goal is release stability and removal of broken/dead/dominant outliers, not perfect esport-level balance.
+
+**Exit:** no release blocker, no stalled match, no known broken dominant interaction.
+
+## C6 — Final release validation and closure
+
+Automated:
+- all V0.16 CI green
+- all V0.17 skill-system CI green
+- deterministic 64-player tournaments complete
+- elimination + Champion paths work
+- exact Pages artifact contains all Duel modules
+- public deploy succeeds
+
+Hands-on:
+- desktop tournament flow
+- mobile/responsive tournament flow
+- readable/tappable skill choices
+- readable preview/build/HUD/result UI
+- no major visual-mechanical desync
+- no blocking navigation bug
+
+Closure:
+- fix release blockers
+- update `README.md`, `ROADMAP.md`, `PROJECT_HANDOFF.md`
+- change `V0.17 DEV` → **V0.17**
+- mark **V0.17 COMPLETE / RELEASED**
+- freeze V0.17 baseline
+
+---
+
+# After V0.17 — NOT RELEASE BLOCKERS
+
+Future roadmap may include:
+- higher-quality fighter art and animation
+- sprite/skeletal renderer replacement
+- richer VFX/camera impact
+- more arenas / hazards
+- jump and aerial combat
+- new tournament variants
+- online/global systems
+- new content beyond the V0.16 skill ecosystem
+
+These are new-version goals, not unfinished V0.17 tasks.
+
+---
 
 # PROJECT STATUS
-**V0.17 Duel Arena is deployed with all 80/80 base Kỹ Năng adapted. D6 now moves to Hợp Đạo Kỹ (0/28). V0.16 Survival/Endless remains the stable released baseline.**
+
+**V0.17 Duel Arena foundation is complete and deployed. All 80/80 base Kỹ Năng are integrated. The remaining locked release path is C1 Hợp Đạo foundation → C2 28 Hợp Đạo → C3 12 Siêu Cấp → C4 20 rare → C5 integration/balance → C6 final validation → V0.17 COMPLETE / RELEASED.**
