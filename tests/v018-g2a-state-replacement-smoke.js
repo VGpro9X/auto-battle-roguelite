@@ -9,7 +9,7 @@ const v2Source=fs.readFileSync(path.join(root,"js/duel-renderer-v2.js"),"utf8");
 const assetSource=fs.readFileSync(path.join(root,"js/duel-visual-assets.js"),"utf8");
 
 assert.ok(manifest.animations.idle,"idle coverage missing");
-assert.equal(manifest.animations.recover,undefined,"state fallback test requires recover to remain uncovered here");
+assert.equal(manifest.animations.victory,undefined,"fallback test requires an optional uncovered state");
 assert.match(assetSource,/manifest\.animations\[state\]\|\|null/,"missing-state loader must return null");
 assert.match(vectorSource,/skipFighterSides/,"vector renderer must support per-side omission");
 assert.match(vectorSource,/!skip\.has\("player"\)/,"player vector omission missing");
