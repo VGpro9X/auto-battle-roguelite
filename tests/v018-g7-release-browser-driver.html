@@ -1,0 +1,59 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>V0.18 G7 release browser validation</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden}#app{border:0;width:100vw;height:100vh;display:block}#result{position:fixed;inset:0;z-index:999999;background:#111;color:#fff;padding:20px;white-space:pre-wrap;font:14px monospace}</style>
+<iframe id="app"></iframe>
+<script>
+(async()=>{
+  const topDoc=document,frame=topDoc.getElementById('app'),params=new URLSearchParams(location.search),expected=params.get('expect')||'desktop';
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  async function waitFor(fn,label,timeout=9000){const start=performance.now();while(performance.now()-start<timeout){try{const value=fn();if(value)return value;}catch(_){}await sleep(25);}throw new Error(`timeout: ${label}`);}
+  function check(value,message){if(!value)throw new Error(message);return value;}
+  function entry(id,name,build){return{id,name,build:{...build}};}
+  function hiddenCanvas(d,w){const c=d.createElement('canvas');const cw=Math.max(320,Math.min(960,w-20));c.style.cssText=`position:fixed;left:-10000px;top:0;width:${cw}px;height:${Math.max(360,Math.round(cw*.62))}px`;d.body.appendChild(c);return c;}
+  async function verifyAssetHttp(w,manifestUrl){
+    const response=await w.fetch(manifestUrl,{cache:'no-store'});check(response.ok,`manifest HTTP ${response.status}: ${manifestUrl}`);const manifest=await response.json();const base=new URL(manifestUrl,w.location.href);const refs=[];
+    for(const item of Object.values(manifest.animations||{}))if(item?.src)refs.push(item.src);
+    for(const layer of manifest.layers||[])if(layer?.src)refs.push(layer.src);
+    for(const rel of [...new Set(refs)]){const url=new URL(rel,base).href;const r=await w.fetch(url,{cache:'no-store'});check(r.ok,`asset HTTP ${r.status}: ${url}`);}
+    return{manifest,refs:[...new Set(refs)]};
+  }
+  function finishMatch(w,renderer){
+    const player=entry('g7-p','P',{power:3,rapid:3,vitality:3,speed:3,crit:3});
+    const opponent=entry('g7-o','O',{});
+    const match=w.createDuelMatch(player,opponent,{rng:()=>.99});w.startDuelRound(match);
+    let ticks=0,frames=0;
+    while(!match.over&&ticks<16000){const round=match.currentRound;if(round&&!round.ended)w.updateDuelRound(match,.033);const active=match.currentRound;if(active){renderer.consume(w.drainDuelEvents(active));renderer.render(match,.033);frames++;}if(active?.ended&&!match.over)w.settleDuelRound(match);ticks++;}
+    check(match.over,`production V2 match did not finish (${ticks})`);check(match.winner==='player'||match.winner==='opponent','resolved winner missing');check(match.roundHistory.length>=2,'Best-of-3 history missing');check(frames>0,'production V2 rendered zero frames');return{ticks,frames,winner:match.winner,rounds:match.roundHistory.length};
+  }
+  try{
+    const loaded=new Promise((resolve,reject)=>{frame.addEventListener('load',resolve,{once:true});setTimeout(()=>reject(new Error('iframe load timeout')),9000);});
+    frame.src='../index.html?duelRenderer=v2&duelQuality='+(expected==='mobile'?'constrained':'full');await loaded;
+    const w=frame.contentWindow,d=frame.contentDocument;
+    await waitFor(()=>w.__V018_DUEL_RENDERER_READY__,'Renderer V2 bootstrap promise');await w.__V018_DUEL_RENDERER_READY__;
+    await waitFor(()=>typeof w.createDuelRendererV2==='function'&&typeof w.createDuelMatch==='function','production Duel APIs');
+    if(expected==='mobile')check(w.innerWidth<=500,`mobile width=${w.innerWidth}`);else check(w.innerWidth>=900,`desktop width=${w.innerWidth}`);
+    check(w.getDuelRendererMode()==='v2','production normal renderer path is not V2');
+
+    const fighterHttp=await verifyAssetHttp(w,'../assets/duel/fighters/base/manifest.json');
+    const arenaHttp=await verifyAssetHttp(w,'../assets/duel/arenas/ashen-sanctum/manifest.json');
+    check(Object.keys(fighterHttp.manifest.animations||{}).length===13,`HTTP fighter manifest states=${Object.keys(fighterHttp.manifest.animations||{}).length}`);
+    check(arenaHttp.refs.length===6,`HTTP arena layer refs=${arenaHttp.refs.length}`);
+
+    const captured=[];const originalWarn=w.console.warn.bind(w.console),originalError=w.console.error.bind(w.console);
+    w.console.warn=(...args)=>{captured.push(['warn',args.map(String).join(' ')]);originalWarn(...args);};
+    w.console.error=(...args)=>{captured.push(['error',args.map(String).join(' ')]);originalError(...args);};
+    const runtimeErrors=[];w.addEventListener('error',e=>runtimeErrors.push(String(e.error||e.message||'window error')));w.addEventListener('unhandledrejection',e=>runtimeErrors.push(String(e.reason||'unhandled rejection')));
+
+    const stamp=Date.now();const canvas=hiddenCanvas(d,w.innerWidth),renderer=w.createDuelRendererV2(canvas,{manifestUrl:`assets/duel/fighters/base/manifest.json?g7=${stamp}`,arenaManifestUrl:`assets/duel/arenas/ashen-sanctum/manifest.json?g7=${stamp}`});
+    await renderer.preload;const status=renderer.getStatus(),cache=w.getDuelVisualAssetCacheStatus();
+    check(status.ready===true&&status.error===null,`production fighter preload failed: ${status.error}`);check(status.arenaReady===true&&status.arenaError===null,`production arena preload failed: ${status.arenaError}`);check(status.coveredStates.length===13,`runtime covered states=${status.coveredStates.length}`);check(status.arenaId==='ashen-sanctum',`runtime arena=${status.arenaId}`);check(cache.pendingImages===0&&cache.pendingManifests===0,`runtime asset cache pending=${cache.pendingImages}/${cache.pendingManifests}`);
+    const badConsole=captured.filter(([,text])=>/failed|missing|fallback active|unable to initialize|404|not found/i.test(text));check(badConsole.length===0,`production console asset/runtime warnings: ${JSON.stringify(badConsole)}`);check(runtimeErrors.length===0,`production runtime errors: ${runtimeErrors.join(' | ')}`);
+
+    const result=finishMatch(w,renderer),after=renderer.getStatus();check(after.ready&&after.arenaReady,'production V2 readiness lost after completed match');check(runtimeErrors.length===0,`runtime errors during completed match: ${runtimeErrors.join(' | ')}`);
+    const lateBad=captured.filter(([,text])=>/failed|missing|fallback active|unable to initialize|404|not found/i.test(text));check(lateBad.length===0,`console warnings during match: ${JSON.stringify(lateBad)}`);
+
+    topDoc.body.innerHTML=`<pre id="result">V018_G7_BROWSER_PASS ${expected} states=${status.coveredStates.length} fighterAssets=${fighterHttp.refs.length} arenaAssets=${arenaHttp.refs.length} cache=${cache.settledImages}/${cache.pendingImages} match=${result.winner}/${result.rounds}/${result.ticks} errors=${runtimeErrors.length}/${lateBad.length}</pre>`;
+  }catch(error){topDoc.body.innerHTML=`<pre id="result">V018_G7_BROWSER_FAIL ${expected} ${String(error&&error.stack||error)}</pre>`;}
+})();
+</script>
