@@ -32,3 +32,23 @@ jobs:
 
       - name: V0.17 C5 full-system integration and focused balance gate
         run: node tests/v017-duel-c5-integration-balance.js
+
+      - name: V0.17 C6 desktop/mobile rendered browser flow
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 >/tmp/v017-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then
+            echo "Chrome/Chromium not found on runner"
+            exit 1
+          fi
+          "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,900 --virtual-time-budget=7000 --dump-dom "http://127.0.0.1:4173/tests/v017-browser-driver.html?expect=desktop" >/tmp/v017-desktop.html
+          grep -q 'V017_BROWSER_PASS desktop' /tmp/v017-desktop.html || { cat /tmp/v017-desktop.html; exit 1; }
+          "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=7000 --dump-dom "http://127.0.0.1:4173/tests/v017-browser-driver.html?expect=mobile" >/tmp/v017-mobile.html
+          grep -q 'V017_BROWSER_PASS mobile' /tmp/v017-mobile.html || { cat /tmp/v017-mobile.html; exit 1; }
+          grep 'V017_BROWSER_PASS' /tmp/v017-desktop.html
+          grep 'V017_BROWSER_PASS' /tmp/v017-mobile.html
