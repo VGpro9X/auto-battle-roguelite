@@ -46,7 +46,7 @@
 
   function animationFor(manifest,state){
     if(!manifest?.animations)return null;
-    return manifest.animations[state]||manifest.animations.idle||null;
+    return manifest.animations[state]||null;
   }
 
   async function preloadDuelFighterVisual(url){
@@ -54,12 +54,6 @@
     const sources=[...new Set(Object.values(manifest.animations||{}).map(item=>item?.src).filter(Boolean))];
     await Promise.all(sources.map(src=>loadDuelVisualImage(src,manifest.__url)));
     return manifest;
-  }
-
-  function getCachedDuelVisualImage(path,manifestUrl){
-    const key=asUrl(path,manifestUrl);
-    const cached=imageCache.get(key);
-    return cached&&typeof cached.then==="function"?null:cached||null;
   }
 
   async function resolveDuelVisualAsset(manifest,state){
