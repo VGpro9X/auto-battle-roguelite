@@ -201,6 +201,9 @@ jobs:
       - name: V0.18 G6E performance and fallback closure smoke test
         run: node tests/v018-g6e-performance-closure-smoke.js
 
+      - name: V0.18 G7 integrated release audit
+        run: node tests/v018-g7-release-audit.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
