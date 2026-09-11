@@ -105,6 +105,9 @@ jobs:
       - name: V0.17 D6G all-80 Duel base-skill smoke test
         run: node tests/v017-duel-d6g-smoke.js
 
+      - name: V0.17 C1 Duel Hợp Đạo foundation smoke test
+        run: node tests/v017-duel-c1-synergy-foundation-smoke.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
