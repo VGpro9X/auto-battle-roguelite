@@ -16,13 +16,14 @@ GitHub `main` is canonical.
 - V0.18 G3 Arena + Camera Presentation V2: **COMPLETE**.
 - V0.18 G4 Full Duel VFX Readability Pass: **COMPLETE**.
 - V0.18 G5 Duel UI / HUD / Tournament Presentation Polish: **COMPLETE**.
-- Next checkpoint: **G6 — Performance / Quality / Fallback Hardening**.
+- V0.18 G6 Performance / Quality / Fallback Hardening: **COMPLETE**.
+- Next checkpoint: **G7 — V0.18 Integration / Release Validation**.
 - Runtime/public version label remains **V0.17** until G7 release validation passes.
 
 See `V018_GRAPHICS_PLAN.md` for the authoritative V0.18 plan.
 
 ## V0.18 graphics progress
-Renderer V2 is asset/manifest-driven and keeps the V0.17 vector renderer as a safe fallback. Simulation remains the only source of combat truth; graphics never decide hit success, damage, cooldowns, targeting, knockback, fatal ordering, AI decisions, skill offers or tournament outcomes.
+Renderer V2 is asset/manifest-driven and keeps the V0.17 vector renderer as a verified fallback. Simulation remains the only source of combat truth; graphics never decide hit success, damage, cooldowns, targeting, knockback, fatal ordering, AI decisions, skill offers or tournament outcomes.
 
 ### G1 delivered
 - `js/duel-visual-assets.js` manifest/image loader + cache
@@ -75,19 +76,33 @@ Delivered through G5A–G5E without changing combat/tournament/skill-choice trut
 - dedicated G5E rendered desktop/mobile closure workflow
 - mobile long Duel overlays made safely scrollable with safe-area padding after G5E exposed an unreachable lobby action
 - G5E verifies scroll reachability, clickability, horizontal overflow, HUD pointer behavior and combat-center occlusion
-- full V0.16/V0.17/G1–G5 Pages chain green
-- V0.17 rendered desktop/mobile validation green
-- G5E rendered desktop/mobile UI closure green
-- public Pages deploy green at G5 closure
 
-## V0.18 next: G6
-G6 hardens presentation quality and fallback behavior without creating gameplay caps:
-- preload/cache and decoded-memory sanity
-- image-cache lifecycle
-- presentation-only transient effect limits
-- mobile/constrained quality reductions
-- reduced-motion path
-- vector fallback hardening
+### G6 delivered
+Delivered through G6A–G6E without introducing gameplay caps:
+- `js/duel-visual-quality.js` explicit `full` / `constrained` presentation profiles plus reduced-motion policy
+- canvas DPR quality cap applied at render resize
+- camera shake/zoom multipliers honor quality and reduced-motion without changing semantic combat events
+- manifest/image cache dedupe with pending/settled observability, decoded-memory estimates and safe LRU lookup pruning
+- presentation-only transient VFX budgets with `droppedPresentation` observability; engine event input remains intact
+- production V2 preload validation confirms all 13 fighter states + `Ashen Sanctum`, no pending production loads and decoded-memory visibility
+- forced-vector browser validation proves a Best-of-3 Duel can finish through the vector path
+- partial/missing-asset browser validation proves Renderer V2 can fall back state-by-state and arena-by-arena and still finish a Duel
+- G6D browser audit exposed and fixed a real invalid `ctx.ellipse()` Renderer V2 call
+- G6E rendered closure passes desktop full-quality, mobile constrained-quality and reduced-motion paths
+- G6E stress validation confirms VFX caps do not mutate semantic event input
+- outer `duel-renderer.js` and changed G6 runtime modules have cache-busting keys so deployed clients receive the hardening fixes
+- V0.17 C6 and G5E browser audits were made timing-safe after virtual-time exposed false negatives; their original assertions remain intact
+- full V0.16/V0.17/G1–G6E Pages chain green
+- V0.17 rendered desktop/mobile validation green
+- G5E rendered desktop/mobile UI validation green
+- G6D fallback validation green
+- G6E desktop/mobile/reduced-motion validation green
+- public Pages deploy green at G6 closure
+
+## V0.18 next: G7
+G7 is the final V0.18 integration/release validation checkpoint. It must verify the normal Renderer V2 path, verified vector fallback, all 13 fighter states, production arena/camera/VFX/UI, desktop/mobile rendered flows, exact Pages assets, no missing production asset errors, full V0.16/V0.17 regression coverage and final documentation/evidence.
+
+Only after every G7 gate passes may the runtime/public label be promoted from **V0.17** to **V0.18**.
 
 ## V0.17 release baseline
 V0.17 remains frozen except for bug fixes and includes:
@@ -127,4 +142,4 @@ Survival/Endless V0.16 remains supported and unchanged.
 6. `V017_DUEL_ARENA_PLAN.md`
 
 ## Project status
-**V0.17 remains the released/public baseline. V0.18 is active at G0 + G1 + G2 + G3 + G4 + G5 complete / G6 next.**
+**V0.17 remains the released/public baseline. V0.18 is active at G0 + G1 + G2 + G3 + G4 + G5 + G6 complete / G7 next.**
