@@ -11,115 +11,79 @@ GitHub `main` is canonical.
 ## Current status
 - V0.17 is **COMPLETE / RELEASED**.
 - V0.18 graphics roadmap is **ACTIVE**.
-- V0.18 G0 planning/architecture lock is complete.
+- V0.18 G0 architecture lock is complete.
 - V0.18 G1 asset loader + Renderer V2 foundation is complete.
-- Next checkpoint: **G2 — Fighter Visual V2**.
-- Runtime/public build remains labeled **V0.17** until V0.18 passes its final release gates.
+- V0.18 G2 Fighter Visual V2 is complete at **13 / 13 required semantic states**.
+- Next checkpoint: **G3 — Arena + Camera Presentation V2**.
+- Runtime/public version label remains **V0.17** until V0.18 passes G7 release validation.
 
 See `V018_GRAPHICS_PLAN.md` for the authoritative V0.18 plan.
 
-## V0.18 direction
-V0.18 upgrades graphics and presentation while preserving V0.17 gameplay truth.
+## V0.18 graphics progress
+Renderer V2 is manifest-driven and keeps the V0.17 vector renderer as a safe fallback. Combat truth remains simulation-owned; graphics do not decide hit success, damage, cooldowns, knockback, fatal ordering or tournament outcome.
 
-Primary goals:
-- original higher-quality 2D fighter art/animation
-- asset-driven Renderer V2
-- sprite-sheet/image-sequence first, with a skeletal-ready abstraction for later
-- manifest-driven public asset pipeline
-- one production-quality multi-layer Duel arena
-- camera/parallax/impact presentation
-- full Duel VFX readability coverage
-- stronger Hợp Đạo / Siêu Cấp / Rare visual identities
-- Duel HUD/menu polish
-- desktop/mobile rendering quality and performance validation
+G1 delivered:
+- `js/duel-visual-assets.js` loader/cache
+- `js/duel-animation.js` semantic state + per-frame anchor resolver
+- `js/duel-renderer-v2.js` Renderer V2 + vector fallback
+- public `assets/` Pages pipeline
+- exact manifest/source integrity validation
 
-Core rule: **renderer changes must not change combat outcome, AI, hitboxes, damage timing, tournament progression or balance.**
+G2 delivered:
+- clean state-by-state vector → asset replacement
+- complete fighter coverage: `idle`, `walk`, `run`, `dash`, `melee`, `ranged`, `cast`, `hit`, `block`, `knockback`, `knockdown`, `recover`, `ko`
+- per-frame `head`, `chest`, `leftHand`, `rightHand`, `feet`, `front`, `back`, `target` anchors
+- horizontal facing support
+- stable feet/root metadata contract
+- player/opponent visual differentiation
+- V2 floor/contact shadow
+- shield/frost/orbit attachment parity using V2 anchors
+- G2A–G2F automated smoke gates
+- full V0.16/V0.17 regression chain remained green through G2F
 
-The V0.17 vector renderer remains a verified fallback during V0.18 development.
+The fighter sheets currently establish the complete original asset/animation contract required for V0.18. Later visual polish may improve artwork quality without changing the renderer/simulation contract.
 
-G1 has now proven the manifest loader/cache, semantic animation metadata, per-frame anchors, Renderer V2 switch, vector fallback and exact Pages `assets/` pipeline with one proof asset. G2 should expand fighter state coverage incrementally and validate each state in-engine before mass-producing final art.
+## V0.18 next: G3
+G3 upgrades presentation around the fighters without changing logical arena geometry:
+- one original multi-layer Duel arena
+- background parallax
+- floor/contact presentation
+- atmospheric and foreground layers
+- camera framing based on both fighters
+- mild impact shake and zoom
+- hard camera bounds
+- HUYẾT CHIẾN / TỬ CHIẾN phase presentation
 
-## V0.17 release
-V0.17 adds a complete automatic side-view tournament mode while preserving the existing Survival/Endless game.
+## V0.17 release baseline
+V0.17 remains frozen except for bug fixes and includes:
+- 64-fighter single-elimination Duel tournament
+- Best-of-3 automatic combat
+- two unrestricted starter choices
+- one reroll on every choice screen
+- opponent scouting
+- 80 / 80 base Kỹ Năng Duel
+- 28 / 28 Hợp Đạo Kỹ Duel
+- 12 / 12 Siêu Cấp Duel
+- 20 / 20 Rare Duel rules
+- HUYẾT CHIẾN at 45s and TỬ CHIẾN at 60s+
+- full V0.16/V0.17 validation and desktop/mobile browser coverage
 
-### Đấu Trường 1v1
-- **64 fighters** in a single-elimination bracket: `64 → 32 → 16 → 8 → 4 → 2 → Champion`
-- Every matchup is **Best-of-3**; first to 2 round wins advances.
-- Fighters are fully AI-controlled.
-- Two unrestricted starter skill selections; no forced offensive starter.
-- One reward choice after every non-final match victory.
-- Duel skills use **Rank I / II / III**, with Rank III = **TỐI ĐA**.
-- One `XOAY LẠI` on each choice screen.
-- Pre-match scouting shows opponent build/style before combat.
-- Renderer is isolated from combat logic so V0.18 can replace the prototype presentation without rewriting the Duel engine.
-
-### Complete V0.16 ecosystem in Duel
-- **80 / 80 Kỹ Năng**
-- **28 / 28 Hợp Đạo Kỹ**
-- **12 / 12 Siêu Cấp**
-- **20 / 20 rare rules** = 10 Thần Kỹ + 10 Thần Bí Kỹ
-
-Hợp Đạo and Siêu Cấp unlock automatically from build requirements and do not consume reward selections.
-
-### Tournament Rare rules
-Rare chance after tournament wins:
-- after win 1: **0%**
-- after win 2: **3%**
-- after win 3: **6%**
-- after win 4: **10%**
-- after win 5 / before final: **15%**
-
-Rules:
-- no starter Rare
-- at most one Rare card in a 3-card reward roll
-- Rare rules are unique/level-less; no duplicate ownership
-- reroll performs a new Rare roll
-- player and AI use the same stage chance and ownership rules
-
-## Duel combat rules
-- Base normal attack is close-range; ranged behavior comes from the current build.
-- AI evaluates build-derived preferred distance instead of using rigid classes.
-- Round pressure is explicit:
-  - `0–45s`: normal
-  - `45–60s`: **HUYẾT CHIẾN**
-  - `60s+`: **TỬ CHIẾN** until K.O.
-- Round state resets between rounds; tournament build persists.
-
-## V0.17 validation
-Release gates cover:
-- every V0.16 regression test
-- 80 base Duel skill mechanics
-- all 28 Hợp Đạo mechanics
-- all 12 Siêu Cấp mechanics/unlock truth
-- all 20 Rare mechanics, acquisition curve, uniqueness and defensive ordering
-- full-system deterministic matchup simulation
-- defensive mirror termination through TỬ CHIẾN
-- 64-player bracket progression
-- rendered browser interaction at desktop `1440×900` and mobile `390×844`
-- exact GitHub Pages artifact/deployment
-
-See `V017_RELEASE_VALIDATION.md` for the frozen V0.17 release evidence.
-
-## Existing Survival/Endless content
-V0.16 Survival/Endless remains intact with:
-- 80 base Kỹ Năng
-- 28 Hợp Đạo Kỹ
-- 12 Siêu Cấp
-- 20 Rare rules
-- 140 Codex entries
-- Rare System V2 and one-reroll choice screens
+Survival/Endless V0.16 remains supported and unchanged.
 
 ## Locked development rules
-- Movement baseline: **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
+- GitHub `main` is canonical.
+- Fetch latest content/blob SHA before editing an existing file.
+- Commit every meaningful checkpoint.
+- Movement baseline is **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
 - Player-facing UI remains Vietnamese.
 - No hidden gameplay caps/cooldowns/stack maxima/target limits/retry rules/weighting.
 - Preserve V0.12 hidden-shield-cap removal.
 - Preserve Survival `Săn Ấn`: marked target gives +25% base XP only.
-- Choice-card relation hints only appear when that exact choice immediately completes the corresponding unlock.
-- Executable tests stay under `tests/`.
-- Before editing an existing file, fetch the latest GitHub content/blob SHA and commit each meaningful checkpoint.
+- Choice-card relation hints only appear when that exact choice immediately completes the unlock.
+- Executable tests stay under `tests/` and are never shipped in the public Pages artifact.
+- V0.18 visual work must not rebalance combat/AI/tournament/skill acquisition merely for presentation.
 
-## Read before V0.18 work
+## Read before continuing V0.18
 1. `README.md`
 2. `PROJECT_HANDOFF.md`
 3. `ROADMAP.md`
@@ -128,4 +92,4 @@ V0.16 Survival/Endless remains intact with:
 6. `V017_DUEL_ARENA_PLAN.md`
 
 ## Project status
-**V0.17 is the clean released baseline. V0.18 is active at G0 + G1 complete / G2 next.**
+**V0.17 remains the released/public baseline. V0.18 is active at G0 + G1 + G2 complete / G3 next.**
