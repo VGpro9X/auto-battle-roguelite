@@ -9,6 +9,7 @@ GitHub `main` is canonical.
 - Survival/Endless V0.16 remains supported.
 - Movement baseline: **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
 - Player-facing language: Vietnamese.
+- Runtime/public label remains **V0.17** until G7 release validation passes.
 
 ---
 
@@ -74,19 +75,6 @@ Authoritative plan: `V018_GRAPHICS_PLAN.md`.
 Delivered in incremental G2A–G2F checkpoints:
 - clean state-by-state V2 replacement ✅
 - **13 / 13 required semantic states** ✅
-  - idle
-  - walk
-  - run
-  - dash
-  - melee
-  - ranged
-  - cast
-  - hit
-  - block
-  - knockback
-  - knockdown
-  - recover
-  - ko
 - per-frame required anchors ✅
 - facing flip + mirrored anchor math ✅
 - player/opponent visual differentiation ✅
@@ -94,62 +82,60 @@ Delivered in incremental G2A–G2F checkpoints:
 - shield/frost/orbit attachment parity ✅
 - exact Pages asset sources validated ✅
 - G2A–G2F smoke gates green ✅
-- full V0.16/V0.17 mechanics regression chain remained green through G2F ✅
+- full V0.16/V0.17 mechanics regression chain remained green ✅
 
 ## G3 — Arena + Camera Presentation V2 — COMPLETE ✅
-Delivered:
 - original `Ashen Sanctum` canonical arena ✅
-- six manifest-driven layers: sky / far / mid / ambient / floor / foreground ✅
-- parallax transforms ✅
-- richer floor/contact plane ✅
-- atmospheric ambient + safe foreground layers ✅
-- presentation-only camera in `js/duel-camera.js` ✅
-- fighter-pair camera framing with hard bounds ✅
+- six manifest-driven layers ✅
+- presentation-only fighter-pair camera ✅
+- hard world bounds ✅
 - desktop/mobile zoom limits ✅
-- mobile-reduced impact shake ✅
-- semantic hit/area/cast/KO/phase impact shake + zoom ✅
-- one shared world→screen transform for V2 fighters and vector fallback projectiles/VFX ✅
-- HUYẾT CHIẾN / TỬ CHIẾN phase presentation ✅
-- G3 smoke gate green ✅
-- exact Pages arena artifact validation green ✅
-- V0.16/V0.17/G1/G2/G3 Pages chain green ✅
-- V0.17 rendered desktop/mobile validation remained green ✅
-- public Pages deploy green ✅
+- parallax transforms ✅
+- mobile-reduced semantic impact shake/zoom ✅
+- shared world→screen transform ✅
+- HUYẾT CHIẾN / TỬ CHIẾN presentation ✅
+- exact Pages arena artifact validation ✅
+- G3 smoke gate + regression chain + rendered validation + Pages deploy green ✅
 
-**Exit achieved:** the Duel arena no longer depends on the prototype/debug stage while simulation coordinates remain unchanged.
+## G4 — Full Duel VFX Readability Pass — COMPLETE ✅
+Delivered incrementally through G4A–G4E:
+- semantic `js/duel-vfx-v2.js` router ✅
+- Hợp Đạo / Siêu Cấp / Rare `js/duel-vfx-tier.js` classifier ✅
+- 15 cumulative visual families ✅
+  - physical / projectile
+  - fire / frost / lightning
+  - poison / blood
+  - defense / heal / control
+  - summon / area / chain
+  - time / soul
+- anchor/world-coordinate driven VFX placement ✅
+- stronger Hợp Đạo and Siêu Cấp overlays ✅
+- 20 / 20 Rare visual identities/signatures ✅
+- active Rare trigger audit; `divineGift` intentionally reward-only ✅
+- visible `heavenSeal` consumption event ✅
+- transient VFX expiry / no permanent effect wall ✅
+- plain K.O. remains legacy-owned until G5 presentation replaces it safely ✅
+- G4A–G4E gates green ✅
+- V0.16/V0.17/G1–G4 Pages chain green ✅
+- V0.17 desktop/mobile rendered validation green ✅
+- public Pages deploy green at G4 closure ✅
 
-## G4 — Full Duel VFX Readability Pass — NEXT
-Planned visual families:
-- physical/melee impact
-- projectile
-- fire
-- frost
-- lightning
-- poison/DOT
-- blood/lifesteal
-- shield/defense
-- heal/recovery
-- control/slow/stun
-- summon/orbit
-- explosion/area
-- chain
-- time/space
-- soul/death
-- divine/mystic Rare rules
+**Exit achieved:** visually meaningful Duel combat events have a readable V2 semantic presentation without changing combat truth.
 
-Required:
-- semantic events → shared VFX families
-- anchor-driven impact placement
-- stronger Hợp Đạo / Siêu Cấp / Rare overrides
-- all visually meaningful Duel mechanics readable
-- no permanent full-screen VFX wall
-- no VFX changes hitboxes, damage, targeting or timing
+## G5 — Duel UI / HUD / Tournament Presentation Polish — NEXT
+Planned work:
+- G5A: combat HUD hierarchy and responsive readability
+- G5B: lobby / mode entry / opponent scouting presentation
+- G5C: reward choice cards and build readability
+- G5D: round start / K.O. / match win / elimination / Champion presentation
+- G5E: rendered desktop/mobile UI closure audit
 
-## G5 — Duel UI / HUD / Tournament Presentation Polish
-- lobby/scouting/reward cards
-- combat HUD
-- round/K.O./Champion/elimination presentation
-- mobile usability retained
+Rules:
+- player-facing text remains Vietnamese
+- no UI layer may block critical combat unintentionally
+- mobile keeps safe-area support and usable touch targets
+- no UI change may alter tournament/combat/skill selection truth
+- keep V0.17 release label until G7
 
 ## G6 — Performance / Quality / Fallback Hardening
 - preload/cache/memory sanity
@@ -174,4 +160,4 @@ Required before release:
 
 # PROJECT STATUS
 
-**V0.17 remains the current released/public baseline. V0.18 is ACTIVE at G0 + G1 + G2 + G3 complete / G4 next. Continue with the Full Duel VFX Readability Pass; do not change combat/AI/balance.**
+**V0.17 remains the current released/public baseline. V0.18 is ACTIVE at G0 + G1 + G2 + G3 + G4 complete / G5 next. Continue with Duel UI/HUD/Tournament Presentation Polish; do not change combat/AI/balance.**
