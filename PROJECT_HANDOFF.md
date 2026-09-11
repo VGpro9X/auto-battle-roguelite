@@ -18,7 +18,7 @@ Use this file as the starting context when continuing development in a new chat.
 - V0.17 has no unfinished checkpoint.
 - Active development roadmap: **V0.18 – Graphics & Presentation Overhaul**.
 - V0.18 authoritative plan: `V018_GRAPHICS_PLAN.md`.
-- V0.18 status: **G0 complete, G1 next**.
+- V0.18 status: **G0 + G1 complete, G2 next**.
 
 ## Read first in a new chat
 1. `README.md`
@@ -30,8 +30,12 @@ Use this file as the starting context when continuing development in a new chat.
 
 Then fetch latest before editing:
 - `js/duel-renderer.js`
+- `js/duel-renderer-v2.js`
+- `js/duel-visual-assets.js`
+- `js/duel-animation.js`
 - `js/duel-engine.js`
 - `js/duel-ui.js`
+- `assets/duel/fighters/base/manifest.json`
 - `index.html`
 - `.github/workflows/pages.yml`
 
@@ -79,7 +83,7 @@ Implementation direction:
 - renderer abstraction remains **skeletal-ready** for a later version
 - V0.17 vector renderer remains a verified fallback during V0.18
 - manifests drive assets/animation timing/anchors
-- future runtime assets live under public `assets/`
+- runtime assets live under public `assets/`
 
 ## V0.18 architecture rules
 Simulation stays authoritative.
@@ -128,42 +132,43 @@ Required semantic animation states:
 
 ## V0.18 checkpoint map
 
-### G0 — COMPLETE
+### G0 — COMPLETE ✅
 - scope/art direction locked
 - manifest/asset architecture locked
 - sprite-first/skeletal-ready choice locked
 - vector fallback locked
 - no-gameplay-change principle locked
 
-### G1 — NEXT: Asset loader + Renderer V2 foundation
-Build infrastructure before mass-producing art.
+### G1 — COMPLETE ✅: Asset loader + Renderer V2 foundation
+Delivered:
+- `js/duel-visual-assets.js` manifest/image loader + cache
+- `js/duel-animation.js` semantic state/frame resolver + per-frame anchors
+- `js/duel-renderer-v2.js` asset-driven Renderer V2 wrapper/factory
+- `assets/duel/fighters/base/manifest.json` + one original proof `idle` asset
+- public Pages pipeline now includes `assets/`
+- exact Pages manifest/source integrity validation
+- URL/internal renderer switching (`vector` ↔ `v2`)
+- missing state/asset returns safely to the V0.17 vector renderer
+- G1 smoke test under `tests/v018-g1-assets-smoke.js`
+- full V0.16/V0.17 Pages regression chain remained green at G1 integration
 
-Expected modules:
-- `js/duel-visual-assets.js`
-- `js/duel-animation.js`
-- `js/duel-camera.js`
-- `js/duel-renderer-v2.js`
-- later `js/duel-vfx-v2.js`
-- `js/duel-visual-quality.js`
-- `css/v018-graphics.css`
+G1 rule now proven:
+- use an asset only when that exact semantic state exists
+- never substitute `idle` artwork for a missing combat state
+- missing assets must not crash or alter simulation
 
-G1 tasks:
-- update Pages pipeline to support public `assets/`
-- manifest loader/cache
-- missing-asset vector fallback
-- animation metadata/state resolver
-- per-frame visual anchor metadata support
-- internal Renderer V2 switch
-- renderer switching must not change combat result
-- exact Pages asset-integrity validation
-
-G1 exit:
-- one proof asset path can render safely in a live Duel
-- missing asset cannot crash combat
-- all V0.16/V0.17 gameplay regression tests remain green
-
-### G2 — Fighter Visual V2
+### G2 — NEXT: Fighter Visual V2
 Complete production fighter state coverage and player/opponent readability.
+
+Required work:
+- replace covered states cleanly instead of drawing asset over the vector fighter
+- complete idle/walk/run/dash/melee/ranged/cast/hit/block/knockback/knockdown/recover/ko
+- stable root/feet alignment
+- horizontal facing + anchor correctness
+- player/opponent differentiation
+- preserve floor/contact shadow
+- preserve shield/frost/orbit attachments
+- validate state/asset batches in-engine before creating the full art set
 
 ### G3 — Arena + Camera Presentation V2
 One production-quality multi-layer arena, parallax, framing, impact camera and phase presentation.
@@ -185,18 +190,16 @@ All V0.16 + V0.17 tests green, Renderer V2 normal path, fallback validated, prod
 ## Critical implementation order
 Do not start by generating dozens of final images.
 
-Required order:
-1. G1 asset/renderer infrastructure
-2. one proof asset/state
-3. validate transform/anchors/animation
-4. expand fighter states
+Current progression:
+1. G1 asset/renderer infrastructure ✅
+2. one proof asset/state ✅
+3. validate transform/anchors/animation ✅ foundation proven
+4. expand fighter states ← **NEXT**
 5. arena/camera
 6. VFX families
 7. UI polish
 8. performance/fallback
 9. release validation
-
-This avoids generating a large amount of art against a renderer contract that later needs to change.
 
 ## Locked terminology / truth rules
 - Kỹ Năng / Hợp Đạo Kỹ / Siêu Cấp / Thần Kỹ / Thần Bí Kỹ / TỐI ĐA.
@@ -206,11 +209,11 @@ This avoids generating a large amount of art against a renderer contract that la
 - Preserve Survival `Săn Ấn`: marked target gives +25% base XP only.
 - Choice-card relation hints only appear when that exact choice immediately completes the unlock.
 - Tests live under `tests/`.
-- V0.18 Pages will eventually add `assets/`; test harnesses still must not ship publicly.
+- Pages publishes `assets/`; test harnesses still must not ship publicly.
 
 ## Status for next conversation
-**Start V0.18 from G1 only. Do not reopen V0.17 content/balance work and do not mass-generate final art before the Renderer V2/asset contract is proven in-engine.**
+**Continue V0.18 from G2. G0 and G1 are complete. Do not reopen V0.17 content/balance work. Expand fighter state coverage incrementally and keep vector rendering as the state-by-state fallback until G2 coverage is complete.**
 
 Recommended continuation prompt:
 
-`Tiếp tục VGpro9X/auto-battle-roguelite từ V0.18. GitHub main là canonical. Đọc README.md, PROJECT_HANDOFF.md, ROADMAP.md và V018_GRAPHICS_PLAN.md. V0.17 đã release sạch; V0.18 graphics roadmap đang active, G0 đã xong và G1 là checkpoint tiếp theo. Bắt đầu bằng asset loader + Renderer V2 foundation, giữ vector renderer làm fallback, không thay combat/AI/balance. Fetch file trước khi sửa và commit sau mỗi checkpoint có ý nghĩa.`
+`Tiếp tục VGpro9X/auto-battle-roguelite từ V0.18. GitHub main là canonical. Đọc README.md, PROJECT_HANDOFF.md, ROADMAP.md và V018_GRAPHICS_PLAN.md. G0 + G1 đã complete; G2 Fighter Visual V2 là checkpoint tiếp theo. Bắt đầu bằng state-by-state clean replacement để state có asset thay vector hoàn toàn, state chưa có asset vẫn fallback vector; sau đó mở rộng fighter states từng batch, không thay combat/AI/balance. Fetch file trước khi sửa và commit sau mỗi checkpoint có ý nghĩa.`
