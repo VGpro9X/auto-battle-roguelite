@@ -29,3 +29,6 @@ jobs:
 
       - name: V0.17 C4 all-20 Duel rare mechanics/acquisition smoke test
         run: node tests/v017-duel-c4-all20-rare-smoke.js
+
+      - name: V0.17 C5 full-system integration and focused balance gate
+        run: node tests/v017-duel-c5-integration-balance.js
