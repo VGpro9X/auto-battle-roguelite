@@ -1,0 +1,72 @@
+name: V0.18 G7 release validation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v018-g7-release-validation
+  cancel-in-progress: true
+
+jobs:
+  validate-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Syntax-check JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            node --check "$file"
+          done < <(find js tests -type f -name '*.js' -print0 | sort -z)
+
+      - name: V0.18 G7 release audit
+        run: node tests/v018-g7-release-audit.js
+
+      - name: V0.18 G7 integrated rendered release matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4178 >/tmp/v018-g7-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then
+            echo "Chrome/Chromium not found on runner"
+            exit 1
+          fi
+
+          run_g7() {
+            name="$1"
+            size="$2"
+            out="/tmp/v018-g7-${name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --force-device-scale-factor=2 --window-size="$size" --virtual-time-budget=25000 --dump-dom "http://127.0.0.1:4178/tests/v018-g7-release-browser-driver.html?expect=${name}" >"$out"
+            grep -q "V018_G7_BROWSER_PASS ${name}" "$out" || { cat "$out"; exit 1; }
+            grep "V018_G7_BROWSER_PASS ${name}" "$out"
+          }
+
+          run_g6e() {
+            name="$1"
+            size="$2"
+            out="/tmp/v018-g7-g6e-${name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --force-device-scale-factor=2 --window-size="$size" --virtual-time-budget=20000 --dump-dom "http://127.0.0.1:4178/tests/v018-g6e-performance-browser-driver.html?expect=${name}" >"$out"
+            grep -q "V018_G6E_PERF_PASS ${name}" "$out" || { cat "$out"; exit 1; }
+          }
+
+          run_g7 desktop 1440,900
+          run_g7 mobile 390,844
+
+          "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1280,800 --virtual-time-budget=15000 --dump-dom "http://127.0.0.1:4178/tests/v018-g6d-fallback-browser-driver.html" >/tmp/v018-g7-fallback.html
+          grep -q 'V018_G6D_FALLBACK_PASS' /tmp/v018-g7-fallback.html || { cat /tmp/v018-g7-fallback.html; exit 1; }
+
+          run_g6e desktop 1440,900
+          run_g6e mobile 390,844
+          run_g6e reduced 1440,900
