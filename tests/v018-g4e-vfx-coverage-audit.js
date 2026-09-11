@@ -54,7 +54,9 @@ const activeRareTriggers={
 };
 function hasSemanticTrigger(token){
   const q=token.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
-  return new RegExp(`(?:status|skill|source):["']${q}["']|(?:heal|addShield)\\([^\\n;]*["']${q}["']`).test(rareSource);
+  const semanticProperty=new RegExp(`(?:status|skill|source):[^,}\\n]{0,160}["']${q}["']`);
+  const semanticHelper=new RegExp(`(?:heal|addShield)\\([^\\n;]*["']${q}["']`);
+  return semanticProperty.test(rareSource)||semanticHelper.test(rareSource);
 }
 for(const [id,tokens] of Object.entries(activeRareTriggers)){
   assert.ok(tokens.some(hasSemanticTrigger),`combat-active Rare lacks a semantic presentation trigger: ${id}`);
