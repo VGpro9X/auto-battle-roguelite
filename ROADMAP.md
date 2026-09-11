@@ -38,7 +38,6 @@ Released content:
 - Codex: **140 entries** ✅
 
 V0.16 Survival/Endless remains the stable baseline while V0.17 is developed.
-
 Post-release V0.16 focused balance pass is **COMPLETE / CLOSED** with no gameplay-number change required.
 
 ---
@@ -46,7 +45,6 @@ Post-release V0.16 focused balance pass is **COMPLETE / CLOSED** with no gamepla
 # V0.17 — DUEL ARENA / ĐẤU TRƯỜNG 1v1 — ACTIVE
 
 Design contract: `V017_DUEL_ARENA_PLAN.md`.
-
 Completion contract: `V017_COMPLETION_PLAN.md`.
 
 ## V0.17 scope lock
@@ -54,13 +52,12 @@ Completion contract: `V017_COMPLETION_PLAN.md`.
 **V0.17 = complete Đấu Trường mode + complete integration of the existing V0.16 skill ecosystem.**
 
 V0.17 may be marked `COMPLETE / RELEASED` only when all of the following are complete:
-
-- 64-fighter tournament ✅/required
-- best-of-3 automatic Duel combat ✅/required
-- build-aware side-view AI ✅/required
-- starter/reward/reroll progression ✅/required
-- **80 / 80 Kỹ Năng Duel**
-- **28 / 28 Hợp Đạo Kỹ Duel**
+- 64-fighter tournament ✅
+- best-of-3 automatic Duel combat ✅
+- build-aware side-view AI ✅
+- starter/reward/reroll progression ✅
+- **80 / 80 Kỹ Năng Duel** ✅
+- **28 / 28 Hợp Đạo Kỹ Duel** ✅
 - **12 / 12 Siêu Cấp Duel**
 - **20 / 20 rare Duel rules**
 - full-content integration/balance pass
@@ -116,9 +113,8 @@ Hands-on final release sign-off remains part of C6 because content integration i
 # D6 — Full skill ecosystem integration — ACTIVE
 
 Current status:
-
 - Base Kỹ Năng Duel: **80 / 80 COMPLETE** ✅
-- Hợp Đạo Kỹ Duel: **8 / 28**
+- Hợp Đạo Kỹ Duel: **28 / 28 COMPLETE** ✅
 - Siêu Cấp Duel: **0 / 12**
 - Rare Duel: **0 / 20**
 
@@ -134,32 +130,16 @@ Base-skill expansion is CLOSED except for bugs/regressions. Frozen CI checkpoint
 - first real end-to-end Hợp Đạo (`soulFurnace` / Lò Luyện Hồn) ✅
 - dedicated C1 CI + Pages validation ✅
 
-**Exit achieved:** synergy framework stable.
+## C2 — 28 / 28 Hợp Đạo Kỹ — COMPLETE ✅
+Audited checkpoints:
+- C2A: `0 → 8` ✅
+- C2B: `8 → 16` ✅
+- C2C: `16 → 22` ✅
+- C2D: `22 → 28` ✅
 
-## C2 — 28 / 28 Hợp Đạo Kỹ — ACTIVE
-Audited batches:
-- C2A: `0 → 8` **COMPLETE** ✅
-- C2B: `8 → 16` **NEXT**
-- C2C: `16 → 22`
-- C2D: `22 → 28`
+All 28 Hợp Đạo have explicit Duel descriptions and real mechanics. Hợp Đạo unlock automatically from build requirements and never consume a reward selection. The all-28 gate runs together with all V0.16 tests, all 80 base Duel tests and Pages deployment. ✅
 
-C2A implemented and mechanically gated:
-- Lò Luyện Hồn (`soulFurnace`)
-- Hàn Sát (`frozenExecution`)
-- Huyết Thành (`crimsonFortress`)
-- Săn Ấn (`markedBounty`)
-- Hồn Thuẫn (`soulAegis`)
-- Bạo Lôi (`criticalStorm`)
-- Hồi Quang (`lastBreath`)
-- Huyết Kính (`glassBlood`)
-
-C2A validation locks real interactions for low-HP/frost damage, heal→shield, mark+bounty progress, Soul Harvest stack shields, Crit/Lightning follow-up, revive/fatal ordering, and actual-heal duplication. Carrier skills are also tested to initialize safely when their matching Hợp Đạo is not owned. All V0.16 + 80-base + C1 + C2A CI and Pages deploy together successfully. ✅
-
-Every Duel reinterpretation must be explicit in its description. Hợp Đạo never consumes a reward selection.
-
-**C2 exit:** all 28 mechanics + all-28 CI gate.
-
-## C3 — 12 / 12 Siêu Cấp
+## C3 — 12 / 12 Siêu Cấp — NEXT
 - evolution requirement foundation
 - base skill must be Duel Rank III / TỐI ĐA
 - support/tag requirement must be satisfied
@@ -257,4 +237,4 @@ These are new-version goals, not unfinished V0.17 tasks.
 
 # PROJECT STATUS
 
-**V0.17 Duel Arena foundation is complete and deployed. All 80/80 base Kỹ Năng and C1 Hợp Đạo foundation are complete; C2A has reached 8/28 Hợp Đạo with CI/Pages green. Next locked checkpoint: C2B 8→16.**
+**V0.17 Duel Arena foundation is complete and deployed. 80/80 base Kỹ Năng and 28/28 Hợp Đạo are complete with CI/Pages green. Next locked checkpoint: C3 Siêu Cấp 0→6→12.**
