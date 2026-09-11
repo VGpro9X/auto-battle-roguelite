@@ -1,6 +1,7 @@
 (()=>{
   const root=typeof window!=="undefined"?window:globalThis;
   const DEFAULT_MANIFEST="assets/duel/fighters/base/manifest.json";
+  const createVectorRenderer=root.createDuelRenderer;
 
   function getDuelRendererMode(){
     if(root.DUEL_RENDERER_V2_ENABLED===false)return"vector";
@@ -14,7 +15,8 @@
 
   function createDuelRendererV2(canvas,{manifestUrl=DEFAULT_MANIFEST}={}){
     if(!canvas)throw new Error("Duel Renderer V2 requires a canvas");
-    const fallback=createDuelRenderer(canvas);
+    if(typeof createVectorRenderer!=="function")throw new Error("Vector Duel renderer unavailable");
+    const fallback=createVectorRenderer(canvas);
     const ctx=canvas.getContext("2d");
     const animationResolver=typeof createDuelAnimationResolver==="function"?createDuelAnimationResolver():null;
     let manifest=null;
@@ -37,6 +39,11 @@
       const width=Math.max(1,rect.width||1),height=Math.max(1,rect.height||1),arena=match.arena;
       const scale=Math.min(width/arena.width,height/arena.height),ox=(width-arena.width*scale)/2,oy=(height-arena.height*scale)/2;
       return{scale,ox,oy,x:v=>ox+v*scale,y:v=>oy+v*scale};
+    }
+
+    function getColumns(image,frameWidth){
+      const width=Number(image?.naturalWidth||image?.width||frameWidth);
+      return Math.max(1,Math.floor(width/frameWidth));
     }
 
     function drawAssetFighter(fighter,round,tr){
@@ -63,11 +70,6 @@
       return true;
     }
 
-    function getColumns(image,frameWidth){
-      const width=Number(image?.naturalWidth||image?.width||frameWidth);
-      return Math.max(1,Math.floor(width/frameWidth));
-    }
-
     function consume(events){fallback.consume(events);}
 
     function render(match,dt=0){
@@ -81,8 +83,7 @@
     function getAnchor(fighter,name){
       const tracked=lastFrames.get(fighter?.side);
       if(!tracked||tracked.fighter!==fighter)return fallback.getAnchor(fighter,name);
-      const anchor=tracked.visual.anchors?.[name];
-      const feet=tracked.visual.anchors?.feet;
+      const anchor=tracked.visual.anchors?.[name],feet=tracked.visual.anchors?.feet;
       if(!anchor||!feet)return fallback.getAnchor(fighter,name);
       const facing=fighter.facing||1,scale=tracked.worldScale;
       return{x:fighter.x+(anchor.x-feet.x)*scale*facing,y:fighter.y+(anchor.y-feet.y)*scale};
@@ -96,15 +97,17 @@
 
   function createConfiguredDuelRenderer(canvas){
     if(getDuelRendererMode()==="vector"){
-      const renderer=createDuelRenderer(canvas);canvas.dataset.duelRenderer="vector";return renderer;
+      const renderer=createVectorRenderer(canvas);canvas.dataset.duelRenderer="vector";return renderer;
     }
     try{return createDuelRendererV2(canvas);}catch(error){
       console.warn("Unable to initialize Duel Renderer V2; using vector fallback.",error);
-      const renderer=createDuelRenderer(canvas);canvas.dataset.duelRenderer="vector-fallback";return renderer;
+      const renderer=createVectorRenderer(canvas);canvas.dataset.duelRenderer="vector-fallback";return renderer;
     }
   }
 
+  root.createDuelVectorRenderer=createVectorRenderer;
   root.getDuelRendererMode=getDuelRendererMode;
   root.createDuelRendererV2=createDuelRendererV2;
   root.createConfiguredDuelRenderer=createConfiguredDuelRenderer;
+  root.createDuelRenderer=createConfiguredDuelRenderer;
 })();
