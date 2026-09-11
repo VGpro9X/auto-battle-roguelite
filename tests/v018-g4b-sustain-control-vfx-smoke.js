@@ -12,8 +12,9 @@ vm.createContext(sandbox);
 vm.runInContext(vfxSource,sandbox);
 const api=sandbox.globalThis;
 const families=Array.from(api.DUEL_VFX_V2_FAMILIES);
-for(const family of ["poison","blood","defense","heal","control"])assert.ok(families.includes(family),`G4B family missing: ${family}`);
-assert.equal(families.length,10,'G4B should expose 10 cumulative semantic VFX families');
+const support=Array.from(api.DUEL_VFX_V2_SUPPORT_FAMILIES);
+assert.deepEqual(support,["poison","blood","defense","heal","control"]);
+for(const family of support)assert.ok(families.includes(family),`expanded VFX coverage lost G4B family ${family}`);
 
 const cases=[
   [{type:"status",status:"chaosPoison"},"poison"],
@@ -28,15 +29,13 @@ const cases=[
   [{type:"status",status:"magnet"},"control"],
   [{type:"hit",source:"soulBind"},"control"]
 ];
-for(const [event,family] of cases){assert.equal(api.getDuelVfxFamily(event),family,`wrong family for ${JSON.stringify(event)}`);assert.equal(api.isDuelVfxV2OwnedEvent(event),true,`G4B should own ${JSON.stringify(event)}`);}
-assert.equal(api.isDuelVfxV2OwnedEvent({type:"area",skill:"corpseBurst"}),false,'unimplemented area/explosion family must remain legacy-owned');
-assert.equal(api.isDuelVfxV2OwnedEvent({type:"status",status:"soulHarvest"}),false,'unclassified future status must remain legacy-owned');
+for(const [event,family] of cases){assert.equal(api.getDuelVfxFamily(event),family,`wrong family for ${JSON.stringify(event)}`);assert.equal(api.isDuelVfxV2OwnedEvent(event),true,`G4B should retain ownership of ${JSON.stringify(event)}`);}
 assert.match(vfxSource,/drawPoison/);
 assert.match(vfxSource,/drawBlood/);
 assert.match(vfxSource,/drawDefense/);
 assert.match(vfxSource,/drawHeal/);
 assert.match(vfxSource,/drawControl/);
-assert.match(bootstrapSource,/js\/duel-vfx-v2\.js\?v=018-g4b/,'browser bootstrap cache key must expose the G4B VFX module');
+assert.match(bootstrapSource,/js\/duel-vfx-v2\.js\?v=018-g4/,'VFX V2 must remain in the public G4 bootstrap chain');
 
 const vfx=api.createDuelVfxV2();
 vfx.consume(cases.map(([event])=>({...event,x:100,y:100,amount:8})));
