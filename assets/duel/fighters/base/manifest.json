@@ -1,27 +1,48 @@
 {
-  "id": "v018-proof-fighter",
-  "version": 1,
+  "id": "v018-base-fighter",
+  "version": 2,
   "type": "fighter",
   "frameWidth": 256,
   "frameHeight": 256,
   "displayWorldWidth": 176,
   "animations": {
     "idle": {
-      "src": "proof-idle.svg",
-      "frames": 1,
-      "fps": 1,
+      "src": "idle.svg",
+      "frames": 4,
+      "columns": 4,
+      "fps": 4,
       "loop": true,
       "anchors": [
-        {
-          "head": [128, 48],
-          "chest": [128, 122],
-          "leftHand": [75, 170],
-          "rightHand": [184, 166],
-          "feet": [128, 232],
-          "front": [190, 160],
-          "back": [66, 160],
-          "target": [128, 125]
-        }
+        {"head":[128,48],"chest":[128,122],"leftHand":[75,158],"rightHand":[184,157],"feet":[128,232],"front":[190,160],"back":[66,160],"target":[128,125]},
+        {"head":[128,50],"chest":[128,124],"leftHand":[72,163],"rightHand":[186,157],"feet":[128,234],"front":[192,162],"back":[66,162],"target":[128,127]},
+        {"head":[128,48],"chest":[128,122],"leftHand":[78,156],"rightHand":[181,159],"feet":[128,232],"front":[187,160],"back":[69,160],"target":[128,125]},
+        {"head":[128,46],"chest":[128,120],"leftHand":[73,157],"rightHand":[185,154],"feet":[128,230],"front":[191,158],"back":[67,158],"target":[128,123]}
+      ]
+    },
+    "walk": {
+      "src": "walk.svg",
+      "frames": 4,
+      "columns": 4,
+      "fps": 7,
+      "loop": true,
+      "anchors": [
+        {"head":[128,48],"chest":[128,122],"leftHand":[83,153],"rightHand":[185,154],"feet":[128,232],"front":[190,160],"back":[66,160],"target":[128,125]},
+        {"head":[128,46],"chest":[128,120],"leftHand":[69,156],"rightHand":[174,150],"feet":[128,230],"front":[188,158],"back":[64,158],"target":[128,123]},
+        {"head":[128,48],"chest":[128,122],"leftHand":[76,151],"rightHand":[189,159],"feet":[128,232],"front":[194,160],"back":[66,160],"target":[128,125]},
+        {"head":[128,46],"chest":[128,120],"leftHand":[72,153],"rightHand":[179,153],"feet":[128,230],"front":[188,158],"back":[64,158],"target":[128,123]}
+      ]
+    },
+    "run": {
+      "src": "run.svg",
+      "frames": 4,
+      "columns": 4,
+      "fps": 10,
+      "loop": true,
+      "anchors": [
+        {"head":[132,48],"chest":[130,122],"leftHand":[67,148],"rightHand":[193,144],"feet":[128,232],"front":[198,158],"back":[65,160],"target":[132,124]},
+        {"head":[132,44],"chest":[130,118],"leftHand":[80,153],"rightHand":[182,149],"feet":[128,228],"front":[194,154],"back":[65,156],"target":[132,120]},
+        {"head":[132,48],"chest":[130,122],"leftHand":[73,145],"rightHand":[196,150],"feet":[128,232],"front":[201,158],"back":[65,160],"target":[132,124]},
+        {"head":[132,44],"chest":[130,118],"leftHand":[76,150],"rightHand":[187,147],"feet":[128,228],"front":[196,154],"back":[65,156],"target":[132,120]}
       ]
     }
   }
