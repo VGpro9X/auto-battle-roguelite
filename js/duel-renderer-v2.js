@@ -54,6 +54,21 @@
       return animationResolver.resolve(fighter,round.time,manifest);
     }
 
+    function drawAssetShadow(fighter,tr){
+      const x=tr.x(fighter.x),y=tr.y(fighter.y),s=tr.scale;
+      ctx.save();ctx.fillStyle="rgba(0,0,0,.34)";ctx.beginPath();ctx.ellipse(x,y-2*s,34*s,8*s,0,0,Math.PI*2);ctx.fill();ctx.restore();
+    }
+
+    function drawSideIdentity(fighter,tr){
+      const x=tr.x(fighter.x),y=tr.y(fighter.y),s=tr.scale;
+      ctx.save();
+      ctx.globalAlpha=.55;
+      ctx.strokeStyle=fighter.side==="player"?"#38bdf8":"#fb7185";
+      ctx.lineWidth=Math.max(1,2*s);
+      ctx.beginPath();ctx.ellipse(x,y-3*s,40*s,10*s,0,0,Math.PI*2);ctx.stroke();
+      ctx.restore();
+    }
+
     function drawAssetFighter(fighter,visual,tr){
       if(!visual?.animation?.src)return false;
       const image=images.get(visual.animation.src);if(!image)return false;
@@ -66,6 +81,8 @@
       const feet=visual.anchors?.feet||{x:frameWidth/2,y:frameHeight};
       const dw=frameWidth*worldScale*tr.scale,dh=frameHeight*worldScale*tr.scale;
       const x=tr.x(fighter.x),y=tr.y(fighter.y);
+      drawAssetShadow(fighter,tr);
+      drawSideIdentity(fighter,tr);
       ctx.save();
       ctx.translate(x,y);
       if((fighter.facing||1)<0)ctx.scale(-1,1);
@@ -74,6 +91,17 @@
       ctx.restore();
       lastFrames.set(fighter.side,{fighter,visual,worldScale});
       return true;
+    }
+
+    function drawAssetAttachments(fighter,round,tr){
+      const tracked=lastFrames.get(fighter.side);if(!tracked)return;
+      const chest=getAnchor(fighter,"chest"),feet=getAnchor(fighter,"feet");
+      const cx=tr.x(chest.x),cy=tr.y(chest.y),fx=tr.x(feet.x),fy=tr.y(feet.y),s=tr.scale;
+      if(fighter.shield>0){ctx.save();ctx.strokeStyle="rgba(125,211,252,.78)";ctx.lineWidth=Math.max(1,3*s);ctx.beginPath();ctx.arc(cx,cy,43*s,0,Math.PI*2);ctx.stroke();ctx.restore();}
+      const frost=typeof getDuelSkillRank==="function"?getDuelSkillRank(fighter.build,"frost"):0;
+      if(frost){ctx.save();ctx.strokeStyle="rgba(147,197,253,.24)";ctx.lineWidth=Math.max(1,2*s);ctx.beginPath();ctx.arc(fx,fy-48*s,(52+frost*6)*s,0,Math.PI*2);ctx.stroke();ctx.restore();}
+      const orbit=typeof getDuelSkillRank==="function"?getDuelSkillRank(fighter.build,"orbit"):0;
+      if(orbit){for(let i=0;i<orbit;i++){const a=round.time*3.1+i*Math.PI*2/orbit,bx=cx+Math.cos(a)*48*s,by=cy+10*s+Math.sin(a)*18*s;ctx.save();ctx.translate(bx,by);ctx.rotate(a);ctx.fillStyle="#e2e8f0";ctx.fillRect(-2*s,-11*s,4*s,22*s);ctx.restore();}}
     }
 
     function consume(events){fallback.consume(events);}
@@ -89,8 +117,8 @@
       fallback.render(match,dt,{skipFighterSides:covered});
       if(!covered.length)return;
       const tr=getTransform(match);
-      if(pVisual)drawAssetFighter(round.fighters.player,pVisual,tr);
-      if(oVisual)drawAssetFighter(round.fighters.opponent,oVisual,tr);
+      if(pVisual){drawAssetFighter(round.fighters.player,pVisual,tr);drawAssetAttachments(round.fighters.player,round,tr);}
+      if(oVisual){drawAssetFighter(round.fighters.opponent,oVisual,tr);drawAssetAttachments(round.fighters.opponent,round,tr);}
     }
 
     function getAnchor(fighter,name){
