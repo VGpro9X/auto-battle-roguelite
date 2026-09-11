@@ -153,6 +153,9 @@ jobs:
       - name: V0.18 G2E ranged cast block smoke test
         run: node tests/v018-g2e-ranged-cast-block-smoke.js
 
+      - name: V0.18 G2F full fighter state coverage smoke test
+        run: node tests/v018-g2f-full-state-coverage-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
