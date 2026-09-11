@@ -1,6 +1,6 @@
 # V0.18 — Graphics & Presentation Overhaul Plan
 
-Status: **ACTIVE PLAN / IMPLEMENTATION NOT STARTED**
+Status: **ACTIVE — G0 + G1 + G2 + G3 COMPLETE / G4 NEXT**
 
 Canonical source: GitHub `main` in `VGpro9X/auto-battle-roguelite`.
 
@@ -12,56 +12,52 @@ V0.18 goal: **replace the prototype visual presentation with a scalable asset-dr
 
 # 1. Scope lock
 
-V0.18 is a graphics/presentation version first.
+V0.18 is graphics/presentation-first.
 
 Primary scope:
-- higher-quality Duel fighter art and animation
-- asset-driven renderer that can replace the V0.17 vector fighter renderer safely
-- richer arena/background presentation
-- camera impact and screen-space presentation
-- readable skill/VFX presentation across the complete Duel ecosystem
-- Duel HUD/menu visual polish
-- mobile/desktop rendering quality and performance controls
-- graphics asset pipeline, manifests, fallback behavior and validation
+- higher-quality original Duel fighter art and animation
+- asset-driven Renderer V2
+- richer canonical arena/background presentation
+- camera/parallax/impact presentation
+- readable VFX across the complete Duel ecosystem
+- Duel HUD/menu presentation polish
+- mobile/desktop quality and performance controls
+- asset manifests, fallback behavior and release validation
 
 V0.18 does **not** change gameplay by default.
 
-Do not change unless a visual integration bug makes it unavoidable:
+Do not change merely for visuals:
 - V0.17 combat numbers
 - Duel AI decision logic
 - tournament bracket/progression
 - skill acquisition, Hợp Đạo, Siêu Cấp or Rare rules
-- HUYẾT CHIẾN / TỬ CHIẾN rules
+- HUYẾT CHIẾN / TỬ CHIẾN gameplay rules
 - Survival Movement V0.8
 - V0.17 hitboxes, damage timing or combat ordering
 
-If a visual effect appears to require a mechanic change, solve it in the renderer/presentation layer first.
+If presentation appears to require a mechanic change, solve it in the renderer/presentation layer first.
 
 ---
 
 # 2. Visual direction
 
-## 2.1 Art direction
-Use an **original dark-fantasy cultivation / martial-magic 2D style** suitable for the existing Vietnamese fantasy skill system.
+Use an **original dark-fantasy cultivation / martial-magic 2D style**.
 
 Target feel:
 - strong readable silhouettes
 - dark arena atmosphere with high-contrast effects
-- restrained base palette so elemental/rare VFX remain legible
+- restrained base palette so elemental/Rare VFX stay legible
 - crisp 2D illustration rather than pseudo-3D realism
-- energetic melee poses and supernatural skill effects
-- original visual identity; do not copy protected Mortal Kombat, Shadow Fight, anime/game characters, logos or signature costumes
+- energetic martial poses and supernatural effects
+- original visual identity; do not copy protected characters, logos or signature costumes
 
-## 2.2 Readability rules
-Gameplay readability is more important than decoration.
-
-Always preserve:
+Readability outranks decoration. Always preserve:
 - player/opponent side readability
-- facing direction readability
-- attack anticipation and impact timing
+- facing direction
+- anticipation and impact timing
 - projectile visibility
-- shield / invulnerability / control-state visibility
-- HUYẾT CHIẾN and TỬ CHIẾN phase readability
+- shield/defensive/control-state visibility
+- HUYẾT CHIẾN / TỬ CHIẾN phase readability
 - HP/shield HUD clarity
 
 Do not let large VFX hide fighters for long periods.
@@ -70,46 +66,41 @@ Do not let large VFX hide fighters for long periods.
 
 # 3. Architecture contract
 
-V0.17 deliberately separated simulation and renderer. V0.18 must preserve that separation.
-
 ## 3.1 Combat truth remains simulation-owned
-`js/duel-engine.js` and Duel skill modules decide:
-- positions
-- facing
-- action/state
+
+`js/duel-engine.js` and Duel content modules decide:
+- positions/facing
+- semantic action/state
 - HP/shield
-- hit/damage outcome
+- hit/damage/dodge outcomes
 - projectiles
 - control/KO state
-- semantic combat events
+- combat events
+- tournament result
 
-The graphics layer only visualizes those truths.
+Graphics only visualize those truths.
 
-Renderer must never decide:
+Renderer/VFX/camera must never decide:
 - whether an attack hits
 - damage amount
 - dodge success
-- skill cooldown
+- cooldown
 - knockback amount
 - fatal/revive ordering
-- tournament outcome
+- AI choices
+- tournament progression
 
 ## 3.2 Asset-driven renderer
-Preferred V0.18 direction:
 
-**Sprite-sheet / image-sequence first, skeletal-ready abstraction later.**
+Locked implementation direction:
+- sprite-sheet/image-sequence first
+- skeletal-ready abstraction later
+- manifest-driven timing/anchors
+- V0.17 vector renderer retained as fallback through V0.18 validation
 
-Reason:
-- simpler to author and validate for the current browser game
-- easier to replace individual states incrementally
-- deterministic and lightweight enough for desktop/mobile
-- no external runtime dependency required
-- visual API can remain compatible with a future skeletal renderer
+## 3.3 Stable fighter state API
 
-The V0.17 vector renderer remains a fallback until V0.18 asset coverage is complete.
-
-## 3.3 Required visual animation state API
-Keep/support these semantic fighter states:
+Required semantic states:
 - `idle`
 - `walk`
 - `run`
@@ -124,16 +115,11 @@ Keep/support these semantic fighter states:
 - `recover`
 - `ko`
 
-Optional V0.18 extensions may include visual-only sub-states such as:
-- `melee_alt`
-- `cast_heavy`
-- `victory`
-- `intro`
+Optional visual-only extensions may be added later but must map back to stable simulation states.
 
-These must map back to the stable simulation states rather than adding combat rules.
+## 3.4 Stable anchor API
 
-## 3.4 Required anchors
-Preserve the V0.17 anchor contract:
+Required anchors:
 - `head`
 - `chest`
 - `leftHand`
@@ -143,13 +129,13 @@ Preserve the V0.17 anchor contract:
 - `back`
 - `target`
 
-Sprite metadata may define per-frame anchor offsets. VFX attaches to anchors; it must not infer hitboxes from image pixels.
+VFX attach to anchors/world event coordinates. Artwork pixels never define hitboxes.
 
 ---
 
-# 4. Asset pipeline
+# 4. Public asset pipeline
 
-Create an explicit public asset tree. Recommended structure:
+Current public tree includes:
 
 ```text
 assets/
@@ -157,96 +143,43 @@ assets/
     fighters/
       base/
         manifest.json
-        idle.webp
-        walk.webp
-        run.webp
-        dash.webp
-        melee.webp
-        ranged.webp
-        cast.webp
-        hit.webp
-        block.webp
-        knockback.webp
-        knockdown.webp
-        recover.webp
-        ko.webp
+        <13 state sheets>
     arenas/
-      prototype-temple/
+      ashen-sanctum/
         manifest.json
-        sky.webp
-        far.webp
-        mid.webp
-        floor.webp
-        foreground.webp
+        sky.svg
+        far.svg
+        mid.svg
+        ambient.svg
+        floor.svg
+        foreground.svg
     vfx/
-      manifest.json
-      elemental.webp
-      impact.webp
-      aura.webp
-      rare.webp
+      ... G4
     ui/
-      ...
+      ... G5
 ```
 
-Exact filenames may evolve, but the manifest-driven principle is locked.
-
-## 4.1 Fighter asset standard
-Recommended export baseline:
-- transparent WebP or PNG
-- frame box around `256×256` for normal gameplay sprites
-- per-animation strips/sheets rather than one giant atlas
-- consistent feet/root position in every frame
-- no baked floor shadow inside fighter sprites
-- artwork authored at higher resolution if desired, then exported down for runtime
-- player/opponent may share the same base art with deterministic palette/accent treatment to avoid duplicating decoded memory
-
-Minimum frame guidance:
-- idle: 6–8
-- walk/run: 6–8
-- dash: 4–6
-- melee/ranged: 6–10
-- cast: 8–12
-- hit/block: 4–6
-- knockback/recover: 5–8
-- knockdown/ko: 8–12
-
-Animation timing must be metadata-driven, not inferred from file size.
-
-## 4.2 Arena asset standard
-Arena manifest should support:
-- `id`
-- logical width/height
-- `floorY`
-- left/right bounds
-- background layers
-- parallax factor per layer
-- optional ambient overlays
-- optional foreground masks
-
-V0.18 initially upgrades **one canonical arena**. Multiple arenas are only required if explicitly promoted into the V0.18 scope later.
-
-## 4.3 Public deployment change
-V0.17 Pages publishes only `index.html`, `css/`, `js/`.
-
-V0.18 must update Pages deployment to also publish:
-- `assets/`
-
-CI must fail if required production assets referenced by manifests are missing from the exact Pages artifact.
+Rules:
+- all runtime assets must be under public `assets/`
+- manifests reference concrete production sources
+- exact Pages artifact validation must fail when a referenced production asset is missing
+- tests remain under `tests/` and are not shipped publicly
 
 ---
 
-# 5. Technical modules planned
+# 5. Current graphics modules
 
-Recommended new modules:
-- `js/duel-visual-assets.js` — manifest loading/cache/fallback
-- `js/duel-animation.js` — animation state/time/frame resolution
-- `js/duel-camera.js` — presentation camera, shake, impact zoom, bounds
-- `js/duel-renderer-v2.js` — asset-driven Duel renderer
-- `js/duel-vfx-v2.js` — semantic event → visual effect mapping
-- `js/duel-visual-quality.js` — quality/performance policy
-- `css/v018-graphics.css` — V0.18 Duel presentation/HUD styling
+Implemented:
+- `js/duel-visual-assets.js` — manifest/image loader + cache
+- `js/duel-animation.js` — semantic animation/frame/anchor resolution
+- `js/duel-renderer-v2.js` — asset-driven Duel renderer + fallback integration
+- `js/duel-camera.js` — presentation-only camera/parallax/shake/zoom
+- `js/duel-renderer.js` — V0.17 vector fallback/reference, extended to share V2 camera transforms safely
 
-Existing `js/duel-renderer.js` remains the fallback/reference until G6 release closure.
+Planned next:
+- `js/duel-vfx-v2.js` — G4 semantic event → visual-family routing
+- `js/duel-visual-quality.js` — G6 quality/performance policy
+- `css/v018-graphics.css` — G5 presentation/HUD polish as needed
 
 Do not build V0.18 by wrapping `updateDuelRound()` or modifying Survival rendering loops.
 
@@ -254,114 +187,99 @@ Do not build V0.18 by wrapping `updateDuelRound()` or modifying Survival renderi
 
 # 6. Checkpoint roadmap
 
-## G0 — Graphics design + architecture lock — COMPLETE WHEN THIS PLAN IS COMMITTED
+## G0 — Graphics design + architecture lock — COMPLETE ✅
 
-Deliverables:
-- V0.18 scope frozen
-- art direction frozen
-- asset folder/manifest contract frozen
+Delivered:
+- scope locked
+- art direction locked
+- asset/manifest contract locked
 - simulation/renderer separation reaffirmed
-- sprite-first, skeletal-ready direction frozen
-- fallback strategy frozen
-
-Exit:
-- future chat can start implementation without redesigning the architecture
+- sprite-first/skeletal-ready direction locked
+- vector fallback strategy locked
 
 ---
 
-## G1 — Asset loader + Renderer V2 foundation
+## G1 — Asset loader + Renderer V2 foundation — COMPLETE ✅
 
-Build the infrastructure before creating many assets.
+Delivered:
+- Pages publishes `assets/`
+- manifest/image loader + cache
+- missing-asset fallback
+- animation metadata/state resolver
+- per-frame anchors
+- Renderer V2 feature switch
+- exact Pages asset validation
+- V0.16/V0.17 mechanics regressions remained green
 
-Tasks:
-- add `assets/` support to Pages build
-- add visual asset manifest loader/cache
-- graceful missing-asset fallback to V0.17 vector rendering
-- add animation metadata/state resolver
-- add per-frame anchor metadata support
-- add Renderer V2 feature switch internally
-- preserve exact world-to-screen transform independence
-- no gameplay changes
-
-Validation:
-- existing V0.17 tests all green
-- missing asset does not crash a match
-- renderer can switch vector ↔ V2 without changing simulation result
-- Pages artifact contains required assets
-
-Exit: graphics infrastructure is safe enough to replace one fighter state at a time.
+Exit achieved: graphics infrastructure can replace semantic states without altering simulation.
 
 ---
 
-## G2 — Fighter Visual V2
+## G2 — Fighter Visual V2 — COMPLETE ✅
 
-Replace the prototype stick/silhouette fighter with the first complete original fighter asset set.
-
-Required states:
-- idle
-- walk/run
-- dash
-- melee
-- ranged
-- cast
-- hit
-- block
-- knockback
-- knockdown
-- recover
-- ko
-
-Tasks:
-- stable feet/root alignment
-- horizontal facing flip without changing anchors/hitboxes
-- action animation selection from semantic fighter state
-- animation restart/interrupt rules
+Delivered incrementally through G2A–G2F:
+- clean exact-state replacement instead of asset-over-vector double drawing
+- **13 / 13 required fighter states**
+- stable feet/root metadata
+- facing flip and mirrored anchor math
 - player/opponent differentiation
 - floor/contact shadow
-- shield/frost/orbit attachments retained
-- visual knockback/KO matches simulation position/state
+- shield/frost/orbit attachment parity
+- state-by-state fallback safety
+- dedicated G2 smoke gates
+- exact Pages fighter asset validation
+- full V0.16/V0.17 regression chain remained green
 
-Acceptance:
-- no visible foot sliding during idle/attack transitions beyond reasonable animation tolerance
-- attacks visually face the actual target
-- KO state never visually returns to combat before round reset
-- both sides remain identifiable on mobile
-
-Exit: full Best-of-3 can be watched with no vector fighter required during normal coverage.
+Exit achieved: normal Duel fighter coverage no longer requires the vector fighter.
 
 ---
 
-## G3 — Arena + Camera Presentation V2
+## G3 — Arena + Camera Presentation V2 — COMPLETE ✅
 
-Upgrade the single flat prototype arena without changing logical arena geometry.
+Canonical arena: **Ashen Sanctum**.
 
-Tasks:
-- one original multi-layer arena
-- parallax background layers
+Delivered:
+- original six-layer arena: sky / far / mid / ambient / floor / foreground
+- logical geometry exactly matches Duel simulation:
+  - width `1000`
+  - height `560`
+  - floorY `475`
+  - left/right bounds `54 / 946`
+- parallax transforms
 - richer floor/contact plane
 - atmospheric ambient layer
-- foreground layer that never blocks core combat readability
-- camera framing based on both fighters
-- mild impact shake
-- mild attack/cast impact zoom
-- phase presentation for HUYẾT CHIẾN / TỬ CHIẾN
-- camera hard bounds; never lose fighters off-screen
+- safe foreground layer
+- `js/duel-camera.js`
+- framing based on both fighters
+- hard camera bounds
+- desktop zoom cap `1.24`
+- mobile zoom cap `1.10`
+- mobile-reduced shake
+- semantic hit/area/cast/KO/phase shake + zoom
+- shared world→screen transform across V2 fighters and vector fallback projectiles/VFX
+- HUYẾT CHIẾN / TỬ CHIẾN phase presentation
+- conditional canvas resize to preserve layered rendering
+- G3 arena/camera smoke gate
+- exact Pages arena layer validation
+- V0.16/V0.17/G1/G2/G3 Pages chain green
+- V0.17 desktop/mobile rendered flow green
+- public Pages deploy green
 
-Camera rules:
-- simulation coordinates do not change
-- no camera effect changes target selection or timing
-- avoid motion sickness / excessive shaking
-- mobile shake/zoom may be reduced automatically
+Camera rules remain locked:
+- simulation coordinates never change because of camera
+- camera never affects target selection or timing
+- no arena hazards/gameplay geometry changes
+- foreground never intentionally blocks core combat readability
 
-Exit: arena no longer looks like a debug/prototype stage.
+Exit achieved: the arena no longer relies on the prototype/debug presentation.
 
 ---
 
-## G4 — VFX Readability Pass for Full Duel Ecosystem
+## G4 — Full Duel VFX Readability Pass — NEXT
 
-Goal is full visual coverage, not 140 bespoke cinematic effects.
+Goal: full visual coverage, **not 140 bespoke cinematics**.
 
-Use visual families plus high-value overrides.
+Use shared visual families plus high-value overrides.
 
 Core families:
 - physical/melee impact
@@ -379,152 +297,112 @@ Core families:
 - chain
 - time/space
 - soul/death
-- Rare rule / divine / mystic
+- divine/mystic Rare
 
-Tasks:
-- semantic events map to VFX families
-- Hợp Đạo and Siêu Cấp receive stronger upgrade visuals than their base families
-- all 20 Rare rules receive distinct readable visual identities where they activate
-- projectiles use asset-driven sprites/trails where appropriate
-- impact points use visual anchors
-- no effect changes hitboxes
-- phase/fatal/revive ordering remains visually understandable
+Required architecture:
+- semantic combat events map into VFX families
+- effect placement uses world event coordinates and/or stable fighter anchors
+- projectile visuals remain driven by simulation projectile truth
+- effects render through the G3 camera transform
+- presentation lifetime/particle caps may exist, but they must never cap gameplay projectiles, targets, damage instances or mechanics
 
-Priority bespoke effects:
+High-value overrides:
+- major Hợp Đạo activations
 - major Siêu Cấp casts
 - fatal save/revive Rare rules
 - large area/control effects
-- TỬ CHIẾN transition
+- divine/mystic Rare rule activations
 
 Acceptance:
-- every implemented Duel mechanic has a visible/readable representation when visually meaningful
-- no critical defensive state is invisible
-- no common build produces a permanent full-screen VFX wall
+- every visually meaningful Duel mechanic has a readable representation
+- critical defensive states are never invisible
+- no common build creates a permanent full-screen VFX wall
+- no VFX changes hitboxes, damage, cooldowns, targeting, knockback or fatal ordering
 
-Exit: full V0.17 skill ecosystem has production-level visual readability.
+Recommended implementation order:
+1. audit existing Duel event vocabulary + skill visual hints
+2. add `js/duel-vfx-v2.js`
+3. first shared families: physical / projectile / fire / frost / lightning
+4. integrate with Renderer V2, anchors and G3 camera
+5. add G4A smoke gate
+6. expand poison/blood/defense/heal/control
+7. expand summon/orbit/area/chain/time/space/soul/death
+8. add stronger Hợp Đạo / Siêu Cấp / Rare overrides
+9. close G4 only after full family coverage and regression gates are green
 
 ---
 
 ## G5 — Duel UI / HUD / Tournament Presentation Polish
 
 Tasks:
-- visually upgrade Duel mode card/lobby
+- Duel mode card/lobby
 - pre-match VS presentation
-- opponent scouting layout
-- skill/reward cards polish without changing selection rules
-- clearer Hợp Đạo / Siêu Cấp / Rare visual tiers
+- opponent scouting
+- skill/reward card polish without rule changes
+- Hợp Đạo / Siêu Cấp / Rare tier readability
 - combat HUD refinement
-- round win markers
-- match transition / round intro / K.O. presentation
-- Champion/elimination result presentation
-- preserve Vietnamese player-facing text
-
-Rules:
-- UI polish cannot hide mechanical descriptions
-- rare chance/truth text remains explicit
-- mobile tap targets remain usable
-
-Exit: menus/HUD visually match the upgraded combat presentation.
+- round/K.O./Champion/elimination presentation
+- mobile usability preserved
 
 ---
 
 ## G6 — Performance, Quality Levels and Fallback Hardening
 
-Target platforms:
-- desktop PC browser
-- Android/mobile browser
-
 Tasks:
-- asset preload strategy
+- preload/cache strategy
 - decoded-memory sanity
-- image cache lifecycle
-- cap transient particle/effect counts visually, without changing gameplay mechanics
-- quality presets or automatic reductions for expensive presentation features
-- reduce camera shake/parallax/particles on constrained/mobile rendering when needed
-- optional reduced-motion support
-- vector fallback remains usable if asset load fails
+- image-cache lifecycle
+- presentation-only transient effect limits
+- mobile/constrained quality reductions
+- reduced-motion path
+- vector fallback hardening
 
-Important distinction:
-visual particle/effect caps are presentation limits only. They must not cap gameplay projectiles, targets, damage instances or mechanics.
-
-Validation targets:
-- no unbounded effect array growth
-- no repeated image decode/load each frame
-- no large layout jank when entering Duel
-- mobile browser flow stays responsive
-
-Exit: upgraded visuals are safe enough for public Pages.
+Presentation caps must never become hidden gameplay caps.
 
 ---
 
 ## G7 — V0.18 Integration / Release Validation
 
-Automated:
-- all V0.16 tests remain green
-- all V0.17 Duel mechanics tests remain green
-- render-switch determinism check
-- asset manifest integrity check
-- exact Pages artifact includes `assets/`
+Automated requirements:
+- all V0.16 tests green
+- all V0.17 Duel mechanics tests green
+- Renderer V2 normal path green
+- vector fallback green
+- manifest/asset integrity green
+- exact Pages artifact includes all required assets
 - browser console has no missing production asset errors
-- desktop rendered flow
-- mobile rendered flow
-- combat can finish with V2 renderer active
-- fallback renderer path also works
-
-Visual validation:
-- fighter animation state coverage
-- player/opponent readability
-- VFX family coverage
-- major Hợp Đạo/Siêu Cấp/Rare readability
-- arena/camera bounds
-- HUD readability
-- responsive mobile layout
+- desktop rendered flow green
+- mobile rendered flow green
+- combat can finish with V2 active
 
 Release closure:
 - update `README.md`
 - update `ROADMAP.md`
 - update `PROJECT_HANDOFF.md`
 - create `V018_RELEASE_VALIDATION.md`
-- promote runtime/public label from development label to final **V0.18** only after all gates pass
-- freeze V0.18 visual baseline
+- promote runtime/public label to **V0.18** only after all gates pass
+- freeze the V0.18 visual baseline
 
 ---
 
 # 7. Implementation order rule
 
-Do not start by generating dozens of final images.
-
 Required order:
-1. G1 asset/renderer infrastructure
-2. one small proof asset set
-3. validate transform/anchors/animation
-4. expand fighter states
-5. arena/camera
-6. VFX families
+1. G1 asset/renderer infrastructure ✅
+2. proof asset/state ✅
+3. transform/anchor/animation validation ✅
+4. complete fighter states ✅
+5. arena/camera ✅
+6. VFX families ← **NEXT**
 7. UI polish
 8. performance/fallback
 9. release validation
 
-This prevents expensive art generation from locking the project into a broken renderer contract.
+Do not mass-produce assets before their renderer contract is validated.
 
 ---
 
-# 8. Asset creation workflow for future chats
-
-When actual art creation begins:
-- generate/design one canonical fighter sheet or one animation state at a time
-- keep the visual design original
-- use transparent background for fighter/VFX assets
-- preserve consistent root/feet placement
-- avoid text/logos inside combat artwork
-- test the asset in-engine before producing the entire state family
-- keep source/master art separate from runtime-optimized exports if source files are introduced
-
-Do not assume AI-generated frames are animation-compatible without alignment cleanup. Runtime validation is required after each state batch.
-
----
-
-# 9. Definition of Done for V0.18
+# 8. Definition of Done for V0.18
 
 V0.18 may be marked `COMPLETE / RELEASED` only when:
 - asset-driven Renderer V2 is the normal Duel path
@@ -535,24 +413,24 @@ V0.18 may be marked `COMPLETE / RELEASED` only when:
 - full Duel ecosystem has readable VFX coverage
 - Duel UI/HUD presentation pass is complete
 - desktop/mobile performance validation passes
-- all V0.16 + V0.17 mechanic regression tests remain green
+- all V0.16 + V0.17 mechanics regressions remain green
 - exact public Pages artifact ships all required assets
 - final runtime/docs label is **V0.18**
 
-Multiple arenas, jump/aerial combat, online systems and new gameplay content are not automatically part of V0.18.
+Multiple arenas, jump/aerial combat, online systems and unrelated new gameplay content are not automatically part of V0.18.
 
 ---
 
-# 10. First checkpoint for the next chat
+# 9. Current continuation point
 
-Start with **G1 — Asset loader + Renderer V2 foundation**.
+Continue from **G4 — Full Duel VFX Readability Pass**.
 
 Before editing:
 1. read `README.md`
 2. read `PROJECT_HANDOFF.md`
 3. read `ROADMAP.md`
 4. read `V018_GRAPHICS_PLAN.md`
-5. read `V017_RELEASE_VALIDATION.md`
-6. fetch latest `js/duel-renderer.js`, `js/duel-engine.js`, `js/duel-ui.js`, `index.html`, `.github/workflows/pages.yml`
-
-Then implement G1 only, commit meaningful checkpoints frequently, and keep GitHub `main` canonical.
+5. fetch latest Duel event/renderer/content files
+6. keep GitHub `main` canonical
+7. commit meaningful checkpoints frequently
+8. do not change combat/AI/balance truth for visual convenience
