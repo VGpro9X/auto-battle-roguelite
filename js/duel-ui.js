@@ -17,7 +17,7 @@
           <div><b>Best-of-3</b><small>Thắng 2 round để đi tiếp</small></div>
           <div><b>2 kỹ năng khởi đầu</b><small>Hoàn toàn tự do · không ép offensive</small></div>
           <div><b>Rank I / II / III</b><small>Rank III = TỐI ĐA</small></div>
-          <div><b>16 kỹ năng prototype</b><small>Sẽ mở rộng dần tới toàn bộ hệ kỹ năng</small></div>
+          <div><b>80 Kỹ Năng + liên kết</b><small>Hợp Đạo/Siêu Cấp tự mở khi đủ điều kiện</small></div>
         </div>
       </div>
       <div class="duelCombatRules"><b>LUẬT COMBAT PROTOTYPE</b><span>Đòn thường cận chiến: 12 sát thương · tầm 78px · hồi chiêu 0,78 giây. Tốc độ di chuyển cơ bản: 118px/giây.</span><span>Dash AI: 92px + 7px mỗi Rank Thân Pháp/Ảnh Bộ, tối đa +42px; hồi chiêu 4,2 giây − 0,12 giây mỗi Rank đó, tối thiểu 2,8 giây. Dash không có bất tử.</span><span>Round 60 giây. Từ 45–60 giây: HUYẾT CHIẾN tăng sát thương từ ×1,00 → ×1,75 và giảm hồi máu/khiên mới từ ×1,00 → ×0,50. Từ 60 giây: TỬ CHIẾN = sát thương ×2, hồi máu 0, khiên mới 0 cho tới khi có K.O.</span></div><p class="finePrint">Đồ họa hiện là renderer vector thử nghiệm. Combat, AI và skill được tách khỏi renderer để có thể thay bằng sprite/animation chất lượng cao sau này.</p>
@@ -97,7 +97,11 @@
   function buildHtml(build,{limit=8,empty="Chưa có kỹ năng"}={}){
     const entries=listDuelBuild(build);
     if(!entries.length)return`<div class="duelBuildEmpty">${empty}</div>`;
-    return entries.slice(0,limit).map(({meta,rank})=>`<div class="duelBuildChip"><span>${meta.icon}</span><b>${meta.name}</b><small>${rank>=3?"TỐI ĐA":`Rank ${["","I","II","III"][rank]}`}</small></div>`).join("");
+    const skillHtml=entries.slice(0,limit).map(({meta,rank})=>`<div class="duelBuildChip"><span>${meta.icon}</span><b>${meta.name}</b><small>${rank>=3?"TỐI ĐA":`Rank ${["","I","II","III"][rank]}`}</small></div>`).join("");
+    const links=[];
+    if(typeof listDuelSynergies==="function")for(const{meta}of listDuelSynergies(build,{includeLocked:false,implementedOnly:true}))links.push(`<div class="duelBuildChip duelLinkChip"><span>${meta.icon}</span><b>${meta.name}</b><small>HỢP ĐẠO</small></div>`);
+    if(typeof listDuelEvolutions==="function")for(const{meta}of listDuelEvolutions(build,{includeLocked:false,implementedOnly:true}))links.push(`<div class="duelBuildChip duelEvolutionChip"><span>${meta.icon}</span><b>${meta.name}</b><small>SIÊU CẤP</small></div>`);
+    return skillHtml+links.slice(0,8).join("");
   }
 
   function showDuelSkillSelection(starter=false){
@@ -107,14 +111,16 @@
     const modal=document.getElementById("duelSkillModal"),container=document.getElementById("duelChoices"),reroll=document.getElementById("duelReroll");
     document.getElementById("duelPickEyebrow").textContent=starter?`KHỞI ĐẦU · LƯỢT ${duelSession.starterPick+1}/2`:`THẮNG TRẬN · NÂNG BUILD`;
     document.getElementById("duelPickTitle").textContent=starter?"Chọn kỹ năng khởi đầu":"Chọn một kỹ năng trước trận tiếp theo";
-    document.getElementById("duelPickDesc").textContent=starter?"Ba lựa chọn hoàn toàn tự do. Không có nhóm kỹ năng bắt buộc.":"Kỹ năng đã sở hữu có thể xuất hiện lại để tăng Rank. Rank III là TỐI ĐA.";
+    document.getElementById("duelPickDesc").textContent=starter?"Ba lựa chọn hoàn toàn tự do. Không có nhóm kỹ năng bắt buộc.":"Kỹ năng đã sở hữu có thể xuất hiện lại để tăng Rank. Rank III là TỐI ĐA; Hợp Đạo và Siêu Cấp tự mở khi đủ điều kiện.";
 
     function renderChoices(){
       const picks=getDuelChoices(player.build,{starter,count:3,rng:Math.random});container.innerHTML="";
       for(const key of picks){
         const meta=getDuelSkill(key),current=getDuelSkillRank(player.build,key),next=current+1;
+        const evoHints=typeof getDuelEvolutionChoiceHints==="function"?getDuelEvolutionChoiceHints(player.build,key):[];
+        const hintHtml=evoHints.length?`<div class="duelEvolutionHint">✦ MỞ SIÊU CẤP: ${evoHints.map(item=>`${item.icon} ${item.name}`).join(" · ")}</div>`:"";
         const button=document.createElement("button");button.className="choice duelChoice"+(next>=3?" maxNext":"");
-        button.innerHTML=`<div class="icon">${meta.icon}</div><h3>${meta.name}</h3><div class="lvl">Rank ${["","I","II","III"][next]} / III${next>=3?" · TỐI ĐA":""}</div><div class="tags">${meta.tags.slice(0,5).map(tag=>`<span class="tagChip">${typeof getTagLabel==="function"?getTagLabel(tag):tag}</span>`).join("")}</div><div class="desc">${meta.desc(next)}</div>`;
+        button.innerHTML=`<div class="icon">${meta.icon}</div><h3>${meta.name}</h3><div class="lvl">Rank ${["","I","II","III"][next]} / III${next>=3?" · TỐI ĐA":""}</div><div class="tags">${meta.tags.slice(0,5).map(tag=>`<span class="tagChip">${typeof getTagLabel==="function"?getTagLabel(tag):tag}</span>`).join("")}</div><div class="desc">${meta.desc(next)}</div>${hintHtml}`;
         button.addEventListener("click",()=>{
           if(!addDuelSkillRank(player.build,key))return;
           if(starter){duelSession.starterPick++;if(duelSession.starterPick<2){showDuelSkillSelection(true);return;}}
