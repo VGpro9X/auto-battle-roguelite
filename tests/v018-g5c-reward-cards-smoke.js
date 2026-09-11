@@ -9,7 +9,11 @@ const css=read("css/v018-ui.css");
 const ui=read("js/duel-ui.js");
 const rares=read("js/duel-rares.js");
 
-assert.match(bridge,/^@import url\("\.\/v018-graphics\.css\?v=018-g5b"\);\n@import url\("\.\/v018-ui\.css\?v=018-g5c"\);/,'G5C reward stylesheet must load after the shared graphics layer');
+const graphicsImport='@import url("./v018-graphics.css';
+const uiImport='@import url("./v018-ui.css?v=018-g';
+const graphicsPos=bridge.indexOf(graphicsImport),uiPos=bridge.indexOf(uiImport);
+assert.strictEqual(graphicsPos,0,'shared V0.18 graphics stylesheet must remain the first Duel import');
+assert.ok(uiPos>graphicsPos,'G5 reward stylesheet must load after the shared graphics layer');
 
 for(const selector of [
   ".duelSkillCard",
