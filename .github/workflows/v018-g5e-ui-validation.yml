@@ -1,0 +1,40 @@
+name: V0.18 G5E UI validation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v018-g5e-ui-validation
+  cancel-in-progress: true
+
+jobs:
+  validate-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: V0.18 G5E desktop/mobile rendered UI closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4174 >/tmp/v018-g5e-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then
+            echo "Chrome/Chromium not found on runner"
+            exit 1
+          fi
+          "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,900 --virtual-time-budget=9000 --dump-dom "http://127.0.0.1:4174/tests/v018-g5e-browser-driver.html?expect=desktop" >/tmp/v018-g5e-desktop.html
+          grep -q 'V018_G5E_BROWSER_PASS desktop' /tmp/v018-g5e-desktop.html || { cat /tmp/v018-g5e-desktop.html; exit 1; }
+          "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=390,844 --virtual-time-budget=9000 --dump-dom "http://127.0.0.1:4174/tests/v018-g5e-browser-driver.html?expect=mobile" >/tmp/v018-g5e-mobile.html
+          grep -q 'V018_G5E_BROWSER_PASS mobile' /tmp/v018-g5e-mobile.html || { cat /tmp/v018-g5e-mobile.html; exit 1; }
+          grep 'V018_G5E_BROWSER_PASS' /tmp/v018-g5e-desktop.html
+          grep 'V018_G5E_BROWSER_PASS' /tmp/v018-g5e-mobile.html
