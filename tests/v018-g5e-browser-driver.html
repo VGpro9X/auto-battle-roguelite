@@ -11,14 +11,25 @@
   function check(value,message){if(!value)throw new Error(message);return value;}
   function visible(el){return !!el&&el.classList.contains('visible');}
   function rectInside(el,w,h,label,slack=3){const r=el.getBoundingClientRect();check(r.width>0&&r.height>0,`${label} has zero size`);check(r.left>=-slack&&r.top>=-slack&&r.right<=w+slack&&r.bottom<=h+slack,`${label} overflow ${Math.round(r.left)},${Math.round(r.top)},${Math.round(r.right)},${Math.round(r.bottom)} vs ${w}x${h}`);return r;}
+  function rectHorizontal(el,w,label,slack=3){const r=el.getBoundingClientRect();check(r.width>0&&r.height>0,`${label} has zero size`);check(r.left>=-slack&&r.right<=w+slack,`${label} horizontal overflow ${Math.round(r.left)}..${Math.round(r.right)} vs ${w}`);return r;}
   function clickableAtCenter(d,el,label){const r=el.getBoundingClientRect(),hit=d.elementFromPoint(r.left+r.width/2,r.top+r.height/2);check(hit===el||el.contains(hit),`${label} center is blocked by ${hit?.id||hit?.className||hit?.tagName}`);}
   function noHorizontalOverflow(d,w,label){check(d.documentElement.scrollWidth<=w+3,`${label} horizontal overflow ${d.documentElement.scrollWidth}>${w}`);}
+  async function ensureReachable(win,d,el,host,label,vw,vh){
+    let r=rectHorizontal(el,vw,label);
+    if(r.top<-3||r.bottom>vh+3){
+      const style=win.getComputedStyle(host);
+      check(style.overflowY==='auto'||style.overflowY==='scroll',`${label} is off-screen but its host is not scrollable: overflow-y=${style.overflowY}`);
+      check(host.scrollHeight>host.clientHeight,`${label} host is not actually scrollable: ${host.scrollHeight}/${host.clientHeight}`);
+      el.scrollIntoView({block:'nearest'});await sleep(80);r=el.getBoundingClientRect();
+    }
+    rectInside(el,vw,vh,label);clickableAtCenter(d,el,label);return r;
+  }
   try{
     await new Promise((resolve,reject)=>{frame.addEventListener('load',resolve,{once:true});setTimeout(()=>reject(new Error('iframe load timeout')),6000);});
-    const w=frame.contentWindow,d=frame.contentDocument,expected=new URLSearchParams(location.search).get('expect')||'desktop';
+    const win=frame.contentWindow,d=frame.contentDocument,expected=new URLSearchParams(location.search).get('expect')||'desktop';
     await waitFor(()=>d.getElementById('duelModeCard'),'duel mode card');
-    if(expected==='mobile')check(w.innerWidth<=500,`mobile iframe width=${w.innerWidth}`);else check(w.innerWidth>=900,`desktop iframe width=${w.innerWidth}`);
-    const vw=w.innerWidth,vh=w.innerHeight;
+    if(expected==='mobile')check(win.innerWidth<=500,`mobile iframe width=${win.innerWidth}`);else check(win.innerWidth>=900,`desktop iframe width=${win.innerWidth}`);
+    const vw=win.innerWidth,vh=win.innerHeight;
 
     noHorizontalOverflow(d,vw,'main menu');
     const play=d.querySelector('#mainMenu [data-screen="modeMenu"]');
@@ -26,59 +37,57 @@
     await waitFor(()=>visible(d.getElementById('modeMenu')),'mode menu');
     noHorizontalOverflow(d,vw,'mode menu');
     const modeGrid=d.querySelector('#modeMenu .modeGrid'),modeCard=d.getElementById('duelModeCard');
-    if(modeCard.getBoundingClientRect().bottom>vh){
-      const gridStyle=w.getComputedStyle(modeGrid);
-      check(gridStyle.overflowY==='auto'||gridStyle.overflowY==='scroll',`off-screen Duel mode card has no scrollable parent: overflow-y=${gridStyle.overflowY}`);
-      check(modeGrid.scrollHeight>modeGrid.clientHeight,`mode grid is not actually scrollable: ${modeGrid.scrollHeight}/${modeGrid.clientHeight}`);
-      modeCard.scrollIntoView({block:'nearest'});await sleep(80);
-    }
-    rectInside(modeCard,vw,vh,'Duel mode card');clickableAtCenter(d,modeCard,'Duel mode card');
+    await ensureReachable(win,d,modeCard,modeGrid,'Duel mode card',vw,vh);
     modeCard.click();
+
     await waitFor(()=>visible(d.getElementById('duelLobbyMenu')),'Duel lobby');
     noHorizontalOverflow(d,vw,'Duel lobby');
-    const lobbyCard=d.querySelector('#duelLobbyMenu .duelLobbyCard');rectInside(lobbyCard,vw,vh,'Duel lobby card');
-    const start=d.getElementById('duelStartTournament');rectInside(start,vw,vh,'start tournament button');clickableAtCenter(d,start,'start tournament button');
-
+    const lobbyOverlay=d.getElementById('duelLobbyMenu'),lobbyCard=d.querySelector('#duelLobbyMenu .duelLobbyCard');
+    rectHorizontal(lobbyCard,vw,'Duel lobby card');
+    const start=d.getElementById('duelStartTournament');await ensureReachable(win,d,start,lobbyOverlay,'start tournament button',vw,vh);
     start.click();
+
     await waitFor(()=>visible(d.getElementById('duelSkillModal'))&&d.querySelectorAll('#duelChoices .duelChoice').length===3,'starter choices');
     noHorizontalOverflow(d,vw,'starter choices');
-    const skillCard=d.querySelector('#duelSkillModal .duelSkillCard');rectInside(skillCard,vw,vh,'skill modal card');
+    const skillOverlay=d.getElementById('duelSkillModal'),skillCard=d.querySelector('#duelSkillModal .duelSkillCard'),choiceHost=d.getElementById('duelChoices');
+    rectHorizontal(skillCard,vw,'skill modal card');
     let choices=[...d.querySelectorAll('#duelChoices .duelChoice')];
-    for(const [i,button] of choices.entries())rectInside(button,vw,vh,`starter choice ${i+1}`);
-    const reroll=d.getElementById('duelReroll');rectInside(reroll,vw,vh,'reroll button');clickableAtCenter(d,reroll,'reroll button');
-    choices[0].click();
+    for(const [i,button] of choices.entries())await ensureReachable(win,d,button,choiceHost,`starter choice ${i+1}`,vw,vh);
+    const reroll=d.getElementById('duelReroll');await ensureReachable(win,d,reroll,skillOverlay,'reroll button',vw,vh);
+    await ensureReachable(win,d,choices[0],choiceHost,'starter choice 1 return',vw,vh);choices[0].click();
+
     await waitFor(()=>visible(d.getElementById('duelSkillModal'))&&d.querySelectorAll('#duelChoices .duelChoice').length===3,'starter choice 2');
-    choices=[...d.querySelectorAll('#duelChoices .duelChoice')];choices[0].click();
+    choices=[...d.querySelectorAll('#duelChoices .duelChoice')];await ensureReachable(win,d,choices[0],d.getElementById('duelChoices'),'starter choice 2 first card',vw,vh);choices[0].click();
 
     await waitFor(()=>visible(d.getElementById('duelPreMatchMenu')),'pre-match screen');
     noHorizontalOverflow(d,vw,'pre-match screen');
-    const preCard=d.querySelector('#duelPreMatchMenu .duelPreCard');rectInside(preCard,vw,vh,'pre-match card');
-    const begin=d.getElementById('duelBeginMatch');rectInside(begin,vw,vh,'begin match button');clickableAtCenter(d,begin,'begin match button');
-
+    const preOverlay=d.getElementById('duelPreMatchMenu'),preCard=d.querySelector('#duelPreMatchMenu .duelPreCard');rectHorizontal(preCard,vw,'pre-match card');
+    const begin=d.getElementById('duelBeginMatch');await ensureReachable(win,d,begin,preOverlay,'begin match button',vw,vh);
     begin.click();
+
     await waitFor(()=>!d.getElementById('duelCombatRoot').classList.contains('hidden'),'combat root');
     await sleep(700);
     const combat=d.getElementById('duelCombatRoot'),hud=d.querySelector('.duelCombatHud'),abort=d.getElementById('duelAbortButton'),canvas=d.getElementById('duelCanvas');
     rectInside(combat,vw,vh,'combat root');
-    check(w.getComputedStyle(hud).pointerEvents==='none','combat HUD must remain pointer-transparent');
-    check(w.getComputedStyle(abort).pointerEvents==='auto','abort button must remain interactive');
+    check(win.getComputedStyle(hud).pointerEvents==='none','combat HUD must remain pointer-transparent');
+    check(win.getComputedStyle(abort).pointerEvents==='auto','abort button must remain interactive');
     clickableAtCenter(d,abort,'abort button');
     const centerHit=d.elementFromPoint(vw/2,vh*.57);check(centerHit===canvas||centerHit===combat||centerHit?.id==='duelCanvas',`combat center blocked by ${centerHit?.id||centerHit?.className||centerHit?.tagName}`);
     const health=d.querySelector('.duelHealthRow').getBoundingClientRect();check(health.bottom<vh*.34,`combat HUD occludes too much vertical playfield: ${Math.round(health.bottom)}/${vh}`);
-    if(expected==='mobile')check(w.getComputedStyle(d.getElementById('duelCombatBuilds')).display==='none','mobile combat build tray must stay hidden');
+    if(expected==='mobile')check(win.getComputedStyle(d.getElementById('duelCombatBuilds')).display==='none','mobile combat build tray must stay hidden');
     noHorizontalOverflow(d,vw,'combat screen');
 
-    // G5D/G5E result presentation mirrors existing result truth and remains viewport-safe.
+    // G5D/G5E result presentation mirrors existing result truth and remains reachable.
     combat.classList.add('hidden');
     const resultMenu=d.getElementById('duelResultMenu');resultMenu.classList.add('visible');
     const badge=d.getElementById('duelResultBadge'),resultCard=d.querySelector('#duelResultMenu .duelResultCard');
     badge.textContent='NHÀ VÔ ĐỊCH';await sleep(40);check(resultCard.classList.contains('champion'),'Champion presentation class did not sync');
-    noHorizontalOverflow(d,vw,'Champion result');rectInside(resultCard,vw,vh,'Champion result card');
+    noHorizontalOverflow(d,vw,'Champion result');rectHorizontal(resultCard,vw,'Champion result card');
     badge.textContent='BỊ LOẠI';await sleep(40);check(resultCard.classList.contains('eliminated'),'Eliminated presentation class did not sync');
     check(!resultCard.classList.contains('champion'),'Champion class leaked into eliminated state');
-    for(const id of ['duelRetryTournament','duelResultMain']){const button=d.getElementById(id);rectInside(button,vw,vh,id);clickableAtCenter(d,button,id);}
+    for(const id of ['duelRetryTournament','duelResultMain'])await ensureReachable(win,d,d.getElementById(id),resultMenu,id,vw,vh);
 
-    const session=w.duelSession,round=session?.currentMatch?.currentRound;
+    const session=win.duelSession,round=session?.currentMatch?.currentRound;
     check(round&&Number.isFinite(round.fighters.player.hp)&&Number.isFinite(round.fighters.opponent.hp),'Duel combat truth invalid after UI audit');
     topDoc.body.innerHTML=`<pre id="result">V018_G5E_BROWSER_PASS ${expected} ${vw}x${vh} round=${round.number} hud=${Math.round(health.bottom)} result=${Math.round(resultCard.getBoundingClientRect().height)}</pre>`;
   }catch(error){topDoc.body.innerHTML=`<pre id="result">V018_G5E_BROWSER_FAIL ${String(error&&error.stack||error)}</pre>`;}
