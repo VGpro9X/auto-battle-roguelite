@@ -118,32 +118,46 @@ Hands-on final release sign-off remains part of C6 because content integration i
 Current status:
 
 - Base Kỹ Năng Duel: **80 / 80 COMPLETE** ✅
-- Hợp Đạo Kỹ Duel: **0 / 28**
+- Hợp Đạo Kỹ Duel: **8 / 28**
 - Siêu Cấp Duel: **0 / 12**
 - Rare Duel: **0 / 20**
 
 Base-skill expansion is CLOSED except for bugs/regressions. Frozen CI checkpoints exist at 40/50/60/70/80.
 
-## C1 — Hợp Đạo foundation — NEXT
-- dedicated Duel synergy registry
-- Duel requirement evaluator
-- automatic unlock after build changes
-- player/AI parity
-- round state receives unlocked synergies
-- first real end-to-end tested Hợp Đạo
+## C1 — Hợp Đạo foundation — COMPLETE ✅
+- dedicated Duel synergy catalog/registry for all 28 identities ✅
+- Duel requirement evaluator from current build ranks ✅
+- automatic unlock without consuming reward choices ✅
+- player/AI parity ✅
+- round state receives unlocked synergies ✅
+- semantic `synergy_unlock` events ✅
+- first real end-to-end Hợp Đạo (`soulFurnace` / Lò Luyện Hồn) ✅
+- dedicated C1 CI + Pages validation ✅
 
-**Exit:** synergy framework stable.
+**Exit achieved:** synergy framework stable.
 
-## C2 — 28 / 28 Hợp Đạo Kỹ
-Recommended audited batches:
-- C2A: `0 → 8`
-- C2B: `8 → 16`
+## C2 — 28 / 28 Hợp Đạo Kỹ — ACTIVE
+Audited batches:
+- C2A: `0 → 8` **COMPLETE** ✅
+- C2B: `8 → 16` **NEXT**
 - C2C: `16 → 22`
 - C2D: `22 → 28`
 
+C2A implemented and mechanically gated:
+- Lò Luyện Hồn (`soulFurnace`)
+- Hàn Sát (`frozenExecution`)
+- Huyết Thành (`crimsonFortress`)
+- Săn Ấn (`markedBounty`)
+- Hồn Thuẫn (`soulAegis`)
+- Bạo Lôi (`criticalStorm`)
+- Hồi Quang (`lastBreath`)
+- Huyết Kính (`glassBlood`)
+
+C2A validation locks real interactions for low-HP/frost damage, heal→shield, mark+bounty progress, Soul Harvest stack shields, Crit/Lightning follow-up, revive/fatal ordering, and actual-heal duplication. Carrier skills are also tested to initialize safely when their matching Hợp Đạo is not owned. All V0.16 + 80-base + C1 + C2A CI and Pages deploy together successfully. ✅
+
 Every Duel reinterpretation must be explicit in its description. Hợp Đạo never consumes a reward selection.
 
-**Exit:** all 28 mechanics + all-28 CI gate.
+**C2 exit:** all 28 mechanics + all-28 CI gate.
 
 ## C3 — 12 / 12 Siêu Cấp
 - evolution requirement foundation
@@ -243,4 +257,4 @@ These are new-version goals, not unfinished V0.17 tasks.
 
 # PROJECT STATUS
 
-**V0.17 Duel Arena foundation is complete and deployed. All 80/80 base Kỹ Năng are integrated. The remaining locked release path is C1 Hợp Đạo foundation → C2 28 Hợp Đạo → C3 12 Siêu Cấp → C4 20 rare → C5 integration/balance → C6 final validation → V0.17 COMPLETE / RELEASED.**
+**V0.17 Duel Arena foundation is complete and deployed. All 80/80 base Kỹ Năng and C1 Hợp Đạo foundation are complete; C2A has reached 8/28 Hợp Đạo with CI/Pages green. Next locked checkpoint: C2B 8→16.**
