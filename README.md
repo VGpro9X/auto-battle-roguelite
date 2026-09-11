@@ -1,98 +1,104 @@
 # Auto Battle Roguelite
 
-Current release: **V0.16 – Skill Expansion & Rare System V2**
+Current release: **V0.17 – Duel Arena / Đấu Trường 1v1**
 
 Public build: `https://vgpro9x.github.io/auto-battle-roguelite/`
 
 GitHub `main` is canonical.
 
-## Release content
-- **80 base Kỹ Năng**
-- **28 Hợp Đạo Kỹ**
-- **12 Siêu Cấp**
-- **20 rare rules** = 10 Thần Kỹ + 10 Thần Bí Kỹ
-- **140 Codex entries**
+## V0.17 release
+V0.17 adds a complete automatic side-view tournament mode while preserving the existing Survival/Endless game.
 
-## V0.16 run systems
-### Rare System V2
-Different Thần Kỹ/Thần Bí Kỹ can coexist; duplicates cannot.
+### Đấu Trường 1v1
+- **64 fighters** in a single-elimination bracket: `64 → 32 → 16 → 8 → 4 → 2 → Champion`
+- Every matchup is **Best-of-3**; first to 2 round wins advances.
+- Fighters are fully AI-controlled. The player builds the fighter and watches the AI adapt its spacing/action choices to the build.
+- Two unrestricted starter skill selections; no forced offensive starter.
+- One reward choice after every non-final match victory.
+- Duel skills use **Rank I / II / III**, with Rank III = **TỐI ĐA**.
+- One `XOAY LẠI` on each choice screen.
+- Pre-match scouting shows opponent build/style before combat.
+- Flat side-view prototype arena with a renderer isolated from combat logic, so fighter art/animation can be replaced later without rewriting the Duel engine.
+- No jump/air combat in V0.17; that is a post-V0.17 feature.
 
-Normal level-up rare chance:
-- Lv1–7: 0%
-- Lv8: 1%
-- +0.35 percentage point each later level
-- cap 12%
+### Complete V0.16 ecosystem in Duel
+- **80 / 80 Kỹ Năng**
+- **28 / 28 Hợp Đạo Kỹ**
+- **12 / 12 Siêu Cấp**
+- **20 / 20 rare rules** = 10 Thần Kỹ + 10 Thần Bí Kỹ
 
-At most one rare appears in a 3-card roll. Eligible unowned rares are selected uniformly; there is no hidden weighting.
+Hợp Đạo and Siêu Cấp unlock automatically from build requirements and do not consume reward selections.
 
-### One reroll per choice screen
-Every starter/level-up choice screen has exactly one **XOAY LẠI**. It rerolls all three choices, performs a fresh rare roll, cannot be used twice on the same screen, and does not carry over.
+### Tournament Rare rules
+Rare chance after tournament wins:
+- after win 1: **0%**
+- after win 2: **3%**
+- after win 3: **6%**
+- after win 4: **10%**
+- after win 5 / before final: **15%**
 
-### Vô Hạn guaranteed starting rare
-Every Vô Hạn run:
-1. grants one uniformly random rare from the full 20-rule pool
-2. shows a dedicated reveal
-3. continues to one normal starter Kỹ Năng choice
-4. excludes only the already-owned rare from later offers
-5. still allows other rares through the normal level-scaled curve
+Rules:
+- no starter Rare
+- at most one Rare card in a 3-card reward roll
+- Rare rules are unique/level-less; no duplicate ownership
+- reroll performs a new Rare roll
+- player and AI use the same stage chance and ownership rules
+
+## Duel combat rules
+- Base normal attack is close-range; ranged behavior comes from the current build.
+- AI evaluates build-derived preferred distance instead of using rigid classes.
+- Round pressure is explicit:
+  - `0–45s`: normal
+  - `45–60s`: **HUYẾT CHIẾN**, damage rises and new healing/shield generation falls
+  - `60s+`: **TỬ CHIẾN**, damage ×2, healing/new shield generation = 0 until K.O.
+- Round state resets between rounds; tournament build persists.
+
+## V0.17 validation
+Release gates cover:
+- every V0.16 regression test
+- 80 base Duel skill mechanics
+- all 28 Hợp Đạo mechanics
+- all 12 Siêu Cấp mechanics/unlock truth
+- all 20 Rare mechanics, acquisition curve, uniqueness and defensive ordering
+- full-system deterministic matchup simulation
+- defensive mirror termination through TỬ CHIẾN
+- 64-player bracket progression
+- Rare Monte Carlo against the locked 3/6/10/15% curve
+- rendered browser interaction at desktop `1440×900` and mobile `390×844`
+- exact GitHub Pages artifact/deployment
+
+Focused V0.17 balance validation found no release-blocking stalled match or cleanly isolated value requiring a safe buff/nerf, so the release does not include arbitrary balance-number changes.
+
+See `V017_RELEASE_VALIDATION.md` for the frozen release evidence.
+
+## Existing Survival/Endless content
+V0.16 Survival/Endless remains intact with:
+- 80 base Kỹ Năng
+- 28 Hợp Đạo Kỹ
+- 12 Siêu Cấp
+- 20 Rare rules
+- 140 Codex entries
+- Rare System V2 and one-reroll choice screens
 
 ## Locked development rules
 - Movement baseline: **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
-- Player-facing language remains Vietnamese.
+- Player-facing UI remains Vietnamese.
 - No hidden caps/cooldowns/stack maxima/target limits/retry rules/weighting.
-- Partial Hợp Đạo/Siêu Cấp progress stays only in **BỘ KỸ NĂNG & LIÊN KẾT**.
-- Choice-card relation hints only appear when that exact choice immediately completes a Hợp Đạo Kỹ or Siêu Cấp.
 - Preserve V0.12 hidden-shield-cap removal.
-- Preserve Săn Ấn truth: marked target gives +25% base XP only.
-- Executable test harnesses stay under `tests/`; Pages deploys only `index.html`, `css/`, `js/`.
+- Preserve Survival `Săn Ấn`: marked target gives +25% base XP only.
+- Choice-card relation hints only appear when that exact choice immediately completes the corresponding unlock.
+- Executable tests stay under `tests/`; Pages deploys only `index.html`, `css/`, `js/`.
+- Before editing an existing file, fetch the latest GitHub content/blob SHA and commit each meaningful checkpoint.
 
-## V0.16 validation — COMPLETE
-Release validation includes:
-- exact registry counts: 80 / 28 / 12 / 20
-- 140 Codex entries
-- all 20 rare previews with distinct visual identities
-- difficult layered rare ordering in CI
-- rare-rate deterministic simulation
-- 20-rare VFX stress
-- exact Pages-artifact Chromium validation
-- desktop/mobile responsive checks
-- user hands-on sign-off with no blocking issue
+## Project status
+**V0.17 is COMPLETE / RELEASED. There is no unfinished V0.17 implementation checkpoint.**
 
-Runtime/public label is final **V0.16**.
+High-end fighter art, extra arenas, jump/air combat, additional tournament variants and online/global systems are future-version work, not missing V0.17 scope.
 
-## Post-release focused balance pass — COMPLETE / CLOSED
-### B1.1 pressure baseline
-`BALANCE_BASELINE_V016.md` and `tests/balance-baseline-v016.js` freeze the released enemy-pressure curve in CI.
-
-### B1.2 fixed-build measurements
-`BALANCE_FIXED_BUILDS_V016.md` records deterministic exact-Pages-artifact scenarios for offense, defense, summon/control and rare-heavy endpoint builds at 5 and 10 minutes.
-
-10-minute summary:
-- offense: ~120.3 kills/min, ~96.3% observed clear
-- summon/control: ~114.0 kills/min, ~94.0% observed clear, fragile late
-- rare-heavy defensive hybrid: ~79.7 kills/min, ~64.1% observed clear, strong shield survival
-- pure defense: ~11.8 kills/min, ~10.8% observed clear and large crowd accumulation while remaining alive
-
-These deliberately extreme fixed-at-time-0 builds show expected archetype trade-offs but do not isolate a single gameplay value strongly enough to justify a safe buff/nerf.
-
-Therefore:
-- targeted tuning B2: **closed with no gameplay changes**
-- post-tuning B3: **not required**
-- released V0.16 gameplay numbers remain unchanged
-
-## Current project status
-**Clean baseline. No active checkpoint. No unfinished implementation task.**
-
-The project is ready for a new roadmap chosen by the user.
-
-## Project continuity
 Read before future work:
-- `PROJECT_HANDOFF.md`
-- `ROADMAP.md`
-- `BALANCE_BASELINE_V016.md`
-- `BALANCE_FIXED_BUILDS_V016.md`
-- `V016_RELEASE_VALIDATION.md`
-- `V016_SKILL_DESIGN.md`
-- `V016_RARE_SYSTEM_V2.md`
-
-Before editing an existing file, fetch its latest GitHub content/SHA and commit after each meaningful checkpoint.
+1. `README.md`
+2. `PROJECT_HANDOFF.md`
+3. `ROADMAP.md`
+4. `V017_RELEASE_VALIDATION.md`
+5. `V017_DUEL_ARENA_PLAN.md`
+6. `V017_COMPLETION_PLAN.md`
