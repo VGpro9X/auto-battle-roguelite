@@ -147,6 +147,9 @@ jobs:
       - name: V0.18 G2C combat motion smoke test
         run: node tests/v018-g2c-combat-motion-smoke.js
 
+      - name: V0.18 G2D presentation parity smoke test
+        run: node tests/v018-g2d-presentation-parity-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
