@@ -1,0 +1,23 @@
+{
+  "id":"v018-g6d-partial-fighter",
+  "version":1,
+  "type":"fighter",
+  "frameWidth":256,
+  "frameHeight":256,
+  "displayWorldWidth":176,
+  "animations":{
+    "idle":{
+      "src":"../../assets/duel/fighters/base/idle.svg",
+      "frames":4,
+      "columns":4,
+      "fps":4,
+      "loop":true,
+      "anchors":[
+        {"head":[128,48],"chest":[128,122],"leftHand":[75,158],"rightHand":[184,157],"feet":[128,232],"front":[190,160],"back":[66,160],"target":[128,125]},
+        {"head":[128,50],"chest":[128,124],"leftHand":[72,163],"rightHand":[186,157],"feet":[128,234],"front":[192,162],"back":[66,162],"target":[128,127]},
+        {"head":[128,48],"chest":[128,122],"leftHand":[78,156],"rightHand":[181,159],"feet":[128,232],"front":[187,160],"back":[69,160],"target":[128,125]},
+        {"head":[128,46],"chest":[128,120],"leftHand":[73,157],"rightHand":[185,154],"feet":[128,230],"front":[191,158],"back":[67,158],"target":[128,123]}
+      ]
+    }
+  }
+}
