@@ -132,6 +132,9 @@ jobs:
       - name: V0.17 C5 full-system integration and focused balance gate
         run: node tests/v017-duel-c5-integration-balance.js
 
+      - name: V0.17 final release audit
+        run: node tests/v017-release-audit.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
