@@ -159,6 +159,9 @@ jobs:
       - name: V0.18 G3 arena camera presentation smoke test
         run: node tests/v018-g3-arena-camera-smoke.js
 
+      - name: V0.18 G4A semantic VFX foundation smoke test
+        run: node tests/v018-g4a-vfx-foundation-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
