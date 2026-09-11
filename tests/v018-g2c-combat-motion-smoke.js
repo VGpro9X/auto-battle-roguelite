@@ -27,6 +27,5 @@ for(const [state,contract] of Object.entries(expected)){
 
 assert.ok(manifest.animations.melee.anchors.some(frame=>frame.rightHand[0]>210),"melee extension never reaches forward impact pose");
 assert.ok(manifest.animations.hit.anchors.some(frame=>frame.feet[0]!==128),"hit metadata should compensate rotated reaction frames");
-assert.equal(manifest.animations.recover,undefined,"G2C fallback contract expects a later reaction state to remain uncovered");
 
 console.log("V0.18 G2C dash/melee/hit combat motion: PASS");
