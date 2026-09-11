@@ -32,7 +32,7 @@
 
   root.registerDuelRareAdapter("heavenSeal",{
     desc:"Thiên Ấn triệt tiêu hoàn toàn đòn sát thương hợp lệ đầu tiên đánh vào bạn, sau đó hồi lại sau đúng 12 giây. Đòn đã bị nguồn bất tử khác triệt tiêu trước đó không tiêu Thiên Ấn.",
-    behavior:{onCreate:({fighter})=>{S(fighter).heavenSealReadyAt=0;},modifyIncomingDamage:({round,fighter,value})=>{const s=S(fighter);if(value<=0||round.time<s.heavenSealReadyAt)return value;s.heavenSealReadyAt=round.time+12;return 0;}}
+    behavior:{onCreate:({fighter})=>{S(fighter).heavenSealReadyAt=0;},modifyIncomingDamage:({round,fighter,value,emit})=>{const s=S(fighter);if(value<=0||round.time<s.heavenSealReadyAt)return value;s.heavenSealReadyAt=round.time+12;emit("status",{side:fighter.side,status:"heavenSeal",x:fighter.x,y:fighter.y-94,duration:.55});return 0;}}
   });
 
   root.registerDuelRareAdapter("bloodDebt",{
