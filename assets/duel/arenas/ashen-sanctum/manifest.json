@@ -1,0 +1,18 @@
+{
+  "id": "ashen-sanctum",
+  "version": 1,
+  "type": "arena",
+  "logicalWidth": 1000,
+  "logicalHeight": 560,
+  "floorY": 475,
+  "leftBound": 54,
+  "rightBound": 946,
+  "layers": [
+    {"id":"sky","src":"sky.svg","parallax":0.12,"x":-120,"y":0,"width":1240,"height":560,"opacity":1},
+    {"id":"far","src":"far.svg","parallax":0.30,"x":-100,"y":0,"width":1200,"height":560,"opacity":1},
+    {"id":"mid","src":"mid.svg","parallax":0.58,"x":-90,"y":0,"width":1180,"height":560,"opacity":1},
+    {"id":"ambient","src":"ambient.svg","parallax":0.72,"x":-80,"y":0,"width":1160,"height":560,"opacity":0.72},
+    {"id":"floor","src":"floor.svg","parallax":1,"x":-70,"y":0,"width":1140,"height":560,"opacity":1},
+    {"id":"foreground","src":"foreground.svg","parallax":1.08,"x":-100,"y":0,"width":1200,"height":560,"opacity":0.78,"foreground":true}
+  ]
+}
