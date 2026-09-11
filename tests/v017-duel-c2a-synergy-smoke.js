@@ -45,13 +45,13 @@ assert.strictEqual(getDuelSynergy('thermalShock').implemented,false,'unported H�
 // Hàn Sát stacks after normal Execution and Hàn Thấu only when the target is actually inside Hàn Khí.
 {
   const {match,p,o}=duel({frostbite:1,execution:1,frost:1,lightning:1},{vitality:3});
-  p.x=300;o.x=430;o.hp=45;p.hitStun=10;o.hitStun=10;p.skillTimers.lightning=0;
+  p.x=300;o.x=430;o.hp=45;o.hitStun=10;p.skillTimers.lightning=0;
   updateDuelRound(match,.033);
   approx(o.hp,45-(18*1.18*1.25*1.10));
 }
 {
   const {match,p,o}=duel({frostbite:1,execution:1,frost:1,lightning:1},{vitality:3});
-  p.x=300;o.x=500;o.hp=45;p.hitStun=10;o.hitStun=10;p.skillTimers.lightning=0;
+  p.x=300;o.x=500;o.hp=45;o.hitStun=10;p.skillTimers.lightning=0;
   updateDuelRound(match,.033);
   approx(o.hp,45-(18*1.18));
 }
