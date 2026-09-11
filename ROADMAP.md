@@ -6,7 +6,7 @@ GitHub `main` is canonical.
 - Released baseline: **V0.17 – Duel Arena / Đấu Trường 1v1**.
 - Active development roadmap: **V0.18 – Graphics & Presentation Overhaul**.
 - V0.18 design contract: `V018_GRAPHICS_PLAN.md`.
-- Survival/Endless V0.16 systems remain supported inside the V0.17 baseline.
+- Survival/Endless V0.16 remains supported.
 - Movement baseline: **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
 - Player-facing language: Vietnamese.
 
@@ -21,36 +21,22 @@ Responsive phone/tablet/desktop UI accepted on GitHub Pages.
 - 12 Siêu Cấp ✅
 - 20 Rare rules ✅
 - 140 Codex entries ✅
-- post-release focused balance pass CLOSED with no gameplay-number change required ✅
 
 # V0.17 — DUEL ARENA / ĐẤU TRƯỜNG 1v1 — COMPLETE / RELEASED ✅
-
-Design contract: `V017_DUEL_ARENA_PLAN.md`.
-Completion contract: `V017_COMPLETION_PLAN.md`.
-Release evidence: `V017_RELEASE_VALIDATION.md`.
-
-Released scope:
 - 64-fighter tournament ✅
-- exact `64 → 32 → 16 → 8 → 4 → 2 → Champion` advancement ✅
 - Best-of-3 automatic Duel combat ✅
-- side-view build-aware AI ✅
-- separate Duel movement/combat; Survival Movement V0.8 untouched ✅
-- two unrestricted starter choices ✅
-- one reroll on every choice screen ✅
-- one reward after each non-final match victory ✅
-- opponent preview/scouting ✅
-- Duel Rank I/II/III, Rank III = TỐI ĐA ✅
-- **80 / 80 Kỹ Năng Duel** ✅
-- **28 / 28 Hợp Đạo Kỹ Duel** ✅
-- **12 / 12 Siêu Cấp Duel** ✅
-- **20 / 20 Rare Duel rules** ✅
-- full integration/focused balance gate ✅
+- build-aware Duel AI ✅
+- two unrestricted starter choices + reroll ✅
+- opponent scouting ✅
+- 80 / 80 Kỹ Năng Duel ✅
+- 28 / 28 Hợp Đạo Kỹ Duel ✅
+- 12 / 12 Siêu Cấp Duel ✅
+- 20 / 20 Rare Duel rules ✅
 - full V0.16 + V0.17 CI ✅
-- rendered desktop/mobile browser validation ✅
-- public GitHub Pages deployment ✅
+- desktop/mobile rendered validation ✅
 - runtime/public label = **V0.17** ✅
 
-V0.17 is frozen except for bug fixes. Do not reopen closed C1–C6 work as feature development.
+V0.17 remains frozen except for bug fixes.
 
 ---
 
@@ -58,126 +44,108 @@ V0.17 is frozen except for bug fixes. Do not reopen closed C1–C6 work as featu
 
 Authoritative plan: `V018_GRAPHICS_PLAN.md`.
 
-## V0.18 goal
-Replace the prototype Duel presentation with a scalable asset-driven graphics system while preserving V0.17 combat truth, AI, tournament logic and balance.
-
-Primary scope:
-- higher-quality original fighter art/animation
-- sprite-sheet/image-sequence Renderer V2 with future skeletal-ready abstraction
-- manifest-driven public asset pipeline
-- one production-quality multi-layer Duel arena
-- parallax/camera/impact presentation
-- full Duel VFX readability coverage
-- stronger Hợp Đạo / Siêu Cấp / Rare visual identities
-- Duel HUD/menu presentation polish
-- desktop/mobile performance and fallback validation
-
-Locked non-goals by default:
-- no gameplay rebalance
-- no Duel AI rewrite
-- no tournament-rule change
-- no skill acquisition-rule change
-- no Survival Movement rewrite
-- no jump/aerial combat unless separately promoted into scope
-- no requirement for multiple arenas
-- no new skill content merely to justify V0.18
-
-## Graphics architecture contract
-- simulation owns positions/hit/damage/timing/outcome
+## Architecture contract
+- simulation owns position, hit/damage/timing/outcome
 - renderer only visualizes simulation truth
 - world hitboxes remain independent from artwork pixels
-- preserve semantic animation states and anchor API
-- V0.17 vector renderer remains a verified fallback until release
-- sprite/image asset pipeline is first implementation target; keep abstraction open for skeletal animation later
-- Pages publishes `assets/` in addition to `index.html`, `css/`, `js/`
+- V0.17 vector renderer remains the fallback through V0.18 development
+- assets/animation timing/anchors are manifest-driven
+- Pages publishes `assets/`
+- no gameplay rebalance, AI rewrite, tournament-rule change or skill-acquisition change merely for visuals
 
 ## G0 — Graphics design + architecture lock — COMPLETE ✅
-- V0.18 scope locked ✅
-- original dark-fantasy cultivation / martial-magic direction locked ✅
-- asset/manifest strategy locked ✅
-- sprite-first, skeletal-ready direction locked ✅
-- vector fallback strategy locked ✅
+- scope/art direction locked ✅
+- manifest architecture locked ✅
+- sprite-first/skeletal-ready direction locked ✅
+- vector fallback locked ✅
 - no-gameplay-change principle locked ✅
 
 ## G1 — Asset loader + Renderer V2 foundation — COMPLETE ✅
-Delivered:
 - public `assets/` pipeline ✅
-- manifest loader/cache ✅
-- animation metadata resolver ✅
-- per-frame visual anchors ✅
-- Renderer V2 integration + internal switch ✅
-- vector fallback on missing state/asset ✅
-- one original proof fighter asset/manifest path ✅
-- exact Pages asset-integrity validation ✅
-- V0.16/V0.17 regression chain remained green ✅
+- manifest/image loader + cache ✅
+- semantic animation resolver ✅
+- per-frame anchors ✅
+- Renderer V2 internal switch ✅
+- graceful vector fallback ✅
+- exact Pages asset integrity validation ✅
+- V0.16/V0.17 regression chain green ✅
 
-**Exit:** one proof asset path can render through Renderer V2 while missing states safely remain on the V0.17 vector fallback.
+## G2 — Fighter Visual V2 — COMPLETE ✅
+Delivered in incremental G2A–G2F checkpoints:
+- clean state-by-state V2 replacement ✅
+- **13 / 13 required semantic states** ✅
+  - idle
+  - walk
+  - run
+  - dash
+  - melee
+  - ranged
+  - cast
+  - hit
+  - block
+  - knockback
+  - knockdown
+  - recover
+  - ko
+- per-frame required anchors ✅
+- facing flip + mirrored anchor math ✅
+- player/opponent visual differentiation ✅
+- floor/contact shadow retained ✅
+- shield/frost/orbit attachment parity ✅
+- exact Pages asset sources validated ✅
+- G2A–G2F smoke gates green ✅
+- full V0.16/V0.17 mechanics regression chain remained green through G2F ✅
 
-## G2 — Fighter Visual V2 — NEXT
-- complete fighter state set: idle/walk/run/dash/melee/ranged/cast/hit/block/knockback/knockdown/recover/ko
-- stable root/feet alignment
-- facing/anchor correctness
-- player/opponent differentiation
-- shield/frost/orbit attachments retained
-- expand one state/batch at a time and validate in-engine before mass-producing the rest
+G2 establishes the complete original fighter animation contract. Artwork can be refined later without altering combat truth or the renderer API.
 
-## G3 — Arena + Camera Presentation V2
+## G3 — Arena + Camera Presentation V2 — NEXT
+Planned:
 - one original multi-layer arena
-- parallax
-- floor/contact treatment
-- atmospheric/foreground layers
-- camera framing
-- mild shake/impact zoom
-- HUYẾT CHIẾN / TỬ CHIẾN visual phase treatment
+- parallax background layers
+- richer floor/contact plane
+- atmospheric ambient layer
+- safe foreground layer
+- camera framing based on both fighters
+- mild impact shake
+- mild attack/cast zoom
+- hard camera bounds
+- mobile-safe camera reduction where appropriate
+- HUYẾT CHIẾN / TỬ CHIẾN phase treatment
+
+**Exit:** arena no longer reads as a prototype/debug stage while simulation coordinates remain unchanged.
 
 ## G4 — Full Duel VFX Readability Pass
-Visual families cover:
-- physical
-- projectile
-- fire/frost/lightning
-- poison/DOT/blood
-- shield/heal/control
-- summon/orbit
-- explosion/area/chain
-- time/space/soul/death
-- divine/mystic Rare rules
-
-High-value Hợp Đạo, Siêu Cấp and Rare activations receive stronger visual overrides.
+- physical/projectile/fire/frost/lightning/poison/blood families
+- shield/heal/control/summon/orbit/explosion/chain/time/space/soul families
+- stronger Hợp Đạo / Siêu Cấp / Rare overrides
 
 ## G5 — Duel UI / HUD / Tournament Presentation Polish
-- lobby/mode card
-- VS/scouting presentation
-- reward cards/tier readability
+- lobby/scouting/reward cards
 - combat HUD
 - round/K.O./Champion/elimination presentation
-- mobile usability preserved
+- mobile usability retained
 
 ## G6 — Performance / Quality / Fallback Hardening
-- preload/cache policy
-- decoded-memory sanity
-- effect-array bounds
-- mobile visual reductions where needed
-- optional reduced-motion path
-- verified vector fallback
-
-Presentation limits must never become hidden gameplay caps.
+- preload/cache/memory sanity
+- presentation-only effect limits
+- mobile reductions
+- reduced-motion option
+- vector fallback hardening
 
 ## G7 — V0.18 Release Validation
 Required before release:
 - all V0.16 + V0.17 mechanics CI green
-- Renderer V2 normal Duel path
-- vector fallback validated
-- complete fighter visual state coverage
-- one production arena
-- camera/VFX/UI pass complete
+- Renderer V2 normal path + vector fallback validated
+- 13/13 fighter states present
+- production arena/camera/VFX/UI complete
 - desktop/mobile rendered validation
-- exact Pages artifact includes all required `assets/`
+- exact Pages artifact includes all production assets
 - no missing production asset errors
-- release docs/evidence updated
-- runtime/public label promoted to **V0.18** only after gates pass
+- final docs/evidence updated
+- runtime/public label promoted to **V0.18** only after all gates pass
 
 ---
 
 # PROJECT STATUS
 
-**V0.17 remains the current released/public baseline. V0.18 is ACTIVE at G0 + G1 complete / G2 next. Continue with Fighter Visual V2 incrementally; do not change combat/AI/balance.**
+**V0.17 remains the current released/public baseline. V0.18 is ACTIVE at G0 + G1 + G2 complete / G3 next. Continue with Arena + Camera Presentation V2; do not change combat/AI/balance.**
