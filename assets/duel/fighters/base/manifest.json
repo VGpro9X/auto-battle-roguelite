@@ -1,0 +1,28 @@
+{
+  "id": "v018-proof-fighter",
+  "version": 1,
+  "type": "fighter",
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "displayWorldWidth": 176,
+  "animations": {
+    "idle": {
+      "src": "proof-idle.svg",
+      "frames": 1,
+      "fps": 1,
+      "loop": true,
+      "anchors": [
+        {
+          "head": [128, 48],
+          "chest": [128, 122],
+          "leftHand": [75, 170],
+          "rightHand": [184, 166],
+          "feet": [128, 232],
+          "front": [190, 160],
+          "back": [66, 160],
+          "target": [128, 125]
+        }
+      ]
+    }
+  }
+}
