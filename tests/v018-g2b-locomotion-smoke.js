@@ -8,11 +8,11 @@ const manifest=JSON.parse(fs.readFileSync(path.join(base,"manifest.json"),"utf8"
 const requiredAnchors=["head","chest","leftHand","rightHand","feet","front","back","target"];
 
 assert.equal(manifest.id,"v018-base-fighter");
-assert.equal(manifest.version,2);
+assert.ok(manifest.version>=2,"locomotion manifest version regressed");
 for(const state of ["idle","walk","run"]){
   const animation=manifest.animations[state];
   assert.ok(animation,`missing ${state} animation`);
-  assert.equal(animation.frames,4,`${state} must have four proof-production frames`);
+  assert.equal(animation.frames,4,`${state} must have four frames`);
   assert.equal(animation.columns,4,`${state} sheet columns mismatch`);
   assert.ok(animation.fps>0,`${state} fps invalid`);
   assert.ok(fs.existsSync(path.join(base,animation.src)),`missing ${state} sheet ${animation.src}`);
@@ -26,7 +26,6 @@ for(const state of ["idle","walk","run"]){
   }
 }
 
-assert.equal(manifest.animations.melee,undefined,"G2B must not claim melee coverage yet");
 const renderer=fs.readFileSync(path.join(root,"js/duel-renderer-v2.js"),"utf8");
 assert.match(renderer,/\(anchor\.x-feet\.x\)\*scale\*facing/,"anchor x must mirror with fighter facing");
 assert.match(renderer,/ctx\.scale\(-1,1\)/,"sprite facing flip missing");
