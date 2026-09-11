@@ -46,9 +46,15 @@
       return Math.max(1,Math.floor(width/frameWidth));
     }
 
-    function drawAssetFighter(fighter,round,tr){
-      if(!ready||!manifest||!animationResolver)return false;
-      const visual=animationResolver.resolve(fighter,round.time,manifest);
+    function resolveVisual(fighter,round){
+      if(!ready||!manifest||!animationResolver)return null;
+      const state=typeof normalizeDuelVisualState==="function"?normalizeDuelVisualState(fighter?.action):fighter?.action;
+      const animation=typeof getDuelVisualAnimation==="function"?getDuelVisualAnimation(manifest,state):manifest.animations?.[state];
+      if(!animation?.src||!images.get(animation.src))return null;
+      return animationResolver.resolve(fighter,round.time,manifest);
+    }
+
+    function drawAssetFighter(fighter,visual,tr){
       if(!visual?.animation?.src)return false;
       const image=images.get(visual.animation.src);if(!image)return false;
       const frameWidth=Number(visual.animation.frameWidth||manifest.frameWidth||256);
@@ -73,11 +79,18 @@
     function consume(events){fallback.consume(events);}
 
     function render(match,dt=0){
-      fallback.render(match,dt);
-      const round=match?.currentRound;if(!round||!ready)return;
+      const round=match?.currentRound;
+      if(!round){fallback.render(match,dt);return;}
+      const pVisual=resolveVisual(round.fighters.player,round);
+      const oVisual=resolveVisual(round.fighters.opponent,round);
+      const covered=[];
+      if(pVisual)covered.push("player");else lastFrames.delete("player");
+      if(oVisual)covered.push("opponent");else lastFrames.delete("opponent");
+      fallback.render(match,dt,{skipFighterSides:covered});
+      if(!covered.length)return;
       const tr=getTransform(match);
-      drawAssetFighter(round.fighters.player,round,tr);
-      drawAssetFighter(round.fighters.opponent,round,tr);
+      if(pVisual)drawAssetFighter(round.fighters.player,pVisual,tr);
+      if(oVisual)drawAssetFighter(round.fighters.opponent,oVisual,tr);
     }
 
     function getAnchor(fighter,name){
@@ -89,7 +102,7 @@
       return{x:fighter.x+(anchor.x-feet.x)*scale*facing,y:fighter.y+(anchor.y-feet.y)*scale};
     }
 
-    function getStatus(){return{mode:"v2",ready,error:manifestError?.message||null,manifestId:manifest?.id||null};}
+    function getStatus(){return{mode:"v2",ready,error:manifestError?.message||null,manifestId:manifest?.id||null,coveredStates:Object.keys(manifest?.animations||{})};}
 
     canvas.dataset.duelRenderer="v2";
     return{resize:fallback.resize,consume,render,effects:fallback.effects,getAnchor,preload,getStatus,fallback};
