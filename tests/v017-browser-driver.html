@@ -38,15 +38,14 @@
     check(d.getElementById('duelOpponentBuild').children.length>0,'opponent build preview missing');
 
     d.getElementById('duelBeginMatch').click();
-    await waitFor(()=>!d.getElementById('duelCombatRoot').classList.contains('hidden'),'combat root visible');
-    await sleep(500);
+    const combat=await waitFor(()=>{const el=d.getElementById('duelCombatRoot');if(!el||el.classList.contains('hidden'))return null;const r=el.getBoundingClientRect();return r.width>0&&r.height>0?el:null;},'sized combat root');
     const session=w.duelSession,round=session?.currentMatch?.currentRound;
     check(round&&round.fighters?.player&&round.fighters?.opponent,'live duel round missing');
     for(const fighter of [round.fighters.player,round.fighters.opponent]){
       check(Number.isFinite(fighter.hp)&&Number.isFinite(fighter.x),`${fighter.side} combat state invalid`);
     }
     const canvas=d.getElementById('duelCanvas');check(canvas.width>0&&canvas.height>0,'Duel canvas has zero backing size');
-    const rootRect=d.getElementById('duelCombatRoot').getBoundingClientRect();check(rootRect.width>0&&rootRect.height>0,'combat viewport has zero size');
+    const rootRect=combat.getBoundingClientRect();check(rootRect.width>0&&rootRect.height>0,'combat viewport has zero size');
     check(d.getElementById('duelRoundScore').textContent.includes('·'),'round HUD missing');
     check(d.getElementById('duelCombatBuilds').children.length===2,'combat build HUD missing');
 
