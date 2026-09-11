@@ -1,73 +1,52 @@
 # V0.18 — Graphics & Presentation Overhaul Plan
 
-Status: **ACTIVE — G0 + G1 + G2 + G3 + G4 + G5 + G6 COMPLETE / G7 NEXT**
+Status: **COMPLETE / RELEASED — G0 + G1 + G2 + G3 + G4 + G5 + G6 + G7 COMPLETE**
 
 Canonical source: GitHub `main` in `VGpro9X/auto-battle-roguelite`.
 
-Released baseline: **V0.17 – Duel Arena / Đấu Trường 1v1**.
+Released baseline: **V0.18 – Graphics & Presentation Overhaul**.
 
-V0.18 goal: **replace the prototype visual presentation with a scalable asset-driven graphics system while preserving V0.17 combat truth, AI, tournament logic and balance.**
+Previous baseline: **V0.17 – Duel Arena / Đấu Trường 1v1**.
+
+Release evidence: `V018_RELEASE_VALIDATION.md`.
+
+V0.18 goal was to replace the prototype visual presentation with a scalable asset-driven graphics system while preserving V0.17 combat truth, AI, tournament logic and balance. That goal is complete.
 
 ---
 
 # 1. Scope lock
 
-V0.18 is graphics/presentation-first.
+V0.18 is graphics/presentation-first and does not rebalance gameplay.
 
-Primary scope:
-- original Duel fighter art and animation
-- asset-driven Renderer V2
-- richer canonical arena/background presentation
-- camera/parallax/impact presentation
-- readable VFX across the complete Duel ecosystem
-- Duel HUD/menu/tournament presentation polish
-- mobile/desktop quality and performance controls
-- asset manifests, fallback behavior and release validation
-
-V0.18 does **not** change gameplay by default.
-
-Do not change merely for visuals:
+Locked gameplay truth:
 - V0.17 combat numbers
 - Duel AI decision logic
 - tournament bracket/progression
-- skill acquisition, Hợp Đạo, Siêu Cấp or Rare rules
+- skill acquisition, Hợp Đạo, Siêu Cấp and Rare rules
 - HUYẾT CHIẾN / TỬ CHIẾN gameplay rules
 - Survival Movement V0.8
-- hitboxes, damage timing or combat ordering
+- hitboxes, damage timing and combat ordering
 
-If presentation appears to require a mechanic change, solve it in the renderer/UI layer first.
+Simulation remains the only source of combat truth; rendering/UI only visualize it.
 
 ---
 
-# 2. Visual direction
+# 2. Released visual direction
 
-Use an **original dark-fantasy cultivation / martial-magic 2D style**.
-
-Target feel:
-- strong readable silhouettes
-- dark arena atmosphere with high-contrast effects
-- restrained base palette so elemental/Rare VFX stay legible
-- crisp 2D illustration rather than pseudo-3D realism
+V0.18 uses an original dark-fantasy cultivation / martial-magic 2D presentation with:
+- readable fighter silhouettes
+- dark arena atmosphere and high-contrast effects
+- restrained base palette for elemental/Rare readability
 - energetic martial poses and supernatural effects
-- original visual identity; do not copy protected characters, logos or signature costumes
+- original visual identity rather than copied protected characters or signature costumes
 
-Readability outranks decoration. Always preserve:
-- player/opponent side readability
-- facing direction
-- anticipation and impact timing
-- projectile visibility
-- shield/defensive/control-state visibility
-- HUYẾT CHIẾN / TỬ CHIẾN phase readability
-- HP/shield HUD clarity
-
-Do not let large VFX or opaque UI hide fighters for long periods.
+Readability remains above decoration.
 
 ---
 
 # 3. Architecture contract
 
 ## 3.1 Combat truth remains simulation-owned
-
 `js/duel-engine.js` and Duel content modules decide:
 - positions/facing
 - semantic action/state
@@ -78,9 +57,7 @@ Do not let large VFX or opaque UI hide fighters for long periods.
 - combat events
 - tournament result
 
-Graphics/UI only visualize those truths.
-
-Renderer/VFX/camera/UI must never decide:
+Renderer/VFX/camera/UI never decide:
 - whether an attack hits
 - damage amount
 - dodge success
@@ -91,17 +68,14 @@ Renderer/VFX/camera/UI must never decide:
 - skill offer truth
 - tournament progression
 
-## 3.2 Asset-driven renderer
-
-Locked implementation direction:
-- sprite-sheet/image-sequence first
-- skeletal-ready abstraction later
-- manifest-driven timing/anchors
-- V0.17 vector renderer retained as fallback through V0.18 validation
+## 3.2 Released renderer architecture
+- asset-driven Renderer V2 is the normal Duel path
+- sprite/image manifest timing and anchors drive animation
+- V0.17 vector renderer remains a verified fallback
+- state-by-state and arena fallback remain supported
 
 ## 3.3 Stable fighter state API
-
-Required semantic states:
+Released 13-state set:
 - `idle`
 - `walk`
 - `run`
@@ -117,8 +91,7 @@ Required semantic states:
 - `ko`
 
 ## 3.4 Stable anchor API
-
-Required anchors:
+Released anchors:
 - `head`
 - `chest`
 - `leftHand`
@@ -128,13 +101,13 @@ Required anchors:
 - `back`
 - `target`
 
-VFX attach to anchors/world event coordinates. Artwork pixels never define hitboxes.
+Artwork pixels never define hitboxes.
 
 ---
 
 # 4. Public asset pipeline
 
-Current public tree includes:
+Released public tree includes:
 
 ```text
 assets/
@@ -155,16 +128,15 @@ assets/
 ```
 
 Rules:
-- all runtime assets must be under public `assets/`
+- runtime assets stay under public `assets/`
 - manifests reference concrete production sources
-- exact Pages artifact validation must fail when a referenced production asset is missing
+- exact Pages artifact validation fails when a production reference is missing
 - tests remain under `tests/` and are not shipped publicly
 
 ---
 
-# 5. Current graphics modules
+# 5. Released graphics modules
 
-Implemented:
 - `js/duel-visual-assets.js` — manifest/image loader + cache lifecycle/status
 - `js/duel-animation.js` — semantic animation/frame/anchor resolution
 - `js/duel-renderer-v2.js` — asset-driven Duel renderer + fallback integration
@@ -173,258 +145,131 @@ Implemented:
 - `js/duel-vfx-tier.js` — Hợp Đạo / Siêu Cấp / Rare presentation classification
 - `js/duel-vfx-budget.js` — presentation-only transient VFX budgets
 - `js/duel-visual-quality.js` — full/constrained/reduced-motion quality policy
-- `js/duel-renderer.js` — V0.17 vector fallback/reference + V2 bootstrap + quality-aware DPR
-- `css/v018-graphics.css` — HUD/lobby/scouting + mobile closure presentation
+- `js/duel-renderer.js` — vector fallback/reference + V2 bootstrap + quality-aware DPR
+- `css/v018-graphics.css` — HUD/lobby/scouting/mobile presentation
 - `css/v018-ui.css` — reward/result presentation
-- `js/duel-ui-polish.js` — presentation-only Champion/elimination result mirroring
-
-Final validation work belongs to G7. Do not build G7 by wrapping `updateDuelRound()` or modifying Survival rendering loops.
+- `js/duel-ui-polish.js` — presentation-only result-state mirroring
 
 ---
 
-# 6. Checkpoint roadmap
+# 6. Checkpoint roadmap — COMPLETE
 
 ## G0 — Graphics design + architecture lock — COMPLETE ✅
 - scope/art direction locked
 - asset/manifest contract locked
 - simulation/renderer separation reaffirmed
-- sprite-first/skeletal-ready direction locked
 - vector fallback strategy locked
 
 ## G1 — Asset loader + Renderer V2 foundation — COMPLETE ✅
-- Pages publishes `assets/`
+- public `assets/` pipeline
 - manifest/image loader + cache
-- missing-asset fallback
 - animation metadata/state resolver
 - per-frame anchors
-- Renderer V2 feature switch
+- Renderer V2
 - exact Pages asset validation
-- V0.16/V0.17 mechanics regressions green
 
 ## G2 — Fighter Visual V2 — COMPLETE ✅
-- clean exact-state replacement
-- **13 / 13 required fighter states**
+- 13 / 13 required fighter states
 - stable feet/root metadata
 - facing flip and mirrored anchor math
 - player/opponent differentiation
-- floor/contact shadow
-- shield/frost/orbit attachment parity
+- shield/frost/orbit presentation parity
 - state-by-state fallback safety
-- G2A–G2F gates green
 
 ## G3 — Arena + Camera Presentation V2 — COMPLETE ✅
 Canonical arena: **Ashen Sanctum**.
-
-Delivered:
 - original six-layer arena
 - exact logical Duel geometry preserved
-- parallax transforms
-- presentation-only fighter-pair camera
-- hard camera bounds
+- parallax
+- fighter-pair camera
+- hard bounds
 - desktop/mobile-safe zoom
 - semantic impact shake/zoom
 - shared world→screen transform
 - HUYẾT CHIẾN / TỬ CHIẾN presentation
-- G3 Pages + rendered validation green
 
 ## G4 — Full Duel VFX Readability Pass — COMPLETE ✅
-Delivered through G4A–G4E:
-- 15 semantic VFX families: physical, projectile, fire, frost, lightning, poison, blood, defense, heal, control, summon, area, chain, time, soul
+- 15 semantic VFX families
 - event/world-coordinate + stable-anchor placement
-- VFX uses the G3 camera transform
-- stronger Hợp Đạo / Siêu Cấp presentation
+- Hợp Đạo / Siêu Cấp tier overlays
 - 20 / 20 Rare visual identities/signatures
-- combat-active Rare trigger audit
-- `divineGift` intentionally reward-only
-- visible fatal/defensive Rare triggers including `heavenSeal`
-- transient effect expiry; no permanent full-screen wall
-- G4A–G4E gates green
-- full V0.16/V0.17/G1–G4 Pages chain green
-- V0.17 desktop/mobile rendered validation green
-- Pages deploy green at G4 closure
-
-Exit achieved: visually meaningful Duel combat events have readable semantic V2 presentation without changing mechanics.
+- active Rare trigger audit
+- transient effect expiry
 
 ## G5 — Duel UI / HUD / Tournament Presentation Polish — COMPLETE ✅
-
-### G5A — Combat HUD shell — COMPLETE ✅
-- dedicated V0.18 HUD presentation layer
-- improved HP/shield/timer/score/round/phase hierarchy
-- current DOM IDs used by `duel-ui.js` preserved
-- safe-area padding retained
-- desktop + mobile responsive readability
-- HUD pointer-transparent except intentional controls
-
-### G5B — Lobby + scouting — COMPLETE ✅
-- polished Duel mode card/lobby
-- improved pre-match VS presentation
-- stronger player/opponent identity
-- tournament rules/text truth retained
-
-### G5C — Reward/build cards — COMPLETE ✅
-- improved base Rank / TỐI ĐA readability
-- clearer Hợp Đạo / Siêu Cấp / Rare hierarchy
-- exact reward and reroll behavior preserved
-- exact-choice Siêu Cấp hint contract preserved
-
-### G5D — Outcome presentation — COMPLETE ✅
-- round start
-- K.O.
-- round winner / draw replay
-- elimination
-- Champion presentation
-- semantic outcome banner uses existing engine `round_start`, `ko` and `round_end` events
-- result card styling mirrors already-resolved Champion/Bị loại state
-- no outcome is recomputed by graphics/UI
-
-### G5E — UI closure audit — COMPLETE ✅
-- dedicated rendered desktop/mobile workflow
-- no horizontal-overflow regressions
-- scroll-reachability and click-blocking audit
-- HUD pointer behavior and combat-center occlusion audit
-- mobile long Duel overlays made safely scrollable with safe-area padding
-- audit caught and fixed a real unreachable mobile lobby action
-- timing-safe browser checks preserve the same layout assertions under virtual-time
-- V0.17 desktop/mobile validation remained green
-- full Pages chain and deploy green at closure
-
-G5 acceptance achieved:
-- combat HUD readable at desktop and phone widths
-- all player-facing text remains Vietnamese
-- no UI change affects combat/tournament/skill-offer truth
-- safe areas and touch targets remain usable
+- combat HUD hierarchy and safe areas
+- lobby/scouting/VS presentation
+- reward/build cards
+- semantic ROUND/K.O./round-result presentation
+- Champion/elimination presentation
+- rendered desktop/mobile UI closure
 
 ## G6 — Performance, Quality Levels and Fallback Hardening — COMPLETE ✅
+- full/constrained/reduced-motion quality policy
+- quality-aware DPR and camera motion
+- cache/preload/memory observability
+- transient presentation VFX budgets
+- forced-vector full-match fallback
+- partial/missing-asset full-match fallback
+- production 13-state + Ashen Sanctum preload
+- desktop/mobile/reduced-motion rendered closure
+- invalid Renderer V2 `ctx.ellipse()` runtime bug found and fixed before release
 
-### G6A — Quality policy + observability foundation — COMPLETE ✅
-- `js/duel-visual-quality.js`
-- explicit full/constrained presentation profiles
-- reduced-motion mode
-- renderer/VFX/camera-readable quality status
-- no policy value changes simulation truth
-
-### G6B — Cache/preload/memory sanity — COMPLETE ✅
-- manifest/image load dedupe
-- pending/settled status
-- decoded-image memory estimates
-- safe LRU lookup pruning for settled cache entries
-- renderer-held `Image` objects are not invalidated by cache pruning
-
-### G6C — Transient presentation budgets — COMPLETE ✅
-- `js/duel-vfx-budget.js`
-- bounded core VFX and tier overlay arrays
-- presentation drops are observable via `droppedPresentation`
-- semantic event input is never mutated or filtered before camera/non-visual consumers
-
-### G6D — Vector fallback hardening — COMPLETE ✅
-- forced vector browser path validated through full Best-of-3 completion
-- partial fighter asset + missing arena path validated through full Best-of-3 completion
-- state-by-state/arena fallback remains live
-- browser audit caught an invalid Renderer V2 `ctx.ellipse()` call; fixed before closure
-
-### G6E — Performance/fallback closure — COMPLETE ✅
-- quality-aware canvas DPR cap active
-- camera shake/zoom honors full/constrained/reduced-motion multipliers
-- production V2 preload confirms all 13 fighter states
-- production `Ashen Sanctum` preload succeeds
-- runtime asset cache reaches zero pending loads and reports decoded-memory estimate
-- desktop full-quality rendered path green
-- mobile constrained-quality rendered path green
-- reduced-motion rendered path green without erasing semantic VFX
-- VFX stress budgets cap presentation objects without mutating event input
-- production Renderer V2 completes a Best-of-3 Duel
-- forced-vector and partial-asset fallback remain green
-- outer bootstrap + changed inner G6 modules use cache-busting keys
-- full V0.16/V0.17/G1–G6 regression chain green
-- V0.17 desktop/mobile browser validation green
-- G5E UI rendered validation green
-- G6D fallback rendered validation green
-- G6E performance rendered validation green
-- Pages artifact integrity + deploy green
-
-G6 acceptance achieved:
-- presentation cost is bounded/observable
-- constrained/mobile quality actually affects runtime DPR/VFX/camera cost
-- reduced-motion removes presentation motion, not semantic information
-- normal V2 and fallback paths can both finish Duel combat
-- no G6 policy changes gameplay truth
-
-## G7 — V0.18 Integration / Release Validation — NEXT
-Automated requirements:
+## G7 — V0.18 Integration / Release Validation — COMPLETE ✅
+Pre-release validation passed while the runtime/public label was still V0.17:
 - all V0.16 tests green
-- all V0.17 Duel mechanics tests green
+- V0.17 mechanics/content tests green
 - V0.17 desktop/mobile browser regression green
 - Renderer V2 production normal path green
-- vector fallback green
-- partial/missing-asset fallback green
+- vector and partial/missing-asset fallback green
 - 13 / 13 fighter states green
-- production `Ashen Sanctum` arena green
+- 8 required anchors green
+- `Ashen Sanctum` six-layer arena green
 - camera/VFX/UI integration green
-- manifest/asset integrity green
-- exact Pages artifact includes all required production assets
-- browser console has no missing production asset errors
-- desktop rendered end-to-end flow green
-- mobile rendered end-to-end flow green
-- combat can finish with V2 active
-- reduced-motion/constrained quality paths remain green
+- every production fighter/arena HTTP asset reference green
+- production browser console/runtime error audit green
+- desktop/mobile V2 Best-of-3 completion green
+- reduced-motion/constrained quality paths green
+- exact Pages artifact green
+- integrated G7 workflow green
+- Pages G1–G7 pre-release chain/deploy green
 
-Release closure order:
-1. build final G7 integration/release audit gate(s)
-2. create `V018_RELEASE_VALIDATION.md` with exact evidence
-3. keep public/runtime label **V0.17** while validating the pre-release head
-4. only after all pre-release G7 gates pass, promote runtime/public label to **V0.18**
-5. rerun mechanics, rendered and Pages validation on the promoted-label head
-6. update canonical docs to `COMPLETE / RELEASED`
-7. freeze the accepted V0.18 visual baseline
+Only after that matrix passed was the runtime/public label promoted to **V0.18**.
+
+Final promoted-label validation is required to remain green and is recorded by `V018_RELEASE_VALIDATION.md` plus the release workflows.
 
 ---
 
-# 7. Implementation order rule
+# 7. Definition of Done — ACHIEVED
 
-Required order:
-1. G1 asset/renderer infrastructure ✅
-2. proof asset/state ✅
-3. transform/anchor/animation validation ✅
-4. complete fighter states ✅
-5. arena/camera ✅
-6. VFX families ✅
-7. UI polish ✅
-8. performance/fallback ✅
-9. release validation ← **NEXT**
-
----
-
-# 8. Definition of Done for V0.18
-
-V0.18 may be marked `COMPLETE / RELEASED` only when:
-- asset-driven Renderer V2 is the normal Duel path
+V0.18 satisfies the release definition:
+- Renderer V2 is the normal Duel path
 - vector renderer remains a verified fallback
-- complete fighter state set is integrated
-- one production arena is integrated
-- camera/presentation system is integrated
+- complete fighter state set integrated
+- production arena integrated
+- camera/presentation system integrated
 - full Duel ecosystem has readable VFX coverage
-- Duel UI/HUD presentation pass is complete
-- desktop/mobile performance validation passes
-- all V0.16 + V0.17 mechanics regressions remain green
-- exact public Pages artifact ships all required assets
-- G7 release evidence is recorded
-- final runtime/docs label is **V0.18**
+- Duel UI/HUD presentation pass complete
+- desktop/mobile/reduced-motion performance validation passes
+- V0.16 + V0.17 mechanics regressions preserved
+- exact public Pages artifact ships required assets
+- G7 release evidence recorded
+- runtime/docs label promoted to **V0.18**
 
-Multiple arenas, jump/aerial combat, online systems and unrelated new gameplay content are not automatically part of V0.18.
+Multiple arenas, jump/aerial combat, online systems and unrelated new gameplay content are not part of the released V0.18 scope.
 
 ---
 
-# 9. Current continuation point
+# 8. Future continuation point
 
-Continue from **G7 — V0.18 Integration / Release Validation**.
+**V0.18 is COMPLETE / RELEASED.**
 
-Before editing:
+Before future development:
 1. read `README.md`
 2. read `PROJECT_HANDOFF.md`
 3. read `ROADMAP.md`
 4. read `V018_GRAPHICS_PLAN.md`
-5. fetch latest release/browser/renderer/workflow files
-6. keep GitHub `main` canonical
-7. commit meaningful checkpoints frequently
-8. do not promote public/runtime label from V0.17 until every pre-release G7 gate passes
-9. do not change combat/AI/balance truth to make release validation pass
+5. read `V018_RELEASE_VALIDATION.md`
+6. fetch latest files/SHAs from GitHub `main`
+7. treat V0.18 as the frozen current public baseline unless a new roadmap explicitly changes it
+8. do not silently reopen combat/AI/balance truth
