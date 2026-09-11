@@ -111,6 +111,9 @@ jobs:
       - name: V0.17 C2A 8-Hợp-Đạo Duel smoke test
         run: node tests/v017-duel-c2a-synergy-smoke.js
 
+      - name: V0.17 C2B 16-Hợp-Đạo Duel smoke test
+        run: node tests/v017-duel-c2b-synergy-smoke.js
+
       - name: Prepare public game artifact
         run: |
           mkdir -p _site
