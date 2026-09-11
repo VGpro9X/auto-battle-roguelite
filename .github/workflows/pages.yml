@@ -135,13 +135,37 @@ jobs:
       - name: V0.17 final release audit
         run: node tests/v017-release-audit.js
 
+      - name: V0.18 G1 asset and Renderer V2 smoke test
+        run: node tests/v018-g1-assets-smoke.js
+
       - name: Prepare public game artifact
         run: |
+          set -euo pipefail
           mkdir -p _site
           cp index.html _site/index.html
           cp -R css _site/css
           cp -R js _site/js
+          cp -R assets _site/assets
           touch _site/.nojekyll
+
+      - name: Validate exact V0.18 asset artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f _site/assets/duel/fighters/base/manifest.json
+          test -f _site/assets/duel/fighters/base/proof-idle.svg
+          node - <<'NODE'
+          const fs=require('fs');
+          const path=require('path');
+          const base='_site/assets/duel/fighters/base';
+          const manifest=JSON.parse(fs.readFileSync(path.join(base,'manifest.json'),'utf8'));
+          for(const animation of Object.values(manifest.animations||{})){
+            if(!animation.src)throw new Error('Manifest animation missing src');
+            const target=path.join(base,animation.src);
+            if(!fs.existsSync(target))throw new Error(`Pages artifact missing ${target}`);
+          }
+          console.log('V0.18 Pages asset integrity: PASS');
+          NODE
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
