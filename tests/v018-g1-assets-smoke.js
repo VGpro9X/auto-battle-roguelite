@@ -9,7 +9,7 @@ const manifest=JSON.parse(fs.readFileSync(manifestPath,"utf8"));
 const requiredAnchors=["head","chest","leftHand","rightHand","feet","front","back","target"];
 
 assert.equal(manifest.id,"v018-proof-fighter");
-assert.ok(manifest.animations&&manifest.animations.id,"proof idle animation missing");
+assert.ok(manifest.animations&&manifest.animations.idle,"proof idle animation missing");
 const idle=manifest.animations.idle;
 assert.ok(idle.src,"proof idle src missing");
 assert.ok(fs.existsSync(path.join(path.dirname(manifestPath),idle.src)),`missing proof asset ${idle.src}`);
