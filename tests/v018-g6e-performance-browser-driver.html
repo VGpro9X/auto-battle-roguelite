@@ -1,0 +1,90 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>V0.18 G6E performance closure</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden}#app{border:0;width:100vw;height:100vh;display:block}#result{position:fixed;inset:0;z-index:999999;background:#111;color:#fff;padding:20px;white-space:pre-wrap;font:14px monospace}</style>
+<iframe id="app"></iframe>
+<script>
+(async()=>{
+  const topDoc=document,frame=topDoc.getElementById('app');
+  const params=new URLSearchParams(location.search),expected=params.get('expect')||'desktop';
+  const profile=expected==='mobile'?'constrained':'full',motion=expected==='reduced'?'reduce':'full';
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  async function waitFor(fn,label,timeout=8000){const start=performance.now();while(performance.now()-start<timeout){try{const v=fn();if(v)return v;}catch(_){}await sleep(25);}throw new Error(`timeout: ${label}`);}
+  function check(value,message){if(!value)throw new Error(message);return value;}
+  function makeEntry(id,name,build){return{id,name,build:{...build}};}
+  function makeCanvas(d,w){const canvas=d.createElement('canvas');const cssWidth=Math.max(300,Math.min(w-20,960)),cssHeight=Math.max(360,Math.min(560,Math.round(cssWidth*.62)));canvas.style.cssText=`position:fixed;left:-10000px;top:0;width:${cssWidth}px;height:${cssHeight}px`;d.body.appendChild(canvas);return canvas;}
+  function runToMatchEnd(w,renderer){
+    const player=makeEntry('g6e-p','P',{power:3,rapid:3,vitality:3,speed:3,crit:3});
+    const opponent=makeEntry('g6e-o','O',{});
+    const match=w.createDuelMatch(player,opponent,{rng:()=>.99});
+    w.startDuelRound(match);
+    let ticks=0,rendered=0;
+    while(!match.over&&ticks<14000){
+      const round=match.currentRound;
+      if(round&&!round.ended)w.updateDuelRound(match,.033);
+      const active=match.currentRound;
+      if(active){const events=w.drainDuelEvents(active);renderer.consume(events);renderer.render(match,.033);rendered++;}
+      if(active?.ended&&!match.over)w.settleDuelRound(match);
+      ticks++;
+    }
+    check(match.over,`V2 match did not finish in ${ticks} ticks`);
+    check(match.winner==='player'||match.winner==='opponent','V2 match winner missing');
+    check(match.roundHistory.length>=2,'V2 best-of-3 did not settle');
+    check(rendered>0,'V2 renderer never rendered');
+    return{ticks,winner:match.winner,rounds:match.roundHistory.length};
+  }
+  try{
+    const appQuery=`duelRenderer=v2&duelQuality=${profile}&duelMotion=${motion}`;
+    const loaded=new Promise((resolve,reject)=>{frame.addEventListener('load',resolve,{once:true});setTimeout(()=>reject(new Error('iframe load timeout')),8000);});
+    frame.src=`../index.html?${appQuery}`;
+    await loaded;
+    const w=frame.contentWindow,d=frame.contentDocument;
+    await waitFor(()=>w.__V018_DUEL_RENDERER_READY__,'Renderer V2 bootstrap promise');
+    await w.__V018_DUEL_RENDERER_READY__;
+    await waitFor(()=>typeof w.createDuelRendererV2==='function'&&typeof w.getDuelVisualQualityStatus==='function','G6E presentation APIs');
+    check(w.getDuelRendererMode()==='v2','normal path must resolve to Renderer V2');
+    if(expected==='mobile')check(w.innerWidth<=500,`mobile viewport width=${w.innerWidth}`);else check(w.innerWidth>=900,`${expected} viewport width=${w.innerWidth}`);
+
+    const canvas=makeCanvas(d,w.innerWidth),renderer=w.createDuelRendererV2(canvas);
+    await renderer.preload;
+    const preloadStatus=renderer.getStatus();
+    check(preloadStatus.mode==='v2','renderer status mode is not v2');
+    check(preloadStatus.ready===true&&preloadStatus.error===null,`fighter production preload failed: ${preloadStatus.error}`);
+    check(preloadStatus.arenaReady===true&&preloadStatus.arenaError===null,`arena production preload failed: ${preloadStatus.arenaError}`);
+    check(preloadStatus.coveredStates.length===13,`production fighter state count=${preloadStatus.coveredStates.length}`);
+    check(preloadStatus.arenaId==='ashen-sanctum',`production arena=${preloadStatus.arenaId}`);
+    const cache=w.getDuelVisualAssetCacheStatus();
+    check(cache.pendingImages===0&&cache.pendingManifests===0,`asset cache still pending ${cache.pendingImages}/${cache.pendingManifests}`);
+    check(cache.settledImages>=19,`expected fighter+arena production images, got ${cache.settledImages}`);
+    check(cache.decodedBytesEstimate>0,'decoded image memory estimate missing');
+
+    const match=w.createDuelMatch(makeEntry('probe-p','P',{power:1}),makeEntry('probe-o','O',{}),{rng:()=>.99});
+    w.startDuelRound(match);
+    renderer.render(match,.016);
+    const quality=w.getDuelVisualQualityStatus(),rect=canvas.getBoundingClientRect(),backingRatio=canvas.width/Math.max(1,rect.width);
+    check(quality.id===profile,`quality profile ${quality.id} != ${profile}`);
+    check(backingRatio<=quality.dprCap+.06,`canvas DPR ratio ${backingRatio.toFixed(2)} exceeds cap ${quality.dprCap}`);
+    if(expected==='mobile')check(quality.dprCap===1.5&&quality.vfxTransientLimit===64,'mobile constrained budgets not active');
+    if(expected==='desktop')check(quality.dprCap===2&&quality.vfxTransientLimit===96,'desktop full budgets not active');
+    if(expected==='reduced')check(quality.reducedMotion===true&&quality.shakeMultiplier===0&&quality.zoomKickMultiplier===0,'reduced-motion policy not active');
+
+    const burst=Array.from({length:140},(_,i)=>({type:'hit',source:'timeStop',side:'player',target:'opponent',amount:10,critical:true,x:400+i%20,y:260}));
+    const before=JSON.stringify(burst);
+    renderer.consume(burst);
+    check(JSON.stringify(burst)===before,'presentation consumers mutated semantic event input');
+    const stressed=renderer.getStatus(),vfx=stressed.vfx,tier=stressed.tierVfx,camera=stressed.camera;
+    check(vfx?.budget?.profile===profile,`core VFX budget profile=${vfx?.budget?.profile}`);
+    check(tier?.budget?.profile===profile,`tier VFX budget profile=${tier?.budget?.profile}`);
+    check(vfx.active<=vfx.budget.limit&&vfx.budget.droppedPresentation>0,'core transient budget did not cap stress burst');
+    check(tier.active<=tier.budget.limit&&tier.budget.droppedPresentation>0,'tier transient budget did not cap stress burst');
+    check(vfx.active>0&&tier.active>0,'quality policy erased semantic VFX presentation');
+    if(expected==='reduced')check(camera.shakePower===0&&camera.zoomKick===0,'reduced-motion camera still accumulated shake/zoom');
+    else check(camera.shakePower>0&&camera.zoomKick>0,'normal camera lost semantic impact motion');
+
+    const result=runToMatchEnd(w,renderer);
+    const finalStatus=renderer.getStatus();
+    check(finalStatus.ready&&finalStatus.arenaReady,'production V2 readiness lost during match');
+    topDoc.body.innerHTML=`<pre id="result">V018_G6E_PERF_PASS ${expected} profile=${quality.id} dpr=${backingRatio.toFixed(2)}/${quality.dprCap} cache=${cache.settledImages}/${Math.round(cache.decodedBytesEstimate/1024)}KB vfx=${vfx.active}/${vfx.budget.limit}/${vfx.budget.droppedPresentation} tier=${tier.active}/${tier.budget.limit}/${tier.budget.droppedPresentation} match=${result.winner}/${result.rounds}/${result.ticks}</pre>`;
+  }catch(error){topDoc.body.innerHTML=`<pre id="result">V018_G6E_PERF_FAIL ${expected} ${String(error&&error.stack||error)}</pre>`;}
+})();
+</script>
