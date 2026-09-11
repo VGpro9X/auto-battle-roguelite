@@ -168,6 +168,9 @@ jobs:
       - name: V0.18 G4C advanced semantic VFX smoke test
         run: node tests/v018-g4c-advanced-vfx-smoke.js
 
+      - name: V0.18 G4D tier and Rare VFX smoke test
+        run: node tests/v018-g4d-tier-rare-vfx-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
