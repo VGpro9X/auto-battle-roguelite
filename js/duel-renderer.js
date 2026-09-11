@@ -15,4 +15,13 @@
     return{resize,consume,render,effects,getAnchor:getDuelVisualAnchor};
   }
   root.getDuelVisualAnchor=getDuelVisualAnchor;root.createDuelRenderer=createDuelRenderer;
+
+  if(typeof document!=="undefined"&&!root.__V018_DUEL_RENDERER_BOOTSTRAP__){
+    root.__V018_DUEL_RENDERER_BOOTSTRAP__=true;
+    const sources=["js/duel-visual-assets.js?v=018-g1","js/duel-animation.js?v=018-g1","js/duel-renderer-v2.js?v=018-g1"];
+    root.__V018_DUEL_RENDERER_READY__=sources.reduce((chain,src)=>chain.then(()=>new Promise((resolve,reject)=>{
+      if(document.querySelector(`script[data-v018-src=\"${src}\"]`)){resolve();return;}
+      const script=document.createElement("script");script.src=src;script.dataset.v018Src=src;script.onload=resolve;script.onerror=()=>reject(new Error(`Failed to load ${src}`));document.head.appendChild(script);
+    })),Promise.resolve()).catch(error=>{console.warn("V0.18 Renderer V2 bootstrap failed; vector renderer remains active.",error);});
+  }
 })();
