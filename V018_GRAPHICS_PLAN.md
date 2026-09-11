@@ -1,6 +1,6 @@
 # V0.18 — Graphics & Presentation Overhaul Plan
 
-Status: **ACTIVE — G0 + G1 + G2 + G3 + G4 COMPLETE / G5 NEXT**
+Status: **ACTIVE — G0 + G1 + G2 + G3 + G4 + G5 COMPLETE / G6 NEXT**
 
 Canonical source: GitHub `main` in `VGpro9X/auto-battle-roguelite`.
 
@@ -172,11 +172,13 @@ Implemented:
 - `js/duel-vfx-v2.js` — semantic event → VFX family routing
 - `js/duel-vfx-tier.js` — Hợp Đạo / Siêu Cấp / Rare presentation classification
 - `js/duel-renderer.js` — V0.17 vector fallback/reference + V2 bootstrap
+- `css/v018-graphics.css` — G5 HUD/lobby/scouting + mobile closure presentation
+- `css/v018-ui.css` — G5 reward/result presentation
+- `js/duel-ui-polish.js` — presentation-only Champion/elimination result mirroring
 
 Planned next:
-- `css/v018-graphics.css` — G5 presentation/HUD polish
-- optional small G5 UI helper only if markup/state hooks are actually required
 - `js/duel-visual-quality.js` — G6 quality/performance policy
+- focused G6 cache/effect/fallback hardening tests under `tests/`
 
 Do not build V0.18 by wrapping `updateDuelRound()` or modifying Survival rendering loops.
 
@@ -229,22 +231,7 @@ Delivered:
 
 ## G4 — Full Duel VFX Readability Pass — COMPLETE ✅
 Delivered through G4A–G4E:
-- 15 semantic VFX families:
-  - physical
-  - projectile
-  - fire
-  - frost
-  - lightning
-  - poison
-  - blood
-  - defense
-  - heal
-  - control
-  - summon
-  - area
-  - chain
-  - time
-  - soul
+- 15 semantic VFX families: physical, projectile, fire, frost, lightning, poison, blood, defense, heal, control, summon, area, chain, time, soul
 - event/world-coordinate + stable-anchor placement
 - VFX uses the G3 camera transform
 - stronger Hợp Đạo / Siêu Cấp presentation
@@ -253,7 +240,6 @@ Delivered through G4A–G4E:
 - `divineGift` intentionally reward-only
 - visible fatal/defensive Rare triggers including `heavenSeal`
 - transient effect expiry; no permanent full-screen wall
-- plain K.O. remains legacy-owned until G5 safely replaces presentation
 - G4A–G4E gates green
 - full V0.16/V0.17/G1–G4 Pages chain green
 - V0.17 desktop/mobile rendered validation green
@@ -261,59 +247,86 @@ Delivered through G4A–G4E:
 
 Exit achieved: visually meaningful Duel combat events have readable semantic V2 presentation without changing mechanics.
 
-## G5 — Duel UI / HUD / Tournament Presentation Polish — NEXT
+## G5 — Duel UI / HUD / Tournament Presentation Polish — COMPLETE ✅
 
-### G5A — Combat HUD shell
-- introduce dedicated V0.18 UI stylesheet
-- improve HP/shield/timer/round/phase hierarchy
-- keep current DOM IDs used by `duel-ui.js`
-- retain safe-area padding
+### G5A — Combat HUD shell — COMPLETE ✅
+- dedicated V0.18 HUD presentation layer
+- improved HP/shield/timer/score/round/phase hierarchy
+- current DOM IDs used by `duel-ui.js` preserved
+- safe-area padding retained
 - desktop + mobile responsive readability
-- HUD stays pointer-transparent except intentional controls
-- avoid large opaque panels over active combat
+- HUD pointer-transparent except intentional controls
 
-### G5B — Lobby + scouting
-- polish Duel mode card/lobby
-- improve pre-match VS presentation
+### G5B — Lobby + scouting — COMPLETE ✅
+- polished Duel mode card/lobby
+- improved pre-match VS presentation
 - stronger player/opponent identity
-- retain all existing tournament rules/text truth
+- tournament rules/text truth retained
 
-### G5C — Reward/build cards
-- improve base Rank / TỐI ĐA readability
+### G5C — Reward/build cards — COMPLETE ✅
+- improved base Rank / TỐI ĐA readability
 - clearer Hợp Đạo / Siêu Cấp / Rare hierarchy
-- preserve exact reward and reroll behavior
+- exact reward and reroll behavior preserved
+- exact-choice Siêu Cấp hint contract preserved
 
-### G5D — Outcome presentation
+### G5D — Outcome presentation — COMPLETE ✅
 - round start
 - K.O.
-- match win
+- round winner / draw replay
 - elimination
 - Champion presentation
-- replace legacy K.O. only after equivalent or better readable output exists
+- semantic outcome banner uses existing engine `round_start`, `ko` and `round_end` events
+- result card styling mirrors already-resolved Champion/Bị loại state
+- no outcome is recomputed by graphics/UI
 
-### G5E — UI closure audit
-- desktop rendered validation
-- mobile rendered validation
-- no overflow regressions
-- no click-blocking regressions
-- no critical combat occlusion
+### G5E — UI closure audit — COMPLETE ✅
+- dedicated rendered desktop/mobile workflow
+- no horizontal-overflow regressions
+- scroll-reachability and click-blocking audit
+- HUD pointer behavior and combat-center occlusion audit
+- mobile long Duel overlays made safely scrollable with safe-area padding
+- audit caught and fixed a real unreachable mobile lobby action
+- V0.17 desktop/mobile validation remained green
+- full Pages chain and deploy green at closure
 
-G5 acceptance:
-- combat HUD is readable at desktop and phone widths
+G5 acceptance achieved:
+- combat HUD readable at desktop and phone widths
 - all player-facing text remains Vietnamese
 - no UI change affects combat/tournament/skill-offer truth
 - safe areas and touch targets remain usable
 
-## G6 — Performance, Quality Levels and Fallback Hardening
-- preload/cache strategy
+## G6 — Performance, Quality Levels and Fallback Hardening — NEXT
+
+### G6A — Quality policy + observability foundation
+- add `js/duel-visual-quality.js`
+- derive presentation profile from constrained/mobile/reduced-motion context
+- expose explicit presentation-only budgets/status to renderer/VFX/camera
+- no policy value may change simulation truth
+
+### G6B — Cache/preload/memory sanity
+- audit manifest/image preload strategy
 - decoded-memory sanity
 - image-cache lifecycle
-- presentation-only transient effect limits
-- mobile/constrained quality reductions
-- reduced-motion path
-- vector fallback hardening
+- prevent duplicate loads / unbounded stale decoded-image retention
+
+### G6C — Transient presentation budgets
+- cap or dedupe presentation-only transient VFX under stress
+- retain semantic information/readability
+- never drop/alter engine events before non-visual consumers
+
+### G6D — Vector fallback hardening
+- validate partial/missing-asset fallback
+- validate forced vector fallback path
+- prove a Duel can finish with fallback active
+
+### G6E — Performance/fallback closure
+- desktop/mobile rendered quality validation
+- stress/fallback evidence
+- full V0.16/V0.17/G1–G6 regressions green
+- Pages artifact/deploy green
 
 Presentation caps must never become hidden gameplay caps.
+Reduced-motion may reduce animation/shake/flash, not semantic information.
 
 ## G7 — V0.18 Integration / Release Validation
 Automated requirements:
@@ -345,8 +358,8 @@ Required order:
 4. complete fighter states ✅
 5. arena/camera ✅
 6. VFX families ✅
-7. UI polish ← **NEXT**
-8. performance/fallback
+7. UI polish ✅
+8. performance/fallback ← **NEXT**
 9. release validation
 
 ---
@@ -372,14 +385,14 @@ Multiple arenas, jump/aerial combat, online systems and unrelated new gameplay c
 
 # 9. Current continuation point
 
-Continue from **G5A — Combat HUD shell**.
+Continue from **G6A — Quality policy + observability foundation**.
 
 Before editing:
 1. read `README.md`
 2. read `PROJECT_HANDOFF.md`
 3. read `ROADMAP.md`
 4. read `V018_GRAPHICS_PLAN.md`
-5. fetch latest Duel UI/CSS/workflow files
+5. fetch latest visual asset/VFX/camera/renderer/workflow files
 6. keep GitHub `main` canonical
 7. commit meaningful checkpoints frequently
-8. do not change combat/AI/balance truth for presentation convenience
+8. do not change combat/AI/balance truth for performance convenience
