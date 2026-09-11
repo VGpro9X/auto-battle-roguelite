@@ -61,9 +61,9 @@ for(const id of Object.keys(DUEL_EVOLUTION_CATALOG)){
   updateDuelRound(match,.033);assert.ok(round.events.some(e=>e.type==='hit'&&e.source==='bloodWeb'));approx(o.hp,75);
 }
 
-// Tinh Hà Trụy Lạc: one Meteor cast schedules and lands two 70% secondary meteors.
+// Tinh Hà Trụy Lạc: one Meteor cast schedules and lands both 70% secondary meteors while the target is still alive.
 {
-  const {match,p,o,round}=duel({meteorSeal:3});p.unlockedEvolutionSet=new Set(['starfallCataclysm']);p.hitStun=10;o.hitStun=10;p.stats.moveSpeed=0;o.stats.moveSpeed=0;p.x=300;o.x=500;p.skillTimers.meteorSeal=0;
+  const {match,p,o,round}=duel({meteorSeal:3},{vitality:3});p.unlockedEvolutionSet=new Set(['starfallCataclysm']);p.hitStun=10;o.hitStun=10;p.stats.moveSpeed=0;o.stats.moveSpeed=0;p.x=300;o.x=500;p.skillTimers.meteorSeal=0;
   updateDuelRound(match,.033);assert.strictEqual(p.duelEvolutionEffects.starfallSecondaries.length,2);
   for(let i=0;i<40&&!round.ended;i++)updateDuelRound(match,.033);
   assert.strictEqual(round.events.filter(e=>e.type==='hit'&&e.source==='starfallCataclysm').length,2);
