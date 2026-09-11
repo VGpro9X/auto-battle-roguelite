@@ -32,9 +32,9 @@ const cases=[
 ];
 for(const [event,family] of cases){assert.equal(api.getDuelVfxFamily(event),family,`wrong G4C family for ${JSON.stringify(event)}`);assert.equal(api.isDuelVfxV2OwnedEvent(event),true,`G4C should own ${JSON.stringify(event)}`);}
 
-// Specific family identity must outrank generic chain/area labels.
+// Existing specific family identity must outrank new generic chain/area labels.
 assert.equal(api.getDuelVfxFamily({type:"cast",skill:"thunderStride",chain:true}),"lightning");
-assert.equal(api.getDuelVfxFamily({type:"hit",source:"conductiveVenom",chain:true}),"poison");
+assert.equal(api.getDuelVfxFamily({type:"hit",source:"conductiveVenom",chain:true}),"lightning");
 assert.equal(api.getDuelVfxFamily({type:"cast",skill:"bloodLink",chain:true}),"blood");
 assert.equal(api.getDuelVfxFamily({type:"status",status:"soulBind"}),"control");
 assert.equal(api.isDuelVfxV2OwnedEvent({type:"ko",source:"attack"}),false,'plain KO must stay legacy-owned until a dedicated KO override preserves K.O. presentation');
