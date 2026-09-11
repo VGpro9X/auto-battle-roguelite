@@ -195,6 +195,9 @@ jobs:
       - name: V0.18 G6C transient presentation budget smoke test
         run: node tests/v018-g6c-vfx-budget-smoke.js
 
+      - name: V0.18 G6D vector and partial-asset fallback contract smoke test
+        run: node tests/v018-g6d-fallback-contract-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
