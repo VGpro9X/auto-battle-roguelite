@@ -12,7 +12,8 @@ GitHub `main` is canonical.
 - V0.17 is **COMPLETE / RELEASED**.
 - V0.18 graphics roadmap is **ACTIVE**.
 - V0.18 G0 planning/architecture lock is complete.
-- Next checkpoint: **G1 — Asset loader + Renderer V2 foundation**.
+- V0.18 G1 asset loader + Renderer V2 foundation is complete.
+- Next checkpoint: **G2 — Fighter Visual V2**.
 - Runtime/public build remains labeled **V0.17** until V0.18 passes its final release gates.
 
 See `V018_GRAPHICS_PLAN.md` for the authoritative V0.18 plan.
@@ -36,7 +37,7 @@ Core rule: **renderer changes must not change combat outcome, AI, hitboxes, dama
 
 The V0.17 vector renderer remains a verified fallback during V0.18 development.
 
-Do not mass-produce final art before G1 proves the asset loader, animation metadata, anchors, Renderer V2 and fallback path in-engine.
+G1 has now proven the manifest loader/cache, semantic animation metadata, per-frame anchors, Renderer V2 switch, vector fallback and exact Pages `assets/` pipeline with one proof asset. G2 should expand fighter state coverage incrementally and validate each state in-engine before mass-producing final art.
 
 ## V0.17 release
 V0.17 adds a complete automatic side-view tournament mode while preserving the existing Survival/Endless game.
@@ -127,4 +128,4 @@ V0.16 Survival/Endless remains intact with:
 6. `V017_DUEL_ARENA_PLAN.md`
 
 ## Project status
-**V0.17 is the clean released baseline. V0.18 is active at G0 complete / G1 next.**
+**V0.17 is the clean released baseline. V0.18 is active at G0 + G1 complete / G2 next.**
