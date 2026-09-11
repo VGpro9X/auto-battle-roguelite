@@ -214,6 +214,238 @@
 .duelCombatBuilds .duelEvolutionChip{border-color:rgba(250,204,21,.30)}
 .duelCombatBuilds .duelRareChip{border-color:rgba(244,114,182,.30)}
 
+/* G5B: lobby, mode entry and opponent scouting presentation. */
+.duelModeCard{
+  position:relative;
+  overflow:hidden;
+  min-height:180px;
+  border-color:rgba(96,165,250,.42);
+  background:
+    radial-gradient(circle at 22% 16%,rgba(56,189,248,.18),transparent 34%),
+    radial-gradient(circle at 82% 84%,rgba(244,63,94,.12),transparent 38%),
+    linear-gradient(145deg,rgba(18,34,56,.88),rgba(34,17,37,.82));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 14px 38px rgba(0,0,0,.18);
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+.duelModeCard::before{
+  content:"";
+  position:absolute;
+  width:160px;
+  height:160px;
+  right:-74px;
+  top:-76px;
+  border-radius:50%;
+  border:1px solid rgba(191,219,254,.16);
+  box-shadow:0 0 0 20px rgba(96,165,250,.025),0 0 0 42px rgba(244,63,94,.02);
+  pointer-events:none;
+}
+.duelModeCard:hover,.duelModeCard:focus-visible{
+  transform:translateY(-3px);
+  border-color:rgba(125,211,252,.72);
+  box-shadow:0 18px 46px rgba(0,0,0,.28),0 0 28px rgba(59,130,246,.12);
+  outline:none;
+}
+.duelModeCard .modeTime{
+  color:#e0f2fe;
+  text-shadow:0 0 24px rgba(56,189,248,.28);
+}
+.duelModeCard .modeUnit{color:#bfdbfe}
+.duelModeCard strong{color:#f8fafc}
+.duelModeCard small{max-width:29ch;color:#aeb9c8}
+
+.duelLobbyCard,.duelPreCard{
+  position:relative;
+  overflow:hidden;
+  border-color:rgba(148,163,184,.15);
+  background:
+    radial-gradient(circle at 12% 8%,rgba(59,130,246,.09),transparent 30%),
+    radial-gradient(circle at 88% 92%,rgba(244,63,94,.07),transparent 32%),
+    linear-gradient(160deg,rgba(10,16,27,.96),rgba(6,10,18,.94));
+  box-shadow:0 24px 80px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.duelLobbyCard::before,.duelPreCard::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(110deg,rgba(255,255,255,.018),transparent 25%,transparent 75%,rgba(255,255,255,.012));
+}
+.duelLobbyCard>.screenHeader,.duelPreCard>.screenHeader,
+.duelLobbyCard>.duelIntroGrid,.duelLobbyCard>.duelCombatRules,.duelLobbyCard>.finePrint,.duelLobbyCard>.resultButtons,
+.duelPreCard>.duelVersusPanel,.duelPreCard>.resultButtons{
+  position:relative;
+  z-index:1;
+}
+.duelLobbyCard .screenHeader,.duelPreCard .screenHeader{
+  padding-bottom:14px;
+  border-bottom:1px solid rgba(226,232,240,.08);
+}
+.duelLobbyCard .screenHeader h2,.duelPreCard .screenHeader h2{
+  margin-top:4px;
+  letter-spacing:-.02em;
+}
+
+.duelIntroGrid{gap:16px}
+.duelIntroHero{
+  position:relative;
+  overflow:hidden;
+  min-height:250px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  border-color:rgba(96,165,250,.24)!important;
+  background:
+    linear-gradient(135deg,rgba(20,44,74,.62),rgba(10,15,25,.58))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+.duelIntroHero::after{
+  content:"";
+  position:absolute;
+  width:190px;
+  height:190px;
+  right:-65px;
+  bottom:-78px;
+  border:1px solid rgba(147,197,253,.14);
+  transform:rotate(45deg);
+  pointer-events:none;
+}
+.duelVsMark{
+  width:max-content;
+  max-width:100%;
+  padding:5px 12px 6px;
+  border:1px solid rgba(125,211,252,.22);
+  border-radius:10px;
+  background:rgba(2,8,18,.32);
+  color:#eff6ff;
+  font-size:clamp(34px,5vw,58px);
+  line-height:1;
+}
+.duelIntroHero h3{max-width:18ch;font-size:clamp(22px,3vw,31px)}
+.duelIntroHero p{max-width:54ch;color:#c0cada}
+.duelRuleList>div{
+  min-height:96px;
+  justify-content:center;
+  border-color:rgba(226,232,240,.09)!important;
+  background:linear-gradient(145deg,rgba(17,24,39,.58),rgba(8,12,20,.48))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+}
+.duelRuleList>div b{color:#edf4ff;font-size:13px}
+.duelRuleList>div small{color:#9eabbc}
+.duelCombatRules{
+  border-color:rgba(226,232,240,.09)!important;
+  background:rgba(5,9,16,.50)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.02);
+}
+.duelLobbyCard .finePrint{color:#7f8a9a}
+.duelLobbyCard .resultButtons,.duelPreCard .resultButtons{margin-top:18px}
+.duelLobbyCard .primary.large,.duelPreCard .primary.large{
+  min-height:52px;
+  padding-inline:24px;
+  letter-spacing:.045em;
+  box-shadow:0 12px 30px rgba(37,99,235,.16);
+}
+
+.duelVersusPanel{
+  position:relative;
+  grid-template-columns:minmax(0,1fr) 104px minmax(0,1fr);
+  gap:14px;
+  align-items:stretch;
+}
+.duelVersusPanel::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:8%;
+  bottom:8%;
+  width:1px;
+  background:linear-gradient(180deg,transparent,rgba(226,232,240,.18),transparent);
+  pointer-events:none;
+}
+.duelVersusPanel>section{
+  position:relative;
+  overflow:hidden;
+  padding:20px!important;
+  border-radius:20px!important;
+  background:
+    radial-gradient(circle at 12% 10%,rgba(56,189,248,.12),transparent 34%),
+    linear-gradient(150deg,rgba(12,30,50,.58),rgba(7,12,20,.58))!important;
+  border-color:rgba(96,165,250,.25)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 12px 34px rgba(0,0,0,.16);
+}
+.duelVersusPanel>section::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:3px;
+  background:linear-gradient(90deg,transparent,var(--duel-player),transparent);
+  opacity:.62;
+  pointer-events:none;
+}
+.duelVersusPanel>section.opponent{
+  background:
+    radial-gradient(circle at 88% 10%,rgba(251,113,133,.12),transparent 34%),
+    linear-gradient(210deg,rgba(54,19,28,.56),rgba(7,12,20,.58))!important;
+  border-color:rgba(251,113,133,.25)!important;
+}
+.duelVersusPanel>section.opponent::after{
+  background:linear-gradient(90deg,transparent,var(--duel-opponent),transparent);
+}
+.duelSideLabel{
+  display:inline-flex;
+  align-items:center;
+  min-height:24px;
+  padding:4px 8px;
+  border:1px solid rgba(96,165,250,.22);
+  border-radius:999px;
+  background:rgba(37,99,235,.10);
+  color:#bfdbfe;
+}
+.duelVersusPanel .opponent .duelSideLabel{
+  border-color:rgba(251,113,133,.24);
+  background:rgba(190,24,93,.09);
+  color:#fecdd3;
+}
+.duelVersusPanel h3{
+  margin:12px 0 5px;
+  font-size:clamp(22px,2.8vw,30px);
+  overflow-wrap:anywhere;
+}
+.duelStyle{
+  min-height:36px;
+  margin-bottom:14px;
+  padding-bottom:12px;
+  border-bottom:1px solid rgba(226,232,240,.07);
+  color:#aab8ca;
+  line-height:1.4;
+}
+.duelBigVs{
+  position:relative;
+  z-index:1;
+  align-self:center;
+  justify-self:center;
+  width:76px;
+  height:76px;
+  min-height:0;
+  border:1px solid rgba(226,232,240,.16);
+  border-radius:22px;
+  background:linear-gradient(145deg,rgba(13,22,36,.94),rgba(20,10,18,.94));
+  box-shadow:0 12px 36px rgba(0,0,0,.28),0 0 32px rgba(148,163,184,.06);
+  font-size:29px;
+  letter-spacing:.05em;
+  transform:rotate(45deg);
+}
+.duelBigVs::first-line{transform:rotate(-45deg)}
+.duelPreCard .duelBigVs{color:#f8fafc;text-shadow:0 0 18px rgba(255,255,255,.18)}
+.duelPreCard .duelBuildChip{
+  border-color:rgba(226,232,240,.10);
+  background:rgba(3,7,13,.34);
+}
+.duelPreCard .duelLinkChip{border-color:rgba(167,139,250,.28)}
+.duelPreCard .duelEvolutionChip{border-color:rgba(250,204,21,.28)}
+.duelPreCard .duelRareChip{border-color:rgba(244,114,182,.28)}
+
 @media (max-width:760px){
   .duelCombatHud{
     padding:
@@ -237,6 +469,12 @@
   .duelRoundCenter #duelRoundScore{font-size:14px}
   .duelRoundCenter strong{font-size:22px;margin-top:5px}
   .duelRoundCenter strong::after{font-size:7px}
+  .duelModeCard{min-height:150px}
+  .duelIntroHero{min-height:210px}
+  .duelVersusPanel{grid-template-columns:1fr;gap:10px}
+  .duelVersusPanel::before{display:none}
+  .duelBigVs{width:54px;height:54px;border-radius:16px;font-size:21px;margin:0 auto}
+  .duelVersusPanel>section{min-height:0!important;padding:15px!important}
 }
 
 @media (max-width:480px){
@@ -254,9 +492,15 @@
   .duelRoundCenter{min-height:46px;padding:5px 3px}
   .duelRoundCenter #duelRoundScore{font-size:12px;letter-spacing:.04em}
   .duelRoundCenter strong{font-size:19px;margin-top:4px}
+  .duelModeCard{min-height:138px}
+  .duelIntroHero{min-height:190px;padding:15px!important}
+  .duelRuleList>div{min-height:82px}
+  .duelVsMark{font-size:32px}
+  .duelLobbyCard .primary.large,.duelPreCard .primary.large{width:100%;min-height:48px}
 }
 
 @media (prefers-reduced-motion:reduce){
   .duelPhaseHud.tử-chiến{animation:none}
-  .duelHealthBar i,.duelHealthBar em,.duelAbortButton{transition:none}
+  .duelHealthBar i,.duelHealthBar em,.duelAbortButton,.duelModeCard{transition:none}
+  .duelModeCard:hover,.duelModeCard:focus-visible{transform:none}
 }
