@@ -36,7 +36,8 @@ assert.match(css,/@media \(prefers-reduced-motion:reduce\)/,'G5C must preserve r
 // Preserve the existing reward truth and one-reroll contract from Duel UI.
 assert.match(ui,/button\.className=`choice duelChoice duelRareChoice \$\{meta\.tier\}`/,'Rare reward cards must keep their existing tier hook');
 assert.match(ui,/button\.className="choice duelChoice"\+\(next>=3\?" maxNext":""\)/,'Rank III choice must keep maxNext hook');
-assert.match(ui,/class=\\"duelEvolutionHint\\">✦ MỞ SIÊU CẤP:/,'Siêu Cấp immediate-unlock hint must remain exact-choice driven');
+assert.match(ui,/getDuelEvolutionChoiceHints\(player\.build,key\)/,'Siêu Cấp unlock hint must be computed from the exact offered choice');
+assert.ok(ui.includes('duelEvolutionHint">✦ MỞ SIÊU CẤP:'),'Siêu Cấp immediate-unlock presentation hook must remain visible');
 assert.match(ui,/reroll\.disabled=false;reroll\.textContent="↻ XOAY LẠI · 1 LẦN"/,'reroll must start available once');
 assert.match(ui,/reroll\.onclick=\(\)=>\{if\(rerollUsed\)return;rerollUsed=true;reroll\.disabled=true;/,'reroll must remain one-use per choice screen');
 assert.match(ui,/reroll\.textContent="↻ ĐÃ DÙNG LƯỢT XOAY";reroll\.classList\.add\("used"\);renderChoices\(\);/,'used reroll must rerender choices exactly once');
