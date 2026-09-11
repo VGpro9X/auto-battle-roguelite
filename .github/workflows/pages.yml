@@ -144,6 +144,9 @@ jobs:
       - name: V0.18 G2B locomotion anchor smoke test
         run: node tests/v018-g2b-locomotion-smoke.js
 
+      - name: V0.18 G2C combat motion smoke test
+        run: node tests/v018-g2c-combat-motion-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
