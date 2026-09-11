@@ -138,6 +138,9 @@ jobs:
       - name: V0.18 G1 asset and Renderer V2 smoke test
         run: node tests/v018-g1-assets-smoke.js
 
+      - name: V0.18 G2A state replacement smoke test
+        run: node tests/v018-g2a-state-replacement-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
