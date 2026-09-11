@@ -180,6 +180,9 @@ jobs:
       - name: V0.18 G5B lobby and scouting presentation smoke test
         run: node tests/v018-g5b-lobby-scouting-smoke.js
 
+      - name: V0.18 G5C reward and build-card presentation smoke test
+        run: node tests/v018-g5c-reward-cards-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
