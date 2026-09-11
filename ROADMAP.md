@@ -145,22 +145,33 @@ Delivered incrementally through G5A–G5E:
 
 **Exit achieved:** Duel HUD, lobby/scouting, reward cards and outcome/result presentation are readable and usable on desktop and mobile without altering combat/tournament/skill-selection truth.
 
-## G6 — Performance / Quality / Fallback Hardening — NEXT
-Planned work:
-- preload/cache/memory sanity
-- image-cache lifecycle
-- presentation-only transient effect limits
-- mobile/constrained quality reductions
-- reduced-motion path
-- vector fallback hardening
+## G6 — Performance / Quality / Fallback Hardening — COMPLETE ✅
+Delivered incrementally through G6A–G6E:
+- G6A presentation-only `full` / `constrained` quality policy + reduced-motion observability ✅
+- canvas DPR cap now follows the active quality profile ✅
+- camera shake/zoom now follows presentation quality and reduced-motion multipliers ✅
+- G6B manifest/image load dedupe, pending/settled status, decoded-memory estimates and safe LRU lookup pruning ✅
+- G6C transient core/tier VFX budgets with dropped-presentation observability ✅
+- simulation event arrays remain intact before/after presentation consumption ✅
+- G6D forced-vector browser path completes a Best-of-3 Duel ✅
+- G6D partial/missing-asset V2 path falls back cleanly and completes a Best-of-3 Duel ✅
+- G6D exposed and fixed an invalid Renderer V2 `ctx.ellipse()` runtime call ✅
+- G6E production V2 preload validates 13 fighter states + `Ashen Sanctum` with settled runtime asset cache ✅
+- G6E desktop full-quality rendered validation ✅
+- G6E mobile constrained-quality rendered validation ✅
+- G6E reduced-motion rendered validation with semantic VFX retained ✅
+- outer and inner Renderer V2/camera cache keys advanced so deployed clients receive G6 fixes ✅
+- timing-sensitive browser audits made race-safe without weakening their assertions ✅
+- full V0.16/V0.17/G1–G6E Pages chain green ✅
+- V0.17 desktop/mobile browser validation green ✅
+- G5E UI validation green ✅
+- G6D fallback validation green ✅
+- G6E performance validation green ✅
+- public Pages deploy green at G6 closure ✅
 
-Rules:
-- presentation caps must never become gameplay caps
-- semantic events remain simulation-owned and must not be dropped before gameplay consumers
-- quality changes may only reduce presentation cost/readability effects, never combat truth
-- keep runtime/public label V0.17 until G7
+**Exit achieved:** presentation cost is bounded and observable, reduced-motion/mobile quality is active in runtime, production assets preload cleanly, and both normal V2 and vector/partial-asset fallback can finish Duel combat without changing mechanics.
 
-## G7 — V0.18 Release Validation
+## G7 — V0.18 Integration / Release Validation — NEXT
 Required before release:
 - all V0.16 + V0.17 mechanics CI green
 - Renderer V2 normal path + vector fallback validated
@@ -168,12 +179,15 @@ Required before release:
 - production arena/camera/VFX/UI complete
 - desktop/mobile rendered validation
 - exact Pages artifact includes all production assets
-- no missing production asset errors
+- browser console has no missing production asset errors
+- V2 combat can finish to a resolved match
 - final docs/evidence updated
-- runtime/public label promoted to **V0.18** only after all gates pass
+- create `V018_RELEASE_VALIDATION.md`
+- runtime/public label promoted to **V0.18** only after every G7 gate passes
+- freeze the accepted V0.18 visual baseline after promotion
 
 ---
 
 # PROJECT STATUS
 
-**V0.17 remains the current released/public baseline. V0.18 is ACTIVE at G0 + G1 + G2 + G3 + G4 + G5 complete / G6 next. Continue with performance/quality/fallback hardening; do not change combat/AI/balance.**
+**V0.17 remains the current released/public baseline. V0.18 is ACTIVE at G0 + G1 + G2 + G3 + G4 + G5 + G6 complete / G7 next. Continue with final V0.18 integration/release validation; do not change combat/AI/balance.**
