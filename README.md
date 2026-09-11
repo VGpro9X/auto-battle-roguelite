@@ -15,13 +15,14 @@ GitHub `main` is canonical.
 - V0.18 G2 Fighter Visual V2: **COMPLETE — 13 / 13 semantic states**.
 - V0.18 G3 Arena + Camera Presentation V2: **COMPLETE**.
 - V0.18 G4 Full Duel VFX Readability Pass: **COMPLETE**.
-- Next checkpoint: **G5 — Duel UI / HUD / Tournament Presentation Polish**.
+- V0.18 G5 Duel UI / HUD / Tournament Presentation Polish: **COMPLETE**.
+- Next checkpoint: **G6 — Performance / Quality / Fallback Hardening**.
 - Runtime/public version label remains **V0.17** until G7 release validation passes.
 
 See `V018_GRAPHICS_PLAN.md` for the authoritative V0.18 plan.
 
 ## V0.18 graphics progress
-Renderer V2 is asset/manifest-driven and keeps the V0.17 vector renderer as a safe fallback. Simulation remains the only source of combat truth; graphics never decide hit success, damage, cooldowns, targeting, knockback, fatal ordering, AI decisions or tournament outcomes.
+Renderer V2 is asset/manifest-driven and keeps the V0.17 vector renderer as a safe fallback. Simulation remains the only source of combat truth; graphics never decide hit success, damage, cooldowns, targeting, knockback, fatal ordering, AI decisions, skill offers or tournament outcomes.
 
 ### G1 delivered
 - `js/duel-visual-assets.js` manifest/image loader + cache
@@ -53,42 +54,40 @@ Renderer V2 is asset/manifest-driven and keeps the V0.17 vector renderer as a sa
 ### G4 delivered
 - `js/duel-vfx-v2.js` semantic event → visual-family router
 - `js/duel-vfx-tier.js` Hợp Đạo / Siêu Cấp / Rare presentation classifier
-- 15 cumulative VFX families:
-  - physical
-  - projectile
-  - fire
-  - frost
-  - lightning
-  - poison
-  - blood
-  - defense
-  - heal
-  - control
-  - summon
-  - area
-  - chain
-  - time
-  - soul
-- stronger Hợp Đạo / Siêu Cấp presentation overlays
+- 15 cumulative VFX families: physical, projectile, fire, frost, lightning, poison, blood, defense, heal, control, summon, area, chain, time, soul
+- stronger Hợp Đạo / Siêu Cấp overlays
 - 20 / 20 Rare visual identities/signatures
-- combat-active Rare activation coverage, including visible `heavenSeal` consumption
+- combat-active Rare trigger coverage, including visible `heavenSeal` consumption
 - `divineGift` intentionally has no fabricated combat VFX because it is reward/acquisition-only
-- VFX placement uses event coordinates and fighter anchors
-- transient effects expire; no permanent full-screen VFX wall
+- anchor/world-coordinate placement and transient effect expiry
 - G4A–G4E smoke/audit gates green
-- full V0.16/V0.17/G1–G4 Pages chain green
-- V0.17 desktop/mobile rendered validation green at G4 closure
-- public Pages deploy green at G4 closure
 
-## V0.18 next: G5
-G5 polishes the player-facing Duel presentation without changing mechanics:
-- lobby and mode entry
-- opponent scouting / versus screen
-- reward choice cards
-- combat HUD readability
-- HP / shield / timer / round / phase hierarchy
-- round K.O., elimination and Champion presentation
-- desktop + mobile usability
+### G5 delivered
+Delivered through G5A–G5E without changing combat/tournament/skill-choice truth:
+- combat HUD hierarchy for HP, shield, timer, score, round and phase
+- safe-area-aware desktop/mobile HUD with pointer-transparent presentation
+- polished Duel mode entry, lobby, opponent scouting and VS screen
+- reward/build card hierarchy for base Rank, TỐI ĐA, Siêu Cấp hints, Thần Kỹ and Thần Bí Kỹ
+- exact-choice evolution hints and one-reroll semantics preserved
+- semantic `ROUND`, `K.O.`, round-winner and draw/replay presentation driven by existing engine events
+- Champion / elimination result presentation mirrors already-resolved tournament truth
+- dedicated G5D outcome smoke gate
+- dedicated G5E rendered desktop/mobile closure workflow
+- mobile long Duel overlays made safely scrollable with safe-area padding after G5E exposed an unreachable lobby action
+- G5E verifies scroll reachability, clickability, horizontal overflow, HUD pointer behavior and combat-center occlusion
+- full V0.16/V0.17/G1–G5 Pages chain green
+- V0.17 rendered desktop/mobile validation green
+- G5E rendered desktop/mobile UI closure green
+- public Pages deploy green at G5 closure
+
+## V0.18 next: G6
+G6 hardens presentation quality and fallback behavior without creating gameplay caps:
+- preload/cache and decoded-memory sanity
+- image-cache lifecycle
+- presentation-only transient effect limits
+- mobile/constrained quality reductions
+- reduced-motion path
+- vector fallback hardening
 
 ## V0.17 release baseline
 V0.17 remains frozen except for bug fixes and includes:
@@ -128,4 +127,4 @@ Survival/Endless V0.16 remains supported and unchanged.
 6. `V017_DUEL_ARENA_PLAN.md`
 
 ## Project status
-**V0.17 remains the released/public baseline. V0.18 is active at G0 + G1 + G2 + G3 + G4 complete / G5 next.**
+**V0.17 remains the released/public baseline. V0.18 is active at G0 + G1 + G2 + G3 + G4 + G5 complete / G6 next.**
