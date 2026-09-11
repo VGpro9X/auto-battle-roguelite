@@ -156,6 +156,9 @@ jobs:
       - name: V0.18 G2F full fighter state coverage smoke test
         run: node tests/v018-g2f-full-state-coverage-smoke.js
 
+      - name: V0.18 G3 arena camera presentation smoke test
+        run: node tests/v018-g3-arena-camera-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
@@ -171,17 +174,25 @@ jobs:
         run: |
           set -euo pipefail
           test -f _site/assets/duel/fighters/base/manifest.json
+          test -f _site/assets/duel/arenas/ashen-sanctum/manifest.json
           node - <<'NODE'
           const fs=require('fs');
           const path=require('path');
-          const base='_site/assets/duel/fighters/base';
-          const manifest=JSON.parse(fs.readFileSync(path.join(base,'manifest.json'),'utf8'));
-          for(const [state,animation] of Object.entries(manifest.animations||{})){
+          const fighterBase='_site/assets/duel/fighters/base';
+          const fighter=JSON.parse(fs.readFileSync(path.join(fighterBase,'manifest.json'),'utf8'));
+          for(const [state,animation] of Object.entries(fighter.animations||{})){
             if(!animation.src)throw new Error(`Manifest animation ${state} missing src`);
-            const target=path.join(base,animation.src);
+            const target=path.join(fighterBase,animation.src);
             if(!fs.existsSync(target))throw new Error(`Pages artifact missing ${target}`);
           }
-          console.log('V0.18 Pages asset integrity: PASS');
+          const arenaBase='_site/assets/duel/arenas/ashen-sanctum';
+          const arena=JSON.parse(fs.readFileSync(path.join(arenaBase,'manifest.json'),'utf8'));
+          for(const layer of arena.layers||[]){
+            if(!layer.src)throw new Error(`Arena layer ${layer.id} missing src`);
+            const target=path.join(arenaBase,layer.src);
+            if(!fs.existsSync(target))throw new Error(`Pages artifact missing ${target}`);
+          }
+          console.log('V0.18 Pages fighter + arena asset integrity: PASS');
           NODE
 
       - name: Configure Pages
