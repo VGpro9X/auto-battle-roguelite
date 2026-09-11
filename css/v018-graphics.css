@@ -429,14 +429,13 @@
   height:76px;
   min-height:0;
   border:1px solid rgba(226,232,240,.16);
-  border-radius:22px;
+  border-radius:0;
   background:linear-gradient(145deg,rgba(13,22,36,.94),rgba(20,10,18,.94));
   box-shadow:0 12px 36px rgba(0,0,0,.28),0 0 32px rgba(148,163,184,.06);
   font-size:29px;
   letter-spacing:.05em;
-  transform:rotate(45deg);
+  clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);
 }
-.duelBigVs::first-line{transform:rotate(-45deg)}
 .duelPreCard .duelBigVs{color:#f8fafc;text-shadow:0 0 18px rgba(255,255,255,.18)}
 .duelPreCard .duelBuildChip{
   border-color:rgba(226,232,240,.10);
@@ -473,7 +472,7 @@
   .duelIntroHero{min-height:210px}
   .duelVersusPanel{grid-template-columns:1fr;gap:10px}
   .duelVersusPanel::before{display:none}
-  .duelBigVs{width:54px;height:54px;border-radius:16px;font-size:21px;margin:0 auto}
+  .duelBigVs{width:54px;height:54px;border-radius:0;font-size:21px;margin:0 auto}
   .duelVersusPanel>section{min-height:0!important;padding:15px!important}
 }
 
