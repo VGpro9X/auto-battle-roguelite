@@ -2,8 +2,9 @@
   const root=typeof window!=="undefined"?window:globalThis;
   const FOUNDATION_FAMILIES=Object.freeze(["physical","projectile","fire","frost","lightning"]);
   const SUPPORT_FAMILIES=Object.freeze(["poison","blood","defense","heal","control"]);
-  const VFX_FAMILIES=Object.freeze([...FOUNDATION_FAMILIES,...SUPPORT_FAMILIES]);
-  const OWNED_TYPES=new Set(["hit","attack_melee","projectile_spawn","cast","status","heal","shield_gain"]);
+  const ADVANCED_FAMILIES=Object.freeze(["summon","area","chain","time","soul"]);
+  const VFX_FAMILIES=Object.freeze([...FOUNDATION_FAMILIES,...SUPPORT_FAMILIES,...ADVANCED_FAMILIES]);
+  const OWNED_TYPES=new Set(["hit","attack_melee","projectile_spawn","cast","status","heal","shield_gain","area","orbit_hit"]);
 
   function textOf(event){return [event?.type,event?.source,event?.skill,event?.status,event?.variant,event?.colorHint,event?.element].filter(Boolean).join(" ").toLowerCase();}
   function familyForDuelEvent(event){
@@ -14,9 +15,14 @@
     if(/fire|burn|flame|ember|inferno|combustion|chaosfire/.test(text))return"fire";
     if(/poison|venom|toxin|toxic|acid/.test(text))return"poison";
     if(/blood|lifesteal|life.?steal|vamp|hemorrhage/.test(text))return"blood";
-    if(event.type==="shield_gain"||/shield|barrier|guard|armor|guardian|block/.test(text))return"defense";
-    if(event.type==="heal"||/heal|recover|regen|restore|mend/.test(text))return"heal";
-    if(/stun|slow|bind|magnet|control|root|silence|snare|lock/.test(text))return"control";
+    if(event.type==="shield_gain"||/shield|barrier|guard|armor|guardian|block|aegis/.test(text))return"defense";
+    if(event.type==="heal"||/heal|recover|regen|restore|mend|nourish/.test(text))return"heal";
+    if(/stun|slow|soulbind|bind|magnet|control|root|silence|snare|lock/.test(text))return"control";
+    if(/time|rewind|causal|void|afterimage|focusmind|echo/.test(text))return"time";
+    if(/soul|deathmark|sealed.?soul|scapegoat|death/.test(text))return"soul";
+    if(event.type==="orbit_hit"||/summon|orbit|spiritpearl|idol|totem|wisp/.test(text))return"summon";
+    if(/chain|ricochet/.test(text))return"chain";
+    if(event.type==="area"||/explosion|burst|nova|mine|cataclysm|shock|sevenstarstrike/.test(text))return"area";
     if(event.type==="projectile_spawn")return"projectile";
     if(event.type==="attack_melee")return"physical";
     if(event.type==="hit")return"physical";
@@ -36,6 +42,11 @@
       if(family==="defense")return .56;
       if(family==="heal")return .62;
       if(family==="control")return .54;
+      if(family==="summon")return .58;
+      if(family==="area")return .58;
+      if(family==="chain")return .34;
+      if(family==="time")return .66;
+      if(family==="soul")return .68;
       return .24;
     }
     function consume(events){for(const event of events||[]){const family=familyForDuelEvent(event);if(!family||!VFX_FAMILIES.includes(family)||!OWNED_TYPES.has(event.type))continue;const life=lifeFor(family,event.type);effects.push({...event,family,life,maxLife:life,serial:serial++});}}
@@ -54,9 +65,14 @@
     function drawDefense(ctx,e,p,tr,alpha){const x=tr.x(p.x),y=tr.y(p.y),s=tr.scale,r=(24+(1-alpha)*16)*s;ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle="#7dd3fc";ctx.lineWidth=Math.max(1.5,3*s);ctx.beginPath();for(let i=0;i<6;i++){const a=-Math.PI/2+i*Math.PI/3,px=x+Math.cos(a)*r,py=y+Math.sin(a)*r;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}ctx.closePath();ctx.stroke();ctx.globalAlpha=alpha*.42;ctx.fillStyle="#38bdf8";ctx.fill();ctx.restore();}
     function drawHeal(ctx,e,p,tr,alpha){const x=tr.x(p.x),y=tr.y(p.y),s=tr.scale,r=(8+(1-alpha)*16)*s;ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle="#86efac";ctx.lineWidth=Math.max(2,4*s);ctx.beginPath();ctx.moveTo(x-r,y);ctx.lineTo(x+r,y);ctx.moveTo(x,y-r);ctx.lineTo(x,y+r);ctx.stroke();for(let i=0;i<3;i++){const a=e.serial+i*2.094+(1-alpha),rr=(17+i*4)*s;ctx.fillStyle="#bbf7d0";ctx.beginPath();ctx.arc(x+Math.cos(a)*rr,y+Math.sin(a)*rr,2.2*s,0,Math.PI*2);ctx.fill();}if(Number(e.amount)>0){ctx.fillStyle="#bbf7d0";ctx.font=`700 ${Math.max(11,13*s)}px system-ui`;ctx.textAlign="center";ctx.fillText(`+${Math.max(1,Math.round(e.amount))}`,x,y-24*s-(1-alpha)*10*s);}ctx.restore();}
     function drawControl(ctx,e,p,tr,alpha){const x=tr.x(p.x),y=tr.y(p.y),s=tr.scale,r=(22+(1-alpha)*10)*s;ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle="#c4b5fd";ctx.lineWidth=Math.max(1,2*s);ctx.setLineDash([5*s,4*s]);ctx.beginPath();ctx.ellipse(x,y,r,r*.46,0,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);for(let i=0;i<3;i++){const offset=(i-1)*11*s;ctx.beginPath();ctx.moveTo(x-22*s,y-24*s+offset);ctx.lineTo(x+22*s,y-8*s+offset);ctx.stroke();}ctx.restore();}
-    function render(ctx,tr,match,getAnchor){const round=match?.currentRound;if(!ctx||!tr||!round)return;for(const e of effects){const alpha=Math.max(0,Math.min(1,e.life/e.maxLife)),p=eventPoint(e,round,getAnchor),origin=originPoint(e,round,getAnchor);if(e.family==="physical")drawPhysical(ctx,e,p,tr,alpha);else if(e.family==="projectile")drawProjectile(ctx,e,p,origin,tr,alpha);else if(e.family==="fire")drawFire(ctx,e,p,tr,alpha);else if(e.family==="frost")drawFrost(ctx,e,p,tr,alpha);else if(e.family==="lightning")drawLightning(ctx,e,p,origin,tr,alpha);else if(e.family==="poison")drawPoison(ctx,e,p,tr,alpha);else if(e.family==="blood")drawBlood(ctx,e,p,tr,alpha);else if(e.family==="defense")drawDefense(ctx,e,p,tr,alpha);else if(e.family==="heal")drawHeal(ctx,e,p,tr,alpha);else if(e.family==="control")drawControl(ctx,e,p,tr,alpha);drawDamageText(ctx,e,p,tr,alpha);}}
+    function drawSummon(ctx,e,p,tr,alpha){const x=tr.x(p.x),y=tr.y(p.y),s=tr.scale,r=(19+(1-alpha)*12)*s;ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle="#fde68a";ctx.fillStyle="rgba(250,204,21,.16)";ctx.lineWidth=Math.max(1,2*s);ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.stroke();for(let i=0;i<4;i++){const a=e.serial*.47+i*Math.PI/2+(1-alpha)*1.7,bx=x+Math.cos(a)*r,by=y+Math.sin(a)*r*.55;ctx.beginPath();ctx.arc(bx,by,3*s,0,Math.PI*2);ctx.fill();ctx.stroke();}ctx.restore();}
+    function drawArea(ctx,e,p,tr,alpha){const x=tr.x(p.x),y=tr.y(p.y),s=tr.scale,base=Math.max(26,Number(e.radius||72))*s,r=base*(.35+.65*(1-alpha));ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle="#e9d5ff";ctx.fillStyle="rgba(168,85,247,.10)";ctx.lineWidth=Math.max(1.5,3*s);ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.stroke();for(let i=0;i<5;i++){const a=e.serial*.37+i*Math.PI*2/5;ctx.beginPath();ctx.moveTo(x+Math.cos(a)*r*.35,y+Math.sin(a)*r*.35);ctx.lineTo(x+Math.cos(a)*r,y+Math.sin(a)*r);ctx.stroke();}ctx.restore();}
+    function drawChain(ctx,e,p,origin,tr,alpha){const x=tr.x(p.x),y=tr.y(p.y),ox=tr.x(origin.x),oy=tr.y(origin.y),s=tr.scale;ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle="#f0abfc";ctx.lineWidth=Math.max(1.2,2.4*s);ctx.beginPath();ctx.moveTo(ox,oy);for(let i=1;i<=5;i++){const t=i/5,phase=(e.serial+1)*2.3+i*1.9,jitter=i===5?0:Math.sin(phase)*8*s;ctx.lineTo(ox+(x-ox)*t,oy+(y-oy)*t+jitter);}ctx.stroke();ctx.restore();}
+    function drawTime(ctx,e,p,tr,alpha){const x=tr.x(p.x),y=tr.y(p.y),s=tr.scale,r=(22+(1-alpha)*14)*s;ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle="#67e8f9";ctx.lineWidth=Math.max(1,2*s);ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.arc(x,y,r*.68,-Math.PI*.65,Math.PI*.65);ctx.stroke();ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(-1.15+(1-alpha)*1.3)*r*.65,y+Math.sin(-1.15+(1-alpha)*1.3)*r*.65);ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(.35-(1-alpha)*1.1)*r*.45,y+Math.sin(.35-(1-alpha)*1.1)*r*.45);ctx.stroke();ctx.restore();}
+    function drawSoul(ctx,e,p,tr,alpha){const x=tr.x(p.x),y=tr.y(p.y),s=tr.scale;ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle="#d8b4fe";ctx.fillStyle="rgba(192,132,252,.18)";ctx.lineWidth=Math.max(1.2,2.2*s);for(let i=0;i<3;i++){const phase=e.serial*.61+i*2.1+(1-alpha)*1.4,rr=(12+i*7)*s,bx=x+Math.cos(phase)*rr*.55,by=y-Math.sin(phase)*rr*.65-(1-alpha)*15*s;ctx.beginPath();ctx.arc(bx,by,(5-i*.7)*s,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(bx,by+4*s);ctx.quadraticCurveTo(bx+Math.sin(phase)*8*s,by+15*s,bx-Math.cos(phase)*5*s,by+24*s);ctx.stroke();}ctx.restore();}
+    function render(ctx,tr,match,getAnchor){const round=match?.currentRound;if(!ctx||!tr||!round)return;for(const e of effects){const alpha=Math.max(0,Math.min(1,e.life/e.maxLife)),p=eventPoint(e,round,getAnchor),origin=originPoint(e,round,getAnchor);if(e.family==="physical")drawPhysical(ctx,e,p,tr,alpha);else if(e.family==="projectile")drawProjectile(ctx,e,p,origin,tr,alpha);else if(e.family==="fire")drawFire(ctx,e,p,tr,alpha);else if(e.family==="frost")drawFrost(ctx,e,p,tr,alpha);else if(e.family==="lightning")drawLightning(ctx,e,p,origin,tr,alpha);else if(e.family==="poison")drawPoison(ctx,e,p,tr,alpha);else if(e.family==="blood")drawBlood(ctx,e,p,tr,alpha);else if(e.family==="defense")drawDefense(ctx,e,p,tr,alpha);else if(e.family==="heal")drawHeal(ctx,e,p,tr,alpha);else if(e.family==="control")drawControl(ctx,e,p,tr,alpha);else if(e.family==="summon")drawSummon(ctx,e,p,tr,alpha);else if(e.family==="area")drawArea(ctx,e,p,tr,alpha);else if(e.family==="chain")drawChain(ctx,e,p,origin,tr,alpha);else if(e.family==="time")drawTime(ctx,e,p,tr,alpha);else if(e.family==="soul")drawSoul(ctx,e,p,tr,alpha);drawDamageText(ctx,e,p,tr,alpha);}}
     function getStatus(){const counts={};for(const family of VFX_FAMILIES)counts[family]=0;for(const effect of effects)counts[effect.family]=(counts[effect.family]||0)+1;return{families:[...VFX_FAMILIES],active:effects.length,counts};}
     return{consume,update,render,getStatus,ownsEvent:ownsDuelVfxEvent,familyForEvent:familyForDuelEvent,effects};
   }
-  root.DUEL_VFX_V2_FOUNDATION_FAMILIES=FOUNDATION_FAMILIES;root.DUEL_VFX_V2_FAMILIES=VFX_FAMILIES;root.getDuelVfxFamily=familyForDuelEvent;root.isDuelVfxV2OwnedEvent=ownsDuelVfxEvent;root.createDuelVfxV2=createDuelVfxV2;
+  root.DUEL_VFX_V2_FOUNDATION_FAMILIES=FOUNDATION_FAMILIES;root.DUEL_VFX_V2_SUPPORT_FAMILIES=SUPPORT_FAMILIES;root.DUEL_VFX_V2_ADVANCED_FAMILIES=ADVANCED_FAMILIES;root.DUEL_VFX_V2_FAMILIES=VFX_FAMILIES;root.getDuelVfxFamily=familyForDuelEvent;root.isDuelVfxV2OwnedEvent=ownsDuelVfxEvent;root.createDuelVfxV2=createDuelVfxV2;
 })();
