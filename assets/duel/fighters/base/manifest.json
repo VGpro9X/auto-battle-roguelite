@@ -1,6 +1,6 @@
 {
   "id": "v018-base-fighter",
-  "version": 3,
+  "version": 4,
   "type": "fighter",
   "frameWidth": 256,
   "frameHeight": 256,
@@ -37,6 +37,25 @@
       {"head":[128,48],"chest":[128,122],"leftHand":[83,151],"rightHand":[175,157],"feet":[128,232],"front":[188,160],"back":[66,160],"target":[128,125]},
       {"head":[134,50],"chest":[133,124],"leftHand":[94,158],"rightHand":[171,158],"feet":[134,233],"front":[191,163],"back":[72,159],"target":[134,127]},
       {"head":[140,52],"chest":[138,126],"leftHand":[99,162],"rightHand":[166,159],"feet":[138,233],"front":[194,164],"back":[77,158],"target":[140,129]},
-      {"head":[128,48],"chest":[128,122],"leftHand":[83,151],"rightHand":[175,157],"feet":[128,232],"front":[188,160],"back":[66,160],"target":[128,125]}]}
+      {"head":[128,48],"chest":[128,122],"leftHand":[83,151],"rightHand":[175,157],"feet":[128,232],"front":[188,160],"back":[66,160],"target":[128,125]}]},
+    "ranged": {"src":"ranged.svg","frames":6,"columns":6,"fps":16,"loop":false,"anchors":[
+      {"head":[130,48],"chest":[129,122],"leftHand":[77,151],"rightHand":[186,150],"feet":[128,232],"front":[192,158],"back":[66,160],"target":[130,124]},
+      {"head":[130,47],"chest":[129,121],"leftHand":[82,148],"rightHand":[200,139],"feet":[128,231],"front":[206,157],"back":[66,159],"target":[130,123]},
+      {"head":[130,46],"chest":[129,120],"leftHand":[89,143],"rightHand":[218,124],"feet":[128,230],"front":[224,154],"back":[66,158],"target":[130,122]},
+      {"head":[130,47],"chest":[129,121],"leftHand":[90,145],"rightHand":[228,123],"feet":[128,231],"front":[235,156],"back":[66,159],"target":[130,123]},
+      {"head":[130,48],"chest":[129,122],"leftHand":[84,149],"rightHand":[202,144],"feet":[128,232],"front":[208,159],"back":[66,160],"target":[130,124]},
+      {"head":[130,48],"chest":[129,122],"leftHand":[77,151],"rightHand":[186,150],"feet":[128,232],"front":[192,158],"back":[66,160],"target":[130,124]}]},
+    "cast": {"src":"cast.svg","frames":6,"columns":6,"fps":14,"loop":false,"anchors":[
+      {"head":[128,48],"chest":[128,122],"leftHand":[78,150],"rightHand":[186,151],"feet":[128,232],"front":[192,160],"back":[66,160],"target":[128,125]},
+      {"head":[128,46],"chest":[128,120],"leftHand":[72,132],"rightHand":[194,128],"feet":[128,230],"front":[200,158],"back":[64,158],"target":[128,123]},
+      {"head":[128,45],"chest":[128,119],"leftHand":[66,112],"rightHand":[200,113],"feet":[128,229],"front":[206,157],"back":[62,157],"target":[128,122]},
+      {"head":[128,44],"chest":[128,118],"leftHand":[71,101],"rightHand":[195,100],"feet":[128,228],"front":[202,156],"back":[63,156],"target":[128,121]},
+      {"head":[128,46],"chest":[128,120],"leftHand":[76,125],"rightHand":[192,126],"feet":[128,230],"front":[198,158],"back":[64,158],"target":[128,123]},
+      {"head":[128,48],"chest":[128,122],"leftHand":[78,150],"rightHand":[186,151],"feet":[128,232],"front":[192,160],"back":[66,160],"target":[128,125]}]},
+    "block": {"src":"block.svg","frames":4,"columns":4,"fps":14,"loop":false,"anchors":[
+      {"head":[128,48],"chest":[128,122],"leftHand":[91,143],"rightHand":[185,146],"feet":[128,232],"front":[191,160],"back":[66,160],"target":[128,125]},
+      {"head":[128,47],"chest":[128,121],"leftHand":[103,132],"rightHand":[176,121],"feet":[128,231],"front":[184,159],"back":[65,159],"target":[128,124]},
+      {"head":[128,46],"chest":[128,120],"leftHand":[110,125],"rightHand":[172,116],"feet":[128,230],"front":[181,158],"back":[64,158],"target":[128,123]},
+      {"head":[128,48],"chest":[128,122],"leftHand":[91,143],"rightHand":[185,146],"feet":[128,232],"front":[191,160],"back":[66,160],"target":[128,125]}]}
   }
 }
