@@ -18,7 +18,20 @@ function reset(){
   player.x=W/2;player.y=H/2;player.moveX=1;player.moveY=0;player.hp=100;player.maxHp=100;
   state.t=0;state.enemies=[];state.gems=[];resetMovementAI();
 }
-function step(seconds=.033){state.t+=seconds;return chooseMovementDirection();}
+function step(seconds=.033,{applyMovement=false}={}){
+  state.t+=seconds;
+  const direction=chooseMovementDirection();
+  if(applyMovement){
+    player.x=clamp(player.x+direction.x*getEffectiveMoveSpeed()*seconds,24,W-24);
+    player.y=clamp(player.y+direction.y*getEffectiveMoveSpeed()*seconds,54,H-95);
+  }
+  return direction;
+}
+function advance(seconds){
+  const dt=.033;
+  const count=Math.ceil(seconds/dt);
+  for(let i=0;i<count;i++)step(dt,{applyMovement:true});
+}
 function ring(count=12,distance=105){
   for(let i=0;i<count;i++){
     const a=i/count*Math.PI*2;
@@ -47,14 +60,15 @@ d=getMovementAIDiagnostics();
 assert.strictEqual(d.mode,'escape',`danger must pre-empt harvest, got ${d.mode}`);
 assert.ok(d.utility.scores.escape>d.utility.scores.harvest,`escape utility must beat harvest under lethal pressure: ${JSON.stringify(d.utility.scores)}`);
 
-// Once danger is gone and commitment windows expire, utility should return to XP collection.
-state.enemies=[];state.t+=2.2;step();
+// Once danger is gone and normal gameplay frames continue, utility must leave
+// Escape after commitment expires and return to the still-valuable XP field.
+state.enemies=[];advance(2.2);
 d=getMovementAIDiagnostics();
 assert.strictEqual(d.mode,'harvest',`AI should return to harvest after pressure clears, got ${d.mode}`);
 assert.ok(d.utility.scores.harvest>d.utility.scores.escape,'safe post-danger harvest should outrank escape');
 
 // No threats and no XP should settle into patrol rather than sticky escape/kite.
-state.gems=[];state.t+=1.2;step();
+state.gems=[];advance(1.2);
 d=getMovementAIDiagnostics();
 assert.strictEqual(d.mode,'patrol',`empty safe field should patrol, got ${d.mode}`);
 
