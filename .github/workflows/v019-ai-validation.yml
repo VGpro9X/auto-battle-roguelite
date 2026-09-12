@@ -28,6 +28,8 @@ jobs:
           node --check tests/v019-survival-ai-smoke.js
           node --check tests/v019-survival-utility-smoke.js
           node --check tests/v019-duel-ai-smoke.js
+          node --check tests/v019-survival-simulation.js
+          node --check tests/v019-duel-simulation.js
 
       - name: V0.19 Survival A0-A4 deterministic scenarios
         run: node tests/v019-survival-ai-smoke.js
@@ -37,3 +39,9 @@ jobs:
 
       - name: V0.19 Duel A6-A12 tactical scenarios
         run: node tests/v019-duel-ai-smoke.js
+
+      - name: V0.19 A13 Survival simulation matrix
+        run: node tests/v019-survival-simulation.js
+
+      - name: V0.19 A13 Duel simulation matrix
+        run: node tests/v019-duel-simulation.js
