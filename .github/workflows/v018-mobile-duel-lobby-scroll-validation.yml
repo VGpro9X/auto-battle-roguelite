@@ -1,0 +1,37 @@
+name: V0.18 mobile Duel lobby scroll validation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v018-mobile-duel-lobby-scroll-validation
+  cancel-in-progress: true
+
+jobs:
+  validate-mobile-lobby-scroll:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compact mobile Duel lobby scroll regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4178 >/tmp/v018-mobile-duel-scroll-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then
+            echo "Chrome/Chromium not found on runner"
+            exit 1
+          fi
+          "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=360,640 --virtual-time-budget=7000 --dump-dom "http://127.0.0.1:4178/tests/v018-mobile-duel-lobby-scroll-driver.html" >/tmp/v018-mobile-duel-scroll.html
+          grep -q 'V018_MOBILE_DUEL_LOBBY_SCROLL_PASS' /tmp/v018-mobile-duel-scroll.html || { cat /tmp/v018-mobile-duel-scroll.html; exit 1; }
+          grep 'V018_MOBILE_DUEL_LOBBY_SCROLL_PASS' /tmp/v018-mobile-duel-scroll.html
