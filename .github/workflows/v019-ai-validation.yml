@@ -1,0 +1,30 @@
+name: V0.19 tactical AI validation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v019-ai-validation
+  cancel-in-progress: true
+
+jobs:
+  validate-ai:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Syntax-check V0.19 AI JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check js/v019-survival-ai.js
+          node --check tests/v019-survival-ai-smoke.js
+
+      - name: V0.19 Survival A0-A4 deterministic scenarios
+        run: node tests/v019-survival-ai-smoke.js
