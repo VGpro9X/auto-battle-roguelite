@@ -25,6 +25,8 @@
       sectorAnalysis:null,
       lastThreat:null,
       lastDecisionAt:0,
+      utilityScores:{escape:0,kite:0,harvest:0,patrol:0},
+      utilityInputs:null,
       escapeScore:-Infinity,
       escapeMaxDanger:Infinity,
       escapeWidth:0,
@@ -121,10 +123,8 @@
       const predicted=predictedDangerAt(sampleX,sampleY,horizon);
       const wallDanger=getWallDangerForDirection(dirX,dirY,sampleDistance);
       const danger=pressure+predicted.danger*.72+wallDanger*.52;
-      // "Open" answers a geometric question: is there a usable angular lane?
-      // Future danger remains in `danger` and the corridor scorer below. Keeping
-      // these signals separate prevents enemies on both lips of a real gap from
-      // making the entire opening disappear before route scoring can compare it.
+      // Sector openness is geometric. Future danger remains a separate route
+      // quality signal so enemies at the lips of a real gap do not erase it.
       const open=pressure<.90&&wallDanger<1.75;
       sectors.push({i,angle,dirX,dirY,pressure,predictedDanger:predicted.danger,wallDanger,danger,open,nearest});
     }
@@ -151,34 +151,97 @@
     return result;
   }
 
-  function chooseV019Mode(threat,analysis){
+  function harvestOpportunity(){
+    if(!state.gems.length)return 0;
+    let value=0,count=0;
+    for(const gem of state.gems){
+      if(!gem||gem.dead)continue;
+      const distance=Math.hypot(gem.x-player.x,gem.y-player.y);
+      if(distance>340)continue;
+      const closeness=1-clamp(distance/340,0,1);
+      value+=Math.max(.5,Number(gem.xp)||1)*(.35+closeness*.65);
+      count++;
+    }
+    return clamp(value/10+Math.min(count,10)*.025,0,1);
+  }
+
+  function scoreStrategicUtilities(threat,analysis){
     const rt=runtime();
     const edgeSafety=getEdgeSafety(player.x,player.y);
-    const hpRatio=Number.isFinite(player.hp)&&Number.isFinite(player.maxHp)&&player.maxHp>0?player.hp/player.maxHp:1;
-    const compressed=
-      threat.nearest<68||
-      threat.close80>=2||
-      threat.close125>=6||
-      (analysis.encirclement>=.69&&threat.close125>=3)||
-      (analysis.gapWidth<=Math.PI*.34&&threat.close125>=4)||
-      (edgeSafety<.36&&threat.close125>=2);
+    const edgeRisk=1-edgeSafety;
+    const hpRatio=Number.isFinite(player.hp)&&Number.isFinite(player.maxHp)&&player.maxHp>0?clamp(player.hp/player.maxHp,0,1):1;
+    const hpPressure=clamp((.68-hpRatio)/.52,0,1);
+    const nearestPressure=Number.isFinite(threat.nearest)?clamp((185-threat.nearest)/140,0,1):0;
+    const crowd=clamp(threat.close125/7,0,1);
+    const encirclement=clamp(analysis.encirclement,0,1);
+    const gapNarrowness=1-clamp(analysis.gapWidth/(Math.PI*.90),0,1);
+    const harvest=harvestOpportunity();
+    const mobility=clamp((effectiveMoveSpeed()-120)/130,0,1);
+    const danger=Math.max(nearestPressure*.86,crowd*.90,encirclement*.96);
+    const safety=1-clamp(danger+edgeRisk*.16,0,1);
 
-    if(movementBrain.mode==="escape"&&state.t<movementBrain.escapeModeUntil&&(
-      threat.nearest<160||threat.close125>=2||analysis.encirclement>.34||edgeSafety<.44
-    ))return"escape";
+    const scores={
+      escape:
+        nearestPressure*.58+
+        crowd*.72+
+        encirclement*.88+
+        gapNarrowness*.22+
+        edgeRisk*.30+
+        hpPressure*.42-
+        mobility*.06,
+      kite:
+        nearestPressure*.46+
+        crowd*.48+
+        encirclement*.36+
+        hpPressure*.34+
+        safety*.09+
+        mobility*.08,
+      harvest:state.gems.length?
+        harvest*.88+
+        safety*.74+
+        (1-hpPressure)*.08-
+        edgeRisk*.12:
+        -.45,
+      patrol:
+        safety*.72+
+        (1-harvest)*.30+
+        edgeSafety*.08
+    };
 
-    if(compressed||state.t<rt.breakoutUntil)return"escape";
-
-    if(state.t<movementBrain.lockUntil&&movementBrain.mode!=="escape"){
-      if(movementBrain.mode==="kite"&&(threat.nearest<175||threat.close125>=2))return"kite";
-      if(movementBrain.mode==="harvest"&&threat.nearest>=118&&analysis.encirclement<.40)return"harvest";
-      if(movementBrain.mode==="patrol"&&threat.nearest>=150&&analysis.encirclement<.30)return"patrol";
+    // Tactical persistence is part of utility, not a separate hard-coded mode
+    // ladder. Small score noise must not cause visible mode thrashing.
+    if(Object.prototype.hasOwnProperty.call(scores,movementBrain.mode)){
+      scores[movementBrain.mode]+=.15;
+      if(state.t<movementBrain.lockUntil)scores[movementBrain.mode]+=.11;
     }
+    if(movementBrain.mode==="escape"&&state.t<movementBrain.escapeModeUntil)scores.escape+=.20;
+    if(state.t<rt.breakoutUntil)scores.escape+=4;
 
-    const lowHpPressure=hpRatio<.42&&(threat.nearest<170||threat.close125>=2);
-    if(lowHpPressure||threat.nearest<136||threat.close125>=4||analysis.encirclement>=.48)return"kite";
-    if(state.gems.length)return"harvest";
-    return"patrol";
+    // Immediate lethal compression is intentionally decisive. Utility governs
+    // ordinary transitions; this emergency boost ensures survival beats greed.
+    if(threat.nearest<68||threat.close80>=2||threat.close125>=6||
+      (encirclement>=.69&&threat.close125>=3)||
+      (analysis.gapWidth<=Math.PI*.34&&threat.close125>=4)||
+      (edgeSafety<.36&&threat.close125>=2))scores.escape+=3.5;
+
+    rt.utilityScores={...scores};
+    rt.utilityInputs={edgeSafety,hpRatio,hpPressure,nearestPressure,crowd,encirclement,gapNarrowness,harvest,mobility,safety};
+    return scores;
+  }
+
+  function chooseV019Mode(threat,analysis){
+    const scores=scoreStrategicUtilities(threat,analysis);
+    const entries=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+    const [bestMode,bestScore]=entries[0];
+    const current=movementBrain.mode;
+    const currentScore=Number.isFinite(scores[current])?scores[current]:-Infinity;
+
+    // Escape can always pre-empt when clearly dominant. Other modes need a
+    // meaningful advantage to break an existing tactical commitment.
+    if(bestMode==="escape"&&bestScore>=currentScore+.18)return"escape";
+    if(state.t<movementBrain.lockUntil&&currentScore>=bestScore-.16)return current;
+    if(currentScore>=bestScore-.10)return current;
+    return bestMode;
   }
 
   function updateV019StrategicPlan(){
@@ -473,6 +536,7 @@
       modeChanges:rt.modeChanges,
       goal:movementBrain.goal?{x:movementBrain.goal.x,y:movementBrain.goal.y}:null,
       threat:rt.lastThreat?{...rt.lastThreat}:null,
+      utility:{scores:{...rt.utilityScores},inputs:rt.utilityInputs?{...rt.utilityInputs}:null},
       encirclement:analysis?analysis.encirclement:0,
       gapWidth:analysis?analysis.gapWidth:Math.PI*2,
       longestOpenSectors:analysis?analysis.longestOpenSectors:V019_SECTOR_COUNT,
