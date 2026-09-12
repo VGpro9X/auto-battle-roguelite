@@ -121,7 +121,12 @@
       const predicted=predictedDangerAt(sampleX,sampleY,horizon);
       const wallDanger=getWallDangerForDirection(dirX,dirY,sampleDistance);
       const danger=pressure+predicted.danger*.72+wallDanger*.52;
-      sectors.push({i,angle,dirX,dirY,pressure,predictedDanger:predicted.danger,wallDanger,danger,open:pressure<.62&&predicted.danger<1.15&&wallDanger<1.75,nearest});
+      // "Open" answers a geometric question: is there a usable angular lane?
+      // Future danger remains in `danger` and the corridor scorer below. Keeping
+      // these signals separate prevents enemies on both lips of a real gap from
+      // making the entire opening disappear before route scoring can compare it.
+      const open=pressure<.90&&wallDanger<1.75;
+      sectors.push({i,angle,dirX,dirY,pressure,predictedDanger:predicted.danger,wallDanger,danger,open,nearest});
     }
 
     let longest=0,longestStart=0,current=0,currentStart=0;
