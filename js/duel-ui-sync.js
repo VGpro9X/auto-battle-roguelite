@@ -1,5 +1,24 @@
 (()=>{
+  function restoreDuelCardScrolling(){
+    const selectors=[
+      "#duelLobbyMenu .duelLobbyCard",
+      "#duelPreMatchMenu .duelPreCard",
+      "#duelSkillModal .duelSkillCard",
+      "#duelResultMenu .duelResultCard"
+    ];
+    for(const selector of selectors){
+      const card=document.querySelector(selector);
+      if(!card)continue;
+      card.style.overflowX="hidden";
+      card.style.overflowY="auto";
+      card.style.overscrollBehavior="contain";
+      card.style.webkitOverflowScrolling="touch";
+      card.style.scrollPaddingBottom="max(18px, calc(env(safe-area-inset-bottom) + 12px))";
+    }
+  }
+
   function syncDuelReleaseUi(){
+    restoreDuelCardScrolling();
     if(typeof DUEL_SKILL_KEYS!=="undefined"){
       const rules=document.querySelectorAll("#duelLobbyMenu .duelRuleList > div");
       for(const rule of rules){
