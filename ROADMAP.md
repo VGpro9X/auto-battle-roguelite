@@ -4,12 +4,14 @@ GitHub `main` is canonical.
 
 ## Current baseline
 - Released baseline: **V0.18 – Graphics & Presentation Overhaul**.
+- Active development: **V0.19 – Tactical AI & Movement Intelligence**.
 - Previous released baseline: **V0.17 – Duel Arena / Đấu Trường 1v1**.
 - V0.18 release evidence: `V018_RELEASE_VALIDATION.md`.
+- V0.19 authoritative plan: `V019_TACTICAL_AI_PLAN.md`.
 - Survival/Endless V0.16 remains supported.
-- Movement baseline: **V0.8 Strategic Movement AI**; do not rewrite unless explicitly requested.
+- Movement baseline: **V0.8 Strategic Movement AI** is now explicitly authorized for V0.19 tactical rewrite/improvement.
 - Player-facing language: Vietnamese.
-- Runtime/public label = **V0.18**.
+- Runtime/public label remains **V0.18** until V0.19 final release gates pass.
 
 ---
 
@@ -68,10 +70,10 @@ Release validation: `V018_RELEASE_VALIDATION.md`.
 - per-frame anchors ✅
 - Renderer V2 normal path ✅
 - graceful vector fallback ✅
-- exact Pages asset integrity validation ✅
+- exact production asset integrity validation ✅
 
 ## G2 — Fighter Visual V2 — COMPLETE ✅
-- clean state-by-state V2 replacement ✅
+- clean state-by-state V2 replacement by exact state ✅
 - **13 / 13 required semantic states** ✅
 - per-frame required anchors ✅
 - facing flip + mirrored anchor math ✅
@@ -139,6 +141,41 @@ Release validation: `V018_RELEASE_VALIDATION.md`.
 
 ---
 
+# V0.19 — TACTICAL AI & MOVEMENT INTELLIGENCE — IN PROGRESS 🚧
+
+Authoritative plan: `V019_TACTICAL_AI_PLAN.md`.
+
+Primary scope:
+- Survival anti-encirclement / anti-spin movement intelligence
+- predictive escape corridors + commitment/stuck recovery
+- Survival strategic utility improvements
+- Duel tactical perception + spatial position scoring
+- Duel utility tactics, footsies, spacing and anti-corner-lock behavior
+- build-aware AI styles
+- seeded AI simulation + mobile/performance validation
+
+Checkpoint status:
+- A0 AI Diagnostics & Reproduction — **IN PROGRESS**
+- A1 Shared Decision Stability Foundation — PENDING
+- A2 Survival Encirclement Detection V2 — PENDING
+- A3 Survival Predictive Escape V2 — PENDING
+- A4 Survival Anti-Spin / Stuck Recovery — PENDING
+- A5 Survival Strategic Utility V2 — PENDING
+- A6 Duel Tactical Perception — PENDING
+- A7 Duel Spatial Position Scoring — PENDING
+- A8 Duel Utility Action System — PENDING
+- A9 Duel Footsies / Combat Rhythm — PENDING
+- A10 Duel Corner Intelligence — PENDING
+- A11 Build-Aware Fighting Styles — PENDING
+- A12 Human-Like Decision Timing — PENDING
+- A13 AI Simulation & Balance Lab — PENDING
+- A14 Performance + Mobile Gate — PENDING
+- A15 Integration / Release — PENDING
+
+V0.19 is authorized to change AI/movement decision truth only within the approved plan. It does not authorize unrelated combat/content rebalance.
+
+---
+
 # PROJECT STATUS
 
-**V0.18 is COMPLETE / RELEASED. V0.17 remains the frozen historical Duel mechanics/content baseline. Future work should begin from a new explicitly approved roadmap rather than silently reopening V0.18 balance or combat truth.**
+**V0.18 remains COMPLETE / RELEASED and public. V0.19 Tactical AI development is approved and in progress on `main`; do not promote the public/runtime label until V0.19 final release gates pass.**
