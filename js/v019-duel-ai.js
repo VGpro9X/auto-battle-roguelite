@@ -42,6 +42,7 @@
       commitUntil:0,
       spaceUntil:0,
       cornerReleaseUntil:0,
+      wasOwnCorner:false,
       scores:Object.fromEntries(TACTICS.map(key=>[key,0])),
       perception:null,
       decisions:0,
@@ -287,14 +288,17 @@
     for(const [self,other,brain] of [[p,o,brains.player],[o,p,brains.opponent]]){
       const perception=perceive(round,self,other,brain);
       brain.perception=perception;
-      // An attacker who has pushed the opponent against a wall must release
-      // pressure while its offense is cooling, allowing both fighters to migrate
-      // back toward center without side-swapping or teleporting through each other.
-      if(perception.cornerLock&&perception.cooling){
-        brain.cornerReleaseUntil=Math.max(brain.cornerReleaseUntil,round.time+.48);
+      const enteredCorner=perception.ownCorner&&!brain.wasOwnCorner;
+      brain.wasOwnCorner=perception.ownCorner;
+      if(enteredCorner)brain.nextDecisionAt=Math.min(brain.nextDecisionAt,round.time);
+      // Release pressure in bounded windows. Re-arm only after the previous
+      // release window expires; otherwise a cornered exchange would force a
+      // fresh utility decision every render frame.
+      if(perception.cornerLock&&perception.cooling&&round.time>=brain.cornerReleaseUntil){
+        brain.cornerReleaseUntil=round.time+.48;
         brain.nextDecisionAt=Math.min(brain.nextDecisionAt,round.time);
       }
-      if(round.time>=brain.nextDecisionAt||perception.ownCorner)chooseTactic(round,self,other,brain,perception);
+      if(round.time>=brain.nextDecisionAt)chooseTactic(round,self,other,brain,perception);
     }
     const restoreP=applyLegacySteeringControl(round,p,o,brains.player);
     const restoreO=applyLegacySteeringControl(round,o,p,brains.opponent);
