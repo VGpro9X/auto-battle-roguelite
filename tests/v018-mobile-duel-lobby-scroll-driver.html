@@ -1,0 +1,46 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>V0.18 compact mobile Duel lobby scroll regression</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden}#app{border:0;width:100vw;height:100vh;display:block}#result{position:fixed;inset:0;z-index:999999;background:#111;color:#fff;padding:16px;white-space:pre-wrap;font:13px monospace}</style>
+<iframe id="app" src="../index.html"></iframe>
+<script>
+(async()=>{
+  const frame=document.getElementById('app');
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  const check=(value,message)=>{if(!value)throw new Error(message);return value;};
+  async function waitFor(fn,label,timeout=6000){const start=performance.now();while(performance.now()-start<timeout){try{const value=fn();if(value)return value;}catch(_){}await sleep(30);}throw new Error(`timeout: ${label}`);}
+  const visible=el=>!!el&&el.classList.contains('visible');
+  try{
+    await new Promise((resolve,reject)=>{frame.addEventListener('load',resolve,{once:true});setTimeout(()=>reject(new Error('iframe load timeout')),7000);});
+    const win=frame.contentWindow,d=frame.contentDocument;
+    await waitFor(()=>d.getElementById('duelModeCard'),'duel mode card');
+    check(win.innerWidth<=500,`expected compact mobile width, got ${win.innerWidth}`);
+
+    const play=d.querySelector('#mainMenu [data-screen="modeMenu"]');
+    play.click();
+    await waitFor(()=>visible(d.getElementById('modeMenu')),'mode menu');
+    const modeCard=d.getElementById('duelModeCard');
+    modeCard.scrollIntoView({block:'nearest'});await sleep(40);modeCard.click();
+    await waitFor(()=>visible(d.getElementById('duelLobbyMenu')),'duel lobby');
+
+    const card=d.querySelector('#duelLobbyMenu .duelLobbyCard');
+    const start=d.getElementById('duelStartTournament');
+    check(card&&start,'missing lobby card/start button');
+    const style=win.getComputedStyle(card);
+    check(style.overflowY==='auto'||style.overflowY==='scroll',`lobby card must scroll, overflow-y=${style.overflowY}`);
+    check(card.scrollHeight>card.clientHeight,`compact lobby should overflow for regression coverage: ${card.scrollHeight}/${card.clientHeight}`);
+
+    card.scrollTop=card.scrollHeight;
+    await new Promise(r=>win.requestAnimationFrame(()=>win.requestAnimationFrame(r)));
+    const r=start.getBoundingClientRect();
+    check(r.width>0&&r.height>0,'start button has zero size');
+    check(r.top>=0&&r.bottom<=win.innerHeight+3,`start button unreachable after card scroll: ${Math.round(r.top)}..${Math.round(r.bottom)} / ${win.innerHeight}`);
+    const hit=d.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+    check(hit===start||start.contains(hit),`start button blocked by ${hit?.id||hit?.className||hit?.tagName}`);
+
+    start.click();
+    await waitFor(()=>visible(d.getElementById('duelSkillModal')),'starter skill modal after clicking start');
+    document.body.innerHTML=`<pre id="result">V018_MOBILE_DUEL_LOBBY_SCROLL_PASS ${win.innerWidth}x${win.innerHeight} scroll=${card.scrollTop}/${card.scrollHeight-card.clientHeight}</pre>`;
+  }catch(error){document.body.innerHTML=`<pre id="result">V018_MOBILE_DUEL_LOBBY_SCROLL_FAIL ${String(error&&error.stack||error)}</pre>`;}
+})();
+</script>
