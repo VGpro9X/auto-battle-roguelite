@@ -24,11 +24,16 @@ jobs:
         run: |
           set -euo pipefail
           node --check js/v019-survival-ai.js
+          node --check js/v019-duel-ai.js
           node --check tests/v019-survival-ai-smoke.js
           node --check tests/v019-survival-utility-smoke.js
+          node --check tests/v019-duel-ai-smoke.js
 
       - name: V0.19 Survival A0-A4 deterministic scenarios
         run: node tests/v019-survival-ai-smoke.js
 
       - name: V0.19 Survival A5 strategic utility scenarios
         run: node tests/v019-survival-utility-smoke.js
+
+      - name: V0.19 Duel A6-A12 tactical scenarios
+        run: node tests/v019-duel-ai-smoke.js
