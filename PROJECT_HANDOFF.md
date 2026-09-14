@@ -8,117 +8,40 @@ Use this file as the starting context when continuing development in a new chat.
 - GitHub `main` is canonical.
 - Public URL: `https://vgpro9x.github.io/auto-battle-roguelite/`
 - Pages workflow: `.github/workflows/pages.yml`
-- V0.17 historical validation workflow: `.github/workflows/v017-validation.yml`
-- V0.18 G5E rendered UI workflow: `.github/workflows/v018-g5e-ui-validation.yml`
-- V0.18 G6D fallback workflow: `.github/workflows/v018-g6d-fallback-validation.yml`
-- V0.18 G6E performance workflow: `.github/workflows/v018-g6e-performance-validation.yml`
-- V0.18 G7 release workflow: `.github/workflows/v018-g7-release-validation.yml`
+- V0.19 tactical validation: `.github/workflows/v019-ai-validation.yml`
+- V0.19 A14 browser validation: `.github/workflows/v019-a14-browser-validation.yml`
+- V0.19 A15 release validation: `.github/workflows/v019-a15-release-validation.yml`
+- V0.17 historical validation: `.github/workflows/v017-validation.yml`
+- V0.18 G5E/G6D/G6E/G7 workflows remain historical regressions.
 - Fetch current GitHub content + blob SHA before editing existing files.
 - Commit every meaningful checkpoint.
 
 ## Current project state
-- Current released/public baseline: **V0.18 – Graphics & Presentation Overhaul**.
-- Runtime/public label: **V0.18**.
-- V0.18 status: **G0–G7 COMPLETE / RELEASED**.
+- Current released/public baseline: **V0.19 – Tactical AI & Movement Intelligence**.
+- Runtime/public label: **V0.19**.
+- V0.19 status: **A0–A15 COMPLETE / RELEASED**.
+- V0.18 remains frozen as the graphics/presentation baseline.
 - V0.17 remains frozen as the historical Duel mechanics/content baseline.
-- V0.17 has no unfinished checkpoint.
 - V0.16 Survival/Endless remains supported.
-- Authoritative release evidence: `V018_RELEASE_VALIDATION.md`.
+- Authoritative V0.19 evidence: `V019_RELEASE_VALIDATION.md`.
 
 ## Read first
 1. `README.md`
 2. `PROJECT_HANDOFF.md`
 3. `ROADMAP.md`
-4. `V018_GRAPHICS_PLAN.md`
-5. `V018_RELEASE_VALIDATION.md`
-6. `V017_RELEASE_VALIDATION.md`
-7. `V017_DUEL_ARENA_PLAN.md`
+4. `V019_TACTICAL_AI_PLAN.md`
+5. `V019_RELEASE_VALIDATION.md`
+6. `V018_GRAPHICS_PLAN.md`
+7. `V018_RELEASE_VALIDATION.md`
+8. `V017_RELEASE_VALIDATION.md`
+9. `V017_DUEL_ARENA_PLAN.md`
 
 Before editing, fetch latest relevant files and SHAs from GitHub `main`.
 
-## Frozen gameplay contract
-Do not alter the V0.17 gameplay baseline merely for presentation work.
+## Frozen gameplay/content contract
+V0.19 changes tactical AI/movement decision truth only. Do not silently use it as permission for unrelated balance/content changes.
 
-Simulation owns:
-- positions/facing
-- action state
-- HP/shield
-- hit/damage/dodge result
-- projectile truth
-- control/KO state
-- combat events
-- tournament result
-
-Graphics/UI never decide:
-- hit success
-- damage
-- cooldown
-- knockback distance
-- fatal/revive ordering
-- AI decisions
-- skill offer truth
-- tournament progression
-
-Survival Movement V0.8 remains untouched unless explicitly requested.
-
-## V0.18 released graphics stack
-- asset/manifest-driven Renderer V2 is the normal Duel path
-- V0.17 vector renderer remains a verified fallback
-- 13 / 13 states: idle, walk, run, dash, melee, ranged, cast, hit, block, knockback, knockdown, recover, ko
-- per-frame anchors: head/chest/leftHand/rightHand/feet/front/back/target
-- original six-layer `Ashen Sanctum` arena
-- presentation-only camera/parallax/shake/zoom
-- 15 semantic VFX families
-- Hợp Đạo / Siêu Cấp presentation overlays
-- 20 / 20 Rare visual signatures
-- Duel HUD/lobby/scouting/reward/result presentation polish
-- full/constrained quality profiles + reduced-motion
-- cache/memory observability + presentation-only VFX budgets
-
-## G0–G6 closure summary
-- G0 architecture/art direction lock ✅
-- G1 asset loader + Renderer V2 foundation ✅
-- G2 Fighter Visual V2, 13 / 13 states ✅
-- G3 Ashen Sanctum + Camera Presentation V2 ✅
-- G4 Full Duel VFX Readability Pass ✅
-- G5 Duel UI / HUD / Tournament Presentation Polish ✅
-- G6 Performance / Quality / Fallback Hardening ✅
-
-Important G6 evidence:
-- forced-vector Best-of-3 completes
-- partial fighter asset + missing arena fallback completes
-- production V2 preload confirms all 13 states + `Ashen Sanctum`
-- desktop full/mobile constrained/reduced-motion paths pass
-- transient VFX budgets preserve semantic input events
-- browser hardening caught and fixed an invalid Renderer V2 `ctx.ellipse()` call
-
-## G7 — COMPLETE ✅: V0.18 Integration / Release Validation
-Pre-release label remained V0.17 until all G7 candidate gates were green.
-
-Validated before promotion:
-- V0.16 regression suite green
-- V0.17 Duel mechanics/content regression green
-- V0.17 desktop/mobile rendered validation green
-- G5E UI closure green
-- G6D forced-vector + partial-asset fallback green
-- G6E desktop/mobile/reduced-motion green
-- G7 production Renderer V2 desktop/mobile green
-- production fighter/arena HTTP references green
-- no missing production asset/runtime warning in G7 browser audit
-- production V2 Best-of-3 completion green
-- exact Pages asset artifact green
-- Pages G1–G7 audit/deploy green on the pre-release head
-
-Promotion performed only after those gates passed:
-- `GAME_VERSION` → V0.18
-- public title/version badge → V0.18
-- Duel eyebrow → `V0.18 · ĐẤU TRƯỜNG 1V1`
-- public cache keys for promoted version-bearing files advanced
-- V0.17 final audit converted to a historical regression audit while keeping 80/28/12/20 assertions intact
-
-Final promoted-label validation is the release gate. `V018_RELEASE_VALIDATION.md` records the closure contract and evidence.
-
-## Locked content truth
+Locked truth:
 - 80 base Kỹ Năng
 - 28 Hợp Đạo Kỹ
 - 12 Siêu Cấp
@@ -129,8 +52,61 @@ Final promoted-label validation is the release gate. `V018_RELEASE_VALIDATION.md
 - one reroll per choice screen
 - HUYẾT CHIẾN at 45s
 - TỬ CHIẾN at 60s+
+- fatal/revive ordering unchanged
+- damage/cooldown/skill mechanics unchanged by V0.19
 
-## Locked terminology / truth rules
+## V0.19 tactical AI stack
+### Survival / Endless
+- 32-sector encirclement analysis
+- predictive escape corridors
+- stable escape commitment / hysteresis
+- anti-spin heading stability
+- stuck/displacement recovery and emergency breakout
+- utility-based `escape`, `kite`, `harvest`, `patrol`
+- bounded nearby-enemy perception
+
+### Duel 1v1
+- tactical perception: range, walls, center, HP, offense readiness
+- spatial target scoring
+- tactics: ENGAGE / PRESSURE / SPACE / DISENGAGE / CENTER_RESET / CORNER_ESCAPE / FINISH
+- post-burst footsies and re-engagement
+- corner escape + pressure release
+- melee/ranged/mobility/sustain/control weighting
+- bounded decision cadence + commitment
+- same AI rules/information for both sides
+
+## V0.19 validation closure
+Pre-promotion A14 head: `5f5568031c11009ec1bea68d8d49de89de67b6d0`.
+
+On that head:
+- A0–A12 deterministic gates ✅
+- A13 Survival simulation matrix ✅
+- A13 Duel simulation matrix ✅
+- A14 bounded AI performance smoke ✅
+- A14 desktop/mobile browser AI validation ✅
+- V0.17 historical regression ✅
+- V0.18 mobile UI/G5E/G6D/G6E/G7 regressions ✅
+- Pages deploy ✅
+
+A15 promotes the public/runtime label only after that matrix is green and then revalidates the promoted state.
+
+## V0.18 graphics stack — frozen regression baseline
+- asset/manifest-driven Renderer V2 normal path
+- V0.17 vector renderer verified fallback
+- 13 / 13 fighter states
+- eight required per-frame anchors
+- six-layer `Ashen Sanctum`
+- presentation-only camera/parallax/shake/zoom
+- semantic VFX families
+- Duel UI/HUD/tournament presentation
+- full/constrained/reduced-motion paths
+
+## Ownership/truth rules
+Simulation owns positions/facing, action state, HP/shield, hit/damage/dodge result, projectile truth, control/KO state, combat events, AI decision truth and tournament outcome.
+
+Graphics/UI never decide hit success, damage, cooldown, fatal/revive ordering, skill offer truth or tournament progression.
+
+## Locked terminology / project rules
 - Kỹ Năng / Hợp Đạo Kỹ / Siêu Cấp / Thần Kỹ / Thần Bí Kỹ / TỐI ĐA.
 - Player-facing UI remains Vietnamese.
 - No hidden gameplay caps/cooldowns/stack maxima/target limits/retry rules/weighting.
@@ -140,4 +116,4 @@ Final promoted-label validation is the release gate. `V018_RELEASE_VALIDATION.md
 - Tests stay under `tests/` and are not shipped publicly.
 
 ## Status for next conversation
-**V0.18 is COMPLETE / RELEASED. Treat it as the current frozen public baseline. V0.17 remains the historical mechanics/content regression baseline. Start future feature work from a new explicitly approved roadmap rather than silently reopening V0.18 combat/AI/balance truth.**
+**V0.19 is COMPLETE / RELEASED and is the current frozen public baseline. V0.18 remains the graphics/presentation regression baseline; V0.17 remains the historical mechanics/content regression baseline. Start future feature work from a new explicitly approved roadmap rather than silently reopening V0.19 combat/content truth.**
