@@ -3,14 +3,13 @@
   const V019_SECTOR_COUNT=32;
   const V019_ESCAPE_CANDIDATES=64;
   const V019_PROGRESS_WINDOW=.34;
+  const V019_NEARBY_HOSTILE_CAP=48;
+  const V019_NEARBY_RADIUS=430;
+  const V019_PERCEPTION_INTERVAL=.10;
+  const V019_STRATEGIC_INTERVAL=.11;
+  const V019_ESCAPE_STRATEGIC_INTERVAL=.075;
+  const V019_STEERING_INTERVAL=.075;
   const legacyResetMovementAI=resetMovementAI;
-
-  function hostileEnemies(){
-    return state.enemies.filter(enemy=>{
-      if(!enemy||enemy.dead)return false;
-      return typeof isEnemyHostile!=="function"||isEnemyHostile(enemy);
-    });
-  }
 
   function effectiveMoveSpeed(){
     if(typeof getEffectiveMoveSpeed==="function"){
@@ -46,7 +45,21 @@
       lastOutputY:player?.moveY||0,
       lastOutputAt:state?.t||0,
       lastMode:"patrol",
-      modeChanges:0
+      modeChanges:0,
+      nearbyHostiles:[],
+      nearbyHostilesUntil:0,
+      nearbyOriginX:player?.x||0,
+      nearbyOriginY:player?.y||0,
+      nearbyHostileCount:0,
+      nearbyHostileSourceCount:0,
+      perceptionRefreshes:0,
+      strategicSnapshot:null,
+      nextStrategicAt:0,
+      strategicDecisions:0,
+      steeringX:player?.moveX||1,
+      steeringY:player?.moveY||0,
+      nextSteeringAt:0,
+      steeringDecisions:0
     };
   }
 
@@ -54,6 +67,34 @@
     if(!movementBrain.v019)movementBrain.v019=makeRuntimeState();
     return movementBrain.v019;
   }
+
+  function refreshNearbyHostiles(force=false){
+    const rt=runtime();
+    const moved=Math.hypot(player.x-rt.nearbyOriginX,player.y-rt.nearbyOriginY);
+    if(!force&&state.t<rt.nearbyHostilesUntil&&moved<48)return rt.nearbyHostiles;
+
+    const radiusSq=V019_NEARBY_RADIUS*V019_NEARBY_RADIUS;
+    const candidates=[];
+    let sourceCount=0;
+    for(const enemy of state.enemies){
+      if(!enemy||enemy.dead)continue;
+      if(typeof isEnemyHostile==="function"&&!isEnemyHostile(enemy))continue;
+      sourceCount++;
+      const dx=enemy.x-player.x,dy=enemy.y-player.y;
+      const distanceSq=dx*dx+dy*dy;
+      if(distanceSq<=radiusSq)candidates.push({enemy,distanceSq});
+    }
+    candidates.sort((a,b)=>a.distanceSq-b.distanceSq);
+    rt.nearbyHostiles=candidates.slice(0,V019_NEARBY_HOSTILE_CAP).map(item=>item.enemy);
+    rt.nearbyHostilesUntil=state.t+V019_PERCEPTION_INTERVAL;
+    rt.nearbyOriginX=player.x;rt.nearbyOriginY=player.y;
+    rt.nearbyHostileCount=rt.nearbyHostiles.length;
+    rt.nearbyHostileSourceCount=sourceCount;
+    rt.perceptionRefreshes++;
+    return rt.nearbyHostiles;
+  }
+
+  function hostileEnemies(){return refreshNearbyHostiles(false);}
 
   function resetV019MovementAI(){
     legacyResetMovementAI();
@@ -81,6 +122,19 @@
       else if(d<145)danger+=.48*(1-(d-82)/63);
     }
     return{danger,nearest,closeCount};
+  }
+
+  function getBoundedLocalThreat(){
+    let nearest=Infinity,close80=0,close125=0,sumX=0,sumY=0,count=0;
+    for(const enemy of hostileEnemies()){
+      const dx=enemy.x-player.x,dy=enemy.y-player.y;
+      const distance=Math.hypot(dx,dy);
+      nearest=Math.min(nearest,distance);
+      if(distance<80)close80++;
+      if(distance<125)close125++;
+      if(distance<180){sumX+=enemy.x;sumY+=enemy.y;count++;}
+    }
+    return{nearest,close80,close125,centroid:count?{x:sumX/count,y:sumY/count}:null};
   }
 
   function angleDifference(a,b){
@@ -123,8 +177,6 @@
       const predicted=predictedDangerAt(sampleX,sampleY,horizon);
       const wallDanger=getWallDangerForDirection(dirX,dirY,sampleDistance);
       const danger=pressure+predicted.danger*.72+wallDanger*.52;
-      // Sector openness is geometric. Future danger remains a separate route
-      // quality signal so enemies at the lips of a real gap do not erase it.
       const open=pressure<.90&&wallDanger<1.75;
       sectors.push({i,angle,dirX,dirY,pressure,predictedDanger:predicted.danger,wallDanger,danger,open,nearest});
     }
@@ -161,6 +213,7 @@
       const closeness=1-clamp(distance/340,0,1);
       value+=Math.max(.5,Number(gem.xp)||1)*(.35+closeness*.65);
       count++;
+      if(count>=64)break;
     }
     return clamp(value/10+Math.min(count,10)*.025,0,1);
   }
@@ -208,8 +261,6 @@
         edgeSafety*.08
     };
 
-    // Tactical persistence is part of utility, not a separate hard-coded mode
-    // ladder. Small score noise must not cause visible mode thrashing.
     if(Object.prototype.hasOwnProperty.call(scores,movementBrain.mode)){
       scores[movementBrain.mode]+=.15;
       if(state.t<movementBrain.lockUntil)scores[movementBrain.mode]+=.11;
@@ -217,8 +268,6 @@
     if(movementBrain.mode==="escape"&&state.t<movementBrain.escapeModeUntil)scores.escape+=.20;
     if(state.t<rt.breakoutUntil)scores.escape+=4;
 
-    // Immediate lethal compression is intentionally decisive. Utility governs
-    // ordinary transitions; this emergency boost ensures survival beats greed.
     if(threat.nearest<68||threat.close80>=2||threat.close125>=6||
       (encirclement>=.69&&threat.close125>=3)||
       (analysis.gapWidth<=Math.PI*.34&&threat.close125>=4)||
@@ -236,17 +285,18 @@
     const current=movementBrain.mode;
     const currentScore=Number.isFinite(scores[current])?scores[current]:-Infinity;
 
-    // Escape can always pre-empt when clearly dominant. Other modes need a
-    // meaningful advantage to break an existing tactical commitment.
     if(bestMode==="escape"&&bestScore>=currentScore+.18)return"escape";
     if(state.t<movementBrain.lockUntil&&currentScore>=bestScore-.16)return current;
     if(currentScore>=bestScore-.10)return current;
     return bestMode;
   }
 
-  function updateV019StrategicPlan(){
+  function updateV019StrategicPlan(force=false){
     const rt=runtime();
-    const threat=getLocalThreat();
+    if(!force&&rt.strategicSnapshot&&state.t<rt.nextStrategicAt)return rt.strategicSnapshot;
+
+    refreshNearbyHostiles(false);
+    const threat=getBoundedLocalThreat();
     const analysis=analyzeEncirclement();
     rt.lastThreat={nearest:threat.nearest,close80:threat.close80,close125:threat.close125};
     const desiredMode=chooseV019Mode(threat,analysis);
@@ -259,6 +309,7 @@
       movementBrain.lockUntil=state.t+(desiredMode==="escape"?.55:desiredMode==="kite"?.58:.78);
       rt.lastMode=desiredMode;
       rt.modeChanges++;
+      rt.nextSteeringAt=0;
       if(desiredMode==="kite")movementBrain.orbitSign=Math.random()<.5?-1:1;
       if(desiredMode==="escape"){
         movementBrain.escapeModeUntil=state.t+1.05;
@@ -300,7 +351,10 @@
     }
 
     rt.lastDecisionAt=state.t;
-    return{threat,analysis};
+    rt.strategicDecisions++;
+    rt.nextStrategicAt=state.t+(desiredMode==="escape"?V019_ESCAPE_STRATEGIC_INTERVAL:V019_STRATEGIC_INTERVAL);
+    rt.strategicSnapshot={threat,analysis};
+    return rt.strategicSnapshot;
   }
 
   function insideBounds(x,y,margin=10){
@@ -369,7 +423,6 @@
   }
 
   function scanBestEscapeCorridor(analysis,{breakout=false}={}){
-    const rt=runtime();
     let best=null;
     const committedAngle=(movementBrain.escapeDirX||movementBrain.escapeDirY)?Math.atan2(movementBrain.escapeDirY,movementBrain.escapeDirX):null;
     for(let i=0;i<V019_ESCAPE_CANDIDATES;i++){
@@ -477,18 +530,9 @@
     return{x,y};
   }
 
-  function chooseV019MovementDirection(){
-    sampleProgress();
-    const {threat,analysis}=updateV019StrategicPlan();
+  function boundedSteeringDirection(threat){
     const rt=runtime();
-
-    if(movementBrain.mode==="escape"){
-      const escape=committedEscapeDirection(analysis);
-      const smoothing=state.t<rt.breakoutUntil?.96:.91;
-      const x=player.moveX*(1-smoothing)+escape.x*smoothing;
-      const y=player.moveY*(1-smoothing)+escape.y*smoothing;
-      return finalizeDirection(x,y);
-    }
+    if(state.t<rt.nextSteeringAt&&(rt.steeringX||rt.steeringY))return{x:rt.steeringX,y:rt.steeringY};
 
     const goal=movementBrain.goal||{x:W/2,y:H/2};
     const goalDx=goal.x-player.x,goalDy=goal.y-player.y,goalDistance=Math.hypot(goalDx,goalDy)||1;
@@ -523,9 +567,29 @@
       if(candidate.interest>bestInterest){bestInterest=candidate.interest;best=candidate;}
     }
     if(!best)best=candidates.reduce((a,c)=>c.danger<a.danger?c:a,candidates[0]);
+    rt.steeringX=best.dirX;rt.steeringY=best.dirY;
+    rt.nextSteeringAt=state.t+V019_STEERING_INTERVAL;
+    rt.steeringDecisions++;
+    return{x:best.dirX,y:best.dirY};
+  }
+
+  function chooseV019MovementDirection(){
+    sampleProgress();
+    const {threat,analysis}=updateV019StrategicPlan();
+    const rt=runtime();
+
+    if(movementBrain.mode==="escape"){
+      const escape=committedEscapeDirection(analysis);
+      const smoothing=state.t<rt.breakoutUntil?.96:.91;
+      const x=player.moveX*(1-smoothing)+escape.x*smoothing;
+      const y=player.moveY*(1-smoothing)+escape.y*smoothing;
+      return finalizeDirection(x,y);
+    }
+
+    const steering=boundedSteeringDirection(threat);
     const emergency=threat.nearest<62||threat.close80>=3;
     const smoothing=emergency?.78:movementBrain.mode==="patrol"?.30:.42;
-    return finalizeDirection(player.moveX*(1-smoothing)+best.dirX*smoothing,player.moveY*(1-smoothing)+best.dirY*smoothing);
+    return finalizeDirection(player.moveX*(1-smoothing)+steering.x*smoothing,player.moveY*(1-smoothing)+steering.y*smoothing);
   }
 
   function publicDiagnostics(){
@@ -556,6 +620,17 @@
         stuckFor:rt.stuckFor,
         breakoutRemaining:Math.max(0,rt.breakoutUntil-state.t),
         headingReversals:rt.headingReversals
+      },
+      performance:{
+        nearbyHostiles:rt.nearbyHostileCount,
+        sourceHostiles:rt.nearbyHostileSourceCount,
+        hostileCap:V019_NEARBY_HOSTILE_CAP,
+        perceptionRefreshes:rt.perceptionRefreshes,
+        strategicDecisions:rt.strategicDecisions,
+        steeringDecisions:rt.steeringDecisions,
+        nextPerceptionIn:Math.max(0,rt.nearbyHostilesUntil-state.t),
+        nextStrategicIn:Math.max(0,rt.nextStrategicAt-state.t),
+        nextSteeringIn:Math.max(0,rt.nextSteeringAt-state.t)
       }
     };
   }
@@ -563,6 +638,6 @@
   resetMovementAI=resetV019MovementAI;
   chooseMovementDirection=chooseV019MovementDirection;
   root.getMovementAIDiagnostics=publicDiagnostics;
-  root.getV019EncirclementAnalysis=()=>analyzeEncirclement();
-  root.evaluateV019EscapeCorridor=(angle,options)=>evaluateEscapeCorridor(angle,analyzeEncirclement(),options||{});
+  root.getV019EncirclementAnalysis=()=>{refreshNearbyHostiles(true);return analyzeEncirclement();};
+  root.evaluateV019EscapeCorridor=(angle,options)=>{refreshNearbyHostiles(true);return evaluateEscapeCorridor(angle,analyzeEncirclement(),options||{});};
 })();
