@@ -143,12 +143,12 @@
         wallRisk*.16-p.postBurst*.95,
       PRESSURE:
         .12+oppWallPressure*1.35+(p.offenseReady?.72:-.25)+p.weights.melee*.46+
-        opponentLow*.55-tooClose*.30-cooldownPressure*.68-p.postBurst*.95,
+        opponentLow*.55-tooClose*.30-cooldownPressure*.68-p.postBurst*.95-p.weights.ranged*.32,
       SPACE:
-        .18+tooClose*1.45+p.weights.ranged*.82+cooldownPressure*.72+(p.postBurst?1.75:0)+
+        .18+tooClose*1.45+p.weights.ranged*1.05+cooldownPressure*.72+(p.postBurst?1.75:0)+
         (p.cornerLock&&!p.offenseReady?1.45:0)+wallRisk*.22,
       DISENGAGE:
-        .05+lowHp*1.15+tooClose*.58+cooldownPressure*.36+p.weights.ranged*.24,
+        .05+lowHp*1.15+tooClose*.58+cooldownPressure*.36+p.weights.ranged*.38,
       CENTER_RESET:
         .10+wallRisk*1.35+centerNeed*.38+cooldownPressure*.42+
         (p.opponentCorner&&!p.offenseReady?.95:0)+(releaseActive?2.2:0),
@@ -176,7 +176,8 @@
     let target=self.x;
     if(tactic==="CORNER_ESCAPE"||tactic==="CENTER_RESET")target=center;
     else if(tactic==="SPACE"||tactic==="DISENGAGE"){
-      target=other.x+side*Math.max(desiredRange,p.weights.ranged>.55?175:128);
+      const spacingRange=p.weights.ranged>.55?Math.max(desiredRange+24,205):Math.max(desiredRange,128);
+      target=other.x+side*spacingRange;
       target=clampValue(target,minX,maxX);
       if(p.ownCorner&&Math.abs(target-self.x)<26)target=center;
     }else if(tactic==="PRESSURE"||tactic==="FINISH"){
@@ -313,7 +314,7 @@
       const fighter=round.fighters[event.side];
       const profile=normalizedProfile(profileOf(fighter));
       brain.lastAttackAt=round.time;
-      brain.spaceUntil=Math.max(brain.spaceUntil,round.time+(profile.ranged>.55?.44:.28));
+      brain.spaceUntil=Math.max(brain.spaceUntil,round.time+(profile.ranged>.55?.56:.28));
       brain.nextDecisionAt=Math.min(brain.nextDecisionAt,round.time);
     }
     enforceSeparation(round);
