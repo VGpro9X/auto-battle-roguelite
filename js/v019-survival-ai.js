@@ -52,6 +52,7 @@
       nearbyOriginY:player?.y||0,
       nearbyHostileCount:0,
       nearbyHostileSourceCount:0,
+      enemyPopulationSize:state?.enemies?.length||0,
       perceptionRefreshes:0,
       strategicSnapshot:null,
       nextStrategicAt:0,
@@ -90,6 +91,7 @@
     rt.nearbyOriginX=player.x;rt.nearbyOriginY=player.y;
     rt.nearbyHostileCount=rt.nearbyHostiles.length;
     rt.nearbyHostileSourceCount=sourceCount;
+    rt.enemyPopulationSize=state.enemies.length;
     rt.perceptionRefreshes++;
     return rt.nearbyHostiles;
   }
@@ -293,9 +295,10 @@
 
   function updateV019StrategicPlan(force=false){
     const rt=runtime();
-    if(!force&&rt.strategicSnapshot&&state.t<rt.nextStrategicAt)return rt.strategicSnapshot;
+    const populationChanged=state.enemies.length!==rt.enemyPopulationSize;
+    if(!force&&!populationChanged&&rt.strategicSnapshot&&state.t<rt.nextStrategicAt)return rt.strategicSnapshot;
 
-    refreshNearbyHostiles(false);
+    refreshNearbyHostiles(populationChanged);
     const threat=getBoundedLocalThreat();
     const analysis=analyzeEncirclement();
     rt.lastThreat={nearest:threat.nearest,close80:threat.close80,close125:threat.close125};
