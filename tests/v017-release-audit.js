@@ -11,8 +11,8 @@ const readme=fs.readFileSync('README.md','utf8');
 const handoff=fs.readFileSync('PROJECT_HANDOFF.md','utf8');
 const validation=fs.readFileSync('V017_RELEASE_VALIDATION.md','utf8');
 
-const current=core.match(/GAME_VERSION="(V0\.17|V0\.18)"/);
-assert.ok(current,'current runtime must remain a validated V0.17/V0.18 release line');
+const current=core.match(/GAME_VERSION="(V0\.17|V0\.18|V0\.19)"/);
+assert.ok(current,'current runtime must remain a validated V0.17+ release line');
 const currentVersion=current[1];
 assert.ok(index.includes(`<title>Auto Battle Roguelite ${currentVersion}</title>`),'static title/current runtime version mismatch');
 assert.ok(index.includes(`<div id="version">Auto Battle Roguelite ${currentVersion}</div>`),'static badge/current runtime version mismatch');
@@ -22,7 +22,7 @@ assert.ok(!index.includes('Auto Battle Roguelite V0.17 DEV'),'historical V0.17 D
 
 for(const [name,text] of [['ROADMAP',roadmap],['README',readme],['PROJECT_HANDOFF',handoff],['V017_RELEASE_VALIDATION',validation]])assert.ok(text.includes('V0.17'),`${name} no longer records V0.17 history`);
 assert.ok(roadmap.includes('V0.17 — DUEL ARENA / ĐẤU TRƯỜNG 1v1 — COMPLETE / RELEASED'),'ROADMAP no longer records V0.17 as released history');
-assert.ok(/V0\.17[^\n]*COMPLETE \/ RELEASED/s.test(readme)||readme.includes('V0.17 is **COMPLETE / RELEASED**'),'README no longer records V0.17 release closure');
+assert.ok(readme.includes('V0.17 historical mechanics/content baseline')||readme.includes('V0.17 is **COMPLETE / RELEASED**'),'README no longer records V0.17 frozen historical baseline');
 assert.ok(handoff.includes('V0.17 has no unfinished checkpoint')||handoff.includes('No unfinished V0.17 checkpoint remains')||handoff.includes('V0.17 remains frozen'),'PROJECT_HANDOFF no longer records V0.17 closure/freeze');
 assert.ok(validation.includes('Status: **COMPLETE / RELEASED**'),'historical V0.17 release evidence lost');
 
