@@ -19,8 +19,8 @@ const release=read('V018_RELEASE_VALIDATION.md');
 const pages=read('.github/workflows/pages.yml');
 const g7Workflow=read('.github/workflows/v018-g7-release-validation.yml');
 
-const versionMatch=core.match(/GAME_VERSION="(V0\.17|V0\.18)"/);
-assert.ok(versionMatch,'runtime version must be V0.17 pre-release or V0.18 released');
+const versionMatch=core.match(/GAME_VERSION="(V0\.17|V0\.18|V0\.19)"/);
+assert.ok(versionMatch,'runtime version must be a supported V0.17+ release');
 const version=versionMatch[1];
 assert.ok(index.includes(`<title>Auto Battle Roguelite ${version}</title>`),'static title/runtime version mismatch');
 assert.ok(index.includes(`<div id="version">Auto Battle Roguelite ${version}</div>`),'static badge/runtime version mismatch');
@@ -28,15 +28,10 @@ assert.ok(uiSync.includes(`${version} · ĐẤU TRƯỜNG 1V1`),'Duel release la
 assert.ok(handoff.includes('Current released/public baseline:'),'PROJECT_HANDOFF must preserve released/public baseline marker');
 
 if(version==='V0.17'){
-  assert.ok(release.includes('Status: **G7 PRE-RELEASE VALIDATION**'),'pre-release document status must remain explicit before promotion');
-  assert.ok(readme.includes('G6 Performance / Quality / Fallback Hardening: **COMPLETE**'),'README must close G6 before G7');
-  assert.ok(readme.includes('G7 — V0.18 Integration / Release Validation'),'README must point to G7');
-  assert.ok(roadmap.includes('G7 — V0.18 Integration / Release Validation — NEXT'),'ROADMAP must point to G7');
-  assert.ok(handoff.includes('G6 complete, G7 next'),'handoff must point to G7');
-  assert.ok(plan.includes('G6 COMPLETE / G7 NEXT'),'graphics plan must point to G7');
+  assert.ok(release.includes('Status: **G7 PRE-RELEASE VALIDATION**'),'pre-release document status must remain explicit before V0.18 promotion');
 }else{
-  assert.ok(release.includes('Status: **COMPLETE / RELEASED**'),'promoted V0.18 requires released validation document');
-  for(const [name,text] of [['README',readme],['ROADMAP',roadmap],['PROJECT_HANDOFF',handoff],['V018_GRAPHICS_PLAN',plan]])assert.ok(/V0\.18/.test(text)&&/COMPLETE|RELEASED/.test(text),`${name} must record V0.18 closure after promotion`);
+  assert.ok(release.includes('Status: **COMPLETE / RELEASED**'),'historical V0.18 release evidence must remain closed');
+  for(const [name,text] of [['README',readme],['ROADMAP',roadmap],['PROJECT_HANDOFF',handoff],['V018_GRAPHICS_PLAN',plan]])assert.ok(/V0\.18/.test(text)&&/COMPLETE|RELEASED/.test(text),`${name} must retain V0.18 closure history`);
 }
 
 load('js/skills.js');
@@ -68,9 +63,9 @@ for(const file of [
   '.github/workflows/v018-g6e-performance-validation.yml','.github/workflows/v018-g7-release-validation.yml'
 ])assert.ok(exists(file),`G7 release dependency missing: ${file}`);
 
-assert.ok(index.includes('js/duel-renderer.js?v=018-g6e'),'public shell must carry the G6E outer renderer cache key into G7');
+assert.ok(index.includes('js/duel-renderer.js?v=018-g6e'),'public shell must retain the validated V0.18 G6E renderer cache key');
 assert.ok(pages.includes('v018-g6e-performance-closure-smoke.js'),'Pages must retain G6E closure gate');
-assert.ok(pages.includes('v018-g7-release-audit.js'),'Pages must include G7 release audit');
+assert.ok(pages.includes('v018-g7-release-audit.js'),'Pages must include G7 historical release audit');
 assert.ok(pages.includes('cp -R assets _site/assets'),'Pages must ship production assets');
 assert.ok(!pages.includes('cp -R tests _site/tests'),'tests must never ship to Pages');
 assert.ok(g7Workflow.includes('v018-g7-release-audit.js'),'G7 workflow missing static release audit');
@@ -78,4 +73,4 @@ assert.ok(g7Workflow.includes('V018_G7_BROWSER_PASS'),'G7 workflow missing produ
 assert.ok(g7Workflow.includes('V018_G6D_FALLBACK_PASS'),'G7 workflow must revalidate fallback');
 assert.ok(g7Workflow.includes('V018_G6E_PERF_PASS'),'G7 workflow must revalidate performance/reduced-motion matrix');
 
-console.log(`V0.18 G7 integrated release audit: PASS · phase=${version==='V0.17'?'pre-release':'released'} · 80/28/12/20 · 13 states · 8 anchors · 6 arena layers`);
+console.log(`V0.18 G7 historical regression audit: PASS · current=${version} · 80/28/12/20 · 13 states · 8 anchors · 6 arena layers`);
