@@ -1,0 +1,64 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>V0.19 A14 AI browser validation</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden}#app{border:0;width:100vw;height:100vh;display:block}#result{position:fixed;inset:0;z-index:999999;background:#111;color:#fff;padding:20px;white-space:pre-wrap;font:14px monospace}</style>
+<iframe id="app"></iframe>
+<script>
+(async()=>{
+  const topDoc=document,frame=topDoc.getElementById('app');
+  const expected=new URLSearchParams(location.search).get('expect')||'desktop';
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  async function waitFor(fn,label,timeout=8000){const start=performance.now();while(performance.now()-start<timeout){try{const v=fn();if(v)return v;}catch(_){}await sleep(25);}throw new Error(`timeout: ${label}`);}
+  function check(value,message){if(!value)throw new Error(message);return value;}
+  function entry(id,name,build){return{id,name,build:{...build}};}
+  try{
+    const loaded=new Promise((resolve,reject)=>{frame.addEventListener('load',resolve,{once:true});setTimeout(()=>reject(new Error('iframe load timeout')),8000);});
+    frame.src='../index.html?duelRenderer=vector';
+    await loaded;
+    const w=frame.contentWindow;
+    await waitFor(()=>typeof w.getMovementAIDiagnostics==='function'&&typeof w.getDuelAIDiagnostics==='function'&&typeof w.createDuelMatch==='function','V0.19 AI APIs');
+
+    if(expected==='mobile')check(w.innerWidth<=500,`mobile viewport width=${w.innerWidth}`);
+    else check(w.innerWidth>=900,`desktop viewport width=${w.innerWidth}`);
+
+    const survival=w.getMovementAIDiagnostics();
+    check(survival?.version==='V0.19',`Survival AI version=${survival?.version}`);
+    check(survival?.performance?.hostileCap===48,`Survival hostile cap=${survival?.performance?.hostileCap}`);
+    check(Number.isFinite(survival.performance.perceptionRefreshes),'Survival performance diagnostics missing');
+
+    const ranged=entry('a14-ranged','Ranged',{fire:3,iceLance:3,rapid:2,speed:2});
+    const melee=entry('a14-melee','Melee',{power:3,knock:3,vitality:2,speed:2});
+    const match=w.createDuelMatch(ranged,melee,{rng:()=>.73});
+    w.startDuelRound(match);
+    const round=match.currentRound;
+    check(round&&!round.ended,'Duel round did not start');
+
+    // Reproduce a compact corner-pressure situation, then let production V0.19 AI resolve it.
+    round.fighters.player.x=round.arena.leftBound+30;
+    round.fighters.opponent.x=round.arena.leftBound+92;
+    let ticks=0,maxDecisions=0;
+    while(!round.ended&&ticks<360){
+      w.updateDuelRound(match,.033);
+      const diag=w.getDuelAIDiagnostics(match);
+      check(diag?.version==='V0.19',`Duel AI version=${diag?.version}`);
+      for(const side of ['player','opponent']){
+        const f=round.fighters[side];
+        check(Number.isFinite(f.x)&&Number.isFinite(f.hp),`${side} state became non-finite`);
+        maxDecisions=Math.max(maxDecisions,diag[side].decisions);
+      }
+      check(round.fighters.opponent.x-round.fighters.player.x>=53.5,'fighters crossed/overlapped under tactical AI');
+      ticks++;
+    }
+
+    const final=w.getDuelAIDiagnostics(match);
+    check(final.player.decisions>4&&final.opponent.decisions>4,'Duel tactical decision loop did not run');
+    check(final.player.decisions<ticks*.55&&final.opponent.decisions<ticks*.55,`Duel decisions too frequent: ${final.player.decisions}/${final.opponent.decisions} over ${ticks}`);
+    check(final.player.cornerEscapes+final.opponent.cornerEscapes>=1,'forced corner scenario did not trigger corner escape');
+    check(final.player.tacticTransitions+final.opponent.tacticTransitions>=2,'Duel tactics did not transition');
+
+    topDoc.body.innerHTML=`<pre id="result">V019_A14_AI_BROWSER_PASS ${expected} survivalCap=${survival.performance.hostileCap} ticks=${ticks} decisions=${final.player.decisions}/${final.opponent.decisions} cornerEscapes=${final.player.cornerEscapes+final.opponent.cornerEscapes} transitions=${final.player.tacticTransitions+final.opponent.tacticTransitions}</pre>`;
+  }catch(error){
+    topDoc.body.innerHTML=`<pre id="result">V019_A14_AI_BROWSER_FAIL ${expected} ${String(error&&error.stack||error)}</pre>`;
+  }
+})();
+</script>
