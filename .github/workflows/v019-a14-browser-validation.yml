@@ -1,0 +1,46 @@
+name: V0.19 A14 browser AI validation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v019-a14-browser-validation
+  cancel-in-progress: true
+
+jobs:
+  validate-browser-ai:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: V0.19 A14 desktop/mobile AI runtime closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4179 >/tmp/v019-a14-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then
+            echo "Chrome/Chromium not found on runner"
+            exit 1
+          fi
+
+          run_case() {
+            name="$1"
+            size="$2"
+            out="/tmp/v019-a14-${name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size="$size" --virtual-time-budget=12000 --dump-dom "http://127.0.0.1:4179/tests/v019-a14-ai-browser-driver.html?expect=${name}" >"$out"
+            grep -q "V019_A14_AI_BROWSER_PASS ${name}" "$out" || { cat "$out"; exit 1; }
+            grep "V019_A14_AI_BROWSER_PASS ${name}" "$out"
+          }
+
+          run_case desktop 1280,720
+          run_case mobile 360,640
