@@ -140,7 +140,7 @@ diagnostics=getMovementAIDiagnostics();
 assert.ok(diagnostics.progress.breakoutRemaining>0||diagnostics.escape.reason==='stuck-breakout',`stuck detector did not enter breakout: ${JSON.stringify(diagnostics.progress)}`);
 
 const index=fs.readFileSync('index.html','utf8');
-assert.ok(index.includes('js/v019-survival-ai.js?v=019-a1a4-r1'),'public shell must load V0.19 Survival AI after the V0.8 baseline');
+assert.ok(index.includes('js/v019-survival-ai.js?v=019-release-r1'),'public shell must load the promoted V0.19 Survival AI release cache key');
 assert.ok(index.indexOf('js/movement.js')<index.indexOf('js/v019-survival-ai.js'),'V0.19 Survival AI must override movement only after baseline loads');
 
 console.log('V0.19 Survival AI A0-A4 smoke: PASS',{
