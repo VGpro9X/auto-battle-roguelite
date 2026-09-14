@@ -94,7 +94,7 @@ assert.ok(diag.player.tacticTransitions>=2,'ranged fighter should change tactics
 assert.ok(diag.player.decisions<75,'ranged fighter decision loop is running too frequently');
 
 const index=fs.readFileSync('index.html','utf8');
-assert.ok(index.includes('js/v019-duel-ai.js?v=019-a6a12-r1'),'public shell must load V0.19 Duel AI');
+assert.ok(index.includes('js/v019-duel-ai.js?v=019-release-r1'),'public shell must load the promoted V0.19 Duel AI release cache key');
 assert.ok(index.indexOf('js/duel-rares-r2.js')<index.indexOf('js/v019-duel-ai.js'),'V0.19 Duel AI must load after Duel mechanics/content layers');
 assert.ok(index.indexOf('js/v019-duel-ai.js')<index.indexOf('js/duel-renderer.js'),'V0.19 Duel AI must wrap simulation before Renderer V2 starts');
 
