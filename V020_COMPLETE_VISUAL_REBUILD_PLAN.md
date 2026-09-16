@@ -1,6 +1,6 @@
 # V0.20 — Complete Visual Rebuild Plan
 
-Status: **APPROVED / IN DEVELOPMENT — B0 COMPLETE, B1 NEXT**
+Status: **APPROVED / IN DEVELOPMENT — B0–B1 COMPLETE, B2 NEXT**
 
 Canonical source: GitHub `main` in `VGpro9X/auto-battle-roguelite`.
 
@@ -56,12 +56,16 @@ FULL/BALANCED/LOW affect presentation cost only, never gameplay truth.
   - asset inventory/generation spec locked
   - Renderer V3 ownership/fallback boundary locked
   - fighter and arena concept briefs ready
-- **B1 — Renderer V3 Foundation — NEXT**
-  - V3 asset/layer architecture
-  - semantic compatibility
-  - feature flags/fallback
-  - deterministic asset validation
-- **B2 — Fighter Master Design** — generate/select/normalize Ash Wanderer master, turnaround/reference, silhouette/game-scale validation
+- **B1 — Renderer V3 Foundation — COMPLETE ✅**
+  - isolated `assets/v020/` root/fighter/arena manifests and V3 loader/validator
+  - locked 13-state, eight-anchor and six-layer semantic compatibility
+  - FULL/BALANCED/LOW presentation quality normalization
+  - runtime V3 feature flag/bootstrap wired into Duel without changing simulation ownership
+  - deterministic V3→V2 fallback for missing proof fighter states and arena layers; V2 retains vector fallback
+  - Duel start waits for the V3 bootstrap and safely continues through released fallback on failure
+  - deterministic foundation, bridge and runtime-wiring smoke gates live under `tests/`
+  - proof manifests intentionally contain no production fighter states/layers; B2/B5 will populate production art
+- **B2 — Fighter Master Design — NEXT** — generate/select/normalize Ash Wanderer master, turnaround/reference, silhouette/game-scale validation
 - **B3 — Fighter Animation Production** — all 13 states, root stability, eight anchors, facing/mirroring
 - **B4 — Enemy Visual Families** — required family/archetype production, elite/status/hit readability
 - **B5 — Ashen Sanctum V3** — six production layers, parallax/foreground/atmosphere, desktop/mobile validation
@@ -82,4 +86,4 @@ GitHub `main` is canonical. Fetch latest SHA before edits. Commit every meaningf
 V0.20 requires normal production gameplay to use coherent V3 artwork, complete 13 fighter states, coherent required enemies, Ashen Sanctum V3, complete skill visual mapping, distinct high tiers, 20 Rare identities, coherent desktop/mobile UI/icons, unchanged gameplay truth, functional V2/vector fallback, no missing assets/runtime errors, desktop/mobile/performance/reduced-motion gates, historical V0.16–V0.19 regressions, exact Pages deployment, then V0.20 label promotion and final owner visual/gameplay test.
 
 ## Current continuation point
-**B0 COMPLETE. Begin B1 Renderer V3 Foundation. Concept briefs are locked and ready; production generation starts with the Ash Wanderer master and Ashen Sanctum master in the approved sequence while V3 infrastructure is prepared.**
+**B0–B1 COMPLETE. Begin B2 Fighter Master Design. Ash Wanderer is the canonical neutral-class fighter; concept generation, selection, normalization and silhouette/game-scale validation now become the active production task. Public/runtime label remains V0.19 until B14.**
