@@ -1,0 +1,23 @@
+{
+  "id": "v020-visual-runtime",
+  "version": 3,
+  "status": "foundation",
+  "renderer": "v3",
+  "fallbackRenderer": "v2",
+  "assetRoot": "assets/v020/",
+  "qualityTiers": ["full", "balanced", "low"],
+  "fighter": {
+    "id": "ash-wanderer",
+    "manifest": "fighters/ash-wanderer/manifest.json",
+    "requiredStates": ["idle","walk","run","dash","melee","ranged","cast","hit","block","knockback","knockdown","recover","ko"]
+  },
+  "arena": {
+    "id": "ashen-sanctum-v3",
+    "manifest": "arenas/ashen-sanctum/manifest.json"
+  },
+  "fallback": {
+    "allowPartial": true,
+    "missingAsset": "v2",
+    "fatalManifestError": "v2"
+  }
+}

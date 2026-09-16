@@ -1,0 +1,12 @@
+{
+  "id": "ash-wanderer",
+  "version": 3,
+  "status": "proof",
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "displayWorldWidth": 176,
+  "states": {},
+  "requiredStates": ["idle","walk","run","dash","melee","ranged","cast","hit","block","knockback","knockdown","recover","ko"],
+  "requiredAnchors": ["head","chest","leftHand","rightHand","feet","front","back","target"],
+  "fallback": "v2"
+}

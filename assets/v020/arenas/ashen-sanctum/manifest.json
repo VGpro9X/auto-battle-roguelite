@@ -1,0 +1,13 @@
+{
+  "id": "ashen-sanctum-v3",
+  "version": 3,
+  "status": "proof",
+  "logicalWidth": 1000,
+  "logicalHeight": 560,
+  "floorY": 475,
+  "leftBound": 54,
+  "rightBound": 946,
+  "layers": [],
+  "requiredLayers": ["sky","far","mid","ambient","floor","foreground"],
+  "fallback": "v2"
+}
