@@ -3,12 +3,11 @@
 GitHub `main` is canonical.
 
 ## Current baseline
-- Released baseline: **V0.19 – Tactical AI & Movement Intelligence**.
-- Previous released baseline: **V0.18 – Graphics & Presentation Overhaul**.
+- Released/public baseline: **V0.19 – Tactical AI & Movement Intelligence**.
+- Active development roadmap: **V0.20 – Complete Visual Rebuild**.
+- V0.20 authoritative plan: `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`.
+- Previous graphics baseline: **V0.18 – Graphics & Presentation Overhaul**.
 - Historical mechanics/content baseline: **V0.17 – Duel Arena / Đấu Trường 1v1**.
-- V0.19 authoritative plan: `V019_TACTICAL_AI_PLAN.md`.
-- V0.19 release evidence: `V019_RELEASE_VALIDATION.md`.
-- V0.18 release evidence: `V018_RELEASE_VALIDATION.md`.
 - Survival/Endless V0.16 remains supported.
 - Player-facing language: Vietnamese.
 
@@ -56,7 +55,7 @@ Delivered:
 - G6 performance/quality/fallback hardening
 - G7 integrated release validation
 
-V0.18 remains the frozen graphics/presentation baseline. Its G5E/G6D/G6E/G7 workflows continue as historical regression gates under V0.19.
+V0.18 remains the frozen graphics/presentation regression baseline.
 
 ---
 
@@ -65,7 +64,7 @@ V0.18 remains the frozen graphics/presentation baseline. Its G5E/G6D/G6E/G7 work
 Authoritative plan: `V019_TACTICAL_AI_PLAN.md`.
 Release validation: `V019_RELEASE_VALIDATION.md`.
 
-Primary scope delivered:
+Delivered:
 - Survival anti-encirclement / anti-spin movement intelligence
 - predictive escape corridors + commitment/stuck recovery
 - Survival strategic utility improvements
@@ -73,41 +72,45 @@ Primary scope delivered:
 - Duel utility tactics, footsies, spacing and anti-corner-lock behavior
 - build-aware AI styles
 - seeded AI simulation + mobile/performance validation
+- A0–A15 complete
+
+V0.19 remains the current public/runtime baseline while V0.20 is developed.
+
+---
+
+# V0.20 — COMPLETE VISUAL REBUILD — APPROVED / IN DEVELOPMENT 🚧
+
+Authoritative plan: `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`.
+
+Direction: premium original **2D Dark Fantasy × Cultivation × Martial Magic** with **2.5D presentation depth**. V0.20 is visual/presentation work and must preserve V0.19 AI plus locked V0.16/V0.17 combat/content truth.
 
 Checkpoint status:
-- A0 AI Diagnostics & Reproduction — **COMPLETE ✅**
-- A1 Shared Decision Stability Foundation — **COMPLETE ✅**
-- A2 Survival Encirclement Detection V2 — **COMPLETE ✅**
-- A3 Survival Predictive Escape V2 — **COMPLETE ✅**
-- A4 Survival Anti-Spin / Stuck Recovery — **COMPLETE ✅**
-- A5 Survival Strategic Utility V2 — **COMPLETE ✅**
-- A6 Duel Tactical Perception — **COMPLETE ✅**
-- A7 Duel Spatial Position Scoring — **COMPLETE ✅**
-- A8 Duel Utility Action System — **COMPLETE ✅**
-- A9 Duel Footsies / Combat Rhythm — **COMPLETE ✅**
-- A10 Duel Corner Intelligence — **COMPLETE ✅**
-- A11 Build-Aware Fighting Styles — **COMPLETE ✅**
-- A12 Human-Like Decision Timing — **COMPLETE ✅**
-- A13 AI Simulation & Balance Lab — **COMPLETE ✅**
-- A14 Performance + Mobile Gate — **COMPLETE ✅**
-- A15 Integration / Release — **COMPLETE ✅**
+- B0 Visual Audit & Art Bible — **IN PROGRESS 🚧**
+- B1 Renderer V3 Foundation — PENDING
+- B2 Fighter Master Design — PENDING
+- B3 Fighter Animation Production — PENDING
+- B4 Enemy Visual Families — PENDING
+- B5 Ashen Sanctum V3 — PENDING
+- B6 Lighting & Shadow — PENDING
+- B7 Core Combat VFX Library — PENDING
+- B8 Skill Visual Mapping — PENDING
+- B9 High-Tier Spectacle — PENDING
+- B10 UI/HUD V3 — PENDING
+- B11 Icon Production — PENDING
+- B12 Animation & Combat Polish — PENDING
+- B13 Optimization / Mobile / Fallback — PENDING
+- B14 Integration / Release — PENDING
 
-### V0.19 validation contract
-- Survival deterministic encirclement/escape/stuck scenarios green
-- Survival strategic utility scenarios green
-- Duel tactical/corner/spacing/build scenarios green
-- A13 Survival simulation matrix green
-- A13 Duel simulation matrix green
-- bounded AI performance smoke green
-- desktop/mobile V0.19 browser AI validation green
-- V0.17 historical mechanics/content regression green
-- V0.18 UI/fallback/performance/graphics regressions green
-- Pages public artifact/deploy green
-
-V0.19 is authorized to change AI/movement decision truth only within the approved plan. It does not change the locked combat/content/tournament rules above.
+Release discipline:
+- V0.19 remains the public/runtime label during development.
+- Renderer V3 must retain Renderer V2 and vector fallbacks.
+- Production assets must be original/generated for this project; reference imagery is not shipped.
+- Runtime/gameplay truth remains simulation-owned.
+- V0.20 label promotion occurs only after B14 validation is green.
+- Project owner performs the final human visual/gameplay test.
 
 ---
 
 # PROJECT STATUS
 
-**V0.19 is COMPLETE / RELEASED and is the current public/runtime baseline. V0.18 remains the frozen graphics/presentation baseline; V0.17 remains the historical mechanics/content baseline.**
+**V0.19 is COMPLETE / RELEASED and remains the public baseline. V0.20 is APPROVED and B0 is now active.**
