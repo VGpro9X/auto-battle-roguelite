@@ -3,6 +3,7 @@
 GitHub `main` is canonical.
 
 ## Current baseline
+- Released baseline: **V0.19 – Tactical AI & Movement Intelligence**.
 - Released/public baseline: **V0.19 – Tactical AI & Movement Intelligence**.
 - Active development roadmap: **V0.20 – Complete Visual Rebuild**.
 - V0.20 authoritative plan: `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`.
@@ -85,13 +86,13 @@ Authoritative plan: `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`.
 Direction: premium original **2D Dark Fantasy × Cultivation × Martial Magic** with **2.5D presentation depth**. V0.20 is visual/presentation work and must preserve V0.19 AI plus locked V0.16/V0.17 combat/content truth.
 
 Checkpoint status:
-- B0 Visual Audit & Art Bible — **IN PROGRESS 🚧**
-- B1 Renderer V3 Foundation — PENDING
-- B2 Fighter Master Design — PENDING
-- B3 Fighter Animation Production — PENDING
-- B4 Enemy Visual Families — PENDING
-- B5 Ashen Sanctum V3 — PENDING
-- B6 Lighting & Shadow — PENDING
+- B0 Visual Audit & Art Bible — **COMPLETE ✅**
+- B1 Renderer V3 Foundation — **COMPLETE ✅**
+- B2 Fighter Master Design — **COMPLETE ✅**
+- B3 Fighter Animation Production — **COMPLETE ✅**
+- B4 Enemy Visual Families — **COMPLETE ✅**
+- B5 Ashen Sanctum V3 — **COMPLETE ✅**
+- B6 Lighting & Shadow — **ACTIVE 🚧**
 - B7 Core Combat VFX Library — PENDING
 - B8 Skill Visual Mapping — PENDING
 - B9 High-Tier Spectacle — PENDING
@@ -113,4 +114,4 @@ Release discipline:
 
 # PROJECT STATUS
 
-**V0.19 is COMPLETE / RELEASED and remains the public baseline. V0.20 is APPROVED and B0 is now active.**
+**V0.19 is COMPLETE / RELEASED and remains the public baseline. V0.20 has B0–B5 complete; B6 Lighting & Shadow is active.**
