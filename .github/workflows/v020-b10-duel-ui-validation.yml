@@ -1,0 +1,34 @@
+name: V0.20 B10 Duel UI validation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v020-b10-duel-ui-validation
+  cancel-in-progress: true
+
+jobs:
+  validate-duel-ui-v3:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Static B10B Duel UI smoke
+        run: node tests/v020-b10-duel-ui-smoke.js
+      - name: Desktop/mobile Duel UI composition
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4183 >/tmp/v020-b10b-http.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          [ -n "$chrome" ] || { echo "Chrome/Chromium not found"; exit 1; }
+          run_case(){ name="$1"; size="$2"; out="/tmp/v020-b10b-${name}.html"; "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size="$size" --virtual-time-budget=18000 --dump-dom "http://127.0.0.1:4183/tests/v020-b10-duel-ui-browser-driver.html?expect=${name}" >"$out"; grep -q "V020_B10_DUEL_PASS ${name}" "$out" || { cat "$out"; exit 1; }; grep "V020_B10_DUEL_PASS ${name}" "$out"; }
+          run_case desktop 1280,720
+          run_case mobile 360,640

@@ -1,0 +1,152 @@
+/* V0.20 B10B — dedicated Duel lobby, pre-match and combat HUD presentation. */
+#gameWrap .duelModeCard{
+  border-color:rgba(143,184,216,.30);
+  background:
+    radial-gradient(circle at 82% 10%,rgba(104,143,177,.12),transparent 34%),
+    linear-gradient(145deg,rgba(22,30,39,.97),rgba(12,16,22,.98));
+}
+#gameWrap .duelModeCard::after{background:linear-gradient(90deg,transparent,rgba(143,184,216,.68),rgba(205,178,118,.38),transparent)}
+#gameWrap .duelModeCard .modeTime{color:#d9e9f4;text-shadow:0 0 26px rgba(108,157,194,.18)}
+#gameWrap .duelLobbyCard,#gameWrap .duelPreCard{width:min(1080px,100%);border-color:rgba(205,178,118,.24)}
+#gameWrap .duelIntroGrid{gap:14px}
+#gameWrap .duelIntroHero{
+  position:relative;
+  overflow:hidden;
+  border-color:rgba(143,184,216,.18);
+  background:
+    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px),
+    radial-gradient(circle at 25% 20%,rgba(93,139,168,.13),transparent 34%),
+    linear-gradient(145deg,rgba(17,24,31,.92),rgba(8,12,17,.94));
+  background-size:28px 28px,28px 28px,auto,auto;
+  border-radius:16px;
+}
+#gameWrap .duelIntroHero::after{content:"";position:absolute;inset:auto 18px 0;height:2px;background:linear-gradient(90deg,transparent,rgba(143,184,216,.56),transparent)}
+#gameWrap .duelVsMark{color:#edf1ee;font-size:clamp(40px,5vw,58px);letter-spacing:.13em;text-shadow:0 0 28px rgba(143,184,216,.16)}
+#gameWrap .duelIntroHero h3{color:#ede7d9}
+#gameWrap .duelIntroHero p{color:#9fadb9}
+#gameWrap .duelRuleList{gap:8px}
+#gameWrap .duelRuleList>div{
+  min-height:78px;
+  border-color:rgba(205,178,118,.11);
+  border-radius:12px;
+  background:linear-gradient(150deg,rgba(26,31,38,.74),rgba(10,14,19,.72));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.02);
+}
+#gameWrap .duelRuleList b{color:#e1d8c5;font-size:12px;letter-spacing:.025em}
+#gameWrap .duelRuleList small{color:#8998a6}
+#gameWrap .duelCombatRules{border-color:rgba(205,178,118,.12);background:linear-gradient(150deg,rgba(16,21,27,.80),rgba(8,12,17,.80))}
+#gameWrap .duelCombatRules>b{color:#c8b27c}
+#gameWrap .duelCombatRules>span{color:#96a4b0}
+
+/* Pre-match: readable two-sided confrontation rather than two generic panels. */
+#gameWrap .duelVersusPanel{grid-template-columns:minmax(0,1fr) 96px minmax(0,1fr);gap:12px}
+#gameWrap .duelVersusPanel>section{
+  position:relative;
+  overflow:hidden;
+  min-height:286px;
+  border-color:rgba(125,171,199,.20);
+  border-radius:16px;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(94,139,166,.12),transparent 34%),
+    linear-gradient(150deg,rgba(20,27,34,.94),rgba(9,13,18,.96));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+}
+#gameWrap .duelVersusPanel>section::after{content:"";position:absolute;left:16px;right:16px;bottom:0;height:2px;background:linear-gradient(90deg,transparent,rgba(119,174,205,.54),transparent)}
+#gameWrap .duelVersusPanel>section.opponent{
+  border-color:rgba(199,121,106,.22);
+  background:
+    radial-gradient(circle at 90% 0%,rgba(158,80,70,.12),transparent 34%),
+    linear-gradient(210deg,rgba(31,22,23,.95),rgba(11,13,17,.97));
+}
+#gameWrap .duelVersusPanel>section.opponent::after{background:linear-gradient(90deg,transparent,rgba(205,120,103,.55),transparent)}
+#gameWrap .duelSideLabel{color:#9aa9b4;letter-spacing:.20em}
+#gameWrap .duelVersusPanel>section:first-child .duelSideLabel{color:#9cc0d5}
+#gameWrap .duelVersusPanel>section.opponent .duelSideLabel{color:#d49a8e}
+#gameWrap .duelVersusPanel h3{color:#f0ece3;font-size:clamp(22px,2.4vw,30px)}
+#gameWrap .duelStyle{color:#9baab6}
+#gameWrap .duelBigVs{
+  align-self:center;
+  height:82px;
+  border-block:1px solid rgba(205,178,118,.12);
+  color:#d6c7a6;
+  font-size:34px;
+  letter-spacing:.14em;
+  text-shadow:0 0 28px rgba(205,178,118,.12);
+}
+#gameWrap .duelBuildList{gap:6px}
+#gameWrap .duelBuildChip{
+  min-width:132px;
+  border-color:rgba(205,178,118,.10);
+  border-radius:9px;
+  background:linear-gradient(150deg,rgba(255,255,255,.038),rgba(255,255,255,.014));
+}
+#gameWrap .duelBuildChip>b{color:#e5e0d6}
+#gameWrap .duelBuildChip>small{color:#8996a3}
+#gameWrap .duelBuildChip.duelLinkChip{border-color:rgba(209,169,85,.22);background:linear-gradient(150deg,rgba(169,126,42,.09),rgba(50,38,17,.04))}
+#gameWrap .duelBuildChip.duelEvolutionChip{border-color:rgba(148,112,190,.25);background:linear-gradient(150deg,rgba(117,77,158,.10),rgba(38,24,51,.04))}
+#gameWrap .duelBuildChip.duelRareChip{border-style:double;border-color:rgba(214,156,196,.28)}
+
+/* Combat HUD V3. Gameplay canvas and combat state stay untouched. */
+#gameWrap .duelCombatRoot{background:#07090d}
+#gameWrap .duelCombatHud{padding:max(12px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+#gameWrap .duelStageHud,#gameWrap .duelPhaseHud,#gameWrap .duelAbortButton{
+  border-color:rgba(205,178,118,.20);
+  border-radius:8px;
+  background:linear-gradient(180deg,rgba(18,23,29,.84),rgba(7,10,14,.80));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 6px 20px rgba(0,0,0,.20);
+  backdrop-filter:blur(9px) saturate(.82);
+}
+#gameWrap .duelStageHud{color:#d4c6a8}
+#gameWrap .duelPhaseHud{color:#d9e1e6;min-width:96px;text-align:center}
+#gameWrap .duelAbortButton{color:#b6c0c8}
+#gameWrap .duelPhaseHud.huyết-chiến{color:#efb0a8;border-color:rgba(207,108,94,.38);background:linear-gradient(180deg,rgba(61,25,25,.86),rgba(20,12,15,.84))}
+#gameWrap .duelPhaseHud.tử-chiến{color:#ffe4df;border-color:rgba(218,91,82,.55);background:linear-gradient(180deg,rgba(91,24,25,.90),rgba(32,10,15,.88))}
+#gameWrap .duelHealthRow{grid-template-columns:minmax(220px,1fr) 118px minmax(220px,1fr);gap:14px;margin-top:11px}
+#gameWrap .duelFighterHud{position:relative;max-width:520px;padding:8px 10px 9px;border:1px solid rgba(126,170,197,.16);border-radius:10px;background:linear-gradient(150deg,rgba(10,16,21,.62),rgba(5,8,12,.50));box-shadow:0 8px 24px rgba(0,0,0,.16)}
+#gameWrap .duelFighterHud.right{border-color:rgba(201,123,108,.17);background:linear-gradient(210deg,rgba(27,13,15,.58),rgba(7,8,11,.50))}
+#gameWrap .duelFighterHud b{color:#edf0ec;letter-spacing:.035em}
+#gameWrap .duelHealthBar{height:15px;border:1px solid rgba(224,226,218,.16);border-radius:5px;background:rgba(2,4,6,.64);box-shadow:inset 0 2px 5px rgba(0,0,0,.56)}
+#gameWrap .duelHealthBar i{background:linear-gradient(90deg,#456f86,#86b4c7);box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+#gameWrap .duelFighterHud.right .duelHealthBar i{background:linear-gradient(270deg,#78423d,#cd7568)}
+#gameWrap .duelHealthBar em{background:repeating-linear-gradient(135deg,rgba(198,224,240,.54) 0 5px,rgba(128,173,199,.34) 5px 9px);z-index:2}
+#gameWrap .duelFighterHud.right .duelHealthBar em{background:repeating-linear-gradient(45deg,rgba(239,203,195,.50) 0 5px,rgba(177,116,104,.30) 5px 9px)}
+#gameWrap .duelFighterHud small{color:#aab5bd;font-variant-numeric:tabular-nums}
+#gameWrap .duelRoundCenter{align-self:start;padding:7px 6px 8px;border-inline:1px solid rgba(205,178,118,.11);background:linear-gradient(180deg,rgba(7,10,14,.52),rgba(7,10,14,.12))}
+#gameWrap .duelRoundCenter #duelRoundScore{color:#cbbd9e;letter-spacing:.08em;font-variant-numeric:tabular-nums}
+#gameWrap .duelRoundCenter strong{color:#f1eee6;font-size:32px;font-variant-numeric:tabular-nums;text-shadow:0 0 22px rgba(255,255,255,.08)}
+#gameWrap .duelCombatBuilds{gap:10px}
+#gameWrap .duelCombatBuilds>div{padding:6px;border:1px solid rgba(205,178,118,.08);border-radius:10px;background:rgba(5,8,12,.30);backdrop-filter:blur(5px)}
+#gameWrap .duelCombatBuilds .duelBuildChip{border-color:rgba(205,178,118,.10);background:rgba(7,10,14,.70)}
+
+@media(max-width:760px){
+  #gameWrap .duelLobbyCard,#gameWrap .duelPreCard{padding:15px 13px}
+  #gameWrap .duelIntroGrid{gap:9px;margin:12px 0}
+  #gameWrap .duelIntroHero{padding:15px}
+  #gameWrap .duelRuleList{gap:6px}
+  #gameWrap .duelRuleList>div{min-height:66px;padding:11px}
+  #gameWrap .duelVersusPanel{grid-template-columns:1fr;gap:7px;margin:12px 0}
+  #gameWrap .duelVersusPanel>section{min-height:0;padding:13px}
+  #gameWrap .duelBigVs{height:34px;border-block:0;font-size:22px}
+  #gameWrap .duelBuildChip{min-width:112px;padding:6px 7px}
+  #gameWrap .duelHealthRow{grid-template-columns:minmax(0,1fr) 72px minmax(0,1fr);gap:6px;margin-top:7px}
+  #gameWrap .duelFighterHud{padding:6px;border-radius:8px}
+  #gameWrap .duelHealthBar{height:12px;border-radius:4px}
+  #gameWrap .duelRoundCenter{padding:4px 2px 5px}
+  #gameWrap .duelRoundCenter strong{font-size:23px}
+  #gameWrap .duelStageHud,#gameWrap .duelPhaseHud,#gameWrap .duelAbortButton{padding:6px 7px;border-radius:7px}
+}
+@media(max-width:480px){
+  #gameWrap .duelIntroHero p,#gameWrap .duelCombatRules>span{font-size:10px}
+  #gameWrap .duelRuleList{grid-template-columns:1fr}
+  #gameWrap .duelRuleList>div{min-height:0}
+  #gameWrap .duelHealthRow{grid-template-columns:minmax(0,1fr) 56px minmax(0,1fr)}
+  #gameWrap .duelFighterHud{padding:5px}
+  #gameWrap .duelRoundCenter #duelRoundScore{font-size:14px}
+  #gameWrap .duelRoundCenter strong{font-size:20px}
+  #gameWrap .duelPhaseHud{min-width:0}
+}
+@media(prefers-reduced-motion:reduce){
+  #gameWrap .duelPhaseHud.tử-chiến{animation:none!important;box-shadow:0 0 0 1px rgba(218,91,82,.22),0 0 18px rgba(145,42,42,.18)}
+  #gameWrap .duelHealthBar i,#gameWrap .duelHealthBar em{transition:none!important}
+}

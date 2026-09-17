@@ -1,0 +1,11 @@
+const fs=require('fs');
+const assert=require('assert');
+const base=fs.readFileSync('css/v017-duel.css','utf8');
+const css=fs.readFileSync('css/v020-duel-ui.css','utf8');
+assert.ok(base.includes('v020-duel-ui.css?v=020-b10b'),'B10B stylesheet import missing');
+for(const token of ['.duelModeCard','.duelIntroHero','.duelVersusPanel>section','.duelBuildChip','.duelCombatHud','.duelStageHud','.duelPhaseHud','.duelFighterHud','.duelHealthBar','.duelRoundCenter','.duelCombatBuilds'])assert.ok(css.includes(token),`missing B10B surface ${token}`);
+assert.ok(css.includes('@media(max-width:760px)'),'Duel mobile composition gate missing');
+assert.ok(css.includes('@media(max-width:480px)'),'Duel compact mobile gate missing');
+assert.ok(css.includes('@media(prefers-reduced-motion:reduce)'),'Duel reduced motion gate missing');
+for(const forbidden of ['state.','hp-=','hp+=','updateDuelRound','createDuelMatch','Math.random','duelSession='])assert.ok(!css.includes(forbidden),`Duel presentation must not own simulation: ${forbidden}`);
+console.log('v020-b10-duel-ui-smoke: ok');
