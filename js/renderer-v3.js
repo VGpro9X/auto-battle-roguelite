@@ -11,6 +11,30 @@
     return QUALITY.has(q) ? q : 'balanced';
   }
 
+  function validateAnchorFrame(frame) {
+    const errors = [];
+    if (!frame || typeof frame !== 'object') return { ok: false, errors: ['anchor frame missing'] };
+    for (const name of REQUIRED_ANCHORS) {
+      const point = frame[name];
+      if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) errors.push('invalid anchor: ' + name);
+    }
+    return { ok: errors.length === 0, errors };
+  }
+
+  function validateFighterStateEntry(stateId, entry) {
+    const errors = [];
+    if (!REQUIRED_STATES.includes(stateId)) errors.push('unknown state: ' + stateId);
+    if (!entry || typeof entry !== 'object') return { ok: false, errors: errors.concat(['state entry missing']) };
+    if (entry.status !== 'production') errors.push('state not production');
+    if (typeof entry.src !== 'string' || !entry.src.trim()) errors.push('state src missing');
+    if (!Number.isInteger(entry.frameCount) || entry.frameCount <= 0) errors.push('invalid frameCount');
+    if (!Number.isFinite(entry.fps) || entry.fps <= 0) errors.push('invalid fps');
+    if (typeof entry.loop !== 'boolean') errors.push('loop flag missing');
+    if (!Array.isArray(entry.anchors) || entry.anchors.length !== entry.frameCount) errors.push('anchor frame count mismatch');
+    else entry.anchors.forEach((frame,index)=>{const check=validateAnchorFrame(frame);for(const error of check.errors)errors.push('frame '+index+': '+error);});
+    return { ok: errors.length === 0, errors };
+  }
+
   function validateFighterManifest(manifest) {
     const errors = [];
     if (!manifest || typeof manifest !== 'object') return { ok: false, errors: ['fighter manifest missing'] };
@@ -21,6 +45,15 @@
     const declaredAnchors = Array.isArray(manifest.requiredAnchors) ? manifest.requiredAnchors : [];
     for (const state of REQUIRED_STATES) if (!declaredStates.includes(state)) errors.push('missing required state contract: ' + state);
     for (const anchor of REQUIRED_ANCHORS) if (!declaredAnchors.includes(anchor)) errors.push('missing required anchor contract: ' + anchor);
+    if (manifest.states && typeof manifest.states === 'object') {
+      for (const [stateId,entry] of Object.entries(manifest.states)) {
+        if (!entry) continue;
+        if (entry.status === 'production') {
+          const check = validateFighterStateEntry(stateId,entry);
+          for (const error of check.errors) errors.push(stateId + ': ' + error);
+        }
+      }
+    }
     return { ok: errors.length === 0, errors };
   }
 
@@ -81,7 +114,8 @@
     function resolveFighterState(semanticState) {
       const key = REQUIRED_STATES.includes(semanticState) ? semanticState : 'idle';
       const entry = state.fighterManifest && state.fighterManifest.states ? state.fighterManifest.states[key] : null;
-      return entry ? { renderer: 'v3', state: key, entry } : { renderer: 'v2', state: key, entry: null };
+      const check = entry ? validateFighterStateEntry(key,entry) : { ok:false, errors:['state missing'] };
+      return check.ok ? { renderer: 'v3', state: key, entry } : { renderer: 'v2', state: key, entry: null, reason: check.errors.join('; ') };
     }
 
     function resolveArenaLayer(layerId) {
@@ -95,8 +129,8 @@
       return state.quality;
     }
 
-    return { initialize, snapshot, setQuality, resolveFighterState, resolveArenaLayer, validateFighterManifest, validateArenaManifest };
+    return { initialize, snapshot, setQuality, resolveFighterState, resolveArenaLayer, validateFighterManifest, validateArenaManifest, validateFighterStateEntry };
   }
 
-  global.AutoBattleRendererV3 = { create: createRendererV3, validateFighterManifest, validateArenaManifest, REQUIRED_STATES: REQUIRED_STATES.slice(), REQUIRED_ANCHORS: REQUIRED_ANCHORS.slice(), REQUIRED_ARENA_LAYERS: REQUIRED_ARENA_LAYERS.slice() };
+  global.AutoBattleRendererV3 = { create: createRendererV3, validateFighterManifest, validateArenaManifest, validateFighterStateEntry, REQUIRED_STATES: REQUIRED_STATES.slice(), REQUIRED_ANCHORS: REQUIRED_ANCHORS.slice(), REQUIRED_ARENA_LAYERS: REQUIRED_ARENA_LAYERS.slice() };
 })(typeof window !== 'undefined' ? window : globalThis);
