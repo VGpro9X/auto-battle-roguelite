@@ -8,7 +8,7 @@ function normalizeState(fighter){return typeof root.normalizeDuelVisualState==='
 function createTransform(canvas,match){const rect=canvas.getBoundingClientRect(),width=Math.max(1,rect.width||canvas.width||1),height=Math.max(1,rect.height||canvas.height||1),arena=match.arena,scale=Math.min(width/arena.width,height/arena.height),ox=(width-arena.width*scale)/2,oy=(height-arena.height*scale)/2;return{scale,ox,oy,x:v=>ox+v*scale,y:v=>oy+v*scale};}
 function createBridge(canvas){
   if(typeof root.createDuelRendererV2!=='function')throw new Error('Renderer V2 unavailable');
-  const fallback=root.createDuelRendererV2(canvas),api=root.AutoBattleRendererV3,ctx=canvas.getContext('2d'),images=new Map(),lastV3Frames=new Map();
+  const fallback=root.createDuelRendererV2(canvas),api=root.AutoBattleRendererV3,ctx=canvas.getContext('2d'),images=new Map(),lastV3Frames=new Map(),stateClocks=new Map();
   if(!api||typeof api.create!=='function'){canvas.dataset.duelRenderer='v2-v3-api-missing';return fallback;}
   const meta=api.create({enabled:true,quality:requestedQuality()});let status={enabled:true,ready:false,quality:requestedQuality(),reason:'initializing'},activeStates=[];
   async function preloadProductionStates(){
@@ -28,16 +28,21 @@ function createBridge(canvas){
     return next;
   }).catch(error=>{status={enabled:true,ready:false,quality:requestedQuality(),reason:error&&error.message||'bridge-failed'};canvas.dataset.duelRenderer='v2-v3-fallback';return status;});
 
-  function resolveV3(fighter){if(!status.ready)return null;const stateId=normalizeState(fighter),resolved=meta.resolveFighterState(stateId);if(resolved.renderer!=='v3'||!resolved.entry)return null;const image=images.get(resolved.entry.src);return image?{stateId,entry:resolved.entry,image}:null;}
-  function frameIndex(entry,round){const count=Math.max(1,Number(entry.frameCount)||1),fps=Math.max(1,Number(entry.fps)||1),time=Math.max(0,Number(round&&round.time)||0);return entry.loop===false?Math.min(count-1,Math.floor(time*fps)):Math.floor(time*fps)%count;}
+  function touchState(fighter,round){
+    if(!fighter)return'idle';const stateId=normalizeState(fighter),side=fighter.side||'unknown',now=Math.max(0,Number(round&&round.time)||0),prev=stateClocks.get(side);
+    if(!prev||prev.fighter!==fighter||prev.stateId!==stateId||now<prev.enteredAt)stateClocks.set(side,{fighter,stateId,enteredAt:now});
+    return stateId;
+  }
+  function resolveV3(fighter,stateId){if(!status.ready)return null;const resolved=meta.resolveFighterState(stateId);if(resolved.renderer!=='v3'||!resolved.entry)return null;const image=images.get(resolved.entry.src);return image?{stateId,entry:resolved.entry,image}:null;}
+  function frameIndex(entry,round,fighter,stateId){const count=Math.max(1,Number(entry.frameCount)||1),fps=Math.max(1,Number(entry.fps)||1),clock=stateClocks.get(fighter&&fighter.side),now=Math.max(0,Number(round&&round.time)||0),elapsed=Math.max(0,now-Number(clock&&clock.stateId===stateId?clock.enteredAt:now));return entry.loop===false?Math.min(count-1,Math.floor(elapsed*fps)):Math.floor(elapsed*fps)%count;}
   function drawV3Fighter(fighter,round,tr,visual){
-    const entry=visual.entry,index=frameIndex(entry,round),fw=Number(entry.frameWidth||256),fh=Number(entry.frameHeight||256),columns=Math.max(1,Number(entry.columns||entry.frameCount||1)),sx=(index%columns)*fw,sy=Math.floor(index/columns)*fh,displayWorldWidth=Math.max(1,Number(entry.displayWorldWidth||176)),worldScale=displayWorldWidth/fw,anchors=entry.anchors&&entry.anchors[index],feet=anchors&&anchors.feet?anchors.feet:{x:fw/2,y:fh},dw=fw*worldScale*tr.scale,dh=fh*worldScale*tr.scale,x=tr.x(fighter.x),y=tr.y(fighter.y);
+    const entry=visual.entry,index=frameIndex(entry,round,fighter,visual.stateId),fw=Number(entry.frameWidth||256),fh=Number(entry.frameHeight||256),columns=Math.max(1,Number(entry.columns||entry.frameCount||1)),sx=(index%columns)*fw,sy=Math.floor(index/columns)*fh,displayWorldWidth=Math.max(1,Number(entry.displayWorldWidth||176)),worldScale=displayWorldWidth/fw,anchors=entry.anchors&&entry.anchors[index],feet=anchors&&anchors.feet?anchors.feet:{x:fw/2,y:fh},dw=fw*worldScale*tr.scale,dh=fh*worldScale*tr.scale,x=tr.x(fighter.x),y=tr.y(fighter.y);
     ctx.save();ctx.translate(x,y);if((fighter.facing||1)<0)ctx.scale(-1,1);ctx.globalAlpha=fighter.hp<=0?.72:1;ctx.drawImage(visual.image,sx,sy,fw,fh,-feet.x*worldScale*tr.scale,-feet.y*worldScale*tr.scale,dw,dh);ctx.restore();
     lastV3Frames.set(fighter.side,{fighter,entry,index,worldScale});
   }
   function render(match,dt){
     lastV3Frames.clear();
-    const round=match&&match.currentRound,player=round&&round.fighters&&round.fighters.player,opponent=round&&round.fighters&&round.fighters.opponent,pVisual=player&&resolveV3(player),oVisual=opponent&&resolveV3(opponent),v3Sides=[];
+    const round=match&&match.currentRound,player=round&&round.fighters&&round.fighters.player,opponent=round&&round.fighters&&round.fighters.opponent,pState=touchState(player,round),oState=touchState(opponent,round),pVisual=player&&resolveV3(player,pState),oVisual=opponent&&resolveV3(opponent,oState),v3Sides=[];
     if(pVisual)v3Sides.push('player');if(oVisual)v3Sides.push('opponent');
     fallback.render(match,dt,{skipFighterSides:v3Sides});
     if(!round||!v3Sides.length)return;
