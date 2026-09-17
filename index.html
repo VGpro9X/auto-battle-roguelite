@@ -46,6 +46,6 @@
 window.DUEL_RENDERER_V3_DEFAULT=true;window.DUEL_RENDERER_V3_QUALITY='balanced';
 window.__V020_RENDERER_V3_BOOTSTRAP__=Promise.resolve(window.__V018_DUEL_RENDERER_READY__).then(function(){return ['js/renderer-v3.js?v=020-b5','js/duel-renderer-v3-bridge.js?v=020-b5'].reduce(function(chain,src){return chain.then(function(){return new Promise(function(resolve,reject){var s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=function(){reject(new Error('Failed to load '+src));};document.head.appendChild(s);});});},Promise.resolve());}).then(function(){if(typeof window.createConfiguredDuelRendererV3==='function')window.createDuelRenderer=window.createConfiguredDuelRendererV3;}).catch(function(error){console.warn('V0.20 Renderer V3 bootstrap failed; Renderer V2 remains active.',error);});
 </script>
-<script src="js/duel-ui-v020.js?v=020-ui-fix"></script><script src="js/duel-ui-sync.js?v=019-release-r1"></script>
+<script src="js/duel-ui.js?v=020-ui-fix"></script><script src="js/duel-ui-sync.js?v=019-release-r1"></script>
 </body>
 </html>
