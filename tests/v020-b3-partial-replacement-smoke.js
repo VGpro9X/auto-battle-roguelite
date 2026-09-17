@@ -3,18 +3,28 @@ function assert(v,m){if(!v)throw new Error(m);}
 const v2=fs.readFileSync('js/duel-renderer-v2.js','utf8');
 const bridge=fs.readFileSync('js/duel-renderer-v3-bridge.js','utf8');
 const manifest=JSON.parse(fs.readFileSync('assets/v020/fighters/ash-wanderer/manifest.json','utf8'));
-const idle=fs.readFileSync('assets/v020/fighters/ash-wanderer/idle.svg','utf8');
+const assets={idle:'1536',walk:'2048',run:'2048',dash:'1536'};
 
 assert(v2.includes('function render(match,dt=0,options={})'),'Renderer V2 partial-render hook missing');
 assert(v2.includes('options.skipFighterSides'),'Renderer V2 does not accept external fighter skip list');
 assert(v2.includes('function getLastTransform()'),'Renderer V2 does not expose final camera transform');
 assert(bridge.includes('fallback.render(match,dt,{skipFighterSides:v3Sides})'),'V3 bridge does not suppress replaced V2 fighters');
-assert(bridge.includes("fallback.getLastTransform"),'V3 bridge is not sharing V2/camera transform');
+assert(bridge.includes('fallback.getLastTransform'),'V3 bridge is not sharing V2/camera transform');
+assert(bridge.includes('stateClocks=new Map()'),'state-relative animation clock missing');
+assert(bridge.includes('drawV3Attachments'),'V3 replacement drops shield/frost/orbit presentation');
 assert(bridge.includes("canvas.dataset.duelRenderer=activeStates.length?'v3-partial':'v3-foundation'"),'partial V3 runtime status missing');
 assert(manifest.status==='partial-production','fighter manifest must remain partial-production');
-assert(manifest.states.idle&&manifest.states.idle.status==='production','idle production state missing');
-assert(manifest.states.idle.frameCount===6&&manifest.states.idle.columns===6,'idle frame contract changed');
-assert(manifest.states.idle.anchors.length===6,'idle anchor frames missing');
-assert(/^<svg[\s\S]*width="1536"[\s\S]*height="256"/.test(idle),'idle runtime sheet is not 1536x256 SVG');
-assert(!/<text\b/i.test(idle),'idle runtime asset must not contain poster/UI text');
+
+for(const [state,width] of Object.entries(assets)){
+  const entry=manifest.states[state];
+  assert(entry&&entry.status==='production',state+' production state missing');
+  assert(entry.anchors.length===entry.frameCount,state+' anchor frame count mismatch');
+  for(const [i,frame] of entry.anchors.entries())for(const name of manifest.requiredAnchors)assert(frame[name]&&Number.isFinite(frame[name].x)&&Number.isFinite(frame[name].y),`${state} frame ${i} invalid anchor ${name}`);
+  const svg=fs.readFileSync(`assets/v020/fighters/ash-wanderer/${state}.svg`,'utf8');
+  assert(new RegExp(`^<svg[\\s\\S]*width="${width}"[\\s\\S]*height="256"`).test(svg),state+' runtime sheet dimensions invalid');
+  assert(!/<text\b/i.test(svg),state+' runtime asset must not contain poster/UI text');
+}
+assert(manifest.states.idle.frameCount===6&&manifest.states.walk.frameCount===8&&manifest.states.run.frameCount===8&&manifest.states.dash.frameCount===6,'locomotion frame contract changed');
+assert(manifest.states.idle.loop&&manifest.states.walk.loop&&manifest.states.run.loop,'looping locomotion contract changed');
+assert(manifest.states.dash.loop===false,'dash must remain a non-looping semantic animation');
 console.log('v020-b3-partial-replacement-smoke: ok');
