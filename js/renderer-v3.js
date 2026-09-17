@@ -5,23 +5,39 @@
   const REQUIRED_ANCHORS = ['head','chest','leftHand','rightHand','feet','front','back','target'];
   const REQUIRED_ARENA_LAYERS = ['sky','far','mid','ambient','floor','foreground'];
   const QUALITY = new Set(['full','balanced','low']);
+  const DEFAULT_FRAME_WIDTH = 256;
+  const DEFAULT_FRAME_HEIGHT = 256;
 
   function normalizeQuality(value) {
     const q = String(value || '').toLowerCase();
     return QUALITY.has(q) ? q : 'balanced';
   }
 
-  function validateAnchorFrame(frame) {
+  function mirrorAnchorFrame(frame, frameWidth=DEFAULT_FRAME_WIDTH) {
+    const mirrored = {};
+    for (const name of REQUIRED_ANCHORS) {
+      const point = frame && frame[name];
+      if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) continue;
+      mirrored[name] = { x: frameWidth - point.x, y: point.y };
+    }
+    return mirrored;
+  }
+
+  function validateAnchorFrame(frame, frameWidth=DEFAULT_FRAME_WIDTH, frameHeight=DEFAULT_FRAME_HEIGHT) {
     const errors = [];
     if (!frame || typeof frame !== 'object') return { ok: false, errors: ['anchor frame missing'] };
     for (const name of REQUIRED_ANCHORS) {
       const point = frame[name];
-      if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) errors.push('invalid anchor: ' + name);
+      if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) {
+        errors.push('invalid anchor: ' + name);
+        continue;
+      }
+      if (point.x < 0 || point.x > frameWidth || point.y < 0 || point.y > frameHeight) errors.push('anchor out of bounds: ' + name);
     }
     return { ok: errors.length === 0, errors };
   }
 
-  function validateFighterStateEntry(stateId, entry) {
+  function validateFighterStateEntry(stateId, entry, frameWidth=DEFAULT_FRAME_WIDTH, frameHeight=DEFAULT_FRAME_HEIGHT) {
     const errors = [];
     if (!REQUIRED_STATES.includes(stateId)) errors.push('unknown state: ' + stateId);
     if (!entry || typeof entry !== 'object') return { ok: false, errors: errors.concat(['state entry missing']) };
@@ -31,7 +47,7 @@
     if (!Number.isFinite(entry.fps) || entry.fps <= 0) errors.push('invalid fps');
     if (typeof entry.loop !== 'boolean') errors.push('loop flag missing');
     if (!Array.isArray(entry.anchors) || entry.anchors.length !== entry.frameCount) errors.push('anchor frame count mismatch');
-    else entry.anchors.forEach((frame,index)=>{const check=validateAnchorFrame(frame);for(const error of check.errors)errors.push('frame '+index+': '+error);});
+    else entry.anchors.forEach((frame,index)=>{const check=validateAnchorFrame(frame,frameWidth,frameHeight);for(const error of check.errors)errors.push('frame '+index+': '+error);});
     return { ok: errors.length === 0, errors };
   }
 
@@ -49,7 +65,7 @@
       for (const [stateId,entry] of Object.entries(manifest.states)) {
         if (!entry) continue;
         if (entry.status === 'production') {
-          const check = validateFighterStateEntry(stateId,entry);
+          const check = validateFighterStateEntry(stateId,entry,manifest.frameWidth,manifest.frameHeight);
           for (const error of check.errors) errors.push(stateId + ': ' + error);
         }
       }
@@ -114,7 +130,9 @@
     function resolveFighterState(semanticState) {
       const key = REQUIRED_STATES.includes(semanticState) ? semanticState : 'idle';
       const entry = state.fighterManifest && state.fighterManifest.states ? state.fighterManifest.states[key] : null;
-      const check = entry ? validateFighterStateEntry(key,entry) : { ok:false, errors:['state missing'] };
+      const fw = state.fighterManifest?.frameWidth || DEFAULT_FRAME_WIDTH;
+      const fh = state.fighterManifest?.frameHeight || DEFAULT_FRAME_HEIGHT;
+      const check = entry ? validateFighterStateEntry(key,entry,fw,fh) : { ok:false, errors:['state missing'] };
       return check.ok ? { renderer: 'v3', state: key, entry } : { renderer: 'v2', state: key, entry: null, reason: check.errors.join('; ') };
     }
 
@@ -129,8 +147,8 @@
       return state.quality;
     }
 
-    return { initialize, snapshot, setQuality, resolveFighterState, resolveArenaLayer, validateFighterManifest, validateArenaManifest, validateFighterStateEntry };
+    return { initialize, snapshot, setQuality, resolveFighterState, resolveArenaLayer, validateFighterManifest, validateArenaManifest, validateFighterStateEntry, validateAnchorFrame, mirrorAnchorFrame };
   }
 
-  global.AutoBattleRendererV3 = { create: createRendererV3, validateFighterManifest, validateArenaManifest, validateFighterStateEntry, REQUIRED_STATES: REQUIRED_STATES.slice(), REQUIRED_ANCHORS: REQUIRED_ANCHORS.slice(), REQUIRED_ARENA_LAYERS: REQUIRED_ARENA_LAYERS.slice() };
+  global.AutoBattleRendererV3 = { create: createRendererV3, validateFighterManifest, validateArenaManifest, validateFighterStateEntry, validateAnchorFrame, mirrorAnchorFrame, REQUIRED_STATES: REQUIRED_STATES.slice(), REQUIRED_ANCHORS: REQUIRED_ANCHORS.slice(), REQUIRED_ARENA_LAYERS: REQUIRED_ARENA_LAYERS.slice() };
 })(typeof window !== 'undefined' ? window : globalThis);
