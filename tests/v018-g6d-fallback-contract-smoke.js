@@ -12,7 +12,8 @@ assert.match(renderer,/const createVectorRenderer=root\.createDuelRenderer/,'Ren
 assert.match(renderer,/const fallback=createVectorRenderer\(canvas\)/,'every V2 instance must own a live vector fallback');
 assert.match(renderer,/if\(!ready\|\|!manifest\|\|!animationResolver\)return null/,'fighter visual resolution must fall back while assets are unavailable');
 assert.match(renderer,/if\(!animation\?\.src\|\|!images\.get\(animation\.src\)\)return null/,'missing state/image must fall back instead of drawing broken art');
-assert.match(renderer,/fallback\.render\(match,dt,\{skipFighterSides:covered,skipArena:customArena,preserveCanvas:true,transformOverride:tr\}\)/,'V2 must render uncovered fighters/world through vector fallback');
+assert.match(renderer,/skipArena=Boolean\(options\.skipArena\)\|\|customArena/,'V2 must preserve caller arena suppression while adding custom-arena ownership');
+assert.match(renderer,/fallback\.render\(match,dt,\{skipFighterSides:covered,skipArena,preserveCanvas:true,transformOverride:tr\}\)/,'V2 must render uncovered fighters/world through vector fallback');
 assert.match(renderer,/fighter fallback active/,'fighter preload failure must stay observable');
 assert.match(renderer,/arena fallback active/,'arena preload failure must stay observable');
 assert.match(renderer,/arenaReady,arenaError:/,'V2 status must expose arena fallback state');
@@ -28,7 +29,6 @@ assert.strictEqual(Object.keys(fixture.animations).length,1,'G6D fixture must in
 assert.ok(fixture.animations.idle,'G6D partial fixture must cover idle so per-state fallback can be exercised');
 assert.match(fixture.animations.idle.src,/assets\/duel\/fighters\/base\/idle\.svg$/,'G6D fixture must use a real production asset for its one covered state');
 
-// Fallback renderer must remain self-contained and must not import/require V2 assets to render.
 assert.match(fallback,/function createDuelRenderer\(canvas\)/,'vector fallback factory missing');
 assert.match(fallback,/function drawFighter\(fighter,tr,round\)/,'vector fallback fighter renderer missing');
 assert.match(fallback,/function drawProjectiles\(round,tr\)/,'vector fallback projectile renderer missing');
