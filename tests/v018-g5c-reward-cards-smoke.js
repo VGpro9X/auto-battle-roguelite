@@ -6,7 +6,7 @@ const root=path.resolve(__dirname,"..");
 const read=file=>fs.readFileSync(path.join(root,file),"utf8");
 const bridge=read("css/v017-duel.css");
 const css=read("css/v018-ui.css");
-const ui=read("js/duel-ui.js");
+const ui=`${read("js/duel-ui.js")}\n${read("js/duel-ui-v020.js")}`;
 const rares=read("js/duel-rares.js");
 
 const graphicsImport='@import url("./v018-graphics.css';
@@ -37,7 +37,6 @@ assert.match(css,/\.duelRareChoice\.mystic[\s\S]*192,132,252/,'Thần Bí Kỹ c
 assert.match(css,/\.duelReroll\.used,\.duelReroll:disabled[\s\S]*cursor:not-allowed/,'used reroll state must remain visibly disabled');
 assert.match(css,/@media \(prefers-reduced-motion:reduce\)/,'G5C must preserve reduced-motion behavior');
 
-// Preserve the existing reward truth and one-reroll contract from Duel UI.
 assert.match(ui,/button\.className=`choice duelChoice duelRareChoice \$\{meta\.tier\}`/,'Rare reward cards must keep their existing tier hook');
 assert.match(ui,/button\.className="choice duelChoice"\+\(next>=3\?" maxNext":""\)/,'Rank III choice must keep maxNext hook');
 assert.match(ui,/getDuelEvolutionChoiceHints\(player\.build,key\)/,'Siêu Cấp unlock hint must be computed from the exact offered choice');

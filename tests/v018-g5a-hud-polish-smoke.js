@@ -7,7 +7,7 @@ const read=file=>fs.readFileSync(path.join(root,file),"utf8");
 const bridge=read("css/v017-duel.css");
 const css=read("css/v018-graphics.css");
 const runtimeCss=`${css}\n${bridge}`;
-const ui=read("js/duel-ui.js");
+const ui=`${read("js/duel-ui.js")}\n${read("js/duel-ui-v020.js")}`;
 
 assert.match(bridge,/^@import url\("\.\/v018-graphics\.css\?v=018-g5[a-z0-9-]*"\);/,'V0.18 G5 stylesheet must load before legacy Duel rules');
 assert.ok(css.length>3000,'G5A stylesheet should contain the production HUD layer');

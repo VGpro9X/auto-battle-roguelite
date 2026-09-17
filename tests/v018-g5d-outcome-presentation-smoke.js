@@ -9,11 +9,10 @@ const renderer=read("js/duel-renderer.js");
 const rendererV2=read("js/duel-renderer-v2.js");
 const vfx=read("js/duel-vfx-v2.js");
 const polish=read("js/duel-ui-polish.js");
-const ui=read("js/duel-ui.js");
+const ui=`${read("js/duel-ui.js")}\n${read("js/duel-ui-v020.js")}`;
 const css=read("css/v018-ui.css");
 const bridge=read("css/v017-duel.css");
 
-// G5D must present existing simulation truth, never invent match/round outcomes.
 assert.match(engine,/emitDuelEvent\(round,"round_start",\{round:round\.number\}\)/,'round_start semantic event must remain engine-owned');
 assert.match(engine,/emitDuelEvent\(round,"ko",\{side:target\.side,source:meta\.source\|\|"attack",x:target\.x,y:target\.y\}\)/,'KO presentation must use the engine KO event');
 assert.match(engine,/emitDuelEvent\(round,"round_end",\{\.\.\.round\.result\}\)/,'round_end presentation must use the engine result object');
@@ -21,7 +20,6 @@ assert.match(engine,/round\.result=\{winner:"draw",reason:"DOUBLE_KO"\}/,'double
 assert.match(engine,/round\.result=\{winner:"player",reason:"KO"\}/,'player round-win truth must stay in the engine');
 assert.match(engine,/round\.result=\{winner:"opponent",reason:"KO"\}/,'opponent round-win truth must stay in the engine');
 
-// Vector/fallback renderer owns the presentation banner for semantic outcome events.
 assert.match(renderer,/event\.type==="round_start"/,'round-start presentation lifetime missing');
 assert.match(renderer,/event\.type==="round_end"/,'round-end presentation lifetime missing');
 assert.match(renderer,/event\.type==="ko"/,'KO presentation lifetime missing');
@@ -33,7 +31,6 @@ assert.match(renderer,/e\.winner==="draw"/,'round-end banner must read winner fr
 assert.match(renderer,/e\.winner==="player"/,'round-end banner must distinguish the semantic player winner');
 assert.match(renderer,/e\.side==="opponent"/,'KO banner must read defeated side from semantic event');
 
-// Renderer V2 must continue forwarding these unowned semantic events to fallback presentation.
 assert.match(rendererV2,/legacy=vfx\?list\.filter\(event=>!vfx\.ownsEvent\(event\)\):list;fallback\.consume\(legacy\)/,'Renderer V2 must preserve fallback event ownership');
 assert.match(vfx,/const OWNED_TYPES=new Set\(\["hit","attack_melee","projectile_spawn","cast","status","heal","shield_gain","area","orbit_hit"\]\)/,'VFX owned-type contract changed unexpectedly');
 for(const forbiddenOwned of ["round_start","round_end","ko"]){
@@ -41,7 +38,6 @@ for(const forbiddenOwned of ["round_start","round_end","ko"]){
   assert.ok(!ownedLine.includes(`"${forbiddenOwned}"`),`${forbiddenOwned} must remain available to G5D fallback presentation`);
 }
 
-// Tournament result card is a presentation-only mirror of the already-resolved UI result.
 assert.match(ui,/duelResultBadge"\)\.textContent=champion\?"NHÀ VÔ ĐỊCH":"BỊ LOẠI"/,'result badge must remain driven by the existing champion boolean');
 assert.match(polish,/label==="NHÀ VÔ ĐỊCH"/,'champion class must mirror the existing result badge');
 assert.match(polish,/label==="BỊ LOẠI"/,'eliminated class must mirror the existing result badge');

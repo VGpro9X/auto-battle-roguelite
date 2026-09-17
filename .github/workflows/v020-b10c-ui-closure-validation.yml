@@ -1,0 +1,31 @@
+name: V0.20 B10C UI Closure Validation
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  validate-ui-closure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Static B10C closure smoke
+        run: node tests/v020-b10c-ui-closure-smoke.js
+      - name: Browser cross-device closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4184 >/tmp/v020-b10c-http.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          [ -n "$chrome" ] || { echo "Chrome/Chromium not found"; exit 1; }
+          run_case(){
+            name="$1"; size="$2"; shift 2; out="/tmp/v020-b10c-${name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size="$size" "$@" --virtual-time-budget=20000 --dump-dom "http://127.0.0.1:4184/tests/v020-b10c-ui-closure-browser-driver.html?expect=${name}" >"$out"
+            grep -q "V020_B10C_PASS ${name}" "$out" || { cat "$out"; exit 1; }
+            grep "V020_B10C_PASS ${name}" "$out"
+          }
+          run_case desktop 1280,720
+          run_case mobile 360,640
+          run_case reduced 1280,720 --force-prefers-reduced-motion=reduce

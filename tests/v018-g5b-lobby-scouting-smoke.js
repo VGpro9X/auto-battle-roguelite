@@ -6,7 +6,7 @@ const root=path.resolve(__dirname,"..");
 const read=file=>fs.readFileSync(path.join(root,file),"utf8");
 const css=read("css/v018-graphics.css");
 const bridge=read("css/v017-duel.css");
-const ui=read("js/duel-ui.js");
+const ui=`${read("js/duel-ui.js")}\n${read("js/duel-ui-v020.js")}`;
 
 assert.match(bridge,/^@import url\("\.\/v018-graphics\.css\?v=018-g5[a-z0-9-]*"\);/,'G5 graphics cache key must expose G5B or a later compatible presentation revision');
 
@@ -49,7 +49,6 @@ for(const marker of [
   "duelBuildList"
 ])assert.ok(ui.includes(marker),`existing Duel UI markup/state hook missing: ${marker}`);
 
-// G5B is presentation-only: do not introduce gameplay-state keywords into CSS.
 for(const forbidden of ["damageDealt","updateDuelRound","advanceDuelTournament","duelRewardOptions","rerollUsed"]){
   assert.ok(!css.includes(forbidden),`G5B CSS must not encode gameplay truth: ${forbidden}`);
 }
