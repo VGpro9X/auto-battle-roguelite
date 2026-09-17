@@ -1,6 +1,6 @@
 # V0.20 — B3 Fighter Animation Production Spec
 
-Status: **ACTIVE — SOURCE BOARDS REVIEWED / DEDICATED FRAME PRODUCTION NEXT**
+Status: **ACTIVE — PRODUCTION STATE GATE READY / DEDICATED IDLE ASSET NEXT**
 
 Canonical fighter: Ash Wanderer. Concept/master boards are reference only and are never cropped directly into runtime.
 
@@ -38,7 +38,7 @@ Canonical fighter: Ash Wanderer. Concept/master boards are reference only and ar
 Idle loops without visible root drift. Walk/run use contact/pass/recoil/up/down structure with coherent cloth follow-through. Dash may show anticipation and motion silhouette but simulation owns actual displacement. Mirrored playback preserves front/back and hand anchor semantics.
 
 ## Source-board review
-Two V0.20 animation reference boards have now been generated and reviewed. They successfully lock the broad Ash Wanderer motion language and prove that locomotion, reactions, melee, ranged and cast poses remain readable at the intended presentation scale.
+The V0.20 animation reference boards generated so far successfully lock the broad Ash Wanderer motion language and prove that locomotion, reactions, melee, ranged and cast poses remain readable at the intended presentation scale.
 
 They are **not accepted as runtime sprite sheets**. Observed generation drift that dedicated production must correct:
 - some reference-board frame counts differ from canonical targets;
@@ -53,6 +53,20 @@ Therefore no state is promoted to `production` from the boards themselves.
 
 ## Dedicated source production rule
 For each semantic state, generate or construct a clean state-only source sequence from the locked master identity. Normalize every frame into the 256×256 logical cell, remove poster/background material, separate reusable VFX, then author anchors and run validation. Only the resulting dedicated derivative may be referenced by `assets/v020/fighters/ash-wanderer/manifest.json`.
+
+## Runtime production-state gate
+Renderer V3 now refuses to resolve a fighter state unless its manifest entry passes the production contract. A valid entry requires:
+- `status: production`
+- non-empty `src`
+- positive integer `frameCount`
+- positive `fps`
+- explicit boolean `loop`
+- exactly one anchor set per frame
+- all eight required anchors in every frame with finite `x/y`
+
+Proof/incomplete entries deterministically remain on Renderer V2. This prevents concept/proof assets from leaking into normal V3 rendering merely because a state key exists.
+
+Smoke gate: `tests/v020-b3-state-production-gate.js`.
 
 ## Acceptance gate per state
 A state can change from fallback to production only when:
@@ -70,4 +84,4 @@ A state can change from fallback to production only when:
 `manifest.json` stays `status: proof` during partial production. Each accepted state is added independently with `status: production`; missing states continue through V2 fallback. Whole fighter becomes production only after all 13 states pass.
 
 ## Current task
-Produce dedicated clean locomotion sequences in canonical order: `idle` → `walk` → `run` → `dash`. The generated boards are now frozen as visual references only. Do not start enemy/arena bulk production until the fighter pipeline has proven at least one complete state through generation → normalization → anchors → V3 manifest → fallback validation.
+The state-promotion safety gate is now implemented. Next active production target is a dedicated clean six-frame `idle` sequence, followed by normalization → eight anchors → V3 manifest integration → mirrored/fallback validation. Only after `idle` passes end-to-end do `walk`, `run` and `dash` enter dedicated production.
