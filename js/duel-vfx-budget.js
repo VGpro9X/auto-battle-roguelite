@@ -16,6 +16,10 @@
     effects.splice(0,excess);
     return excess;
   }
+  function nonNegative(value){
+    const number=Math.floor(Number(value));
+    return Number.isFinite(number)&&number>0?number:0;
+  }
 
   function wrapFactory(name,limitKey,fallbackLimit){
     const original=root[name];
@@ -29,7 +33,8 @@
       const originalStatus=typeof instance.getStatus==="function"?instance.getStatus.bind(instance):()=>({active:instance.effects.length});
       instance.consume=function(events){
         originalConsume(events);
-        peakActive=Math.max(peakActive,instance.effects.length);
+        const base=originalStatus()||{};
+        peakActive=Math.max(peakActive,instance.effects.length,nonNegative(base.peak));
         const profile=quality();
         const limit=positiveLimit(profile[limitKey],fallbackLimit);
         droppedPresentation+=trimOldest(instance.effects,limit);
@@ -43,8 +48,8 @@
           budget:{
             profile:profile.id||"unknown",
             limit:positiveLimit(profile[limitKey],fallbackLimit),
-            droppedPresentation,
-            peakActive
+            droppedPresentation:droppedPresentation+nonNegative(base.dropped),
+            peakActive:Math.max(peakActive,nonNegative(base.peak))
           }
         };
       };

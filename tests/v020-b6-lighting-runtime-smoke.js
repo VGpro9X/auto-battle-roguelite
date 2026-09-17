@@ -10,7 +10,7 @@ assert(bridge.includes("round.phase==='TỬ CHIẾN'")&&bridge.includes("round.p
 assert(bridge.includes("if(low<.25)"),'low-HP vignette gate missing');
 assert(bridge.includes("globalCompositeOperation='screen'"),'screen-space light blend missing');
 assert(bridge.includes('drawLighting(match,tr,dt)'),'lighting pass is not wired after render');
-assert(bridge.includes('fallback.consume(events);consumeLighting(events);'),'lighting must observe already-produced events');
+assert(bridge.includes('const list=events||[]')&&bridge.includes('consumeLighting(list);'),'lighting must observe the original event list after renderer ownership routing');
 for(const forbidden of ['duelDealDamage(','spawnDuelProjectile(','target.hp-=','target.x='])assert(!bridge.includes(forbidden),'lighting bridge must not own simulation truth: '+forbidden);
 assert(!/round\.phase\s*=(?!=)/.test(bridge),'lighting bridge must not assign round.phase');
 console.log('v020-b6-lighting-runtime-smoke: ok');
