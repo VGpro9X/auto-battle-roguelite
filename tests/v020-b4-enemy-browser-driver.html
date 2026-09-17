@@ -25,13 +25,8 @@ window.isEnemyAllied=function(enemy){return !!enemy.allied;};
 window.drawEnemyStatusVisual=function(context,x,y,r,enemy){window.__statusCount++;context.save();context.strokeStyle=enemy.statuses?.poison?'#9f6':'#fff';context.lineWidth=2;context.strokeRect(-r*.7,-r*.7,r*1.4,r*1.4);context.restore();};
 window.__errors=[];addEventListener('error',e=>window.__errors.push(String(e.error||e.message)));
 </script>
-<script src="js/v014-character-enemy-presentation.js" onerror="window.__errors.push('v014-load')"></script>
-<script>
-// v014 requires game globals, so restore deterministic browser-driver stubs before B4 loads.
-window.drawEnemySilhouetteV014=function(enemy){window.__fallbackCount++;ctx.fillStyle='#f0f';ctx.fillRect(enemy.x-5,enemy.y-5,10,10);};
-window.enemyArchetypeV014=function(enemy){return enemy.testType;};
-</script>
-<script src="js/v020-enemy-presentation.js?v=020-b4-browser1" onerror="window.__errors.push('v020-load')"></script>
+<!-- Production bootstrap path: duel-ui-sync dynamically appends js/v020-enemy-presentation.js. -->
+<script src="js/duel-ui-sync.js?v=020-b4-browser2" onerror="window.__errors.push('bootstrap-load')"></script>
 <script>
 const expected={runner:'beast',hunter:'fallen',anchor:'construct',elite:'abyssal'};
 function fail(msg){document.getElementById('result').textContent='V020_B4_ENEMY_BROWSER_FAIL '+msg;document.body.dataset.failed='1';}
@@ -44,6 +39,8 @@ function waitForAssets(start=performance.now()){
 }
 function run(status){
   if(window.__errors.length){fail('js-errors '+window.__errors.join('|'));return;}
+  const boot=document.querySelector('script[data-v020-enemy-presentation]');
+  if(!boot||!boot.src.includes('js/v020-enemy-presentation.js')){fail('dynamic-bootstrap-missing');return;}
   for(const [role,family] of Object.entries(expected)){
     const enemy={x:100,y:100,r:role==='elite'?18:12,elite:role==='elite',dead:false,hit:0,testType:role,statuses:{}};
     if(window.enemyFamilyV020(enemy)!==family){fail('mapping-'+role);return;}
