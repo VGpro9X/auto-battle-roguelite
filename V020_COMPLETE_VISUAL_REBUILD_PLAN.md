@@ -1,6 +1,6 @@
 # V0.20 — Complete Visual Rebuild Plan
 
-Status: **APPROVED / IN DEVELOPMENT — B0–B5 COMPLETE, B6 ACTIVE**
+Status: **APPROVED / IN DEVELOPMENT — B0–B6 COMPLETE, B7 ACTIVE**
 
 Canonical source: GitHub `main` in `VGpro9X/auto-battle-roguelite`.
 
@@ -24,6 +24,7 @@ The detailed production truth is split into locked documents:
 - `V020_ASH_WANDERER_MASTER_SPEC.md` — canonical fighter identity, scale/root/mirroring/anchor and B3 animation constraints.
 - `V020_B3_ANIMATION_PRODUCTION_SPEC.md` — completed 13-state runtime fighter production and validation contract.
 - `V020_B4_ENEMY_VISUAL_SPEC.md` — completed enemy-family audit, runtime mapping, fallback and browser validation.
+- `V020_B6_LIGHTING_SHADOW_SPEC.md` — completed quality-aware lighting/shadow/atmosphere runtime pass and desktop/mobile validation.
 
 New runtime work is isolated under `assets/v020/`; V0.18 production assets remain intact as fallback.
 
@@ -78,14 +79,19 @@ FULL/BALANCED/LOW affect presentation cost only, never gameplay truth.
   - V3 bridge suppresses the V2 arena only when V3 arena coverage is ready while sharing the same presentation transform
   - production desktop 1280×720 and mobile 360×640 browser validation passed with all six layers rendered
   - no collision/bounds/simulation truth changed
-- **B6 — Lighting & Shadow — ACTIVE**
-  - contact shadows for fighters/enemies without changing collision footprint
-  - quality-aware local skill/projectile glow and brief impact lighting
-  - cosmetic atmosphere response for HUYẾT CHIẾN / TỬ CHIẾN
-  - restrained low-HP vignette and readable foreground values
-  - FULL / BALANCED / LOW and reduced-motion-safe presentation budgets
-  - lighting must never decide hit, damage, targeting, movement or phase truth
-- **B7 — Core Combat VFX Library** — primitives/projectiles/status/lifecycle budgets
+- **B6 — Lighting & Shadow — COMPLETE ✅**
+  - contact shadows preserve simulation collision footprints
+  - projectile/shield local glow and event-driven impact/heal/shield/KO flashes integrated in Renderer V3
+  - HUYẾT CHIẾN / TỬ CHIẾN atmosphere and restrained low-HP vignette integrated
+  - FULL / BALANCED / LOW budgets: 10/6/3 projectile glows and 8/5/2 event flashes
+  - reduced-motion-safe presentation path retained
+  - desktop 1280×720 and mobile 360×640 browser validation passed
+  - no hit/damage/projectile/phase truth moved into presentation
+- **B7 — Core Combat VFX Library — ACTIVE**
+  - audit existing V2 primitive/event ownership before replacement
+  - establish reusable V3 primitives and projectile/status lifecycle budgets
+  - map simulation events to presentation-only slash / impact / pierce / explosion / elemental / sustain / control families
+  - retain bounded quality tiers, reduced motion and V2 fallback
 - **B8 — Skill Visual Mapping** — complete skill ecosystem coverage
 - **B9 — High-Tier Spectacle** — Hợp Đạo/Siêu Cấp/Thần Kỹ/Thần Bí Kỹ + 20 Rare signatures
 - **B10 — UI/HUD V3** — Survival/Duel/menu/Codex/tournament/results; desktop/mobile composition
@@ -101,4 +107,4 @@ GitHub `main` is canonical. Fetch latest SHA before edits. Commit every meaningf
 V0.20 requires normal production gameplay to use coherent V3 artwork, complete 13 fighter states, coherent required enemies, Ashen Sanctum V3, complete skill visual mapping, distinct high tiers, 20 Rare identities, coherent desktop/mobile UI/icons, unchanged gameplay truth, functional V2/vector fallback, no missing assets/runtime errors, desktop/mobile/performance/reduced-motion gates, historical V0.16–V0.19 regressions, exact Pages deployment, then V0.20 label promotion and final owner visual/gameplay test.
 
 ## Current continuation point
-**B0–B5 COMPLETE. B6 ACTIVE: add presentation-only lighting/shadow on top of the validated V3 fighter/arena stack, enforce quality/reduced-motion budgets, restore historical release-gate compatibility, and keep public/runtime label V0.19 until B14.**
+**B0–B6 COMPLETE. B7 ACTIVE: audit the existing Duel V2 VFX event model, build a reusable V3 combat-VFX layer with bounded primitive/projectile/status lifecycles, keep simulation authoritative, and retain V3→V2→vector fallback. Public/runtime label remains V0.19 until B14.**
