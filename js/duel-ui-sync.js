@@ -43,8 +43,28 @@
     document.head.appendChild(script);
   }
 
+  function extendV020RendererBootstrapWithVisualMap(){
+    if(typeof document==="undefined"||typeof window==="undefined")return;
+    const prior=Promise.resolve(window.__V020_RENDERER_V3_BOOTSTRAP__);
+    window.__V020_RENDERER_V3_BOOTSTRAP__=prior.then(()=>{
+      if(typeof window.getDuelVisualProfileV3==="function")return;
+      return new Promise((resolve,reject)=>{
+        const existing=document.querySelector('script[data-v020-skill-visual-map]');
+        if(existing){if(typeof window.getDuelVisualProfileV3==="function")resolve();else existing.addEventListener('load',resolve,{once:true});return;}
+        const script=document.createElement('script');
+        script.src='js/duel-skill-visual-map-v3.js?v=020-b8';
+        script.async=false;
+        script.dataset.v020SkillVisualMap='true';
+        script.onload=()=>{window.refreshDuelVisualMapV3?.();resolve();};
+        script.onerror=()=>reject(new Error('Failed to load V0.20 Duel skill visual map'));
+        document.head.appendChild(script);
+      });
+    }).catch(error=>{console.warn('V0.20 skill visual map unavailable; semantic VFX heuristic fallback remains active.',error);});
+  }
+
   syncDuelReleaseUi();
   bootstrapV020EnemyPresentation();
+  extendV020RendererBootstrapWithVisualMap();
   window.syncDuelPrototypeCount=syncDuelReleaseUi;
   window.syncDuelReleaseUi=syncDuelReleaseUi;
 })();
