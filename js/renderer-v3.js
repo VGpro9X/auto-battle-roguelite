@@ -5,39 +5,23 @@
   const REQUIRED_ANCHORS = ['head','chest','leftHand','rightHand','feet','front','back','target'];
   const REQUIRED_ARENA_LAYERS = ['sky','far','mid','ambient','floor','foreground'];
   const QUALITY = new Set(['full','balanced','low']);
-  const DEFAULT_FRAME_WIDTH = 256;
-  const DEFAULT_FRAME_HEIGHT = 256;
 
   function normalizeQuality(value) {
     const q = String(value || '').toLowerCase();
     return QUALITY.has(q) ? q : 'balanced';
   }
 
-  function mirrorAnchorFrame(frame, frameWidth=DEFAULT_FRAME_WIDTH) {
-    const mirrored = {};
-    for (const name of REQUIRED_ANCHORS) {
-      const point = frame && frame[name];
-      if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) continue;
-      mirrored[name] = { x: frameWidth - point.x, y: point.y };
-    }
-    return mirrored;
-  }
-
-  function validateAnchorFrame(frame, frameWidth=DEFAULT_FRAME_WIDTH, frameHeight=DEFAULT_FRAME_HEIGHT) {
+  function validateAnchorFrame(frame) {
     const errors = [];
     if (!frame || typeof frame !== 'object') return { ok: false, errors: ['anchor frame missing'] };
     for (const name of REQUIRED_ANCHORS) {
       const point = frame[name];
-      if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) {
-        errors.push('invalid anchor: ' + name);
-        continue;
-      }
-      if (point.x < 0 || point.x > frameWidth || point.y < 0 || point.y > frameHeight) errors.push('anchor out of bounds: ' + name);
+      if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) errors.push('invalid anchor: ' + name);
     }
     return { ok: errors.length === 0, errors };
   }
 
-  function validateFighterStateEntry(stateId, entry, frameWidth=DEFAULT_FRAME_WIDTH, frameHeight=DEFAULT_FRAME_HEIGHT) {
+  function validateFighterStateEntry(stateId, entry) {
     const errors = [];
     if (!REQUIRED_STATES.includes(stateId)) errors.push('unknown state: ' + stateId);
     if (!entry || typeof entry !== 'object') return { ok: false, errors: errors.concat(['state entry missing']) };
@@ -47,7 +31,7 @@
     if (!Number.isFinite(entry.fps) || entry.fps <= 0) errors.push('invalid fps');
     if (typeof entry.loop !== 'boolean') errors.push('loop flag missing');
     if (!Array.isArray(entry.anchors) || entry.anchors.length !== entry.frameCount) errors.push('anchor frame count mismatch');
-    else entry.anchors.forEach((frame,index)=>{const check=validateAnchorFrame(frame,frameWidth,frameHeight);for(const error of check.errors)errors.push('frame '+index+': '+error);});
+    else entry.anchors.forEach((frame,index)=>{const check=validateAnchorFrame(frame);for(const error of check.errors)errors.push('frame '+index+': '+error);});
     return { ok: errors.length === 0, errors };
   }
 
@@ -65,7 +49,7 @@
       for (const [stateId,entry] of Object.entries(manifest.states)) {
         if (!entry) continue;
         if (entry.status === 'production') {
-          const check = validateFighterStateEntry(stateId,entry,manifest.frameWidth,manifest.frameHeight);
+          const check = validateFighterStateEntry(stateId,entry);
           for (const error of check.errors) errors.push(stateId + ': ' + error);
         }
       }
@@ -90,13 +74,29 @@
       ready: false,
       reason: 'not-initialized',
       fighterManifest: null,
-      arenaManifest: null
+      arenaManifest: null,
+      supplementalLoaded: false
     };
 
     async function loadJson(url) {
       const response = await fetch(url, { cache: 'no-cache' });
       if (!response.ok) throw new Error('HTTP ' + response.status + ' for ' + url);
       return response.json();
+    }
+
+    async function mergeAshWandererSupplement(fighter) {
+      if (!fighter || fighter.id !== 'ash-wanderer') return fighter;
+      const url = opts.fighterSupplement || 'assets/v020/fighters/ash-wanderer/b3-final-states.json';
+      try {
+        const extra = await loadJson(url);
+        if (extra && extra.states && typeof extra.states === 'object') {
+          fighter.states = Object.assign({}, fighter.states || {}, extra.states);
+          state.supplementalLoaded = true;
+        }
+      } catch (_) {
+        state.supplementalLoaded = false;
+      }
+      return fighter;
     }
 
     async function initialize() {
@@ -107,6 +107,7 @@
       try {
         const root = await loadJson(opts.rootManifest || 'assets/v020/manifest.json');
         const fighter = await loadJson('assets/v020/' + root.fighter.manifest);
+        await mergeAshWandererSupplement(fighter);
         const arena = await loadJson('assets/v020/' + root.arena.manifest);
         const fighterCheck = validateFighterManifest(fighter);
         const arenaCheck = validateArenaManifest(arena);
@@ -124,15 +125,13 @@
     }
 
     function snapshot() {
-      return { enabled: state.enabled, ready: state.ready, quality: state.quality, reason: state.reason };
+      return { enabled: state.enabled, ready: state.ready, quality: state.quality, reason: state.reason, supplementalLoaded: state.supplementalLoaded };
     }
 
     function resolveFighterState(semanticState) {
       const key = REQUIRED_STATES.includes(semanticState) ? semanticState : 'idle';
       const entry = state.fighterManifest && state.fighterManifest.states ? state.fighterManifest.states[key] : null;
-      const fw = state.fighterManifest?.frameWidth || DEFAULT_FRAME_WIDTH;
-      const fh = state.fighterManifest?.frameHeight || DEFAULT_FRAME_HEIGHT;
-      const check = entry ? validateFighterStateEntry(key,entry,fw,fh) : { ok:false, errors:['state missing'] };
+      const check = entry ? validateFighterStateEntry(key,entry) : { ok:false, errors:['state missing'] };
       return check.ok ? { renderer: 'v3', state: key, entry } : { renderer: 'v2', state: key, entry: null, reason: check.errors.join('; ') };
     }
 
@@ -147,8 +146,8 @@
       return state.quality;
     }
 
-    return { initialize, snapshot, setQuality, resolveFighterState, resolveArenaLayer, validateFighterManifest, validateArenaManifest, validateFighterStateEntry, validateAnchorFrame, mirrorAnchorFrame };
+    return { initialize, snapshot, setQuality, resolveFighterState, resolveArenaLayer, validateFighterManifest, validateArenaManifest, validateFighterStateEntry };
   }
 
-  global.AutoBattleRendererV3 = { create: createRendererV3, validateFighterManifest, validateArenaManifest, validateFighterStateEntry, validateAnchorFrame, mirrorAnchorFrame, REQUIRED_STATES: REQUIRED_STATES.slice(), REQUIRED_ANCHORS: REQUIRED_ANCHORS.slice(), REQUIRED_ARENA_LAYERS: REQUIRED_ARENA_LAYERS.slice() };
+  global.AutoBattleRendererV3 = { create: createRendererV3, validateFighterManifest, validateArenaManifest, validateFighterStateEntry, REQUIRED_STATES: REQUIRED_STATES.slice(), REQUIRED_ANCHORS: REQUIRED_ANCHORS.slice(), REQUIRED_ARENA_LAYERS: REQUIRED_ARENA_LAYERS.slice() };
 })(typeof window !== 'undefined' ? window : globalThis);
