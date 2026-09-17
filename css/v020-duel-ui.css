@@ -90,23 +90,23 @@
 /* Combat HUD V3. Gameplay canvas and combat state stay untouched. */
 #gameWrap .duelCombatRoot{background:#07090d}
 #gameWrap .duelCombatHud{padding:max(12px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
-#gameWrap .duelStageHud,#gameWrap .duelPhaseHud,#gameWrap .duelAbortButton{
+#gameWrap .duelCombatHud .duelStageHud,#gameWrap .duelCombatHud .duelPhaseHud,#gameWrap .duelCombatHud .duelAbortButton{
   border-color:rgba(205,178,118,.20);
   border-radius:8px;
   background:linear-gradient(180deg,rgba(18,23,29,.84),rgba(7,10,14,.80));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 6px 20px rgba(0,0,0,.20);
   backdrop-filter:blur(9px) saturate(.82);
 }
-#gameWrap .duelStageHud{color:#d4c6a8}
-#gameWrap .duelPhaseHud{color:#d9e1e6;min-width:96px;text-align:center}
-#gameWrap .duelAbortButton{color:#b6c0c8}
-#gameWrap .duelPhaseHud.huyết-chiến{color:#efb0a8;border-color:rgba(207,108,94,.38);background:linear-gradient(180deg,rgba(61,25,25,.86),rgba(20,12,15,.84))}
-#gameWrap .duelPhaseHud.tử-chiến{color:#ffe4df;border-color:rgba(218,91,82,.55);background:linear-gradient(180deg,rgba(91,24,25,.90),rgba(32,10,15,.88))}
+#gameWrap .duelCombatHud .duelStageHud{color:#d4c6a8}
+#gameWrap .duelCombatHud .duelPhaseHud{color:#d9e1e6;min-width:96px;text-align:center}
+#gameWrap .duelCombatHud .duelAbortButton{color:#b6c0c8}
+#gameWrap .duelCombatHud .duelPhaseHud.huyết-chiến{color:#efb0a8;border-color:rgba(207,108,94,.38);background:linear-gradient(180deg,rgba(61,25,25,.86),rgba(20,12,15,.84))}
+#gameWrap .duelCombatHud .duelPhaseHud.tử-chiến{color:#ffe4df;border-color:rgba(218,91,82,.55);background:linear-gradient(180deg,rgba(91,24,25,.90),rgba(32,10,15,.88))}
 #gameWrap .duelHealthRow{grid-template-columns:minmax(220px,1fr) 118px minmax(220px,1fr);gap:14px;margin-top:11px}
 #gameWrap .duelFighterHud{position:relative;max-width:520px;padding:8px 10px 9px;border:1px solid rgba(126,170,197,.16);border-radius:10px;background:linear-gradient(150deg,rgba(10,16,21,.62),rgba(5,8,12,.50));box-shadow:0 8px 24px rgba(0,0,0,.16)}
 #gameWrap .duelFighterHud.right{border-color:rgba(201,123,108,.17);background:linear-gradient(210deg,rgba(27,13,15,.58),rgba(7,8,11,.50))}
 #gameWrap .duelFighterHud b{color:#edf0ec;letter-spacing:.035em}
-#gameWrap .duelHealthBar{height:15px;border:1px solid rgba(224,226,218,.16);border-radius:5px;background:rgba(2,4,6,.64);box-shadow:inset 0 2px 5px rgba(0,0,0,.56)}
+#gameWrap .duelHealthBar{height:15px;border:1px solid rgba(224,226,218,.16);border-radius:5px;background:linear-gradient(180deg,rgba(2,4,6,.86),rgba(7,10,13,.68));box-shadow:inset 0 2px 5px rgba(0,0,0,.56)}
 #gameWrap .duelHealthBar i{background:linear-gradient(90deg,#456f86,#86b4c7);box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
 #gameWrap .duelFighterHud.right .duelHealthBar i{background:linear-gradient(270deg,#78423d,#cd7568)}
 #gameWrap .duelHealthBar em{background:repeating-linear-gradient(135deg,rgba(198,224,240,.54) 0 5px,rgba(128,173,199,.34) 5px 9px);z-index:2}
@@ -134,7 +134,7 @@
   #gameWrap .duelHealthBar{height:12px;border-radius:4px}
   #gameWrap .duelRoundCenter{padding:4px 2px 5px}
   #gameWrap .duelRoundCenter strong{font-size:23px}
-  #gameWrap .duelStageHud,#gameWrap .duelPhaseHud,#gameWrap .duelAbortButton{padding:6px 7px;border-radius:7px}
+  #gameWrap .duelCombatHud .duelStageHud,#gameWrap .duelCombatHud .duelPhaseHud,#gameWrap .duelCombatHud .duelAbortButton{padding:6px 7px;border-radius:7px}
 }
 @media(max-width:480px){
   #gameWrap .duelIntroHero p,#gameWrap .duelCombatRules>span{font-size:10px}
@@ -144,9 +144,9 @@
   #gameWrap .duelFighterHud{padding:5px}
   #gameWrap .duelRoundCenter #duelRoundScore{font-size:14px}
   #gameWrap .duelRoundCenter strong{font-size:20px}
-  #gameWrap .duelPhaseHud{min-width:0}
+  #gameWrap .duelCombatHud .duelPhaseHud{min-width:0}
 }
 @media(prefers-reduced-motion:reduce){
-  #gameWrap .duelPhaseHud.tử-chiến{animation:none!important;box-shadow:0 0 0 1px rgba(218,91,82,.22),0 0 18px rgba(145,42,42,.18)}
+  #gameWrap .duelCombatHud .duelPhaseHud.tử-chiến{animation:none!important;box-shadow:0 0 0 1px rgba(218,91,82,.22),0 0 18px rgba(145,42,42,.18)}
   #gameWrap .duelHealthBar i,#gameWrap .duelHealthBar em{transition:none!important}
 }
