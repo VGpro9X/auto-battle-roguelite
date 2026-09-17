@@ -38,7 +38,7 @@ for(const forbiddenOwned of ["round_start","round_end","ko"]){
   assert.ok(!ownedLine.includes(`"${forbiddenOwned}"`),`${forbiddenOwned} must remain available to G5D fallback presentation`);
 }
 
-assert.match(ui,/duelResultBadge"\)\.textContent=champion\?"NHÀ VÔ ĐỊCH":"BỊ LOẠI"/,'result badge must remain driven by the existing champion boolean');
+assert.match(ui,/setText\("duelResultBadge",champion\?"NHÀ VÔ ĐỊCH":"BỊ LOẠI"\)/,'result badge must remain driven by the existing champion boolean');
 assert.match(polish,/label==="NHÀ VÔ ĐỊCH"/,'champion class must mirror the existing result badge');
 assert.match(polish,/label==="BỊ LOẠI"/,'eliminated class must mirror the existing result badge');
 assert.match(polish,/MutationObserver\(sync\)/,'result presentation must follow badge updates without replacing result logic');
