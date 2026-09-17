@@ -1,6 +1,6 @@
 # V0.20 — B4 Enemy Visual Families
 
-Status: **ACTIVE — RUNTIME MAPPING LOCKED**
+Status: **ACTIVE — RUNTIME ASSETS + FALLBACK INTEGRATED**
 
 B4 upgrades enemy presentation only. Enemy HP, radius, speed, damage, spawning, elite chance, contact damage, XP, drops, allied conversion, statuses and AI remain owned by the existing simulation.
 
@@ -26,32 +26,41 @@ B4 maps only those real presentation roles:
 `Wraith` stays in the Art Bible as a future visual family vocabulary but is **not produced as a runtime enemy in B4** because no current runtime role requires it.
 
 ## 3. Stable assignment
-Family selection must use the existing presentation archetype result. It must not change or write `enemy.speed`, `enemy.hp`, `enemy.dmg`, `enemy.r`, `enemy.elite`, spawn probability or targeting.
+Family selection uses the existing `enemyArchetypeV014(enemy)` result. It does not write `enemy.speed`, `enemy.hp`, `enemy.dmg`, `enemy.r`, `enemy.elite`, spawn probability or targeting.
 
-A normal enemy must not randomly change family mid-life. Existing `_v14Archetype` / speed-derived classification can be reused as the stable presentation source.
+A normal enemy does not randomly change family mid-life because the existing presentation archetype is cached on the enemy.
 
-## 4. Runtime art contract
-Initial runtime family assets live under:
-- `assets/v020/enemies/beast/`
-- `assets/v020/enemies/fallen/`
-- `assets/v020/enemies/construct/`
-- `assets/v020/enemies/abyssal/`
+## 4. Runtime assets
+Integrated transparent runtime assets:
+- `assets/v020/enemies/beast/beast-runner.svg`
+- `assets/v020/enemies/fallen/fallen-hunter.svg`
+- `assets/v020/enemies/construct/construct-anchor.svg`
+- `assets/v020/enemies/abyssal/abyssal-elite.svg`
 
-B4 first-pass assets are transparent vector runtime silhouettes, not posters. Each family needs readable neutral/move/contact-hit identity at Survival scale. Elite/Abyssal gets a distinct persistent signature but not a gameplay aura.
+Each file is a 128×128 transparent SVG with no poster/UI text.
 
-## 5. Status/allied compatibility
-Visual family art must leave room for existing overlays:
-- allied/bribed indication
-- hit flash
-- poison
-- burn
-- chill/frost
-- mark/status graphics
-- health bar
+## 5. Runtime presentation path
+`js/v020-enemy-presentation.js` now:
+- maps existing archetypes to the four V0.20 families;
+- preloads the corresponding runtime SVG;
+- draws the family asset using existing enemy position/radius and player-facing information;
+- keeps family-specific cosmetic bob/scale only;
+- preserves hit feedback and allied tint at presentation level;
+- redraws existing enemy status visuals for compatibility;
+- calls the original V0.14 enemy renderer when a V0.20 asset is unavailable or fails to load.
 
-Color alone cannot be the only status cue. Family silhouette must remain identifiable when hit/allied/status tints are active.
+The module is bootstrapped after the V0.14 presentation layer from the existing page script chain. Failure to load the B4 module leaves V0.14 active.
 
-## 6. Drawing ownership
+## 6. Status/allied compatibility
+The V0.20 path explicitly preserves:
+- allied/bribed ring/tint
+- hit flash/brightness
+- poison/burn/chill/mark overlays through `drawEnemyStatusVisual`
+- base simulation health bar remains owned by the underlying draw pass
+
+Color is supplementary; each family has a distinct silhouette.
+
+## 7. Drawing ownership
 The B4 presentation layer may read:
 - enemy position/radius
 - `elite`
@@ -61,26 +70,31 @@ The B4 presentation layer may read:
 - player position for facing
 - current presentation time
 
-It may decide cosmetic facing, bob, limb sway, contact anticipation, shadow and family-specific ornament motion.
+It may decide cosmetic facing, bob, shadow, family scale and presentation tint.
 
-It may not decide collision, hit success, contact range, damage, knockback, target choice, movement vector, death, XP or drop truth.
+It does not decide collision, hit success, contact range, damage, knockback, target choice, movement vector, death, XP or drop truth.
 
-## 7. Acceptance gates
-B4 is complete when:
-1. all four actual runtime archetypes resolve to V0.20 families;
-2. each mapped family has a runtime-clean asset/presentation path;
-3. elite remains visibly distinct at compact scale;
-4. allied/status overlays remain readable;
-5. missing V0.20 family art falls back to V0.14/base enemy presentation;
-6. no Wraith or other unused gameplay role is invented;
-7. Survival simulation values remain untouched;
-8. desktop/mobile smoke validation shows no runtime errors.
+## 8. Validation
+Static/runtime contract gate:
+- `tests/v020-b4-enemy-family-runtime-smoke.js`
 
-## 8. Current implementation order
-1. Build family resolver and fallback contract.
-2. Add Fallen / Beast / Construct / Abyssal runtime assets.
-3. Hook V0.20 family drawing after the existing enemy simulation update and replace presentation only.
-4. Add deterministic smoke gate covering mapping, fallback and no gameplay mutation.
-5. Validate statuses/allied/elite readability.
+The gate checks:
+- four runtime assets exist and are runtime-clean;
+- runner→Beast, hunter→Fallen, anchor→Construct, elite→Abyssal mapping;
+- Wraith is not invented;
+- V0.14 fallback exists;
+- status compatibility exists;
+- B4 bootstrap is wired;
+- presentation code does not assign enemy speed/HP/damage/radius/elite truth;
+- core simulation elite/speed rules remain present.
+
+This gate has been added to the repository; it has not been claimed as executed by this connector session.
+
+## 9. Remaining B4 gate
+Before B4 closes:
+1. browser desktop visual smoke;
+2. compact/mobile visual smoke;
+3. verify allied/status overlays and elite readability in live Survival rendering;
+4. verify missing-asset fallback produces no runtime error.
 
 B4 does not alter Duel fighter/tournament logic.
