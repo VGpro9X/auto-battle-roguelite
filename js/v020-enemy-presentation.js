@@ -79,3 +79,17 @@ root.drawEnemySilhouetteV014=function(enemy){
   drawV020Enemy(enemy,family,image);
 };
 })();
+
+(()=>{
+  if(typeof window==='undefined'||typeof document==='undefined')return;
+  function loadSurvivalDivineVfx(){
+    if(document.querySelector('script[data-v020-survival-divine-vfx]'))return;
+    const script=document.createElement('script');
+    script.src='js/v020-survival-divine-vfx.js?v=020-b9';
+    script.dataset.v020SurvivalDivineVfx='1';
+    script.async=false;
+    document.head.appendChild(script);
+  }
+  if(document.readyState==='complete')loadSurvivalDivineVfx();
+  else window.addEventListener('load',loadSurvivalDivineVfx,{once:true});
+})();
