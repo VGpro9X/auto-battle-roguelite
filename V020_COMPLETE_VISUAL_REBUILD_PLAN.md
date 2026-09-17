@@ -1,6 +1,6 @@
 # V0.20 — Complete Visual Rebuild Plan
 
-Status: **APPROVED / IN DEVELOPMENT — B0–B3 COMPLETE, B4 ACTIVE**
+Status: **APPROVED / IN DEVELOPMENT — B0–B4 COMPLETE, B5 ACTIVE**
 
 Canonical source: GitHub `main` in `VGpro9X/auto-battle-roguelite`.
 
@@ -23,6 +23,7 @@ The detailed production truth is split into locked documents:
 - `V020_CONCEPT_GENERATION_BRIEFS.md` — first production concept briefs for Ash Wanderer and Ashen Sanctum V3.
 - `V020_ASH_WANDERER_MASTER_SPEC.md` — canonical fighter identity, scale/root/mirroring/anchor and B3 animation constraints.
 - `V020_B3_ANIMATION_PRODUCTION_SPEC.md` — completed 13-state runtime fighter production and validation contract.
+- `V020_B4_ENEMY_VISUAL_SPEC.md` — completed enemy-family audit, runtime mapping, fallback and browser validation.
 
 New runtime work is isolated under `assets/v020/`; V0.18 production assets remain intact as fallback.
 
@@ -54,35 +55,27 @@ FULL/BALANCED/LOW affect presentation cost only, never gameplay truth.
 ## Checkpoint roadmap
 - **B0 — Visual Audit & Art Bible — COMPLETE ✅**
 - **B1 — Renderer V3 Foundation — COMPLETE ✅**
-  - isolated V0.20 asset manifests/loader/validator
-  - locked semantic contracts and quality tiers
-  - runtime Duel bootstrap and deterministic V3→V2→vector fallback
-  - foundation/bridge/runtime-wiring smoke gates under `tests/`
 - **B2 — Fighter Master Design — COMPLETE ✅**
-  - Ash Wanderer canonical identity locked
-  - turnaround/material/silhouette direction selected
-  - gameplay target remains 256×256 logical frame / 176 world-width compatibility
-  - 96px and 64px readability stress-review rules locked
-  - right-facing production orientation and mirror constraints locked
-  - eight-anchor rules locked
-  - all 13 semantic pose intents and initial frame targets locked
-  - generated concept/master board explicitly treated as reference, never cropped directly into runtime
 - **B3 — Fighter Animation Production — COMPLETE ✅**
   - all 13 semantic states have dedicated runtime sheets
-  - scale/root/crop normalized to 256×256 logical cells / 176 display width
   - eight anchors authored for every frame
-  - state-relative timing and loop/non-loop behavior locked
-  - real V3 partial replacement suppresses the corresponding V2 fighter body instead of drawing over it
-  - shield/frost/orbit presentation retained for V3 fighters
-  - B3.3 reaction/defeat states are merged through `b3-final-states.json`
-  - 13/13 runtime coverage gate added under `tests/`
-  - no combat/AI/tournament truth moved into presentation
-- **B4 — Enemy Visual Families — ACTIVE**
-  - audit actual enemy types used by Survival/Duel before producing art
-  - establish Fallen / Beast / Wraith / Construct / Abyssal silhouettes only where gameplay roles require them
-  - build runtime enemy visual contract with role/state/status/elite readability
-  - preserve all existing enemy movement/combat/XP/drop truth
-- **B5 — Ashen Sanctum V3** — six production layers, parallax/foreground/atmosphere, desktop/mobile validation
+  - real V3 partial replacement suppresses corresponding V2 fighter bodies
+  - 13/13 coverage validation present
+- **B4 — Enemy Visual Families — COMPLETE ✅**
+  - actual runtime enemy model audited before art production
+  - runner→Beast, hunter→Fallen, anchor→Construct, elite→Abyssal
+  - Wraith not invented because no current runtime role requires it
+  - four transparent V0.20 runtime enemy assets integrated
+  - allied/status/hit compatibility retained
+  - V0.14 fallback retained for missing assets
+  - no enemy simulation truth changed
+  - GitHub Actions desktop/mobile browser validation passed
+- **B5 — Ashen Sanctum V3 — ACTIVE**
+  - preserve logical geometry 1000×560, floorY 475, bounds 54–946
+  - produce six V3 runtime layers: sky / far / mid / ambient / floor / foreground
+  - retain V2 arena fallback until V3 layer set validates as a whole
+  - validate parallax, foreground occlusion, compact/mobile composition and runtime asset loading
+  - do not alter collision/bounds/camera simulation truth
 - **B6 — Lighting & Shadow** — contact shadows, local glow/impact lighting, atmosphere states, quality tiers
 - **B7 — Core Combat VFX Library** — primitives/projectiles/status/lifecycle budgets
 - **B8 — Skill Visual Mapping** — complete skill ecosystem coverage
@@ -100,4 +93,4 @@ GitHub `main` is canonical. Fetch latest SHA before edits. Commit every meaningf
 V0.20 requires normal production gameplay to use coherent V3 artwork, complete 13 fighter states, coherent required enemies, Ashen Sanctum V3, complete skill visual mapping, distinct high tiers, 20 Rare identities, coherent desktop/mobile UI/icons, unchanged gameplay truth, functional V2/vector fallback, no missing assets/runtime errors, desktop/mobile/performance/reduced-motion gates, historical V0.16–V0.19 regressions, exact Pages deployment, then V0.20 label promotion and final owner visual/gameplay test.
 
 ## Current continuation point
-**B0–B3 COMPLETE. B4 ACTIVE: audit the actual runtime enemy model first, then produce only the enemy families/archetypes that map to real gameplay entities. Public/runtime label remains V0.19 until B14.**
+**B0–B4 COMPLETE. B5 ACTIVE: build Ashen Sanctum V3 as a six-layer runtime environment using the locked V0.18 geometry and parallax contract, validate complete-set fallback and desktop/mobile composition, and keep public/runtime label V0.19 until B14.**
