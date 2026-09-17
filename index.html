@@ -37,7 +37,6 @@
         <button id="pauseButton" class="iconButton" aria-label="Tạm dừng">Ⅱ</button>
       </div>
     </div>
-
     <div id="skillBar"></div>
     <button id="buildTrackerToggle" class="buildTrackerToggle" type="button" aria-expanded="false" aria-controls="buildTracker">☰ BỘ KỸ NĂNG</button>
     <div id="buildTracker" class="panel buildTracker">
@@ -154,12 +153,12 @@
 <script src="js/duel-rares-r1.js?v=017duel-c4a-r1"></script>
 <script src="js/duel-rares-r2.js?v=017duel-c4b-r1"></script>
 <script src="js/v019-duel-ai.js?v=019-release-r1"></script>
-<script src="js/duel-renderer.js?v=020-b3"></script>
+<script src="js/duel-renderer.js?v=020-b5"></script>
 <script>
 window.DUEL_RENDERER_V3_DEFAULT = true;
 window.DUEL_RENDERER_V3_QUALITY = 'balanced';
 window.__V020_RENDERER_V3_BOOTSTRAP__ = Promise.resolve(window.__V018_DUEL_RENDERER_READY__).then(function(){
-  return ['js/renderer-v3.js?v=020-b3','js/duel-renderer-v3-bridge.js?v=020-b3'].reduce(function(chain,src){
+  return ['js/renderer-v3.js?v=020-b5','js/duel-renderer-v3-bridge.js?v=020-b5'].reduce(function(chain,src){
     return chain.then(function(){return new Promise(function(resolve,reject){var s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=function(){reject(new Error('Failed to load '+src));};document.head.appendChild(s);});});
   },Promise.resolve());
 }).then(function(){
