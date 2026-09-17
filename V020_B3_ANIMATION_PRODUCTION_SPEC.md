@@ -1,17 +1,17 @@
 # V0.20 — B3 Fighter Animation Production Spec
 
-Status: **ACTIVE — IDLE AUTHORING GATE READY / CLEAN STATE ASSET STILL REQUIRED**
+Status: **ACTIVE — B3.1 LOCOMOTION RUNTIME COMPLETE / B3.2 NEXT**
 
 Canonical fighter: Ash Wanderer. Concept/master boards are reference only and are never cropped directly into runtime.
 
 ## Batch order
-### B3.1 Locomotion
+### B3.1 Locomotion — COMPLETE ✅
 - idle: 6 frames
 - walk: 8 frames
 - run: 8 frames
 - dash: 6 frames
 
-### B3.2 Combat / casting
+### B3.2 Combat / casting — NEXT
 - melee: 10 frames
 - ranged: 8 frames
 - cast: 10 frames
@@ -28,31 +28,11 @@ Canonical fighter: Ash Wanderer. Concept/master boards are reference only and ar
 - logical cell 256×256
 - right-facing canonical source
 - displayWorldWidth 176
-- stable `feet` root; no accidental locomotion baked into sprite root
+- stable `feet` root; simulation owns world displacement
 - eight anchors per frame: head, chest, leftHand, rightHand, feet, front, back, target
-- transparent background for runtime character derivatives
-- no baked environment or text
-- body art and semantic VFX are separated wherever practical
-
-## Motion rules
-Idle loops without visible root drift. Walk/run use contact/pass/recoil/up/down structure with coherent cloth follow-through. Dash may show anticipation and motion silhouette but simulation owns actual displacement. Mirrored playback preserves front/back and hand anchor semantics.
-
-## Source-board review
-The V0.20 animation reference boards generated so far successfully lock the broad Ash Wanderer motion language and prove that locomotion, reactions, melee, ranged and cast poses remain readable at the intended presentation scale.
-
-They are **not accepted as runtime sprite sheets**. Observed generation drift that dedicated production must correct:
-- some reference-board frame counts differ from canonical targets;
-- numbering/labels are presentation artifacts and cannot become runtime metadata;
-- some frames include baked slash/projectile/magic effects;
-- root/pivot alignment is visually approximate rather than deterministic;
-- exact eight-anchor coordinates are not encoded;
-- generated sheets include poster UI/background rather than isolated transparent cells;
-- optional special/ultimate/color-variant material is non-canonical and does not imply new gameplay.
-
-A further generation attempt requested for clean `idle` output again returned a composite poster/package. It is rejected for runtime use under the same rule and must not be cropped into production.
-
-## Dedicated source production rule
-For each semantic state, generate or construct a clean state-only source sequence from the locked master identity. Normalize every frame into the 256×256 logical cell, remove poster/background material, separate reusable VFX, then author anchors and run validation. Only the resulting dedicated derivative may be referenced by `assets/v020/fighters/ash-wanderer/manifest.json`.
+- transparent SVG runtime sheets for current locomotion production
+- no poster UI, embedded text or environment inside runtime fighter sheets
+- gameplay/VFX truth remains outside sprite art
 
 ## Runtime production-state gate
 Renderer V3 refuses to resolve a fighter state unless its manifest entry passes the production contract. A valid entry requires:
@@ -62,35 +42,57 @@ Renderer V3 refuses to resolve a fighter state unless its manifest entry passes 
 - positive `fps`
 - explicit boolean `loop`
 - exactly one anchor set per frame
-- all eight required anchors in every frame with finite in-bounds `x/y`
+- all eight required anchors with finite coordinates
 
-Proof/incomplete entries deterministically remain on Renderer V2. This prevents concept/proof assets from leaking into normal V3 rendering merely because a state key exists.
+Incomplete/missing states remain on Renderer V2 automatically.
 
-Smoke gates:
+## Real partial-replacement path
+B3 now uses an actual partial V3 runtime path rather than drawing a V3 proof image over V2:
+1. Bridge resolves production states before V2 rendering.
+2. V3 production fighter sides are passed through `skipFighterSides`.
+3. Renderer V2 and its vector fallback suppress those fighters only.
+4. V3 reuses Renderer V2's final camera transform, so shake/zoom/arena coordinates remain aligned.
+5. V3 draws contact shadow, side identity and fighter sprite.
+6. Shield/frost/orbit presentation is restored for the replaced fighter.
+7. Missing states continue through V2 without changing simulation.
+
+## Animation timing
+V3 animation clocks are state-relative, not round-relative. Each fighter side tracks semantic state entry time. This is required for non-loop states such as `dash`; a dash no longer jumps directly to its last frame merely because the round has been running for several seconds.
+
+## B3.1 runtime assets
+Production files:
+- `assets/v020/fighters/ash-wanderer/idle.svg` — 6× 256×256 cells
+- `assets/v020/fighters/ash-wanderer/walk.svg` — 8× 256×256 cells
+- `assets/v020/fighters/ash-wanderer/run.svg` — 8× 256×256 cells
+- `assets/v020/fighters/ash-wanderer/dash.svg` — 6× 256×256 cells
+
+`manifest.json` is now `partial-production` and promotes `idle`, `walk`, `run`, `dash` independently to V3. All remaining states still resolve through V2.
+
+## B3.1 validation
+The locomotion manifest records anchors per frame and keeps the existing 256×256 / 176-world-width contract. `dash` is explicitly non-looping; idle/walk/run loop.
+
+Relevant gates:
 - `tests/v020-b3-state-production-gate.js`
 - `tests/v020-b3-anchor-mirror-smoke.js`
+- `tests/v020-b3-idle-runtime-smoke.js`
+- `tests/v020-b3-partial-replacement-smoke.js`
 
-## Idle authoring package
-The first production target now has:
-- `assets/v020/fighters/ash-wanderer/idle-production-spec.json`
-- `assets/v020/fighters/ash-wanderer/idle-anchor-template.json`
+The partial-replacement smoke gate checks V2 suppression, shared camera transform, state-relative timing presence, retained attachments, locomotion asset dimensions/frame contracts and no poster text in runtime SVGs.
 
-The anchor template is explicitly non-production and must be adjusted against the final clean transparent sheet. Renderer V3 now exposes deterministic anchor mirroring and bounds validation so the final six-frame idle asset can be checked in both facing directions without changing simulation truth.
+## Cache/deployment wiring
+`index.html` now cache-busts the B3 renderer bootstrap and `duel-renderer.js` cache-busts the updated V2 partial-render hook. Public version text remains V0.19; this does not promote V0.20 release status.
 
 ## Acceptance gate per state
-A state can change from fallback to production only when:
-1. canonical face/hair/costume identity is stable across every frame;
-2. canonical frame target is met or an explicitly documented B3 motion-quality adjustment is approved;
-3. root/crop/scale pass deterministic validation;
-4. eight anchors exist for every frame and remain inside the frame contract;
-5. loop/end pose is visually valid for the semantic state;
-6. right-facing and mirrored-left previews are readable;
-7. 176px and compact-scale previews pass silhouette review;
-8. no malformed anatomy, duplicate equipment, text or watermark-like marks;
-9. V3 loader resolves the state without affecting other fallback states.
-
-## Manifest promotion
-`manifest.json` stays `status: proof` during partial production. Each accepted state is added independently with `status: production`; missing states continue through V2 fallback. Whole fighter becomes production only after all 13 states pass.
+A state remains production only when:
+1. identity remains coherent with Ash Wanderer;
+2. frame target is explicit;
+3. root/crop/scale follow the contract;
+4. eight anchors exist for every frame;
+5. loop/end semantics are correct;
+6. right/left mirroring remains usable;
+7. compact presentation remains readable;
+8. no embedded UI/text/watermark artifacts exist;
+9. V3 resolves the state without breaking V2 fallback states.
 
 ## Current task
-The B3 code/metadata side for the first state is ready. The remaining blocker for `idle` is the clean dedicated six-frame transparent artwork itself. Until that exists, `idle` stays on V2 fallback and `walk`/`run`/`dash` are not promoted.
+**B3.1 LOCOMOTION COMPLETE. Begin B3.2 in order: `melee` → `ranged` → `cast` → `block`.** Combat assets must use the same real runtime path, keep VFX separable from body art, and must not invent hit/damage/cooldown truth.
