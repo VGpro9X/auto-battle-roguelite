@@ -1,0 +1,42 @@
+name: V0.20 B9 high-tier spectacle validation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v020-b9-high-tier-spectacle-validation
+  cancel-in-progress: true
+
+jobs:
+  validate-high-tier-spectacle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Static B9 spectacle smoke
+        run: node tests/v020-b9-high-tier-spectacle-smoke.js
+
+      - name: Desktop/mobile runtime quality coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4181 >/tmp/v020-b9-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then echo "Chrome/Chromium not found"; exit 1; fi
+          run_case() {
+            name="$1"; size="$2"; quality="$3"; out="/tmp/v020-b9-${name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size="$size" --virtual-time-budget=20000 --dump-dom "http://127.0.0.1:4181/tests/v020-b9-high-tier-spectacle-browser-driver.html?expect=${name}&quality=${quality}" >"$out"
+            grep -q "V020_B9_HIGH_TIER_PASS ${name} quality=${quality}" "$out" || { cat "$out"; exit 1; }
+            grep "V020_B9_HIGH_TIER_PASS ${name} quality=${quality}" "$out"
+          }
+          run_case desktop 1280,720 full
+          run_case mobile 360,640 low
