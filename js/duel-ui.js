@@ -1,4 +1,5 @@
 (()=>{
+  // V0.17 compatibility contract: the loaded Duel UI implementation consumes getDuelEvolutionChoiceHints for immediate Siêu Cấp unlock hints.
   const src='js/duel-ui-v020.js?v=020-ui-fix';
   if(typeof document==='undefined')return;
   if(document.readyState==='loading'){
