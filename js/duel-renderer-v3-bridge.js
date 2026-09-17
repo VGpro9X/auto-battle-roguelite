@@ -36,9 +36,12 @@ function createBridge(canvas){
     lastV3Frames.set(fighter.side,{fighter,entry,index,worldScale});
   }
   function render(match,dt){
-    fallback.render(match,dt);lastV3Frames.clear();
-    const round=match&&match.currentRound;if(!round||!status.ready||!activeStates.length)return;
-    const tr=createTransform(canvas,match),player=round.fighters&&round.fighters.player,opponent=round.fighters&&round.fighters.opponent,pVisual=player&&resolveV3(player),oVisual=opponent&&resolveV3(opponent);
+    lastV3Frames.clear();
+    const round=match&&match.currentRound,player=round&&round.fighters&&round.fighters.player,opponent=round&&round.fighters&&round.fighters.opponent,pVisual=player&&resolveV3(player),oVisual=opponent&&resolveV3(opponent),v3Sides=[];
+    if(pVisual)v3Sides.push('player');if(oVisual)v3Sides.push('opponent');
+    fallback.render(match,dt,{skipFighterSides:v3Sides});
+    if(!round||!v3Sides.length)return;
+    const tr=typeof fallback.getLastTransform==='function'&&fallback.getLastTransform()||createTransform(canvas,match);
     if(pVisual)drawV3Fighter(player,round,tr,pVisual);
     if(oVisual)drawV3Fighter(opponent,round,tr,oVisual);
   }
