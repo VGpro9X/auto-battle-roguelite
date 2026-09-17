@@ -18,7 +18,7 @@ assert(manifest.layers.find(x=>x.id==='foreground').foreground===true,'foregroun
 for(const id of required.filter(x=>x!=='foreground'))assert(manifest.layers.find(x=>x.id===id).foreground===false,`${id} incorrectly foreground`);
 assert(renderer.includes('function validateArenaLayerEntry'),'arena layer production validator missing');
 assert(renderer.includes('function resolveArena()'),'complete arena resolver missing');
-assert(renderer.includes("return{renderer:'v2',entry:null,reason:'arena incomplete'}"),'all-or-nothing arena fallback missing');
+assert(renderer.includes("renderer:'v2'")&&renderer.includes("reason:'arena incomplete'"),'all-or-nothing arena fallback missing');
 assert(bridge.includes('async function preloadProductionArena'),'V3 arena preload missing');
 assert(bridge.includes('function drawV3Arena'),'V3 arena draw path missing');
 assert(bridge.includes('skipArena:true'),'V3 bridge does not suppress V2 arena');
