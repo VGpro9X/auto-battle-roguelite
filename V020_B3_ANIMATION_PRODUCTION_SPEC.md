@@ -1,6 +1,6 @@
 # V0.20 — B3 Fighter Animation Production Spec
 
-Status: **ACTIVE — PRODUCTION STATE GATE READY / DEDICATED IDLE ASSET NEXT**
+Status: **ACTIVE — IDLE AUTHORING GATE READY / CLEAN STATE ASSET STILL REQUIRED**
 
 Canonical fighter: Ash Wanderer. Concept/master boards are reference only and are never cropped directly into runtime.
 
@@ -49,31 +49,40 @@ They are **not accepted as runtime sprite sheets**. Observed generation drift th
 - generated sheets include poster UI/background rather than isolated transparent cells;
 - optional special/ultimate/color-variant material is non-canonical and does not imply new gameplay.
 
-Therefore no state is promoted to `production` from the boards themselves.
+A further generation attempt requested for clean `idle` output again returned a composite poster/package. It is rejected for runtime use under the same rule and must not be cropped into production.
 
 ## Dedicated source production rule
 For each semantic state, generate or construct a clean state-only source sequence from the locked master identity. Normalize every frame into the 256×256 logical cell, remove poster/background material, separate reusable VFX, then author anchors and run validation. Only the resulting dedicated derivative may be referenced by `assets/v020/fighters/ash-wanderer/manifest.json`.
 
 ## Runtime production-state gate
-Renderer V3 now refuses to resolve a fighter state unless its manifest entry passes the production contract. A valid entry requires:
+Renderer V3 refuses to resolve a fighter state unless its manifest entry passes the production contract. A valid entry requires:
 - `status: production`
 - non-empty `src`
 - positive integer `frameCount`
 - positive `fps`
 - explicit boolean `loop`
 - exactly one anchor set per frame
-- all eight required anchors in every frame with finite `x/y`
+- all eight required anchors in every frame with finite in-bounds `x/y`
 
 Proof/incomplete entries deterministically remain on Renderer V2. This prevents concept/proof assets from leaking into normal V3 rendering merely because a state key exists.
 
-Smoke gate: `tests/v020-b3-state-production-gate.js`.
+Smoke gates:
+- `tests/v020-b3-state-production-gate.js`
+- `tests/v020-b3-anchor-mirror-smoke.js`
+
+## Idle authoring package
+The first production target now has:
+- `assets/v020/fighters/ash-wanderer/idle-production-spec.json`
+- `assets/v020/fighters/ash-wanderer/idle-anchor-template.json`
+
+The anchor template is explicitly non-production and must be adjusted against the final clean transparent sheet. Renderer V3 now exposes deterministic anchor mirroring and bounds validation so the final six-frame idle asset can be checked in both facing directions without changing simulation truth.
 
 ## Acceptance gate per state
 A state can change from fallback to production only when:
 1. canonical face/hair/costume identity is stable across every frame;
 2. canonical frame target is met or an explicitly documented B3 motion-quality adjustment is approved;
 3. root/crop/scale pass deterministic validation;
-4. eight anchors exist for every frame;
+4. eight anchors exist for every frame and remain inside the frame contract;
 5. loop/end pose is visually valid for the semantic state;
 6. right-facing and mirrored-left previews are readable;
 7. 176px and compact-scale previews pass silhouette review;
@@ -84,4 +93,4 @@ A state can change from fallback to production only when:
 `manifest.json` stays `status: proof` during partial production. Each accepted state is added independently with `status: production`; missing states continue through V2 fallback. Whole fighter becomes production only after all 13 states pass.
 
 ## Current task
-The state-promotion safety gate is now implemented. Next active production target is a dedicated clean six-frame `idle` sequence, followed by normalization → eight anchors → V3 manifest integration → mirrored/fallback validation. Only after `idle` passes end-to-end do `walk`, `run` and `dash` enter dedicated production.
+The B3 code/metadata side for the first state is ready. The remaining blocker for `idle` is the clean dedicated six-frame transparent artwork itself. Until that exists, `idle` stays on V2 fallback and `walk`/`run`/`dash` are not promoted.
