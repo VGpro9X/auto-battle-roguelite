@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="../">
+<title>V0.20 B4 Enemy Browser Driver</title>
+<style>html,body{margin:0;background:#090d13;color:#fff;font:14px monospace}canvas{display:block;width:100vw;height:100vh}</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<pre id="result">RUNNING</pre>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+const dpr=Math.min(devicePixelRatio||1,2);
+canvas.width=Math.max(320,innerWidth)*dpr;canvas.height=Math.max(320,innerHeight)*dpr;
+ctx.setTransform(dpr,0,0,dpr,0,0);
+window.ctx=ctx;
+window.state={t:1.25};
+window.player={x:innerWidth/2,y:innerHeight/2,r:16};
+window.__fallbackCount=0;window.__statusCount=0;
+window.drawEnemySilhouetteV014=function(enemy){window.__fallbackCount++;ctx.fillStyle='#f0f';ctx.fillRect(enemy.x-5,enemy.y-5,10,10);};
+window.enemyArchetypeV014=function(enemy){return enemy.testType;};
+window.isEnemyAllied=function(enemy){return !!enemy.allied;};
+window.drawEnemyStatusVisual=function(context,x,y,r,enemy){window.__statusCount++;context.save();context.strokeStyle=enemy.statuses?.poison?'#9f6':'#fff';context.lineWidth=2;context.strokeRect(-r*.7,-r*.7,r*1.4,r*1.4);context.restore();};
+window.__errors=[];addEventListener('error',e=>window.__errors.push(String(e.error||e.message)));
+</script>
+<script src="js/v014-character-enemy-presentation.js" onerror="window.__errors.push('v014-load')"></script>
+<script>
+// v014 requires game globals, so restore deterministic browser-driver stubs before B4 loads.
+window.drawEnemySilhouetteV014=function(enemy){window.__fallbackCount++;ctx.fillStyle='#f0f';ctx.fillRect(enemy.x-5,enemy.y-5,10,10);};
+window.enemyArchetypeV014=function(enemy){return enemy.testType;};
+</script>
+<script src="js/v020-enemy-presentation.js?v=020-b4-browser1" onerror="window.__errors.push('v020-load')"></script>
+<script>
+const expected={runner:'beast',hunter:'fallen',anchor:'construct',elite:'abyssal'};
+function fail(msg){document.getElementById('result').textContent='V020_B4_ENEMY_BROWSER_FAIL '+msg;document.body.dataset.failed='1';}
+function pass(){const mode=new URLSearchParams(location.search).get('expect')||'unknown';document.getElementById('result').textContent='V020_B4_ENEMY_BROWSER_PASS '+mode;document.body.dataset.passed='1';}
+function waitForAssets(start=performance.now()){
+  const status=window.getEnemyFamilyV020Status&&window.getEnemyFamilyV020Status();
+  if(status&&status.loaded&&status.loaded.length===4){run(status);return;}
+  if(performance.now()-start>7000){fail('asset-timeout '+JSON.stringify(status));return;}
+  requestAnimationFrame(()=>waitForAssets(start));
+}
+function run(status){
+  if(window.__errors.length){fail('js-errors '+window.__errors.join('|'));return;}
+  for(const [role,family] of Object.entries(expected)){
+    const enemy={x:100,y:100,r:role==='elite'?18:12,elite:role==='elite',dead:false,hit:0,testType:role,statuses:{}};
+    if(window.enemyFamilyV020(enemy)!==family){fail('mapping-'+role);return;}
+  }
+  ctx.clearRect(0,0,innerWidth,innerHeight);
+  const roles=['runner','hunter','anchor','elite'];
+  roles.forEach((role,i)=>{
+    const enemy={x:70+i*Math.max(65,(innerWidth-120)/4),y:Math.max(110,innerHeight*.45),r:role==='elite'?18:12,elite:role==='elite',dead:false,hit:i===1?.04:0,testType:role,allied:i===2,statuses:i===0?{poison:{until:9}}:{}};
+    window.drawEnemySilhouetteV014(enemy);
+  });
+  const fallbackBefore=window.__fallbackCount;
+  window.drawEnemySilhouetteV014({x:30,y:30,r:12,dead:false,hit:0,testType:'unused',statuses:{}});
+  if(window.__fallbackCount!==fallbackBefore+1){fail('fallback-not-used');return;}
+  if(window.__statusCount<4){fail('status-overlay-not-retained '+window.__statusCount);return;}
+  if(status.failed.length){fail('asset-failures '+status.failed.join(','));return;}
+  pass();
+}
+waitForAssets();
+</script>
+</body>
+</html>
