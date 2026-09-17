@@ -1,11 +1,31 @@
 {
   "id": "ash-wanderer",
   "version": 3,
-  "status": "proof",
+  "status": "partial-production",
   "frameWidth": 256,
   "frameHeight": 256,
   "displayWorldWidth": 176,
-  "states": {},
+  "states": {
+    "idle": {
+      "status": "production",
+      "src": "assets/v020/fighters/ash-wanderer/idle.svg",
+      "frameCount": 6,
+      "columns": 6,
+      "fps": 6,
+      "loop": true,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "displayWorldWidth": 176,
+      "anchors": [
+        {"head":{"x":140,"y":45},"chest":{"x":138,"y":111},"leftHand":{"x":97,"y":164},"rightHand":{"x":190,"y":161},"feet":{"x":140,"y":235},"front":{"x":205,"y":145},"back":{"x":76,"y":145},"target":{"x":205,"y":145}},
+        {"head":{"x":140,"y":43},"chest":{"x":138,"y":109},"leftHand":{"x":97,"y":162},"rightHand":{"x":190,"y":159},"feet":{"x":140,"y":233},"front":{"x":205,"y":143},"back":{"x":76,"y":143},"target":{"x":205,"y":143}},
+        {"head":{"x":140,"y":42},"chest":{"x":138,"y":108},"leftHand":{"x":97,"y":161},"rightHand":{"x":190,"y":158},"feet":{"x":140,"y":232},"front":{"x":205,"y":142},"back":{"x":76,"y":142},"target":{"x":205,"y":142}},
+        {"head":{"x":140,"y":44},"chest":{"x":138,"y":110},"leftHand":{"x":97,"y":163},"rightHand":{"x":190,"y":160},"feet":{"x":140,"y":234},"front":{"x":205,"y":144},"back":{"x":76,"y":144},"target":{"x":205,"y":144}},
+        {"head":{"x":140,"y":46},"chest":{"x":138,"y":112},"leftHand":{"x":97,"y":165},"rightHand":{"x":190,"y":162},"feet":{"x":140,"y":236},"front":{"x":205,"y":146},"back":{"x":76,"y":146},"target":{"x":205,"y":146}},
+        {"head":{"x":140,"y":45},"chest":{"x":138,"y":111},"leftHand":{"x":97,"y":164},"rightHand":{"x":190,"y":161},"feet":{"x":140,"y":235},"front":{"x":205,"y":145},"back":{"x":76,"y":145},"target":{"x":205,"y":145}}
+      ]
+    }
+  },
   "requiredStates": ["idle","walk","run","dash","melee","ranged","cast","hit","block","knockback","knockdown","recover","ko"],
   "requiredAnchors": ["head","chest","leftHand","rightHand","feet","front","back","target"],
   "fallback": "v2"
