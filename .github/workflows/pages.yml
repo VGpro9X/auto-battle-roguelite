@@ -204,6 +204,15 @@ jobs:
       - name: V0.18 G7 integrated release audit
         run: node tests/v018-g7-release-audit.js
 
+      - name: V0.20 B1 Renderer V3 foundation
+        run: node tests/renderer-v3-foundation.test.js && node tests/v020-b1-renderer-bridge-smoke.js && node tests/v020-b1-runtime-wiring-smoke.js
+
+      - name: V0.20 B3 fighter production gates
+        run: node tests/v020-b3-state-production-gate.js && node tests/v020-b3-anchor-mirror-smoke.js && node tests/v020-b3-idle-runtime-smoke.js && node tests/v020-b3-partial-replacement-smoke.js && node tests/v020-b3-full-state-runtime-smoke.js
+
+      - name: V0.20 B4 enemy family gates
+        run: node tests/v020-b4-enemy-family-runtime-smoke.js && node tests/v020-b4-enemy-runtime-harness.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
