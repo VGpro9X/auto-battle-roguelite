@@ -25,12 +25,11 @@ window.isEnemyAllied=function(enemy){return !!enemy.allied;};
 window.drawEnemyStatusVisual=function(context,x,y,r,enemy){window.__statusCount++;context.save();context.strokeStyle=enemy.statuses?.poison?'#9f6':'#fff';context.lineWidth=2;context.strokeRect(-r*.7,-r*.7,r*1.4,r*1.4);context.restore();};
 window.__errors=[];addEventListener('error',e=>window.__errors.push(String(e.error||e.message)));
 </script>
-<!-- Production order mirrors index.html: V0.14 presentation already exists, then V0.20 overrides enemy drawing only. -->
-<script data-v020-enemy-presentation src="js/v020-enemy-presentation.js?v=020-b4" onerror="window.__errors.push('v020-load')"></script>
+<script data-v020-enemy-presentation src="js/v020-enemy-presentation.js?v=020-b4-runtime-fix" onerror="window.__errors.push('v020-load')"></script>
 <script>
 const expected={runner:'beast',hunter:'fallen',anchor:'construct',elite:'abyssal'};
 function fail(msg){document.getElementById('result').textContent='V020_B4_ENEMY_BROWSER_FAIL '+msg;document.body.dataset.failed='1';}
-function pass(){const mode=new URLSearchParams(location.search).get('expect')||'unknown';document.getElementById('result').textContent='V020_B4_ENEMY_BROWSER_PASS '+mode;document.body.dataset.passed='1';}
+function pass(status){const mode=new URLSearchParams(location.search).get('expect')||'unknown';document.getElementById('result').textContent=`V020_B4_ENEMY_BROWSER_PASS ${mode} draws=${status.draws} allied=${status.alliedDraws} status=${status.statusDraws}`;document.body.dataset.passed='1';}
 function waitForAssets(start=performance.now()){
   const status=window.getEnemyFamilyV020Status&&window.getEnemyFamilyV020Status();
   if(status&&status.loaded&&status.loaded.length===4){run(status);return;}
@@ -51,12 +50,17 @@ function run(status){
     const enemy={x:70+i*Math.max(65,(innerWidth-120)/4),y:Math.max(110,innerHeight*.45),r:role==='elite'?18:12,elite:role==='elite',dead:false,hit:i===1?.04:0,testType:role,allied:i===2,statuses:i===0?{poison:{until:9}}:{}};
     window.drawEnemySilhouetteV014(enemy);
   });
+  const afterDraw=window.getEnemyFamilyV020Status();
+  for(const family of Object.values(expected))if((afterDraw.familyDraws[family]||0)<1){fail('family-not-drawn-'+family);return;}
+  if(afterDraw.draws<4){fail('draw-count-'+afterDraw.draws);return;}
+  if(afterDraw.alliedDraws<1){fail('allied-overlay-not-retained');return;}
+  if(afterDraw.statusDraws<4||window.__statusCount<4){fail('status-overlay-not-retained '+afterDraw.statusDraws+'/'+window.__statusCount);return;}
   const fallbackBefore=window.__fallbackCount;
   window.drawEnemySilhouetteV014({x:30,y:30,r:12,dead:false,hit:0,testType:'unused',statuses:{}});
   if(window.__fallbackCount!==fallbackBefore+1){fail('fallback-not-used');return;}
-  if(window.__statusCount<4){fail('status-overlay-not-retained '+window.__statusCount);return;}
-  if(status.failed.length){fail('asset-failures '+status.failed.join(','));return;}
-  pass();
+  const finalStatus=window.getEnemyFamilyV020Status();
+  if(finalStatus.failed.length){fail('asset-failures '+finalStatus.failed.join(','));return;}
+  pass(finalStatus);
 }
 waitForAssets();
 </script>
