@@ -21,7 +21,7 @@ const samples=[
  {type:'dodge',source:'evasion'},
  {type:'orbit_hit',source:'orbit'},
  {type:'area',source:'explosion'},
- {type:'hit',source:'chainLightning'},
+ {type:'hit',source:'ricochet'},
  {type:'cast',source:'timeEcho'},
  {type:'ko',source:'death'}
 ];
