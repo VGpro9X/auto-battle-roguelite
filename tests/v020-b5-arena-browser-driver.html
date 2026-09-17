@@ -1,21 +1,21 @@
-<!doctype html><html><head><meta charset="utf-8"><title>V0.20 B5 Arena Driver</title></head><body><canvas id="c"></canvas><pre id="result">RUNNING</pre><script>
+<!doctype html><html><head><meta charset="utf-8"><base href="../"><title>V0.20 B5 Arena Driver</title></head><body><canvas id="c"></canvas><pre id="result">RUNNING</pre><script>
 (()=>{
 const p=new URLSearchParams(location.search),mode=p.get('expect')||'desktop',canvas=document.getElementById('c');
 canvas.width=mode==='mobile'?360:1280;canvas.height=mode==='mobile'?640:720;canvas.style.width=canvas.width+'px';canvas.style.height=canvas.height+'px';
 const ctx=canvas.getContext('2d'),calls=[];const originalDraw=ctx.drawImage.bind(ctx);ctx.drawImage=function(image,...args){calls.push(image.src||'image');return originalDraw(image,...args);};
 window.DUEL_RENDERER_V3_DEFAULT=true;window.DUEL_RENDERER_V3_QUALITY='balanced';
 window.createDuelRendererV2=function(canvas){
- const tr={scale:Math.min(canvas.width/1000,canvas.height/560),x:v=>v*Math.min(canvas.width/1000,canvas.height/560),y:v=>v*Math.min(canvas.width/1000,canvas.height/560)};
+ const scale=Math.min(canvas.width/1000,canvas.height/560),ox=(canvas.width-1000*scale)/2,oy=(canvas.height-560*scale)/2,tr={scale,ox,oy,width:canvas.width,height:canvas.height,centerX:500,zoom:1,mobile:canvas.width<620,shakeX:0,shakeY:0,x:v=>ox+v*scale,y:v=>oy+v*scale};
  return{preload:Promise.resolve(),resize(){},consume(){},effects:[],camera:{layerTransform(base){return base;}},prepareFrameTransform(){return tr;},getLastTransform(){return tr;},getAnchor(f,n){return{x:f.x,y:f.y-30};},getStatus(){return{mode:'v2-stub'};},render(match,dt,options){calls.push('FALLBACK:'+JSON.stringify({skipArena:!!options?.skipArena,preserveCanvas:!!options?.preserveCanvas,skipFighterSides:options?.skipFighterSides||[]}));}};
 };
 window.__B5_CALLS__=calls;
 })();
-</script><script src="../js/renderer-v3.js?v=020-b5-browser1"></script><script src="../js/duel-renderer-v3-bridge.js?v=020-b5-browser1"></script><script>
+</script><script src="js/renderer-v3.js?v=020-b5-browser2"></script><script src="js/duel-renderer-v3-bridge.js?v=020-b5-browser2"></script><script>
 (async()=>{
  const out=document.getElementById('result'),expect=new URLSearchParams(location.search).get('expect')||'desktop';
  try{
   const canvas=document.getElementById('c'),renderer=window.createDuelRendererV3Bridge(canvas);await renderer.preload;
-  const status=renderer.getStatus();if(!status.arena.active)throw new Error('arena not active '+JSON.stringify(status.arena));if(status.arena.loaded.length!==6)throw new Error('expected 6 layers, got '+status.arena.loaded.length);
+  const status=renderer.getStatus();if(!status.v3?.ready)throw new Error('V3 init failed '+JSON.stringify(status.v3));if(!status.arena.active)throw new Error('arena not active '+JSON.stringify(status.arena));if(status.arena.loaded.length!==6)throw new Error('expected 6 layers, got '+status.arena.loaded.length);
   const fighter=(side,x,facing)=>({side,x,y:475,facing,action:'idle',hp:100,shield:0,build:{}});
   const match={arena:{width:1000,height:560,floorY:475,leftBound:54,rightBound:946},currentRound:{time:1.2,phase:'NORMAL',fighters:{player:fighter('player',330,1),opponent:fighter('opponent',670,-1)},projectiles:[]}};
   renderer.render(match,.016);
