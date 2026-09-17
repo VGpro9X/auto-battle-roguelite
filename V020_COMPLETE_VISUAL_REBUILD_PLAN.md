@@ -1,6 +1,6 @@
 # V0.20 — Complete Visual Rebuild Plan
 
-Status: **APPROVED / IN DEVELOPMENT — B0–B8 COMPLETE, B9 ACTIVE**
+Status: **APPROVED / IN DEVELOPMENT — B0–B9 COMPLETE, B10 ACTIVE**
 
 Canonical source: GitHub `main` in `VGpro9X/auto-battle-roguelite`.
 
@@ -27,7 +27,7 @@ The detailed production truth is split into locked documents:
 - `V020_B6_LIGHTING_SHADOW_SPEC.md` — completed quality-aware lighting/shadow/atmosphere runtime pass and desktop/mobile validation.
 - `V020_B7_CORE_VFX_SPEC.md` — completed 15-family semantic V3 core VFX migration, budgets and browser validation.
 - `V020_B8_SKILL_VISUAL_MAPPING_SPEC.md` — completed 80/28/12 Duel skill/synergy/evolution semantic mapping and runtime coverage validation.
-- `V020_B9_HIGH_TIER_SPECTACLE_SPEC.md` — active deterministic high-tier presentation contract; Duel foundation integrated, Survival divine tiers next.
+- `V020_B9_HIGH_TIER_SPECTACLE_SPEC.md` — completed deterministic Duel + Survival high-tier presentation contract with 20 Duel Rare and 20 Survival divine/mystic signatures.
 
 New runtime work is isolated under `assets/v020/`; V0.18 production assets remain intact as fallback.
 
@@ -104,15 +104,21 @@ FULL/BALANCED/LOW affect presentation cost only, never gameplay truth.
   - V3 core VFX consumes the B8 profile before heuristic fallback
   - static + desktop 1280×720 + mobile 360×640 validation passed
   - no skill logic, unlock, damage, cooldown or event truth changed
-- **B9 — High-Tier Spectacle — ACTIVE**
-  - deterministic Duel Hợp Đạo / Siêu Cấp / 20 Rare signatures integrated
+- **B9 — High-Tier Spectacle — COMPLETE ✅**
+  - deterministic Duel Hợp Đạo / Siêu Cấp / all 20 Rare signatures integrated
+  - deterministic Survival coverage integrated for all 20 real high-tier IDs: 10 Thần Kỹ + 10 Thần Bí Kỹ
   - semantic-family palette and tier-specific geometry replace one-size-fits-all spectacle
-  - FULL / BALANCED / LOW high-tier transient budgets: 48 / 30 / 16
+  - Duel FULL / BALANCED / LOW high-tier transient budgets: 48 / 30 / 16
+  - Survival FULL / BALANCED / LOW high-tier transient budgets: 36 / 24 / 12
   - reduced-motion keeps identity while removing decorative rotational progression
-  - runtime `visualQuality` selection now reaches the high-tier overlay correctly
-  - B9 static + desktop FULL + mobile LOW validation workflow added
-  - Survival Thần Kỹ / Thần Bí Kỹ spectacle remains the next B9 track before checkpoint closure
-- **B10 — UI/HUD V3** — Survival/Duel/menu/Codex/tournament/results; desktop/mobile composition
+  - runtime quality selection reaches the spectacle layers correctly
+  - static + desktop FULL + mobile LOW B9 validation passes for Duel and Survival
+  - B6 lighting, V0.18 performance and historical V0.18/V0.19 release gates remain compatible after B9 integration
+  - no gameplay/simulation truth changed
+- **B10 — UI/HUD V3 — ACTIVE**
+  - Survival/Duel/menu/Codex/tournament/results
+  - desktop/mobile composition
+  - presentation-only modernization; gameplay and tournament truth remain authoritative in existing systems
 - **B11 — Icon Production** — complete coherent runtime icon coverage
 - **B12 — Animation & Combat Polish** — impact/camera/trail/KO presentation, no simulation leakage
 - **B13 — Optimization / Mobile / Fallback** — compression/memory, quality gates, reduced motion, V3→V2→vector fallback
@@ -125,4 +131,4 @@ GitHub `main` is canonical. Fetch latest SHA before edits. Commit every meaningf
 V0.20 requires normal production gameplay to use coherent V3 artwork, complete 13 fighter states, coherent required enemies, Ashen Sanctum V3, complete skill visual mapping, distinct high tiers, 20 Rare identities, coherent desktop/mobile UI/icons, unchanged gameplay truth, functional V2/vector fallback, no missing assets/runtime errors, desktop/mobile/performance/reduced-motion gates, historical V0.16–V0.19 regressions, exact Pages deployment, then V0.20 label promotion and final owner visual/gameplay test.
 
 ## Current continuation point
-**B0–B8 COMPLETE. B9 ACTIVE: validate the new Duel high-tier spectacle layer, then audit and migrate the real Survival Thần Kỹ / Thần Bí Kỹ presentation path without changing their gameplay truth. Public/runtime label remains V0.19 until B14.**
+**B0–B9 COMPLETE. B10 ACTIVE: rebuild the UI/HUD presentation for Survival, Duel, menu, Codex, tournament and results across desktop/mobile while preserving V0.19 gameplay truth. Public/runtime label remains V0.19 until B14.**
