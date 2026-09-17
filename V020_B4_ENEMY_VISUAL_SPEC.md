@@ -1,6 +1,6 @@
 # V0.20 — B4 Enemy Visual Families
 
-Status: **ACTIVE — RUNTIME ASSETS + FALLBACK INTEGRATED**
+Status: **COMPLETE ✅**
 
 B4 upgrades enemy presentation only. Enemy HP, radius, speed, damage, spawning, elite chance, contact damage, XP, drops, allied conversion, statuses and AI remain owned by the existing simulation.
 
@@ -40,7 +40,7 @@ Integrated transparent runtime assets:
 Each file is a 128×128 transparent SVG with no poster/UI text.
 
 ## 5. Runtime presentation path
-`js/v020-enemy-presentation.js` now:
+`js/v020-enemy-presentation.js`:
 - maps existing archetypes to the four V0.20 families;
 - preloads the corresponding runtime SVG;
 - draws the family asset using existing enemy position/radius and player-facing information;
@@ -61,16 +61,7 @@ The V0.20 path explicitly preserves:
 Color is supplementary; each family has a distinct silhouette.
 
 ## 7. Drawing ownership
-The B4 presentation layer may read:
-- enemy position/radius
-- `elite`
-- existing presentation archetype
-- hit flash timer
-- allied/status state
-- player position for facing
-- current presentation time
-
-It may decide cosmetic facing, bob, shadow, family scale and presentation tint.
+The B4 presentation layer may read enemy position/radius, `elite`, existing presentation archetype, hit flash timer, allied/status state, player position for facing and current presentation time. It may decide cosmetic facing, bob, shadow, family scale and presentation tint.
 
 It does not decide collision, hit success, contact range, damage, knockback, target choice, movement vector, death, XP or drop truth.
 
@@ -78,23 +69,23 @@ It does not decide collision, hit success, contact range, damage, knockback, tar
 Static/runtime contract gate:
 - `tests/v020-b4-enemy-family-runtime-smoke.js`
 
-The gate checks:
-- four runtime assets exist and are runtime-clean;
-- runner→Beast, hunter→Fallen, anchor→Construct, elite→Abyssal mapping;
-- Wraith is not invented;
-- V0.14 fallback exists;
-- status compatibility exists;
-- B4 bootstrap is wired;
-- presentation code does not assign enemy speed/HP/damage/radius/elite truth;
-- core simulation elite/speed rules remain present.
+Browser visual gate:
+- `tests/v020-b4-enemy-browser-driver.html`
+- `.github/workflows/v020-b4-enemy-browser-validation.yml`
 
-This gate has been added to the repository; it has not been claimed as executed by this connector session.
+Validated in GitHub Actions on commit `d50d50e0c47541bb8d03dedb1117851b221f8264`:
+- static B4 runtime smoke: PASS
+- desktop 1280×720 browser smoke: PASS
+- mobile 360×640 browser smoke: PASS
+- all four V0.20 enemy assets loaded: PASS
+- runner→Beast / hunter→Fallen / anchor→Construct / elite→Abyssal mapping: PASS
+- allied/status overlay path retained: PASS
+- unknown/missing-family fallback to V0.14: PASS
+- no browser/runtime errors in validation driver: PASS
 
-## 9. Remaining B4 gate
-Before B4 closes:
-1. browser desktop visual smoke;
-2. compact/mobile visual smoke;
-3. verify allied/status overlays and elite readability in live Survival rendering;
-4. verify missing-asset fallback produces no runtime error.
+GitHub Actions run: `35172538916`, job `validate-enemy-visuals`, conclusion `success`.
 
-B4 does not alter Duel fighter/tournament logic.
+## 9. B4 exit
+B4 is complete. Runtime enemy presentation now uses coherent V0.20 visual families for every enemy archetype that actually exists in the current game, without creating new gameplay classes or changing simulation values.
+
+Next checkpoint: **B5 — Ashen Sanctum V3**.
