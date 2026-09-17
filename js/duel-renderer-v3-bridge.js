@@ -35,10 +35,18 @@ function createBridge(canvas){
   }
   function resolveV3(fighter,stateId){if(!status.ready)return null;const resolved=meta.resolveFighterState(stateId);if(resolved.renderer!=='v3'||!resolved.entry)return null;const image=images.get(resolved.entry.src);return image?{stateId,entry:resolved.entry,image}:null;}
   function frameIndex(entry,round,fighter,stateId){const count=Math.max(1,Number(entry.frameCount)||1),fps=Math.max(1,Number(entry.fps)||1),clock=stateClocks.get(fighter&&fighter.side),now=Math.max(0,Number(round&&round.time)||0),elapsed=Math.max(0,now-Number(clock&&clock.stateId===stateId?clock.enteredAt:now));return entry.loop===false?Math.min(count-1,Math.floor(elapsed*fps)):Math.floor(elapsed*fps)%count;}
+  function drawV3ShadowIdentity(fighter,tr){const x=tr.x(fighter.x),y=tr.y(fighter.y),s=tr.scale;ctx.save();ctx.fillStyle='rgba(0,0,0,.34)';ctx.beginPath();ctx.ellipse(x,y-2*s,34*s,8*s,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.55;ctx.strokeStyle=fighter.side==='player'?'#38bdf8':'#fb7185';ctx.lineWidth=Math.max(1,2*s);ctx.beginPath();ctx.ellipse(x,y-3*s,40*s,10*s,0,0,Math.PI*2);ctx.stroke();ctx.restore();}
   function drawV3Fighter(fighter,round,tr,visual){
     const entry=visual.entry,index=frameIndex(entry,round,fighter,visual.stateId),fw=Number(entry.frameWidth||256),fh=Number(entry.frameHeight||256),columns=Math.max(1,Number(entry.columns||entry.frameCount||1)),sx=(index%columns)*fw,sy=Math.floor(index/columns)*fh,displayWorldWidth=Math.max(1,Number(entry.displayWorldWidth||176)),worldScale=displayWorldWidth/fw,anchors=entry.anchors&&entry.anchors[index],feet=anchors&&anchors.feet?anchors.feet:{x:fw/2,y:fh},dw=fw*worldScale*tr.scale,dh=fh*worldScale*tr.scale,x=tr.x(fighter.x),y=tr.y(fighter.y);
+    drawV3ShadowIdentity(fighter,tr);
     ctx.save();ctx.translate(x,y);if((fighter.facing||1)<0)ctx.scale(-1,1);ctx.globalAlpha=fighter.hp<=0?.72:1;ctx.drawImage(visual.image,sx,sy,fw,fh,-feet.x*worldScale*tr.scale,-feet.y*worldScale*tr.scale,dw,dh);ctx.restore();
     lastV3Frames.set(fighter.side,{fighter,entry,index,worldScale});
+  }
+  function drawV3Attachments(fighter,round,tr){
+    const chest=getAnchor(fighter,'chest'),feet=getAnchor(fighter,'feet'),cx=tr.x(chest.x),cy=tr.y(chest.y),fx=tr.x(feet.x),fy=tr.y(feet.y),s=tr.scale;
+    if(fighter.shield>0){ctx.save();ctx.strokeStyle='rgba(125,211,252,.78)';ctx.lineWidth=Math.max(1,3*s);ctx.beginPath();ctx.arc(cx,cy,43*s,0,Math.PI*2);ctx.stroke();ctx.restore();}
+    const rank=typeof root.getDuelSkillRank==='function'?root.getDuelSkillRank:null,frost=rank?rank(fighter.build,'frost'):0;if(frost){ctx.save();ctx.strokeStyle='rgba(147,197,253,.24)';ctx.lineWidth=Math.max(1,2*s);ctx.beginPath();ctx.arc(fx,fy-48*s,(52+frost*6)*s,0,Math.PI*2);ctx.stroke();ctx.restore();}
+    const orbit=rank?rank(fighter.build,'orbit'):0;if(orbit){for(let i=0;i<orbit;i++){const a=round.time*3.1+i*Math.PI*2/orbit,bx=cx+Math.cos(a)*48*s,by=cy+10*s+Math.sin(a)*18*s;ctx.save();ctx.translate(bx,by);ctx.rotate(a);ctx.fillStyle='#e2e8f0';ctx.fillRect(-2*s,-11*s,4*s,22*s);ctx.restore();}}
   }
   function render(match,dt){
     lastV3Frames.clear();
@@ -47,8 +55,8 @@ function createBridge(canvas){
     fallback.render(match,dt,{skipFighterSides:v3Sides});
     if(!round||!v3Sides.length)return;
     const tr=typeof fallback.getLastTransform==='function'&&fallback.getLastTransform()||createTransform(canvas,match);
-    if(pVisual)drawV3Fighter(player,round,tr,pVisual);
-    if(oVisual)drawV3Fighter(opponent,round,tr,oVisual);
+    if(pVisual){drawV3Fighter(player,round,tr,pVisual);drawV3Attachments(player,round,tr);}
+    if(oVisual){drawV3Fighter(opponent,round,tr,oVisual);drawV3Attachments(opponent,round,tr);}
   }
   function getAnchor(fighter,name){
     const tracked=lastV3Frames.get(fighter&&fighter.side);if(!tracked||tracked.fighter!==fighter)return fallback.getAnchor(fighter,name);
