@@ -1,6 +1,6 @@
 # V0.20 — Complete Visual Rebuild Plan
 
-Status: **APPROVED / IN DEVELOPMENT — B0–B4 COMPLETE, B5 ACTIVE**
+Status: **APPROVED / IN DEVELOPMENT — B0–B5 COMPLETE, B6 ACTIVE**
 
 Canonical source: GitHub `main` in `VGpro9X/auto-battle-roguelite`.
 
@@ -70,13 +70,21 @@ FULL/BALANCED/LOW affect presentation cost only, never gameplay truth.
   - V0.14 fallback retained for missing assets
   - no enemy simulation truth changed
   - GitHub Actions desktop/mobile browser validation passed
-- **B5 — Ashen Sanctum V3 — ACTIVE**
-  - preserve logical geometry 1000×560, floorY 475, bounds 54–946
-  - produce six V3 runtime layers: sky / far / mid / ambient / floor / foreground
-  - retain V2 arena fallback until V3 layer set validates as a whole
-  - validate parallax, foreground occlusion, compact/mobile composition and runtime asset loading
-  - do not alter collision/bounds/camera simulation truth
-- **B6 — Lighting & Shadow** — contact shadows, local glow/impact lighting, atmosphere states, quality tiers
+- **B5 — Ashen Sanctum V3 — COMPLETE ✅**
+  - six production runtime layers integrated: sky / far / mid / ambient / floor / foreground
+  - logical geometry preserved at 1000×560, floorY 475, bounds 54–946
+  - locked parallax values and foreground ordering preserved
+  - V3 arena activates only when the complete six-layer set validates; otherwise V2 arena fallback remains active
+  - V3 bridge suppresses the V2 arena only when V3 arena coverage is ready while sharing the same presentation transform
+  - production desktop 1280×720 and mobile 360×640 browser validation passed with all six layers rendered
+  - no collision/bounds/simulation truth changed
+- **B6 — Lighting & Shadow — ACTIVE**
+  - contact shadows for fighters/enemies without changing collision footprint
+  - quality-aware local skill/projectile glow and brief impact lighting
+  - cosmetic atmosphere response for HUYẾT CHIẾN / TỬ CHIẾN
+  - restrained low-HP vignette and readable foreground values
+  - FULL / BALANCED / LOW and reduced-motion-safe presentation budgets
+  - lighting must never decide hit, damage, targeting, movement or phase truth
 - **B7 — Core Combat VFX Library** — primitives/projectiles/status/lifecycle budgets
 - **B8 — Skill Visual Mapping** — complete skill ecosystem coverage
 - **B9 — High-Tier Spectacle** — Hợp Đạo/Siêu Cấp/Thần Kỹ/Thần Bí Kỹ + 20 Rare signatures
@@ -93,4 +101,4 @@ GitHub `main` is canonical. Fetch latest SHA before edits. Commit every meaningf
 V0.20 requires normal production gameplay to use coherent V3 artwork, complete 13 fighter states, coherent required enemies, Ashen Sanctum V3, complete skill visual mapping, distinct high tiers, 20 Rare identities, coherent desktop/mobile UI/icons, unchanged gameplay truth, functional V2/vector fallback, no missing assets/runtime errors, desktop/mobile/performance/reduced-motion gates, historical V0.16–V0.19 regressions, exact Pages deployment, then V0.20 label promotion and final owner visual/gameplay test.
 
 ## Current continuation point
-**B0–B4 COMPLETE. B5 ACTIVE: build Ashen Sanctum V3 as a six-layer runtime environment using the locked V0.18 geometry and parallax contract, validate complete-set fallback and desktop/mobile composition, and keep public/runtime label V0.19 until B14.**
+**B0–B5 COMPLETE. B6 ACTIVE: add presentation-only lighting/shadow on top of the validated V3 fighter/arena stack, enforce quality/reduced-motion budgets, restore historical release-gate compatibility, and keep public/runtime label V0.19 until B14.**
