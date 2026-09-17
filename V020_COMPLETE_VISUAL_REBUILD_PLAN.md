@@ -1,6 +1,6 @@
 # V0.20 — Complete Visual Rebuild Plan
 
-Status: **APPROVED / IN DEVELOPMENT — B0–B6 COMPLETE, B7 ACTIVE**
+Status: **APPROVED / IN DEVELOPMENT — B0–B7 COMPLETE, B8 ACTIVE**
 
 Canonical source: GitHub `main` in `VGpro9X/auto-battle-roguelite`.
 
@@ -25,6 +25,7 @@ The detailed production truth is split into locked documents:
 - `V020_B3_ANIMATION_PRODUCTION_SPEC.md` — completed 13-state runtime fighter production and validation contract.
 - `V020_B4_ENEMY_VISUAL_SPEC.md` — completed enemy-family audit, runtime mapping, fallback and browser validation.
 - `V020_B6_LIGHTING_SHADOW_SPEC.md` — completed quality-aware lighting/shadow/atmosphere runtime pass and desktop/mobile validation.
+- `V020_B7_CORE_VFX_SPEC.md` — completed 15-family semantic V3 core VFX migration, budgets and browser validation.
 
 New runtime work is isolated under `assets/v020/`; V0.18 production assets remain intact as fallback.
 
@@ -87,12 +88,19 @@ FULL/BALANCED/LOW affect presentation cost only, never gameplay truth.
   - reduced-motion-safe presentation path retained
   - desktop 1280×720 and mobile 360×640 browser validation passed
   - no hit/damage/projectile/phase truth moved into presentation
-- **B7 — Core Combat VFX Library — ACTIVE**
-  - audit existing V2 primitive/event ownership before replacement
-  - establish reusable V3 primitives and projectile/status lifecycle budgets
-  - map simulation events to presentation-only slash / impact / pierce / explosion / elemental / sustain / control families
-  - retain bounded quality tiers, reduced motion and V2 fallback
-- **B8 — Skill Visual Mapping** — complete skill ecosystem coverage
+- **B7 — Core Combat VFX Library — COMPLETE ✅**
+  - preserved 15 semantic families: physical / projectile / fire / frost / lightning / poison / blood / defense / heal / control / summon / area / chain / time / soul
+  - reusable V3 burst / ring / beam primitives integrated
+  - FULL / BALANCED / LOW transient budgets: 112 / 72 / 36 active effects
+  - V3-owned core events are removed from V2 base-VFX feed to prevent duplicate drawing
+  - tier overlay and camera still observe V3-owned events
+  - V2 fallback remains authoritative when the V3 VFX module is unavailable
+  - static, desktop 1280×720 and mobile 360×640 validation passed
+- **B8 — Skill Visual Mapping — ACTIVE**
+  - audit all real Duel skill IDs, event sources/tags and tier identities
+  - build deterministic skill→semantic-family/profile mapping without changing skill logic
+  - verify complete base/synergy/evolution visual coverage before B9 signatures
+  - preserve fallback and bounded quality tiers
 - **B9 — High-Tier Spectacle** — Hợp Đạo/Siêu Cấp/Thần Kỹ/Thần Bí Kỹ + 20 Rare signatures
 - **B10 — UI/HUD V3** — Survival/Duel/menu/Codex/tournament/results; desktop/mobile composition
 - **B11 — Icon Production** — complete coherent runtime icon coverage
@@ -107,4 +115,4 @@ GitHub `main` is canonical. Fetch latest SHA before edits. Commit every meaningf
 V0.20 requires normal production gameplay to use coherent V3 artwork, complete 13 fighter states, coherent required enemies, Ashen Sanctum V3, complete skill visual mapping, distinct high tiers, 20 Rare identities, coherent desktop/mobile UI/icons, unchanged gameplay truth, functional V2/vector fallback, no missing assets/runtime errors, desktop/mobile/performance/reduced-motion gates, historical V0.16–V0.19 regressions, exact Pages deployment, then V0.20 label promotion and final owner visual/gameplay test.
 
 ## Current continuation point
-**B0–B6 COMPLETE. B7 ACTIVE: audit the existing Duel V2 VFX event model, build a reusable V3 combat-VFX layer with bounded primitive/projectile/status lifecycles, keep simulation authoritative, and retain V3→V2→vector fallback. Public/runtime label remains V0.19 until B14.**
+**B0–B7 COMPLETE. B8 ACTIVE: inventory the actual Duel skill/synergy/evolution IDs and emitted visual metadata, build deterministic skill→V3 semantic profiles, validate complete coverage without altering skill truth, and keep B9 responsible for high-tier spectacle/signatures. Public/runtime label remains V0.19 until B14.**
