@@ -1,0 +1,37 @@
+{
+  "state": "idle",
+  "status": "source-production",
+  "canonicalFacing": "right",
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "frameCount": 6,
+  "displayWorldWidth": 176,
+  "fps": 6,
+  "loop": true,
+  "rootRule": "feet-stable-bottom-center",
+  "motion": [
+    "ready-neutral",
+    "inhale-rise",
+    "cloth-follow",
+    "exhale-settle",
+    "secondary-cloth-return",
+    "loop-match"
+  ],
+  "requiredAnchors": ["head","chest","leftHand","rightHand","feet","front","back","target"],
+  "artRules": {
+    "background": "transparent",
+    "bakedShadow": false,
+    "bakedVfx": false,
+    "text": false,
+    "posterUi": false,
+    "weaponMutation": false,
+    "costumeMutation": false
+  },
+  "acceptance": {
+    "identityStable": true,
+    "rootDriftPxMax": 2,
+    "compactReadabilityPx": 64,
+    "mirrorValidationRequired": true,
+    "runtimePromotion": "only-after-dedicated-sheet-and-anchor-validation"
+  }
+}
