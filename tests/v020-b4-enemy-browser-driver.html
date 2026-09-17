@@ -30,11 +30,11 @@ window.__errors=[];addEventListener('error',e=>window.__errors.push(String(e.err
 const expected={runner:'beast',hunter:'fallen',anchor:'construct',elite:'abyssal'};
 function fail(msg){document.getElementById('result').textContent='V020_B4_ENEMY_BROWSER_FAIL '+msg;document.body.dataset.failed='1';}
 function pass(status){const mode=new URLSearchParams(location.search).get('expect')||'unknown';document.getElementById('result').textContent=`V020_B4_ENEMY_BROWSER_PASS ${mode} draws=${status.draws} allied=${status.alliedDraws} status=${status.statusDraws}`;document.body.dataset.passed='1';}
-function waitForAssets(start=performance.now()){
+function waitForAssets(start=Date.now()){
   const status=window.getEnemyFamilyV020Status&&window.getEnemyFamilyV020Status();
   if(status&&status.loaded&&status.loaded.length===4){run(status);return;}
-  if(performance.now()-start>7000){fail('asset-timeout '+JSON.stringify(status));return;}
-  requestAnimationFrame(()=>waitForAssets(start));
+  if(Date.now()-start>7000){fail('asset-timeout '+JSON.stringify(status));return;}
+  setTimeout(()=>waitForAssets(start),40);
 }
 function run(status){
   if(window.__errors.length){fail('js-errors '+window.__errors.join('|'));return;}
