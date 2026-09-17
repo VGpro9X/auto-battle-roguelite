@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="256" viewBox="0 0 1536 256">
+<defs>
+  <linearGradient id="coat" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#202733"/><stop offset="1" stop-color="#0b0f15"/></linearGradient>
+  <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8f8170"/><stop offset=".5" stop-color="#4c4f56"/><stop offset="1" stop-color="#1d222a"/></linearGradient>
+  <linearGradient id="blade" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#d8dde5"/><stop offset=".65" stop-color="#767f8c"/><stop offset="1" stop-color="#282d35"/></linearGradient>
+  <filter id="cyanGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <g id="ash">
+    <!-- rear scarf / mantle -->
+    <path d="M100 76 C80 72 67 82 51 91 C68 91 77 99 59 113 C82 108 97 110 111 104 Z" fill="#5e2428" opacity=".95"/>
+    <path d="M105 82 C84 88 74 103 61 119 C84 111 95 119 82 133 C104 124 115 111 122 96 Z" fill="#7a2a2e" opacity=".72"/>
+    <!-- hair mass -->
+    <path d="M119 45 C110 31 116 21 130 17 C142 20 147 31 143 44 C156 38 166 44 168 55 C157 52 153 59 149 68 L116 68 C108 60 108 51 119 45Z" fill="#0a0d12"/>
+    <path d="M132 21 C131 10 142 7 151 13 C144 15 142 22 146 28Z" fill="#111722"/>
+    <path d="M145 27 C160 24 173 30 177 40 C165 35 158 39 153 46Z" fill="#121722"/>
+    <!-- neck/head -->
+    <path d="M120 58 C120 44 129 35 141 35 C153 35 160 44 159 57 C158 70 151 79 140 80 C129 79 121 70 120 58Z" fill="#c69b82"/>
+    <path d="M121 50 C126 35 143 29 158 39 C154 39 153 46 151 52 C141 48 131 51 121 50Z" fill="#11151d"/>
+    <path d="M146 58 l9 1" stroke="#2d1c1c" stroke-width="2" stroke-linecap="round"/>
+    <!-- scarf around neck -->
+    <path d="M111 76 C125 68 151 68 165 78 L158 96 C143 91 126 92 113 98Z" fill="#6d262b"/>
+    <!-- torso -->
+    <path d="M111 91 C124 83 151 84 164 94 L173 143 C155 154 124 154 105 143Z" fill="url(#coat)"/>
+    <path d="M119 94 L137 104 L153 92 L160 140 L111 140Z" fill="#171c24"/>
+    <path d="M128 97 L139 116 L150 98" fill="none" stroke="#8a6b45" stroke-width="3"/>
+    <circle cx="139" cy="119" r="5" fill="#8b7048"/>
+    <!-- shoulder armor -->
+    <path d="M103 94 C99 88 103 81 112 79 L126 85 L120 99Z" fill="url(#metal)" stroke="#262c34" stroke-width="2"/>
+    <path d="M162 91 C172 91 180 99 179 108 L166 111Z" fill="url(#metal)" stroke="#262c34" stroke-width="2"/>
+    <!-- rear arm -->
+    <path d="M108 104 C98 111 93 127 95 144 L104 146 C108 131 113 119 119 109Z" fill="#202630"/>
+    <path d="M95 141 L105 143 L102 164 L92 162Z" fill="#5d4d42"/>
+    <path d="M91 159 C88 165 91 171 97 172 C103 170 105 166 103 161Z" fill="#b78973"/>
+    <!-- front arm -->
+    <path d="M165 103 C176 113 183 127 184 140 L176 144 C170 130 164 119 157 112Z" fill="#222832"/>
+    <path d="M175 140 L185 138 L190 158 L180 161Z" fill="#695349"/>
+    <path d="M181 157 C181 165 187 168 193 164 C196 158 192 154 187 153Z" fill="#b78973"/>
+    <!-- coat skirt -->
+    <path d="M108 139 L137 141 L132 205 L96 205 C102 184 104 160 108 139Z" fill="#141a22"/>
+    <path d="M137 141 L166 139 C171 164 178 184 184 204 L143 205Z" fill="#1b2028"/>
+    <path d="M121 143 L135 145 L130 208 L111 208Z" fill="#4a2529" opacity=".55"/>
+    <!-- belt -->
+    <path d="M105 137 L169 137 L169 145 L105 145Z" fill="#352b28"/>
+    <rect x="133" y="136" width="12" height="10" rx="2" fill="#987b4e"/>
+    <!-- legs -->
+    <path d="M114 199 L133 199 L130 229 L111 229Z" fill="#12171e"/>
+    <path d="M146 198 L164 197 L169 228 L149 229Z" fill="#10151c"/>
+    <!-- boots -->
+    <path d="M108 226 L131 226 L132 235 L103 235 C102 231 104 228 108 226Z" fill="#090c10"/>
+    <path d="M149 226 L170 225 L179 234 L147 235Z" fill="#090c10"/>
+    <!-- sword sheath and blade -->
+    <path d="M99 127 L76 213" stroke="#29231f" stroke-width="9" stroke-linecap="round"/>
+    <path d="M99 127 L79 212" stroke="#9b7b4f" stroke-width="2"/>
+    <path d="M168 138 L205 198" stroke="#2c2220" stroke-width="7" stroke-linecap="round"/>
+    <path d="M204 198 L214 212" stroke="url(#blade)" stroke-width="6" stroke-linecap="round"/>
+    <!-- spirit focus -->
+    <circle cx="188" cy="161" r="3.5" fill="#82d9df" filter="url(#cyanGlow)" opacity=".9"/>
+  </g>
+</defs>
+<!-- six transparent idle cells -->
+<g transform="translate(0 0)"><use href="#ash"/></g>
+<g transform="translate(256 -2)"><use href="#ash"/><path d="M54 91 C75 91 87 101 67 116" fill="none" stroke="#7a2a2e" stroke-width="4" opacity=".45"/></g>
+<g transform="translate(512 -3)"><use href="#ash"/><circle cx="700" cy="158" r="4" fill="#82d9df" opacity=".25"/></g>
+<g transform="translate(768 -1)"><use href="#ash"/><path d="M822 93 C844 89 855 99 838 115" fill="none" stroke="#7a2a2e" stroke-width="3" opacity=".35"/></g>
+<g transform="translate(1024 1)"><use href="#ash"/></g>
+<g transform="translate(1280 0)"><use href="#ash"/></g>
+</svg>
