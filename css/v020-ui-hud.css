@@ -1,0 +1,210 @@
+/* V0.20 B10A — shared UI/HUD V3 presentation shell. Presentation only. */
+:root{
+  --v20-ink:#07090d;
+  --v20-surface:rgba(10,13,18,.92);
+  --v20-surface-strong:rgba(12,16,22,.97);
+  --v20-panel:rgba(15,20,27,.82);
+  --v20-line:rgba(205,178,118,.24);
+  --v20-line-soft:rgba(218,226,238,.11);
+  --v20-metal:#c8b27c;
+  --v20-metal-bright:#ead7a4;
+  --v20-mist:#9dafc4;
+  --v20-text:#f3f0e8;
+  --v20-muted:#9aa8b8;
+  --v20-cold:#8fb8d8;
+  --v20-danger:#dc7b72;
+  --v20-radius:20px;
+}
+
+#gameWrap .screenOverlay{
+  background:
+    radial-gradient(circle at 50% 18%,rgba(86,105,125,.14),transparent 36%),
+    linear-gradient(180deg,rgba(3,5,8,.66),rgba(4,6,9,.88));
+  backdrop-filter:blur(9px) saturate(.82);
+}
+#gameWrap .menuScreen{
+  background:
+    radial-gradient(circle at 50% 16%,rgba(164,132,73,.10),transparent 26%),
+    radial-gradient(circle at 16% 76%,rgba(59,93,111,.09),transparent 31%),
+    linear-gradient(160deg,rgba(4,6,9,.80),rgba(7,9,13,.92));
+}
+#gameWrap .menuCard,#gameWrap .modalCard{
+  position:relative;
+  isolation:isolate;
+  border:1px solid var(--v20-line);
+  border-radius:var(--v20-radius);
+  background:
+    linear-gradient(135deg,rgba(205,178,118,.045),transparent 22%,transparent 76%,rgba(117,151,171,.035)),
+    linear-gradient(165deg,var(--v20-surface-strong),rgba(7,10,14,.96));
+  box-shadow:0 28px 90px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.045),inset 0 0 0 1px rgba(0,0,0,.28);
+}
+#gameWrap .menuCard::before,#gameWrap .modalCard::before{
+  content:"";
+  position:absolute;
+  inset:8px;
+  z-index:-1;
+  pointer-events:none;
+  border:1px solid rgba(205,178,118,.075);
+  border-radius:calc(var(--v20-radius) - 7px);
+  clip-path:polygon(0 0,42px 0,42px 1px,calc(100% - 42px) 1px,calc(100% - 42px) 0,100% 0,100% 42px,calc(100% - 1px) 42px,calc(100% - 1px) calc(100% - 42px),100% calc(100% - 42px),100% 100%,calc(100% - 42px) 100%,calc(100% - 42px) calc(100% - 1px),42px calc(100% - 1px),42px 100%,0 100%,0 calc(100% - 42px),1px calc(100% - 42px),1px 42px,0 42px);
+}
+#gameWrap .heroCard{
+  max-width:590px;
+  padding:46px 40px 40px;
+  border-color:rgba(220,190,124,.31);
+  background:
+    radial-gradient(circle at 50% 12%,rgba(205,178,118,.12),transparent 31%),
+    linear-gradient(165deg,rgba(16,18,22,.97),rgba(7,9,13,.98));
+}
+#gameWrap .eyebrow{
+  color:var(--v20-metal);
+  font-size:10px;
+  letter-spacing:.22em;
+  text-shadow:0 0 18px rgba(205,178,118,.12);
+}
+#gameWrap h1,#gameWrap h2{color:var(--v20-text);text-wrap:balance}
+#gameWrap .subtitle,#gameWrap .codexSubtitle{color:var(--v20-muted)}
+
+#gameWrap button.primary,#gameWrap button.secondary,#gameWrap .dangerButton,#gameWrap .backButton,#gameWrap .toggleButton{
+  position:relative;
+  border-radius:10px;
+  letter-spacing:.035em;
+  transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease,filter .14s ease;
+}
+#gameWrap button.primary{
+  border:1px solid rgba(243,220,165,.42);
+  background:linear-gradient(180deg,#e7d7af,#bda56e);
+  color:#15130f;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 8px 28px rgba(114,89,43,.18);
+}
+#gameWrap button.secondary,#gameWrap .backButton,#gameWrap .toggleButton{
+  border-color:rgba(205,178,118,.18);
+  background:linear-gradient(180deg,rgba(32,38,45,.92),rgba(17,22,29,.94));
+  color:#e7e3d9;
+}
+#gameWrap button.primary:hover,#gameWrap button.primary:focus-visible{box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 10px 34px rgba(164,132,73,.28)}
+#gameWrap button.secondary:hover,#gameWrap .backButton:hover,#gameWrap .toggleButton:hover{border-color:rgba(218,193,137,.34);background:linear-gradient(180deg,rgba(42,48,55,.95),rgba(21,27,34,.96))}
+
+/* Main mode/menu composition */
+#gameWrap .screenHeader{padding-bottom:13px;border-bottom:1px solid rgba(205,178,118,.105)}
+#gameWrap .modeGrid{gap:10px}
+#gameWrap .modeCard{
+  position:relative;
+  overflow:hidden;
+  min-height:210px;
+  border:1px solid rgba(205,178,118,.16);
+  border-radius:16px;
+  background:
+    linear-gradient(180deg,rgba(205,178,118,.025),transparent 36%),
+    linear-gradient(145deg,rgba(22,27,34,.96),rgba(11,15,20,.96));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+}
+#gameWrap .modeCard::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:2px;background:linear-gradient(90deg,transparent,rgba(205,178,118,.46),transparent);opacity:.45}
+#gameWrap .modeCard:hover,#gameWrap .modeCard:focus-visible{border-color:rgba(226,200,143,.36);background:linear-gradient(145deg,rgba(30,36,44,.98),rgba(14,19,25,.98));box-shadow:0 14px 34px rgba(0,0,0,.26)}
+#gameWrap .modeTime{color:#eee7d5;text-shadow:0 0 24px rgba(205,178,118,.09)}
+#gameWrap .modeUnit{color:#9f9278}
+#gameWrap .modeCard small{color:#98a4b2}
+#gameWrap .endlessCard{border-color:rgba(156,122,199,.24);background:radial-gradient(circle at 80% 12%,rgba(138,92,180,.10),transparent 33%),linear-gradient(145deg,rgba(27,24,35,.96),rgba(12,14,21,.97))}
+
+/* Survival HUD */
+#gameWrap .gameUi .panel,#gameWrap #skillBar{
+  border:1px solid rgba(205,178,118,.17);
+  background:linear-gradient(165deg,rgba(12,16,21,.90),rgba(7,10,14,.86));
+  box-shadow:0 12px 34px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.035);
+  backdrop-filter:blur(10px) saturate(.85);
+}
+#gameWrap .hud{gap:10px}
+#gameWrap .stats{border-radius:12px;padding:9px 11px}
+#gameWrap .stats .row>b{color:#c9bea4;font-size:10px;letter-spacing:.075em}
+#gameWrap .stats .row>span{color:#d8dce0;font-variant-numeric:tabular-nums}
+#gameWrap .bar{height:10px;border-color:rgba(236,224,196,.10);background:rgba(0,0,0,.48);box-shadow:inset 0 1px 4px rgba(0,0,0,.55)}
+#gameWrap .hp>i{background:linear-gradient(90deg,#8d3f3e,#d47b68)}
+#gameWrap .xp>i{background:linear-gradient(90deg,#547c91,#8fb8c8)}
+#gameWrap .rightHud .pill{border-radius:10px;color:#d9d4c9;font-variant-numeric:tabular-nums}
+#gameWrap .rightHud .pill b{color:#f4ecdb}
+#gameWrap .iconButton{border-color:rgba(205,178,118,.22);border-radius:10px;background:linear-gradient(180deg,rgba(30,35,41,.95),rgba(13,17,22,.95));color:#e9dfc8}
+#gameWrap #skillBar{border-radius:12px;padding:7px}
+#gameWrap .skillMini{border-color:rgba(205,178,118,.13);border-radius:9px;background:linear-gradient(155deg,rgba(255,255,255,.038),rgba(255,255,255,.015))}
+#gameWrap .skillMini b{color:#e7e3da}
+#gameWrap .skillMini small{color:#8f9ba8}
+#gameWrap .skillMini.evolved{border-color:rgba(174,132,220,.30);background:linear-gradient(155deg,rgba(132,88,178,.11),rgba(38,25,52,.06))}
+#gameWrap .skillMini.synergy{border-color:rgba(218,184,109,.27);background:linear-gradient(155deg,rgba(183,137,57,.10),rgba(52,39,18,.05))}
+#gameWrap .buildTracker{border-color:rgba(205,178,118,.18);border-radius:12px}
+#gameWrap .buildTrackerTitle{color:#c8b27c}
+#gameWrap .buildLine{border-color:rgba(205,178,118,.10);background:rgba(255,255,255,.024)}
+#gameWrap .buildTrackerToggle{border-color:rgba(205,178,118,.22);background:linear-gradient(180deg,rgba(28,33,40,.96),rgba(12,16,21,.97));color:#e2dbc9}
+#gameWrap .unlockToast{border-color:rgba(218,184,109,.42);border-radius:13px;background:radial-gradient(circle at 12% 50%,rgba(205,178,118,.10),transparent 34%),rgba(10,14,19,.97);box-shadow:0 20px 64px rgba(0,0,0,.48),0 0 30px rgba(152,118,52,.08)}
+
+/* Skill/reward choices */
+#gameWrap .choice{
+  position:relative;
+  overflow:hidden;
+  border-color:rgba(205,178,118,.14);
+  border-radius:15px;
+  background:linear-gradient(155deg,rgba(24,29,36,.94),rgba(11,15,20,.96));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+}
+#gameWrap .choice::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:2px;background:linear-gradient(90deg,transparent,rgba(143,184,216,.42),transparent);opacity:.55}
+#gameWrap .choice:hover,#gameWrap .choice:focus-visible{border-color:rgba(226,200,143,.34);background:linear-gradient(155deg,rgba(31,37,45,.97),rgba(13,18,24,.98));box-shadow:0 13px 34px rgba(0,0,0,.24)}
+#gameWrap .choice .lvl{color:#9bb8c9}
+#gameWrap .choice .desc{color:#b6c0c8}
+#gameWrap .tagChip{border-color:rgba(143,184,216,.17);background:rgba(78,113,132,.09);color:#b5c8d4}
+
+/* Codex */
+#gameWrap .codexCard{border-color:rgba(205,178,118,.22)}
+#gameWrap .codexToolbar{padding-bottom:10px;border-bottom:1px solid rgba(205,178,118,.09)}
+#gameWrap .codexTab{border-color:rgba(205,178,118,.14);border-radius:8px;background:rgba(20,25,31,.88);color:#aab4bd}
+#gameWrap .codexTab.active{border-color:rgba(231,211,166,.35);background:linear-gradient(180deg,#ddcda7,#b9a06a);color:#15130f}
+#gameWrap .codexSkillCard{border-color:rgba(205,178,118,.11);background:linear-gradient(155deg,rgba(23,28,34,.90),rgba(10,14,19,.94));box-shadow:inset 0 1px 0 rgba(255,255,255,.02)}
+#gameWrap .codexSkillCard:hover,#gameWrap .codexSkillCard:focus-visible{border-color:rgba(224,198,141,.30);box-shadow:0 10px 26px rgba(0,0,0,.24)}
+#gameWrap .codexDetail{border-color:rgba(205,178,118,.14);background:linear-gradient(165deg,rgba(18,23,29,.96),rgba(9,13,18,.97))}
+#gameWrap .codexDetail canvas{border-color:rgba(205,178,118,.12);background:radial-gradient(circle at 50% 42%,rgba(86,108,123,.11),rgba(5,8,12,.65))}
+#gameWrap .codexSectionHeader h3{color:#e7e0d1}
+
+/* Survival results and pause/settings */
+#gameWrap .resultCard{max-width:590px;border-color:rgba(205,178,118,.25);background:radial-gradient(circle at 50% -5%,rgba(205,178,118,.13),transparent 37%),linear-gradient(165deg,rgba(16,19,24,.98),rgba(7,10,14,.98))}
+#gameWrap .resultBadge{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:6px 12px;border:1px solid rgba(205,178,118,.22);border-radius:999px;background:rgba(128,102,51,.10);color:#d8c28e}
+#gameWrap .resultStats{gap:7px}
+#gameWrap .resultStats>div{border-color:rgba(205,178,118,.10);background:rgba(4,7,10,.40);border-radius:10px}
+#gameWrap .resultStats span{color:#8e9aa6;text-transform:uppercase;letter-spacing:.055em}
+#gameWrap .resultStats b{color:#f0eadc;font-variant-numeric:tabular-nums}
+#gameWrap .recordNotice{color:#e2c77d;text-shadow:0 0 22px rgba(226,199,125,.15)}
+#gameWrap .settingRow{border-color:rgba(205,178,118,.09)}
+#gameWrap .howToList p{border-color:rgba(205,178,118,.075)}
+
+/* Keep Duel inside the same shell without overriding dedicated V0.18 card/result hierarchy. */
+#gameWrap .duelLobbyCard,#gameWrap .duelPreCard{border-color:rgba(205,178,118,.22)}
+#gameWrap .duelIntroHero,#gameWrap .duelRuleList>div,#gameWrap .duelVersusPanel>section,#gameWrap .duelCombatRules{border-color:rgba(205,178,118,.11);background:rgba(6,10,14,.46)}
+#gameWrap .duelCombatHud .duelStageHud,#gameWrap .duelCombatHud .duelPhaseHud,#gameWrap .duelCombatHud .duelAbortButton{border-color:rgba(205,178,118,.19);background:rgba(6,9,13,.70)}
+
+@media(max-width:700px){
+  :root{--v20-radius:15px}
+  #gameWrap .menuCard,#gameWrap .modalCard{padding:15px}
+  #gameWrap .heroCard{padding:28px 18px 24px}
+  #gameWrap .screenHeader{padding-bottom:9px}
+  #gameWrap .modeGrid{gap:7px}
+  #gameWrap .modeCard{min-height:142px;padding:13px 11px;border-radius:13px}
+  #gameWrap .modeTime{font-size:38px}
+  #gameWrap .stats{padding:6px 8px}
+  #gameWrap .rightHud{gap:4px}
+  #gameWrap #skillBar{padding:5px}
+  #gameWrap .skillMini{border-radius:8px}
+  #gameWrap .choice{border-radius:12px}
+  #gameWrap .codexDetail{background:linear-gradient(165deg,rgba(14,18,23,.995),rgba(7,10,14,.995))}
+  #gameWrap .resultStats{gap:6px}
+}
+
+@media(max-height:520px) and (orientation:landscape){
+  #gameWrap .heroCard{padding-block:16px}
+  #gameWrap .modeCard{min-height:126px}
+  #gameWrap .menuCard,#gameWrap .modalCard{box-shadow:0 18px 52px rgba(0,0,0,.44),inset 0 1px 0 rgba(255,255,255,.035)}
+}
+
+@media(hover:none){
+  #gameWrap .modeCard:hover,#gameWrap .choice:hover,#gameWrap .codexSkillCard:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  #gameWrap button,#gameWrap .modeCard,#gameWrap .choice,#gameWrap .codexSkillCard,#gameWrap .buildTracker{transition:none!important}
+  #gameWrap button:hover,#gameWrap .modeCard:hover,#gameWrap .choice:hover,#gameWrap .codexSkillCard:hover{transform:none!important}
+}
