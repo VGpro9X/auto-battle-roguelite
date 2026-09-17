@@ -57,12 +57,37 @@
     return { ok: errors.length === 0, errors };
   }
 
+  function validateArenaLayerEntry(layerId, entry) {
+    const errors = [];
+    if (!REQUIRED_ARENA_LAYERS.includes(layerId)) errors.push('unknown arena layer: ' + layerId);
+    if (!entry || typeof entry !== 'object') return { ok:false, errors:errors.concat(['arena layer entry missing']) };
+    if (entry.status !== 'production') errors.push('arena layer not production');
+    if (typeof entry.src !== 'string' || !entry.src.trim()) errors.push('arena layer src missing');
+    if (!Number.isFinite(entry.parallax) || entry.parallax <= 0) errors.push('invalid arena layer parallax');
+    if (!Number.isFinite(entry.width) || entry.width <= 0 || !Number.isFinite(entry.height) || entry.height <= 0) errors.push('invalid arena layer dimensions');
+    if (!Number.isFinite(entry.opacity) || entry.opacity < 0 || entry.opacity > 1) errors.push('invalid arena layer opacity');
+    if (typeof entry.foreground !== 'boolean') errors.push('arena foreground flag missing');
+    if (layerId === 'foreground' && entry.foreground !== true) errors.push('foreground layer must be foreground');
+    if (layerId !== 'foreground' && entry.foreground !== false) errors.push(layerId + ' must not be foreground');
+    return {ok:errors.length===0,errors};
+  }
+
   function validateArenaManifest(manifest) {
     const errors = [];
     if (!manifest || typeof manifest !== 'object') return { ok: false, errors: ['arena manifest missing'] };
     if (manifest.logicalWidth !== 1000 || manifest.logicalHeight !== 560 || manifest.floorY !== 475 || manifest.leftBound !== 54 || manifest.rightBound !== 946) errors.push('arena gameplay geometry changed');
     const declared = Array.isArray(manifest.requiredLayers) ? manifest.requiredLayers : [];
     for (const layer of REQUIRED_ARENA_LAYERS) if (!declared.includes(layer)) errors.push('missing arena layer contract: ' + layer);
+    const layers = Array.isArray(manifest.layers) ? manifest.layers : [];
+    if (manifest.status === 'production') {
+      for (const layerId of REQUIRED_ARENA_LAYERS) {
+        const entry = layers.find(layer=>layer&&layer.id===layerId);
+        const check = validateArenaLayerEntry(layerId,entry);
+        for (const error of check.errors) errors.push(layerId + ': ' + error);
+      }
+      const uniqueIds = new Set(layers.map(layer=>layer&&layer.id).filter(Boolean));
+      if (uniqueIds.size !== layers.length) errors.push('duplicate arena layer id');
+    }
     return { ok: errors.length === 0, errors };
   }
 
@@ -75,6 +100,7 @@
       reason: 'not-initialized',
       fighterManifest: null,
       arenaManifest: null,
+      arenaReady: false,
       supplementalLoaded: false
     };
 
@@ -115,17 +141,19 @@
         if (errors.length) throw new Error(errors.join('; '));
         state.fighterManifest = fighter;
         state.arenaManifest = arena;
+        state.arenaReady = arena.status === 'production' && arenaCheck.ok;
         state.ready = true;
         state.reason = 'ready';
       } catch (error) {
         state.ready = false;
+        state.arenaReady = false;
         state.reason = error && error.message ? error.message : 'initialization-failed';
       }
       return snapshot();
     }
 
     function snapshot() {
-      return { enabled: state.enabled, ready: state.ready, quality: state.quality, reason: state.reason, supplementalLoaded: state.supplementalLoaded };
+      return { enabled: state.enabled, ready: state.ready, arenaReady:state.arenaReady, quality: state.quality, reason: state.reason, supplementalLoaded: state.supplementalLoaded };
     }
 
     function resolveFighterState(semanticState) {
@@ -135,10 +163,18 @@
       return check.ok ? { renderer: 'v3', state: key, entry } : { renderer: 'v2', state: key, entry: null, reason: check.errors.join('; ') };
     }
 
+    function resolveArena() {
+      if (!state.ready || !state.arenaReady || !state.arenaManifest) return {renderer:'v2',entry:null,reason:'arena incomplete'};
+      const check=validateArenaManifest(state.arenaManifest);
+      if(!check.ok)return{renderer:'v2',entry:null,reason:check.errors.join('; ')};
+      return{renderer:'v3',entry:state.arenaManifest,layers:REQUIRED_ARENA_LAYERS.map(id=>state.arenaManifest.layers.find(layer=>layer.id===id))};
+    }
+
     function resolveArenaLayer(layerId) {
-      const layers = state.arenaManifest && Array.isArray(state.arenaManifest.layers) ? state.arenaManifest.layers : [];
-      const entry = layers.find((layer) => layer && layer.id === layerId);
-      return entry ? { renderer: 'v3', layer: layerId, entry } : { renderer: 'v2', layer: layerId, entry: null };
+      const arena=resolveArena();
+      if(arena.renderer!=='v3')return{renderer:'v2',layer:layerId,entry:null,reason:arena.reason};
+      const entry=arena.layers.find(layer=>layer&&layer.id===layerId);
+      return entry ? { renderer: 'v3', layer: layerId, entry } : { renderer: 'v2', layer: layerId, entry: null, reason:'arena complete-set violation' };
     }
 
     function setQuality(value) {
@@ -146,8 +182,8 @@
       return state.quality;
     }
 
-    return { initialize, snapshot, setQuality, resolveFighterState, resolveArenaLayer, validateFighterManifest, validateArenaManifest, validateFighterStateEntry };
+    return { initialize, snapshot, setQuality, resolveFighterState, resolveArena, resolveArenaLayer, validateFighterManifest, validateArenaManifest, validateArenaLayerEntry, validateFighterStateEntry };
   }
 
-  global.AutoBattleRendererV3 = { create: createRendererV3, validateFighterManifest, validateArenaManifest, validateFighterStateEntry, REQUIRED_STATES: REQUIRED_STATES.slice(), REQUIRED_ANCHORS: REQUIRED_ANCHORS.slice(), REQUIRED_ARENA_LAYERS: REQUIRED_ARENA_LAYERS.slice() };
+  global.AutoBattleRendererV3 = { create: createRendererV3, validateFighterManifest, validateArenaManifest, validateArenaLayerEntry, validateFighterStateEntry, REQUIRED_STATES: REQUIRED_STATES.slice(), REQUIRED_ANCHORS: REQUIRED_ANCHORS.slice(), REQUIRED_ARENA_LAYERS: REQUIRED_ARENA_LAYERS.slice() };
 })(typeof window !== 'undefined' ? window : globalThis);
