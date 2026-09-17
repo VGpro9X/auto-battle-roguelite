@@ -19,8 +19,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Static B9 spectacle smoke
+      - name: Static B9 Duel spectacle smoke
         run: node tests/v020-b9-high-tier-spectacle-smoke.js
+
+      - name: Static B9 Survival divine spectacle smoke
+        run: node tests/v020-b9-survival-divine-spectacle-smoke.js
 
       - name: Desktop/mobile runtime quality coverage
         shell: bash
@@ -32,11 +35,19 @@ jobs:
           sleep 1
           chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           if [ -z "$chrome" ]; then echo "Chrome/Chromium not found"; exit 1; fi
-          run_case() {
-            name="$1"; size="$2"; quality="$3"; out="/tmp/v020-b9-${name}.html"
+          run_duel_case() {
+            name="$1"; size="$2"; quality="$3"; out="/tmp/v020-b9-duel-${name}.html"
             "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size="$size" --virtual-time-budget=20000 --dump-dom "http://127.0.0.1:4181/tests/v020-b9-high-tier-spectacle-browser-driver.html?expect=${name}&quality=${quality}" >"$out"
             grep -q "V020_B9_HIGH_TIER_PASS ${name} quality=${quality}" "$out" || { cat "$out"; exit 1; }
             grep "V020_B9_HIGH_TIER_PASS ${name} quality=${quality}" "$out"
           }
-          run_case desktop 1280,720 full
-          run_case mobile 360,640 low
+          run_survival_case() {
+            name="$1"; size="$2"; quality="$3"; out="/tmp/v020-b9-survival-${name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size="$size" --virtual-time-budget=22000 --dump-dom "http://127.0.0.1:4181/tests/v020-b9-survival-divine-spectacle-browser-driver.html?expect=${name}&quality=${quality}" >"$out"
+            grep -q "V020_B9_SURVIVAL_PASS ${name} quality=${quality}" "$out" || { cat "$out"; exit 1; }
+            grep "V020_B9_SURVIVAL_PASS ${name} quality=${quality}" "$out"
+          }
+          run_duel_case desktop 1280,720 full
+          run_duel_case mobile 360,640 low
+          run_survival_case desktop 1280,720 full
+          run_survival_case mobile 360,640 low
