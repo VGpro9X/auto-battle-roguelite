@@ -6,7 +6,7 @@ const noop=()=>{};
 const ctx={save:noop,restore:noop,translate:noop,beginPath:noop,closePath:noop,moveTo:noop,lineTo:noop,stroke:noop,fill:noop,arc:noop,set globalCompositeOperation(v){},set strokeStyle(v){},set fillStyle(v){},set lineWidth(v){},set globalAlpha(v){}};
 const root={
   state:{t:10},player:{x:100,y:80},ctx,
-  location:{search:'?visualQuality=low'},
+  location:{search:'?visualQuality=low'},URLSearchParams,
   matchMedia:()=>({matches:true}),
   draw(){},
   onSkillEvent(name,fn){(handlers[name]||(handlers[name]=[])).push(fn);},
