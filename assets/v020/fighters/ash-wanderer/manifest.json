@@ -45,6 +45,46 @@
         {"head":{"x":137,"y":42},"chest":{"x":136,"y":108},"leftHand":{"x":96,"y":162},"rightHand":{"x":189,"y":157},"feet":{"x":140,"y":232},"front":{"x":203,"y":141},"back":{"x":74,"y":143},"target":{"x":203,"y":141}},
         {"head":{"x":140,"y":44},"chest":{"x":138,"y":110},"leftHand":{"x":88,"y":160},"rightHand":{"x":198,"y":156},"feet":{"x":140,"y":234},"front":{"x":205,"y":144},"back":{"x":76,"y":144},"target":{"x":205,"y":144}}
       ]
+    },
+    "run": {
+      "status": "production",
+      "src": "assets/v020/fighters/ash-wanderer/run.svg",
+      "frameCount": 8,
+      "columns": 8,
+      "fps": 11,
+      "loop": true,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "displayWorldWidth": 176,
+      "anchors": [
+        {"head":{"x":120,"y":46},"chest":{"x":125,"y":112},"leftHand":{"x":67,"y":161},"rightHand":{"x":202,"y":138},"feet":{"x":140,"y":235},"front":{"x":195,"y":139},"back":{"x":67,"y":152},"target":{"x":195,"y":139}},
+        {"head":{"x":120,"y":42},"chest":{"x":125,"y":108},"leftHand":{"x":77,"y":162},"rightHand":{"x":196,"y":141},"feet":{"x":140,"y":231},"front":{"x":195,"y":135},"back":{"x":67,"y":148},"target":{"x":195,"y":135}},
+        {"head":{"x":120,"y":40},"chest":{"x":125,"y":106},"leftHand":{"x":85,"y":162},"rightHand":{"x":186,"y":148},"feet":{"x":140,"y":229},"front":{"x":195,"y":133},"back":{"x":67,"y":146},"target":{"x":195,"y":133}},
+        {"head":{"x":120,"y":43},"chest":{"x":125,"y":109},"leftHand":{"x":107,"y":166},"rightHand":{"x":165,"y":160},"feet":{"x":140,"y":232},"front":{"x":195,"y":136},"back":{"x":67,"y":149},"target":{"x":195,"y":136}},
+        {"head":{"x":120,"y":46},"chest":{"x":125,"y":112},"leftHand":{"x":114,"y":167},"rightHand":{"x":156,"y":164},"feet":{"x":140,"y":235},"front":{"x":195,"y":139},"back":{"x":67,"y":152},"target":{"x":195,"y":139}},
+        {"head":{"x":120,"y":42},"chest":{"x":125,"y":108},"leftHand":{"x":103,"y":165},"rightHand":{"x":165,"y":159},"feet":{"x":140,"y":231},"front":{"x":195,"y":135},"back":{"x":67,"y":148},"target":{"x":195,"y":135}},
+        {"head":{"x":120,"y":40},"chest":{"x":125,"y":106},"leftHand":{"x":95,"y":163},"rightHand":{"x":178,"y":152},"feet":{"x":140,"y":229},"front":{"x":195,"y":133},"back":{"x":67,"y":146},"target":{"x":195,"y":133}},
+        {"head":{"x":120,"y":43},"chest":{"x":125,"y":109},"leftHand":{"x":73,"y":161},"rightHand":{"x":196,"y":142},"feet":{"x":140,"y":232},"front":{"x":195,"y":136},"back":{"x":67,"y":149},"target":{"x":195,"y":136}}
+      ]
+    },
+    "dash": {
+      "status": "production",
+      "src": "assets/v020/fighters/ash-wanderer/dash.svg",
+      "frameCount": 6,
+      "columns": 6,
+      "fps": 12,
+      "loop": false,
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "displayWorldWidth": 176,
+      "anchors": [
+        {"head":{"x":127,"y":45},"chest":{"x":129,"y":111},"leftHand":{"x":80,"y":164},"rightHand":{"x":201,"y":146},"feet":{"x":140,"y":235},"front":{"x":199,"y":141},"back":{"x":70,"y":150},"target":{"x":199,"y":141}},
+        {"head":{"x":107,"y":46},"chest":{"x":116,"y":111},"leftHand":{"x":64,"y":166},"rightHand":{"x":197,"y":129},"feet":{"x":140,"y":233},"front":{"x":188,"y":133},"back":{"x":61,"y":155},"target":{"x":188,"y":133}},
+        {"head":{"x":94,"y":48},"chest":{"x":108,"y":112},"leftHand":{"x":54,"y":168},"rightHand":{"x":192,"y":118},"feet":{"x":140,"y":232},"front":{"x":181,"y":129},"back":{"x":56,"y":160},"target":{"x":181,"y":129}},
+        {"head":{"x":94,"y":48},"chest":{"x":108,"y":112},"leftHand":{"x":56,"y":169},"rightHand":{"x":191,"y":120},"feet":{"x":140,"y":232},"front":{"x":181,"y":129},"back":{"x":56,"y":160},"target":{"x":181,"y":129}},
+        {"head":{"x":114,"y":46},"chest":{"x":121,"y":111},"leftHand":{"x":69,"y":165},"rightHand":{"x":198,"y":136},"feet":{"x":140,"y":234},"front":{"x":192,"y":136},"back":{"x":64,"y":154},"target":{"x":192,"y":136}},
+        {"head":{"x":133,"y":45},"chest":{"x":134,"y":111},"leftHand":{"x":86,"y":163},"rightHand":{"x":199,"y":152},"feet":{"x":140,"y":235},"front":{"x":202,"y":143},"back":{"x":73,"y":147},"target":{"x":202,"y":143}}
+      ]
     }
   },
   "requiredStates": ["idle","walk","run","dash","melee","ranged","cast","hit","block","knockback","knockdown","recover","ko"],
