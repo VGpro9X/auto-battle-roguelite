@@ -1,13 +1,20 @@
 {
   "id": "ashen-sanctum-v3",
   "version": 3,
-  "status": "proof",
+  "status": "production",
   "logicalWidth": 1000,
   "logicalHeight": 560,
   "floorY": 475,
   "leftBound": 54,
   "rightBound": 946,
-  "layers": [],
+  "layers": [
+    {"id":"sky","status":"production","src":"assets/v020/arenas/ashen-sanctum/sky.svg","parallax":0.12,"x":0,"y":0,"width":1000,"height":560,"opacity":1,"foreground":false},
+    {"id":"far","status":"production","src":"assets/v020/arenas/ashen-sanctum/far.svg","parallax":0.30,"x":0,"y":0,"width":1000,"height":560,"opacity":1,"foreground":false},
+    {"id":"mid","status":"production","src":"assets/v020/arenas/ashen-sanctum/mid.svg","parallax":0.58,"x":0,"y":0,"width":1000,"height":560,"opacity":1,"foreground":false},
+    {"id":"ambient","status":"production","src":"assets/v020/arenas/ashen-sanctum/ambient.svg","parallax":0.72,"x":0,"y":0,"width":1000,"height":560,"opacity":0.72,"foreground":false},
+    {"id":"floor","status":"production","src":"assets/v020/arenas/ashen-sanctum/floor.svg","parallax":1.0,"x":0,"y":0,"width":1000,"height":560,"opacity":1,"foreground":false},
+    {"id":"foreground","status":"production","src":"assets/v020/arenas/ashen-sanctum/foreground.svg","parallax":1.08,"x":0,"y":0,"width":1000,"height":560,"opacity":0.78,"foreground":true}
+  ],
   "requiredLayers": ["sky","far","mid","ambient","floor","foreground"],
   "fallback": "v2"
 }
