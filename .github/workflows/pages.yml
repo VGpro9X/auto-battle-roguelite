@@ -213,6 +213,9 @@ jobs:
       - name: V0.20 B4 enemy family gates
         run: node tests/v020-b4-enemy-family-runtime-smoke.js && node tests/v020-b4-enemy-runtime-harness.js
 
+      - name: V0.20 B10 UI/HUD closure gate
+        run: node tests/v020-b10-ui-hud-smoke.js && node tests/v020-b10-duel-ui-smoke.js && node tests/v020-b10c-ui-closure-smoke.js
+
       - name: V0.20 B11A icon runtime gate
         run: node tests/v020-b11-icon-runtime-smoke.js
 
