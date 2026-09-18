@@ -11,14 +11,30 @@
     return QUALITY.has(q) ? q : 'balanced';
   }
 
-  function validateAnchorFrame(frame) {
+  function validateAnchorFrame(frame, width, height) {
     const errors = [];
     if (!frame || typeof frame !== 'object') return { ok: false, errors: ['anchor frame missing'] };
+    const hasBounds=Number.isFinite(width)&&width>0&&Number.isFinite(height)&&height>0;
     for (const name of REQUIRED_ANCHORS) {
       const point = frame[name];
-      if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) errors.push('invalid anchor: ' + name);
+      if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) {
+        errors.push('invalid anchor: ' + name);
+        continue;
+      }
+      if (hasBounds && (point.x < 0 || point.x > width || point.y < 0 || point.y > height)) errors.push('anchor out of bounds: ' + name);
     }
     return { ok: errors.length === 0, errors };
+  }
+
+  function mirrorAnchorFrame(frame, width) {
+    if (!frame || typeof frame !== 'object' || !Number.isFinite(width)) return {};
+    const mirrored={};
+    for (const [name,point] of Object.entries(frame)) {
+      mirrored[name]=point&&Number.isFinite(point.x)&&Number.isFinite(point.y)
+        ? {x:width-point.x,y:point.y}
+        : point;
+    }
+    return mirrored;
   }
 
   function validateFighterStateEntry(stateId, entry) {
@@ -185,5 +201,5 @@
     return { initialize, snapshot, setQuality, resolveFighterState, resolveArena, resolveArenaLayer, validateFighterManifest, validateArenaManifest, validateArenaLayerEntry, validateFighterStateEntry };
   }
 
-  global.AutoBattleRendererV3 = { create: createRendererV3, validateFighterManifest, validateArenaManifest, validateArenaLayerEntry, validateFighterStateEntry, REQUIRED_STATES: REQUIRED_STATES.slice(), REQUIRED_ANCHORS: REQUIRED_ANCHORS.slice(), REQUIRED_ARENA_LAYERS: REQUIRED_ARENA_LAYERS.slice() };
+  global.AutoBattleRendererV3 = { create: createRendererV3, validateAnchorFrame, mirrorAnchorFrame, validateFighterManifest, validateArenaManifest, validateArenaLayerEntry, validateFighterStateEntry, REQUIRED_STATES: REQUIRED_STATES.slice(), REQUIRED_ANCHORS: REQUIRED_ANCHORS.slice(), REQUIRED_ARENA_LAYERS: REQUIRED_ARENA_LAYERS.slice() };
 })(typeof window !== 'undefined' ? window : globalThis);
