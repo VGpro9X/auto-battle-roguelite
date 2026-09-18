@@ -72,7 +72,7 @@
   function resolveTier(kind,item={}){
     if(kind==="mystic"||item?.tier==="mystic")return"mystic";
     if(kind==="divine"||item?.tier==="divine")return"divine";
-    if(kind==="rare")return item?.tier==="mystic"?"mystic":"rare";
+    if(kind==="rare")return"rare";
     if(kind==="evolution")return"evolution";
     if(kind==="synergy")return"synergy";
     return"base";
