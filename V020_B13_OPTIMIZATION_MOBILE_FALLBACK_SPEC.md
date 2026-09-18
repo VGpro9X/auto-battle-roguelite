@@ -1,6 +1,6 @@
 # V0.20 — B13 Optimization / Mobile / Fallback
 
-Status: **ACTIVE — B13A AUTO QUALITY INTEGRATED**
+Status: **COMPLETE ✅ — B13A/B13B/B13C VALIDATED**
 
 B13 closes performance, mobile and fallback behavior before V0.20 release integration. It must not change gameplay truth.
 
@@ -72,8 +72,38 @@ B13A only selects presentation budgets. It must not alter:
   - mobile forced FULL override
 - historical G4D, G6A and B9 quality gates remain required.
 
-## Remaining B13
-- **B13B — fallback closure:** V3 → V2 → vector forced-mode/browser validation, missing/partial asset fallback and reduced-motion closure.
-- **B13C — final performance/mobile audit:** public artifact size/path audit, runtime error check and final B13 handoff to B14.
+## B13B — fallback closure
+B13B validates the current renderer chain in-browser:
+- forced vector mode
+- forced Renderer V2 mode
+- forced Renderer V3 mode
+- forced missing/unready V3 presentation falls back to V2
+- reduced-motion propagates from the unified quality policy into V3 lighting/core VFX/tier VFX
+- historical G6D/G6E and B1 fallback contracts remain green
 
-Public/runtime label remains V0.19 until B14.
+Validation:
+- `tests/v020-b13b-fallback-smoke.js`
+- `tests/v020-b13b-fallback-browser-driver.html`
+- `.github/workflows/v020-b13b-fallback-validation.yml`
+
+## B13C — public performance/mobile closure
+B13C validates the actual public roots (`index.html`, `css/`, `js/`, `assets/`):
+- artifact size remains below 1.5 MiB
+- no individual public file exceeds 128 KiB
+- public HTML/runtime script paths resolve
+- tests/workflows do not leak into public artifact roots
+- desktop and explicit 360×640 mobile runtime smoke both pass
+- Survival choice UI, Duel lobby and V3 renderer initialize without captured runtime errors
+- B12/B13 static dependencies remain green
+
+Validation:
+- `tests/v020-b13c-public-artifact-audit.js`
+- `tests/v020-b13c-public-browser-driver.html`
+- `.github/workflows/v020-b13c-public-closure.yml`
+
+B13C run #2 completed successfully across artifact, desktop/mobile runtime and dependency closure.
+
+## Handoff
+B13 is complete. Next checkpoint: **B14 — Integration / Release**.
+
+Public/runtime label remains V0.19 until B14 release gates pass.
