@@ -18,10 +18,11 @@ const plan=read('V019_TACTICAL_AI_PLAN.md');
 const release=read('V019_RELEASE_VALIDATION.md');
 const pages=read('.github/workflows/pages.yml');
 
-assert.ok(core.includes('const GAME_VERSION="V0.19"'),'runtime GAME_VERSION must be V0.19');
-assert.ok(index.includes('<title>Auto Battle Roguelite V0.19</title>'),'static title must be V0.19');
-assert.ok(index.includes('<div id="version">Auto Battle Roguelite V0.19</div>'),'static badge must be V0.19');
-assert.ok(uiSync.includes('V0.19 · ĐẤU TRƯỜNG 1V1'),'Duel release label must be V0.19');
+const currentVersion=(core.match(/GAME_VERSION="(V0\\.19|V0\\.20)"/)||[])[1];
+assert.ok(currentVersion,'runtime GAME_VERSION must remain V0.19+ compatible');
+assert.ok(index.includes(`<title>Auto Battle Roguelite ${currentVersion}</title>`),'static title/runtime version mismatch');
+assert.ok(index.includes(`<div id="version">Auto Battle Roguelite ${currentVersion}</div>`),'static badge/runtime version mismatch');
+assert.ok(uiSync.includes(`${currentVersion} · ĐẤU TRƯỜNG 1V1`),'Duel release label/runtime version mismatch');
 for(const src of [
   'js/core.js?v=019-release-r1',
   'js/v019-survival-ai.js?v=019-release-r1',
@@ -29,9 +30,15 @@ for(const src of [
   'js/duel-ui-sync.js?v=019-release-r1'
 ])assert.ok(index.includes(src),`release cache key missing: ${src}`);
 
-assert.ok(readme.includes('Current release: **V0.19 – Tactical AI & Movement Intelligence**'),'README current release mismatch');
-assert.ok(roadmap.includes('Released baseline: **V0.19 – Tactical AI & Movement Intelligence**'),'ROADMAP current release mismatch');
-assert.ok(handoff.includes('Current released/public baseline: **V0.19 – Tactical AI & Movement Intelligence**'),'handoff current baseline mismatch');
+if(currentVersion==='V0.20'){
+  assert.ok(readme.includes('Current release: **V0.20 – Complete Visual Rebuild**'),'README current release mismatch');
+  assert.ok(roadmap.includes('Released baseline: **V0.20 – Complete Visual Rebuild**'),'ROADMAP current release mismatch');
+  assert.ok(handoff.includes('Current released/public baseline: **V0.20 – Complete Visual Rebuild**'),'handoff current baseline mismatch');
+}else{
+  assert.ok(readme.includes('Current release: **V0.19 – Tactical AI & Movement Intelligence**'),'README current release mismatch');
+  assert.ok(roadmap.includes('Released baseline: **V0.19 – Tactical AI & Movement Intelligence**'),'ROADMAP current release mismatch');
+  assert.ok(handoff.includes('Current released/public baseline: **V0.19 – Tactical AI & Movement Intelligence**'),'handoff current baseline mismatch');
+}
 assert.ok(plan.includes('Status: **COMPLETE / RELEASED**'),'V0.19 plan must be closed');
 assert.ok(release.includes('Status: **COMPLETE / RELEASED**'),'V0.19 release evidence must be closed');
 for(const checkpoint of Array.from({length:16},(_,i)=>`A${i}`))assert.ok(plan.includes(`${checkpoint}`)&&plan.includes('COMPLETE'),`plan closure missing ${checkpoint}`);
@@ -57,4 +64,4 @@ assert.ok(!pages.includes('cp -R tests _site/tests'),'tests must not ship to Pag
 assert.ok(readme.includes('V0.18')&&readme.includes('V0.17'),'historical baselines must remain documented');
 assert.ok(handoff.includes('Current released/public baseline'),'required handoff marker missing');
 
-console.log('V0.19 A15 release audit: PASS · V0.19 promoted · 80/28/12/20 retained · tests excluded from Pages');
+console.log(`V0.19 A15 historical regression audit: PASS · current=${currentVersion} · 80/28/12/20 retained · tests excluded from Pages`);
