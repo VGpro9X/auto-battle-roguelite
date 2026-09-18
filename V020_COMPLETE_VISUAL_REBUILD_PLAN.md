@@ -1,6 +1,6 @@
 # V0.20 — Complete Visual Rebuild Plan
 
-Status: **APPROVED / IN DEVELOPMENT — B0–B11 COMPLETE, B12 ACTIVE**
+Status: **APPROVED / IN DEVELOPMENT — B0–B12 COMPLETE, B13 ACTIVE**
 
 Canonical source: GitHub `main` in `VGpro9X/auto-battle-roguelite`.
 
@@ -27,7 +27,7 @@ The detailed production truth is split into locked documents:
 - `V020_B6_LIGHTING_SHADOW_SPEC.md` — completed quality-aware lighting/shadow/atmosphere runtime pass and desktop/mobile validation.
 - `V020_B7_CORE_VFX_SPEC.md` — completed 15-family semantic V3 core VFX migration, budgets and browser validation.
 - `V020_B8_SKILL_VISUAL_MAPPING_SPEC.md` — completed 80/28/12 Duel skill/synergy/evolution semantic mapping and runtime coverage validation.
-- `V020_B9_HIGH_TIER_SPECTACLE_SPEC.md` — completed deterministic Duel + Survival high-tier presentation contract with 20 Duel Rare and 20 Survival divine/mystic signatures.\n- `V020_B10_UI_HUD_SPEC.md` — completed shared Survival/Duel/menu/Codex/tournament/result UI/HUD V3 composition and cross-device closure.\n- `V020_B11_ICON_PRODUCTION_SPEC.md` — active deterministic SVG icon production and runtime coverage checkpoint.
+- `V020_B9_HIGH_TIER_SPECTACLE_SPEC.md` — completed deterministic Duel + Survival high-tier presentation contract with 20 Duel Rare and 20 Survival divine/mystic signatures.\n- `V020_B10_UI_HUD_SPEC.md` — completed shared Survival/Duel/menu/Codex/tournament/result UI/HUD V3 composition and cross-device closure.\n- `V020_B11_ICON_PRODUCTION_SPEC.md` — active deterministic SVG icon production and runtime coverage checkpoint.\n- `V020_B12_ANIMATION_COMBAT_POLISH_SPEC.md` — completed hit/slash/KO VFX, directional camera impact and cross-device/reduced-motion combat closure.
 
 New runtime work is isolated under `assets/v020/`; V0.18 production assets remain intact as fallback.
 
@@ -127,8 +127,15 @@ FULL/BALANCED/LOW affect presentation cost only, never gameplay truth.
   - B11C desktop/mobile/reduced-motion browser validation passed
   - Survival/Codex/Duel primary UI surfaces now prefer semantic V3 icons
   - legacy metadata emoji retained only as compatibility fallback
-- **B12 — Animation & Combat Polish — ACTIVE** — impact/camera/trail/KO presentation, no simulation leakage
-- **B13 — Optimization / Mobile / Fallback** — compression/memory, quality gates, reduced motion, V3→V2→vector fallback
+- **B12 — Animation & Combat Polish — COMPLETE ✅**
+  - B12A hit rings, physical slash trails, critical impact and KO burst
+  - B12B bounded directional camera kick for hit/KO with reduced-motion zeroing
+  - B12C real Canvas2D desktop/mobile/reduced-motion browser closure passed
+  - presentation-only; no simulation ownership
+- **B13 — Optimization / Mobile / Fallback — ACTIVE**
+  - compression/memory and transient budgets
+  - mobile quality and reduced-motion closure
+  - V3→V2→vector fallback verification and public artifact discipline
 - **B14 — Integration / Release** — V0.16–V0.19 regressions, V0.20 browser/mobile/Pages validation, then promote label to V0.20 and owner final test
 
 ## Release discipline
@@ -138,4 +145,4 @@ GitHub `main` is canonical. Fetch latest SHA before edits. Commit every meaningf
 V0.20 requires normal production gameplay to use coherent V3 artwork, complete 13 fighter states, coherent required enemies, Ashen Sanctum V3, complete skill visual mapping, distinct high tiers, 20 Rare identities, coherent desktop/mobile UI/icons, unchanged gameplay truth, functional V2/vector fallback, no missing assets/runtime errors, desktop/mobile/performance/reduced-motion gates, historical V0.16–V0.19 regressions, exact Pages deployment, then V0.20 label promotion and final owner visual/gameplay test.
 
 ## Current continuation point
-**B0–B11 COMPLETE. B12 ACTIVE: polish combat animation, hit readability, timing presentation and motion feedback without changing gameplay truth. Public/runtime label remains V0.19 until B14.**
+**B0–B12 COMPLETE. B13 ACTIVE: optimize budgets/mobile behavior and close V3→V2→vector fallback before release integration. Public/runtime label remains V0.19 until B14.**
