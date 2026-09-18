@@ -9,7 +9,7 @@ const bootstrap=read("js/duel-renderer.js");
 const enemyPresentation=read("js/v020-enemy-presentation.js");
 
 assert(html.includes("DUEL_RENDERER_V3_QUALITY='auto'"),"public V3 quality must default to auto");
-assert(html.includes("js/duel-renderer-v3-bridge.js?v=020-b13a"),"B13A bridge cache key missing");
+assert(/js\/duel-renderer-v3-bridge\.js\?v=020-b13[ab]/.test(html),"B13A/B13B bridge cache key missing");
 assert(bootstrap.includes("js/duel-vfx-tier.js?v=020-b13a"),"B13A Duel tier cache key missing");
 assert(enemyPresentation.includes("js/v020-survival-divine-vfx.js?v=020-b13a"),"B13A Survival spectacle cache key missing");
 
