@@ -17,8 +17,8 @@ assert(html.includes("js/duel-vfx-v3.js?v=020-b12a"),"B12A VFX cache key missing
 assert(readme.includes("Current release: **V0.20 – Complete Visual Rebuild**"),"README current release mismatch");
 assert(roadmap.includes("Released baseline: **V0.20 – Complete Visual Rebuild**"),"ROADMAP current release mismatch");
 assert(handoff.includes("Current released/public baseline: **V0.20 – Complete Visual Rebuild**"),"handoff current baseline mismatch");
-assert(/B0–B13 COMPLETE, B14 (?:ACTIVE|COMPLETE)/.test(plan),"master plan not in B14 release state");
-assert(spec.includes("# V0.20 — B14 Integration / Release"),"B14 release spec missing");
+assert(plan.includes("B0–B14 COMPLETE"),"master plan not in completed B14 release state");
+assert(spec.includes("# V0.20 — B14 Integration / Release"),"B14 release spec missing");\nassert(spec.includes("Status: **COMPLETE / RELEASED ✅**"),"B14 release spec is not closed");\nassert(exists("V020_RELEASE_VALIDATION.md"),"V0.20 release validation evidence missing");
 
 for(const file of [
  "V019_RELEASE_VALIDATION.md","V018_RELEASE_VALIDATION.md","V017_RELEASE_VALIDATION.md",
