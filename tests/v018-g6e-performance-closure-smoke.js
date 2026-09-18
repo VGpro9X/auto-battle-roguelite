@@ -24,7 +24,7 @@ const browser=read('tests/v018-g6e-performance-browser-driver.html');
 
 assert.match(renderer,/refreshDuelVisualQuality\(\{width,height\}\)/,'renderer resize must refresh visual quality from rendered dimensions');
 assert.match(renderer,/quality\?\.dprCap/,'renderer resize must apply quality DPR cap');
-assert.match(renderer,/duel-camera\.js\?v=018-g6e/,'G6E camera cache key missing');
+assert.match(renderer,/duel-camera\.js\?v=(?:018-g6e|020-b12b)/,'G6E camera compatibility cache key missing');
 assert.match(renderer,/duel-renderer-v2\.js\?v=(?:018-g6e|020-b5)/,'G6E Renderer V2 compatibility cache key missing');
 assert.match(camera,/getDuelVisualQuality/,'camera must consume visual quality policy');
 assert.match(camera,/shakeMultiplier/,'camera shake quality multiplier missing');
