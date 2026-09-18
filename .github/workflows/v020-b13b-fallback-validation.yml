@@ -1,0 +1,56 @@
+name: V0.20 B13B Fallback Closure
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "js/duel-renderer-v3-bridge.js"
+      - "js/duel-renderer-v2.js"
+      - "js/duel-renderer.js"
+      - "js/duel-visual-quality.js"
+      - "tests/v020-b13b-fallback-smoke.js"
+      - "tests/v020-b13b-fallback-browser-driver.html"
+      - "V020_B13_OPTIMIZATION_MOBILE_FALLBACK_SPEC.md"
+      - ".github/workflows/v020-b13b-fallback-validation.yml"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Syntax and static fallback contract
+        run: |
+          node --check js/duel-renderer-v3-bridge.js
+          node --check tests/v020-b13b-fallback-smoke.js
+          node tests/v020-b13b-fallback-smoke.js
+
+      - name: Historical fallback regressions
+        run: |
+          node tests/v018-g6d-fallback-contract-smoke.js
+          node tests/v018-g6e-performance-closure-smoke.js
+          node tests/v020-b1-renderer-bridge-smoke.js
+          node tests/v020-b1-runtime-wiring-smoke.js
+
+      - name: Forced vector V2 V3 and reduced-motion browser closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4188 >/tmp/v020-b13b-http.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          [ -n "$chrome" ] || { echo "Chrome/Chromium not found"; exit 1; }
+          run_case(){
+            name="$1"; out="/tmp/v020-b13b-${name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1280,720 --virtual-time-budget=28000 --dump-dom "http://127.0.0.1:4188/tests/v020-b13b-fallback-browser-driver.html?expect=${name}" >"$out"
+            grep -q "V020_B13B_PASS ${name}" "$out" || { cat "$out"; exit 1; }
+            grep "V020_B13B_PASS ${name}" "$out"
+          }
+          run_case vector
+          run_case v2
+          run_case v3
+          run_case reduced
