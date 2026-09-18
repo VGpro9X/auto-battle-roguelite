@@ -1,0 +1,65 @@
+<!doctype html><meta charset="utf-8">
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+iframe{margin:0;width:100%;height:100%;border:0}
+#result{position:fixed;z-index:999999;left:0;top:0;background:#000;color:#fff;font:12px monospace;white-space:pre-wrap}
+</style>
+<iframe id="app" src="../index.html"></iframe><pre id="result">B11C loading…</pre>
+<script>
+(()=>{
+  const q=new URLSearchParams(location.search),expect=q.get("expect")||"desktop",frame=document.getElementById("app"),out=document.getElementById("result");
+  if(expect==="mobile"){frame.style.width="360px";frame.style.height="640px"}
+  const fail=m=>{out.textContent="V020_B11C_FAIL "+expect+" "+m;throw new Error(m)};
+  const ok=(v,m)=>{if(!v)fail(m)};
+  const inside=(node,w)=>{const r=node.getBoundingClientRect();return r.left>=-2&&r.right<=w.innerWidth+2&&r.top>=-2&&r.bottom<=w.innerHeight+2};
+  frame.addEventListener("load",()=>setTimeout(async()=>{
+    const d=frame.contentDocument,w=frame.contentWindow;
+    try{
+      ok(typeof w.getV020IconMarkup==="function","icon runtime missing");
+      ok(Array.isArray(w.V020_ICON_FAMILIES)&&w.V020_ICON_FAMILIES.length>=16,"icon family vocabulary missing");
+
+      w.startRun("5");
+      await new Promise(r=>setTimeout(r,380));
+      const choices=[...d.querySelectorAll("#choices .choice")];
+      ok(choices.length===3,"Survival must show three choices");
+      for(const [i,card] of choices.entries()){
+        const icon=card.querySelector(".icon .v20Icon svg");
+        ok(icon,"Survival choice "+i+" missing SVG icon");
+        ok(inside(card,w),"Survival choice "+i+" overflows viewport");
+      }
+
+      w.showScreen("skillCodexMenu");
+      await new Promise(r=>setTimeout(r,220));
+      const codexIcons=[...d.querySelectorAll(".codexSkillCard .v20Icon svg")];
+      ok(codexIcons.length>=100,"Codex runtime icon coverage unexpectedly low: "+codexIcons.length);
+      ok(d.querySelector("#codexDetailContent h3 .v20Icon svg"),"Codex detail icon missing");
+      ok(d.documentElement.scrollWidth<=w.innerWidth+2,"Codex horizontal overflow");
+
+      w.openDuelLobby();
+      d.getElementById("duelStartTournament").click();
+      await new Promise(r=>setTimeout(r,120));
+      const duelChoices=[...d.querySelectorAll("#duelChoices .duelChoice")];
+      ok(duelChoices.length===3,"Duel must show three choices");
+      for(const [i,card] of duelChoices.entries()){
+        ok(card.querySelector(".icon .v20Icon svg"),"Duel choice "+i+" missing SVG icon");
+        ok(inside(card,w),"Duel choice "+i+" overflows viewport");
+      }
+
+      const probe=d.createElement("span");
+      probe.innerHTML=w.getV020IconMarkup("divine","heavenlyPunishment",{name:"Thiên Phạt",tier:"divine",tags:["LIGHTNING"]},{size:"lg"});
+      d.getElementById("gameWrap").appendChild(probe);
+      const rendered=probe.querySelector(".v20Icon");
+      const rs=w.getComputedStyle(rendered);
+      ok(parseFloat(rs.width)>0&&parseFloat(rs.height)>0,"computed icon size invalid");
+      if(expect==="reduced"){
+        ok(w.matchMedia("(prefers-reduced-motion: reduce)").matches,"reduced-motion media not active");
+        ok(rs.filter==="none","reduced-motion icon filter not disabled");
+      }
+      probe.remove();
+      if(expect==="mobile")ok(Math.round(frame.getBoundingClientRect().width)<=400,"mobile iframe width missing");
+
+      out.textContent="V020_B11C_PASS "+expect+" families="+w.V020_ICON_FAMILIES.length+" codexIcons="+codexIcons.length;
+    }catch(e){fail(e.message)}
+  },2600));
+})();
+</script>
