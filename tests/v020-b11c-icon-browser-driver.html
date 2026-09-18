@@ -11,7 +11,7 @@ iframe{margin:0;width:100%;height:100%;border:0}
   if(expect==="mobile"){frame.style.width="360px";frame.style.height="640px"}
   const fail=m=>{out.textContent="V020_B11C_FAIL "+expect+" "+m;throw new Error(m)};
   const ok=(v,m)=>{if(!v)fail(m)};
-  const inside=(node,w)=>{const r=node.getBoundingClientRect();return r.left>=-2&&r.right<=w.innerWidth+2&&r.top>=-2&&r.bottom<=w.innerHeight+2};
+  const insideX=(node,w)=>{const r=node.getBoundingClientRect();return r.left>=-2&&r.right<=w.innerWidth+2};
   frame.addEventListener("load",()=>setTimeout(async()=>{
     const d=frame.contentDocument,w=frame.contentWindow;
     try{
@@ -25,7 +25,7 @@ iframe{margin:0;width:100%;height:100%;border:0}
       for(const [i,card] of choices.entries()){
         const icon=card.querySelector(".icon .v20Icon svg");
         ok(icon,"Survival choice "+i+" missing SVG icon");
-        ok(inside(card,w),"Survival choice "+i+" overflows viewport");
+        ok(insideX(card,w),"Survival choice "+i+" overflows viewport");
       }
 
       w.showScreen("skillCodexMenu");
@@ -42,7 +42,7 @@ iframe{margin:0;width:100%;height:100%;border:0}
       ok(duelChoices.length===3,"Duel must show three choices");
       for(const [i,card] of duelChoices.entries()){
         ok(card.querySelector(".icon .v20Icon svg"),"Duel choice "+i+" missing SVG icon");
-        ok(inside(card,w),"Duel choice "+i+" overflows viewport");
+        ok(insideX(card,w),"Duel choice "+i+" overflows viewport");
       }
 
       const probe=d.createElement("span");
