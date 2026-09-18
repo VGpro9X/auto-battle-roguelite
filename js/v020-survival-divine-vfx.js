@@ -17,9 +17,11 @@ const TARGET_LIMITS={full:8,balanced:5,low:3};
 const runtime={bursts:[],dropped:0,draws:0,lastTriggerAt:{}};
 
 function quality(){
-  let q='balanced';
-  try{const p=new URLSearchParams(root.location?.search||'');q=(p.get('visualQuality')||root.DUEL_RENDERER_V3_QUALITY||'balanced').toLowerCase();}catch{}
-  return q==='full'||q==='low'?q:'balanced';
+  let q='auto';
+  try{const p=new URLSearchParams(root.location?.search||'');q=(p.get('visualQuality')||root.DUEL_RENDERER_V3_QUALITY||'auto').toLowerCase();}catch{}
+  if(q==='full'||q==='balanced'||q==='low')return q;
+  const legacy=typeof root.getDuelVisualQuality==='function'?root.getDuelVisualQuality():null;
+  return legacy?.id==='constrained'?'low':'balanced';
 }
 function reducedMotion(){
   try{return Boolean(root.matchMedia?.('(prefers-reduced-motion: reduce)').matches);}catch{return false;}
