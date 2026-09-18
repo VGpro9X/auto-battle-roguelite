@@ -1,6 +1,6 @@
 # V0.20 — Complete Visual Rebuild Plan
 
-Status: **APPROVED / IN DEVELOPMENT — B0–B13 COMPLETE, B14 ACTIVE**
+Status: **COMPLETE / RELEASED — B0–B14 COMPLETE ✅**
 
 Canonical source: GitHub `main` in `VGpro9X/auto-battle-roguelite`.
 
@@ -28,6 +28,7 @@ The detailed production truth is split into locked documents:
 - `V020_B7_CORE_VFX_SPEC.md` — completed 15-family semantic V3 core VFX migration, budgets and browser validation.
 - `V020_B8_SKILL_VISUAL_MAPPING_SPEC.md` — completed 80/28/12 Duel skill/synergy/evolution semantic mapping and runtime coverage validation.
 - `V020_B9_HIGH_TIER_SPECTACLE_SPEC.md` — completed deterministic Duel + Survival high-tier presentation contract with 20 Duel Rare and 20 Survival divine/mystic signatures.\n- `V020_B10_UI_HUD_SPEC.md` — completed shared Survival/Duel/menu/Codex/tournament/result UI/HUD V3 composition and cross-device closure.\n- `V020_B11_ICON_PRODUCTION_SPEC.md` — active deterministic SVG icon production and runtime coverage checkpoint.\n- `V020_B12_ANIMATION_COMBAT_POLISH_SPEC.md` — completed hit/slash/KO VFX, directional camera impact and cross-device/reduced-motion combat closure.
+- `V020_RELEASE_VALIDATION.md` — final V0.20 promotion, regression, browser and Pages release evidence.
 
 New runtime work is isolated under `assets/v020/`; V0.18 production assets remain intact as fallback.
 
@@ -137,11 +138,12 @@ FULL/BALANCED/LOW affect presentation cost only, never gameplay truth.
   - forced vector/V2/V3 plus missing-V3→V2 fallback browser closure passed
   - reduced-motion propagation validated through V3 presentation
   - public artifact budget/path + desktop/mobile runtime closure passed
-- **B14 — Integration / Release — ACTIVE**
-  - V0.16–V0.19 historical regression sweep
-  - V0.20 integrated browser/mobile candidate validation
-  - promote public label to V0.20 only after candidate gate passes
-  - exact GitHub Pages deploy, then owner final visual/gameplay test
+- **B14 — Integration / Release — COMPLETE ✅**
+  - V0.16–V0.19 historical regression sweep passed
+  - V0.20 integrated desktop/mobile/reduced-motion release validation passed
+  - public/runtime label promoted to V0.20 after candidate gate passed
+  - exact GitHub Pages deploy succeeded
+  - automated release closure complete; owner final visual/gameplay acceptance remains
 
 ## Release discipline
 GitHub `main` is canonical. Fetch latest SHA before edits. Commit every meaningful checkpoint. Do not promote public/runtime V0.20 before B14 gates pass. Current public baseline stays V0.19. Tests remain under `tests/` and are not shipped in Pages artifact.
@@ -150,4 +152,4 @@ GitHub `main` is canonical. Fetch latest SHA before edits. Commit every meaningf
 V0.20 requires normal production gameplay to use coherent V3 artwork, complete 13 fighter states, coherent required enemies, Ashen Sanctum V3, complete skill visual mapping, distinct high tiers, 20 Rare identities, coherent desktop/mobile UI/icons, unchanged gameplay truth, functional V2/vector fallback, no missing assets/runtime errors, desktop/mobile/performance/reduced-motion gates, historical V0.16–V0.19 regressions, exact Pages deployment, then V0.20 label promotion and final owner visual/gameplay test.
 
 ## Current continuation point
-**B0–B13 COMPLETE. B14 ACTIVE: run the integrated release candidate gates, promote the public label to V0.20 only after they pass, deploy the exact Pages artifact, then hand off to owner final test.**
+**B0–B14 COMPLETE / RELEASED. V0.20 is deployed on GitHub Pages. Automated validation is closed; the project owner now performs the final human visual/gameplay acceptance test.**
