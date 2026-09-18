@@ -1,4 +1,4 @@
-const CODEX_GROUPS=[
+function codexV20Icon(entry,size="sm"){return typeof getV020IconMarkup==="function"?getV020IconMarkup(entry.kind,entry.key,entry.data,{size,title:entry.data?.name||entry.key}):`<span class="legacyIcon" aria-hidden="true">${entry.data?.icon||"◆"}</span>`;}\n\nconst CODEX_GROUPS=[
   {id:"attack",label:"Tấn công & Đạn",match:tags=>tags.some(t=>["ATTACK","PROJECTILE","CRITICAL","DAMAGE"].includes(t))},
   {id:"element",label:"Nguyên tố",match:tags=>tags.some(t=>["FIRE","ICE","LIGHTNING","POISON","ELEMENTAL","DOT"].includes(t))},
   {id:"summon",label:"Triệu hồi",match:tags=>tags.includes("SUMMON")},
@@ -115,7 +115,7 @@ function makeCodexCard(entry){
     <canvas class="codexPreview" width="144" height="92" aria-hidden="true"></canvas>
     <div class="codexCardMeta">
       <span class="codexCardType">${codexTypeLabel(entry)}</span>
-      <b>${entry.data.icon?`${entry.data.icon} `:""}${entry.data.name}</b>
+      <b>${codexV20Icon(entry,"sm")} ${entry.data.name}</b>
     </div>
   `;
   button.addEventListener("mouseenter",()=>selectCodexEntry(entry,false));
@@ -234,7 +234,7 @@ function renderCodexDetail(entry){
 
   root.innerHTML=`
     <div class="codexDetailEyebrow">${codexTypeLabel(entry)}</div>
-    <h3>${entry.data.icon?`${entry.data.icon} `:""}${entry.data.name}</h3>
+    <h3>${codexV20Icon(entry,"md")} ${entry.data.name}</h3>
     ${entry.kind==="skill"?`<div class="codexDetailLevel">Cấp tối đa ${entry.data.max}</div>`:(entry.kind==="mystic"||entry.kind==="divine")?`<div class="codexDetailLevel">DUY NHẤT · KHÔNG CÓ CẤP</div>`:""}
     ${tags.length?`<div class="codexDetailTags">${tags.map(tag=>`<span class="tagChip">${typeof getTagLabel==="function"?getTagLabel(tag):tag}</span>`).join("")}</div>`:""}
     <p>${desc}</p>
