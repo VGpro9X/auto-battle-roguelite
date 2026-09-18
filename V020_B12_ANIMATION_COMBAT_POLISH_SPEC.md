@@ -1,6 +1,6 @@
 # V0.20 — B12 Animation & Combat Polish
 
-Status: **ACTIVE — B12A DUEL IMPACT POLISH INTEGRATED**
+Status: **COMPLETE ✅ — B12A/B12B/B12C VALIDATED**
 
 B12 improves motion readability and combat impact without changing simulation truth.
 
@@ -41,8 +41,32 @@ This prevents the public Pages build from retaining the older B7 VFX file in bro
   - rejects direct combat-state mutation from the presentation layer
   - confirms the public cache key
 
-## Remaining B12 work
-- **B12B:** camera/impact timing audit and controlled hit-stop-like presentation cues without pausing simulation
-- **B12C:** mobile/reduced-motion combat browser closure and final B12 documentation
+## B12B — camera impact timing
+Runtime source: `js/duel-camera.js`.
+
+B12B adds directional presentation kick for hit and KO events:
+- horizontal kick follows event position/target side
+- critical hits and KOs receive stronger bounded impulse
+- impulses decay independently from existing shake/zoom response
+- mobile keeps the existing reduced camera scale
+- reduced-motion quality sets shake, zoom and directional kick to zero
+
+Validation:
+- `tests/v020-b12b-camera-impact-smoke.js`
+- historical G3 and G6E camera regressions
+- `.github/workflows/v020-b12b-camera-impact-validation.yml`
+
+## B12C — browser closure
+`tests/v020-b12c-combat-browser-driver.html` renders real Canvas2D presentation and validates:
+- hit ring / slash / KO VFX are visibly drawn
+- directional camera impact is active on normal desktop/mobile
+- mobile zoom remains within the existing camera contract
+- reduced-motion disables camera kick while preserving semantic VFX
+- B12A runtime status is available in-browser
+
+`.github/workflows/v020-b12c-combat-browser-validation.yml` passed desktop, mobile and forced reduced-motion coverage.
+
+## Handoff
+B12 is complete. Next checkpoint: **B13 — Optimization / Mobile / Fallback**.
 
 Public/runtime version remains V0.19 until B14.
