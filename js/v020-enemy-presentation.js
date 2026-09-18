@@ -85,7 +85,7 @@ root.drawEnemySilhouetteV014=function(enemy){
   function loadSurvivalDivineVfx(){
     if(document.querySelector('script[data-v020-survival-divine-vfx]'))return;
     const script=document.createElement('script');
-    script.src='js/v020-survival-divine-vfx.js?v=020-b9';
+    script.src='js/v020-survival-divine-vfx.js?v=020-b13a';
     script.dataset.v020SurvivalDivineVfx='1';
     script.async=false;
     document.head.appendChild(script);
