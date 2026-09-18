@@ -17,29 +17,33 @@ Use this file as the starting context when continuing development in a new chat.
 - Commit every meaningful checkpoint.
 
 ## Current project state
-- Current released/public baseline: **V0.19 – Tactical AI & Movement Intelligence**.
-- Runtime/public label: **V0.19**.
-- V0.19 status: **A0–A15 COMPLETE / RELEASED**.
+- Current released/public baseline: **V0.20 – Complete Visual Rebuild**.
+- Runtime/public label: **V0.20**.
+- V0.20 status: **B0–B13 COMPLETE; B14 final release validation active**.
+- V0.19 status: **A0–A15 COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
 - V0.18 remains frozen as the graphics/presentation baseline.
 - V0.17 remains frozen as the historical Duel mechanics/content baseline.
 - V0.16 Survival/Endless remains supported.
-- Authoritative V0.19 evidence: `V019_RELEASE_VALIDATION.md`.
+- Authoritative V0.20 plan/release state: `V020_COMPLETE_VISUAL_REBUILD_PLAN.md` + `V020_B14_RELEASE_SPEC.md`.
+- Historical V0.19 evidence: `V019_RELEASE_VALIDATION.md`.
 
 ## Read first
 1. `README.md`
 2. `PROJECT_HANDOFF.md`
 3. `ROADMAP.md`
-4. `V019_TACTICAL_AI_PLAN.md`
-5. `V019_RELEASE_VALIDATION.md`
-6. `V018_GRAPHICS_PLAN.md`
-7. `V018_RELEASE_VALIDATION.md`
-8. `V017_RELEASE_VALIDATION.md`
-9. `V017_DUEL_ARENA_PLAN.md`
+4. `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`
+5. `V020_B14_RELEASE_SPEC.md`
+6. `V019_TACTICAL_AI_PLAN.md`
+7. `V019_RELEASE_VALIDATION.md`
+8. `V018_GRAPHICS_PLAN.md`
+9. `V018_RELEASE_VALIDATION.md`
+10. `V017_RELEASE_VALIDATION.md`
+11. `V017_DUEL_ARENA_PLAN.md`
 
 Before editing, fetch latest relevant files and SHAs from GitHub `main`.
 
 ## Frozen gameplay/content contract
-V0.19 changes tactical AI/movement decision truth only. Do not silently use it as permission for unrelated balance/content changes.
+V0.20 is presentation-first and preserves V0.19 tactical AI/movement decision truth. Do not silently use the visual rebuild as permission for unrelated balance/content changes.
 
 Locked truth:
 - 80 base Kỹ Năng
@@ -116,4 +120,4 @@ Graphics/UI never decide hit success, damage, cooldown, fatal/revive ordering, s
 - Tests stay under `tests/` and are not shipped publicly.
 
 ## Status for next conversation
-**V0.19 is COMPLETE / RELEASED and is the current frozen public baseline. V0.18 remains the graphics/presentation regression baseline; V0.17 remains the historical mechanics/content regression baseline. Start future feature work from a new explicitly approved roadmap rather than silently reopening V0.19 combat/content truth.**
+**V0.20 is the current public release candidate in B14 final validation. V0.19 remains the frozen tactical AI regression baseline; V0.18 remains the historical graphics baseline and V0.17 the historical mechanics/content baseline. After B14 closes, future feature work should start from a new explicitly approved roadmap.**
