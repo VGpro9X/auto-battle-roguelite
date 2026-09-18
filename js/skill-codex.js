@@ -1,4 +1,6 @@
-function codexV20Icon(entry,size="sm"){return typeof getV020IconMarkup==="function"?getV020IconMarkup(entry.kind,entry.key,entry.data,{size,title:entry.data?.name||entry.key}):`<span class="legacyIcon" aria-hidden="true">${entry.data?.icon||"◆"}</span>`;}\n\nconst CODEX_GROUPS=[
+function codexV20Icon(entry,size="sm"){return typeof getV020IconMarkup==="function"?getV020IconMarkup(entry.kind,entry.key,entry.data,{size,title:entry.data?.name||entry.key}):`<span class="legacyIcon" aria-hidden="true">${entry.data?.icon||"◆"}</span>`;}
+
+const CODEX_GROUPS=[
   {id:"attack",label:"Tấn công & Đạn",match:tags=>tags.some(t=>["ATTACK","PROJECTILE","CRITICAL","DAMAGE"].includes(t))},
   {id:"element",label:"Nguyên tố",match:tags=>tags.some(t=>["FIRE","ICE","LIGHTNING","POISON","ELEMENTAL","DOT"].includes(t))},
   {id:"summon",label:"Triệu hồi",match:tags=>tags.includes("SUMMON")},
