@@ -1,6 +1,6 @@
 # V0.20 — B11 Icon Production
 
-Status: **ACTIVE — B11A RUNTIME ICON FOUNDATION INTEGRATED**
+Status: **COMPLETE ✅ — B11A/B11B/B11C VALIDATED**
 
 B11 replaces inconsistent platform-dependent emoji presentation with a coherent deterministic icon language while preserving all existing skill/content metadata and gameplay truth.
 
@@ -94,8 +94,30 @@ B11A adds:
   - B11A runtime smoke test
 - GitHub Pages now runs B10 closure and B11A icon validation before artifact publication.
 
-## Remaining B11 work
-- **B11B — complete catalog audit:** enumerate all runtime base/Hợp Đạo/Siêu Cấp/Rare/Thần Kỹ/Thần Bí Kỹ entries and ensure every content ID resolves to an intentional semantic family rather than accidental name fallback.
-- **B11C — visual closure:** desktop/mobile browser validation for choice cards, skill strip, Codex and Duel build surfaces; fix clipping/density/readability; then close B11.
+## B11B — complete catalog audit
+B11B reuses the B8 semantic VFX map as the authoritative identity source for:
+- 80 base Kỹ Năng
+- 28 Hợp Đạo Kỹ
+- 12 Siêu Cấp
+
+The 20 released Rare identities receive explicit icon families so Thần Kỹ / Thần Bí Kỹ do not fall through to a generic glyph. The icon vocabulary also gains a dedicated physical family rather than conflating physical attacks with projectiles.
+
+Validation: `tests/v020-b11b-icon-catalog-audit.js`.
+
+## B11C — visual closure
+B11C opens the real application and validates icon presentation in:
+- Survival level-up choices
+- Codex catalog + detail
+- Duel reward choices
+- desktop composition
+- explicit 360×640 iframe mobile composition
+- reduced-motion mode
+
+Validation: `tests/v020-b11c-icon-browser-driver.html`.
+
+GitHub Actions run **V0.20 B11 Icon Validation #11** completed successfully with syntax, B11A runtime, B11B catalog, and B11C browser gates all green.
+
+## Handoff
+B11 is complete. The next checkpoint is **B12 — Animation & Combat Polish**.
 
 Public/runtime version remains V0.19 until B14.
