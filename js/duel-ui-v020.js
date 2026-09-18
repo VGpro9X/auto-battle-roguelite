@@ -5,7 +5,8 @@
 
   function addOverlayId(id){if(typeof overlayIds!=="undefined"&&!overlayIds.includes(id))overlayIds.push(id);}
   function byId(id){return document.getElementById(id);}
-  function setText(id,value){const el=byId(id);if(el)el.textContent=value;}\n  function duelV20Icon(kind,key,item,size="sm"){return typeof root.getV020IconMarkup==="function"?root.getV020IconMarkup(kind,key,item,{size,title:item?.name||key}):`<span class="legacyIcon" aria-hidden="true">${item?.icon||"◆"}</span>`;}
+  function setText(id,value){const el=byId(id);if(el)el.textContent=value;}
+  function duelV20Icon(kind,key,item,size="sm"){return typeof root.getV020IconMarkup==="function"?root.getV020IconMarkup(kind,key,item,{size,title:item?.name||key}):`<span class="legacyIcon" aria-hidden="true">${item?.icon||"◆"}</span>`;}
 
   function ensureDuelDom(){
     const wrap=byId("gameWrap");if(!wrap||byId("duelLobbyMenu"))return;
