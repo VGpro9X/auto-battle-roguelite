@@ -18,13 +18,32 @@
     ["area",["AREA","EXPLOSION"]],
     ["mark",["MARK","CHAIN","CHARGE"]],
     ["growth",["XP","SCALING","LEVEL_UP"]],
-    ["projectile",["PROJECTILE","ATTACK","CRITICAL","DAMAGE"]]
+    ["projectile",["PROJECTILE"]],
+    ["physical",["ATTACK","CRITICAL","DAMAGE","HIT","KILL"]]
   ];
+
+  const b8FamilyToIcon=Object.freeze({
+    physical:"physical",projectile:"projectile",fire:"fire",frost:"frost",lightning:"lightning",poison:"poison",
+    blood:"blood",defense:"defense",heal:"heal",control:"control",summon:"summon",area:"area",chain:"mark",time:"time",soul:"soul"
+  });
+  const highTierFamily=Object.freeze({
+    bribery:"control",immortalBreath:"heal",heavenlyPunishment:"lightning",fateExchange:"mark",
+    heavenlyMandate:"time",divineJudgment:"mark",spatialSwap:"time",equalPrice:"blood",
+    heavenlyWard:"defense",divineDomain:"area",lifeRewind:"time",causalInversion:"time",
+    divineGift:"growth",timeStop:"time",celestialEdict:"mark",heavenSeal:"defense",
+    bloodDebt:"blood",parasitePact:"soul",voidReality:"soul",scapegoatFate:"soul"
+  });
 
   function tagsOf(item){
     return new Set((Array.isArray(item?.tags)?item.tags:[]).map(tag=>String(tag).toUpperCase()));
   }
   function inferFamily(id,item={}){
+    if(highTierFamily[id])return highTierFamily[id];
+    try{
+      const profile=typeof root.getDuelVisualProfileV3==="function"?root.getDuelVisualProfileV3(id):null;
+      const mapped=b8FamilyToIcon[profile?.primary];
+      if(mapped)return mapped;
+    }catch{}
     const tags=tagsOf(item);
     for(const [family,list] of familyOrder)if(list.some(tag=>tags.has(tag)))return family;
     const hay=(String(id||"")+" "+String(item?.name||"")).toLowerCase();
@@ -74,7 +93,8 @@
     area:'<circle cx="32" cy="32" r="7"/><circle cx="32" cy="32" r="16"/><path d="M32 8v8M32 48v8M8 32h8M48 32h8"/>',
     mark:'<path d="M32 10 49 20v24L32 54 15 44V20z"/><circle cx="32" cy="32" r="8"/><path d="M32 20v24M20 32h24"/>',
     growth:'<path d="M32 53V24M32 24c-10 0-16-5-18-13 10 0 16 5 18 13zM32 30c10 0 16-5 18-13-10 0-16 5-18 13z"/><path d="M22 53h20"/>',
-    projectile:'<path d="M12 42 48 16l-9 33-8-11-12 8 7-13z"/><path d="M31 38 48 16"/>'
+    projectile:'<path d="M12 42 48 16l-9 33-8-11-12 8 7-13z"/><path d="M31 38 48 16"/>',
+    physical:'<path d="M18 48 46 16M38 14l10 2-2 10M14 38l12 12M21 31l12 12"/><path d="M15 50h16"/>'
   };
 
   function frameMarkup(tier,seed){
