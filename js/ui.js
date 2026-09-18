@@ -1,5 +1,6 @@
 const overlayIds=["mainMenu","modeMenu","skillCodexMenu","leaderboardMenu","settingsMenu","howToMenu","pauseMenu","levelModal","resultModal"];
 let leaderboardMode="5";
+function uiV20Icon(kind,key,item,size="md"){return typeof getV020IconMarkup==="function"?getV020IconMarkup(kind,key,item,{size,title:item?.name||key}):`<span class="legacyIcon" aria-hidden="true">${item?.icon||"◆"}</span>`;}
 
 function hideAllOverlays(){for(const id of overlayIds)document.getElementById(id).classList.remove("visible");}
 function showScreen(id){hideAllOverlays();const screen=document.getElementById(id);if(screen)screen.classList.add("visible");state.currentScreen=id;if(typeof setSkillCodexActive==="function")setSkillCodexActive(id==="skillCodexMenu");if(id==="leaderboardMenu")renderLeaderboard();if(id==="settingsMenu")renderSettings();}
@@ -34,7 +35,7 @@ function showLevelUp(isStarter=false){
       const item=DIVINE_SKILLS[pick.key];
       button.className=`choice divineChoice ${item.tier}`;
       button.innerHTML=`
-        <div class="icon">${item.icon}</div>
+        <div class="icon">${uiV20Icon(item.tier,pick.key,item,"xl")}</div>
         <h3>${item.name}</h3>
         <div class="lvl">${getDivineTierLabel(item)} · DUY NHẤT · KHÔNG CÓ CẤP</div>
         <div class="tags"><span class="tagChip">QUY TẮC</span><span class="tagChip">HIẾM</span></div>
@@ -51,7 +52,7 @@ function showLevelUp(isStarter=false){
     const hints=getSkillRelationHints(key);
     button.className="choice"+(next>=skill.max?" maxNext":"");
     button.innerHTML=`
-      <div class="icon">${skill.icon}</div>
+      <div class="icon">${uiV20Icon("skill",key,skill,"xl")}</div>
       <h3>${skill.name}</h3>
       <div class="lvl">Cấp ${next}/${skill.max}${next>=skill.max?" · TỐI ĐA":""}</div>
       <div class="tags">${tags.map(tag=>`<span class="tagChip">${typeof getTagLabel==="function"?getTagLabel(tag):tag}</span>`).join("")}</div>
@@ -92,20 +93,20 @@ function refreshSkillBar(){
     const element=document.createElement("div");element.className="skillMini"+(evolved?" evolved":"");
     const levelText=evolved?"SIÊU CẤP":skillLevel(key)>=skills[key].max?"TỐI ĐA":`Cấp ${owned[key]}`;
     const tagText=(skills[key].tags||[]).slice(0,2).map(tag=>typeof getTagLabel==="function"?getTagLabel(tag):tag).join("/");
-    element.innerHTML=`<b>${getSkillDisplayIcon(key)} ${getSkillDisplayName(key)}</b><small>${levelText}${tagText?` · ${tagText}`:""}</small>`;bar.appendChild(element);
+    element.innerHTML=`<b>${uiV20Icon(evolved?"evolution":"skill",key,evolved?(Object.values(EVOLUTIONS).find(item=>item.base===key)||skills[key]):skills[key],"sm")} ${getSkillDisplayName(key)}</b><small>${levelText}${tagText?` · ${tagText}`:""}</small>`;bar.appendChild(element);
   }
   if(typeof DIVINE_SKILLS!=="undefined"){
     for(const id of getOwnedDivineSkillIds()){
       const item=DIVINE_SKILLS[id];
       const element=document.createElement("div");
       element.className=`skillMini ${item.tier==="mystic"?"mysticSkill":"divineSkill"}`;
-      element.innerHTML=`<b>${item.icon} ${item.name}</b><small>${getDivineTierLabel(item)} · DUY NHẤT</small>`;
+      element.innerHTML=`<b>${uiV20Icon(item.tier,id,item,"sm")} ${item.name}</b><small>${getDivineTierLabel(item)} · DUY NHẤT</small>`;
       bar.appendChild(element);
     }
   }
   for(const synergy of Object.values(SYNERGIES)){
     if(!hasSynergy(synergy.id))continue;
-    const element=document.createElement("div");element.className="skillMini synergy";element.innerHTML=`<b>${synergy.icon} ${synergy.name}</b><small>HỢP ĐẠO KỸ</small>`;bar.appendChild(element);
+    const element=document.createElement("div");element.className="skillMini synergy";element.innerHTML=`<b>${uiV20Icon("synergy",synergy.id,synergy,"sm")} ${synergy.name}</b><small>HỢP ĐẠO KỸ</small>`;bar.appendChild(element);
   }
 }
 
@@ -115,16 +116,16 @@ function refreshBuildTracker(){
   const lines=[];
   for(const synergy of Object.values(SYNERGIES)){
     if(!hasSynergy(synergy.id))continue;
-    lines.push(`<div class="buildLine unlocked"><span class="buildIcon">${synergy.icon}</span><div><b>${synergy.name}</b><small>HỢP ĐẠO KỸ · ${typeof localizeGameText==="function"?localizeGameText(synergy.desc):synergy.desc}</small></div></div>`);
+    lines.push(`<div class="buildLine unlocked"><span class="buildIcon">${uiV20Icon("synergy",synergy.id,synergy,"sm")}</span><div><b>${synergy.name}</b><small>HỢP ĐẠO KỸ · ${typeof localizeGameText==="function"?localizeGameText(synergy.desc):synergy.desc}</small></div></div>`);
   }
   for(const evolution of Object.values(EVOLUTIONS)){
     if(!hasEvolution(evolution.id))continue;
-    lines.push(`<div class="buildLine evolution"><span class="buildIcon">${evolution.icon}</span><div><b>${evolution.name}</b><small>SIÊU CẤP · ${typeof localizeGameText==="function"?localizeGameText(evolution.desc):evolution.desc}</small></div></div>`);
+    lines.push(`<div class="buildLine evolution"><span class="buildIcon">${uiV20Icon("evolution",evolution.id,evolution,"sm")}</span><div><b>${evolution.name}</b><small>SIÊU CẤP · ${typeof localizeGameText==="function"?localizeGameText(evolution.desc):evolution.desc}</small></div></div>`);
   }
   const near=getNearBuildUnlocks(Math.max(0,4-lines.length));
   for(const entry of near){
     const missing=entry.progress.missing.map(p=>p.label).join(" + ")||"Sẵn sàng";
-    lines.push(`<div class="buildLine near ${entry.kind==="evolution"?"evolution":""}"><span class="buildIcon">${entry.item.icon}</span><div><b>${entry.item.name}</b><small>${entry.kind==="evolution"?"GẦN SIÊU CẤP":"GẦN HỢP ĐẠO"} · thiếu ${missing}</small></div></div>`);
+    lines.push(`<div class="buildLine near ${entry.kind==="evolution"?"evolution":""}"><span class="buildIcon">${uiV20Icon(entry.kind,entry.item.id||entry.item.base||entry.item.name,entry.item,"sm")}</span><div><b>${entry.item.name}</b><small>${entry.kind==="evolution"?"GẦN SIÊU CẤP":"GẦN HỢP ĐẠO"} · thiếu ${missing}</small></div></div>`);
   }
   content.innerHTML=lines.length?lines.slice(0,5).join(""):`<div class="buildEmpty">Chưa có liên kết. Chọn các kỹ năng có thuộc tính hoặc gợi ý liên quan để hình thành Hợp Đạo Kỹ.</div>`;
 }
@@ -142,7 +143,7 @@ function showNextBuildUnlockToast(){
   toast.classList.toggle("evolution",evolution);
   toast.classList.toggle("divine",divine);
   toast.classList.toggle("mystic",mystic);
-  document.getElementById("unlockToastIcon").textContent=payload.item.icon||"✨";
+  document.getElementById("unlockToastIcon").innerHTML=uiV20Icon(payload.kind,payload.item.id||payload.item.base||payload.item.name,payload.item,"lg");
   document.getElementById("unlockToastType").textContent=mystic?"THẦN BÍ KỸ XUẤT HIỆN":divine?"THẦN KỸ XUẤT HIỆN":evolution?"SIÊU CẤP KÍCH HOẠT":"HỢP ĐẠO KỸ KÍCH HOẠT";
   document.getElementById("unlockToastTitle").textContent=payload.item.name;
   document.getElementById("unlockToastDesc").textContent=(typeof localizeGameText==="function"?localizeGameText(payload.item.desc):payload.item.desc)||"Bộ kỹ năng của bạn vừa mở một liên kết mới.";
