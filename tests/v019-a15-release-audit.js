@@ -18,7 +18,7 @@ const plan=read('V019_TACTICAL_AI_PLAN.md');
 const release=read('V019_RELEASE_VALIDATION.md');
 const pages=read('.github/workflows/pages.yml');
 
-const currentVersion=(core.match(/GAME_VERSION="(V0\\.19|V0\\.20)"/)||[])[1];
+const currentVersion=core.includes('const GAME_VERSION="V0.20"')?'V0.20':core.includes('const GAME_VERSION="V0.19"')?'V0.19':null;
 assert.ok(currentVersion,'runtime GAME_VERSION must remain V0.19+ compatible');
 assert.ok(index.includes(`<title>Auto Battle Roguelite ${currentVersion}</title>`),'static title/runtime version mismatch');
 assert.ok(index.includes(`<div id="version">Auto Battle Roguelite ${currentVersion}</div>`),'static badge/runtime version mismatch');
