@@ -6,7 +6,7 @@ const pages=read(".github/workflows/pages.yml");
 
 assert(/<title>Auto Battle Roguelite V0\.(?:19|20)<\/title>/.test(html),"B14 label must be V0.19 candidate or V0.20 promoted release");
 assert(/id="version">Auto Battle Roguelite V0\.(?:19|20)/.test(html),"B14 in-game version must be V0.19 candidate or V0.20 promoted release");
-assert(plan.includes("B0–B13 COMPLETE, B14 ACTIVE"),"master plan is not at B14 candidate state");
+assert(plan.includes("B0–B13 COMPLETE, B14 ACTIVE")||plan.includes("B0–B14 COMPLETE"),"master plan is not in B14 candidate/released state");
 
 for(const gate of [
   "V0.20 B10 UI/HUD closure gate",
