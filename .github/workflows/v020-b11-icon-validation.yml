@@ -10,7 +10,9 @@ on:
       - "js/duel-ui-v020.js"
       - "css/v020-ui-hud.css"
       - "index.html"
-      - "tests/v020-b11-icon-runtime-smoke.js"\n      - "tests/v020-b11b-icon-catalog-audit.js"\n      - "tests/v020-b11c-icon-browser-driver.html"
+      - "tests/v020-b11-icon-runtime-smoke.js"
+      - "tests/v020-b11b-icon-catalog-audit.js"
+      - "tests/v020-b11c-icon-browser-driver.html"
       - ".github/workflows/v020-b11-icon-validation.yml"
   workflow_dispatch:
 
@@ -26,7 +28,8 @@ jobs:
           node --check js/ui.js
           node --check js/skill-codex.js
           node --check js/duel-ui-v020.js
-          node --check tests/v020-b11-icon-runtime-smoke.js\n          node --check tests/v020-b11b-icon-catalog-audit.js
+          node --check tests/v020-b11-icon-runtime-smoke.js
+          node --check tests/v020-b11b-icon-catalog-audit.js
       - name: Validate B11A icon runtime
         run: node tests/v020-b11-icon-runtime-smoke.js
       - name: Audit B11B complete catalog coverage
