@@ -1,6 +1,6 @@
 # V0.20 — Complete Visual Rebuild Plan
 
-Status: **APPROVED / IN DEVELOPMENT — B0–B12 COMPLETE, B13 ACTIVE**
+Status: **APPROVED / IN DEVELOPMENT — B0–B13 COMPLETE, B14 ACTIVE**
 
 Canonical source: GitHub `main` in `VGpro9X/auto-battle-roguelite`.
 
@@ -132,11 +132,16 @@ FULL/BALANCED/LOW affect presentation cost only, never gameplay truth.
   - B12B bounded directional camera kick for hit/KO with reduced-motion zeroing
   - B12C real Canvas2D desktop/mobile/reduced-motion browser closure passed
   - presentation-only; no simulation ownership
-- **B13 — Optimization / Mobile / Fallback — ACTIVE**
-  - compression/memory and transient budgets
-  - mobile quality and reduced-motion closure
-  - V3→V2→vector fallback verification and public artifact discipline
-- **B14 — Integration / Release** — V0.16–V0.19 regressions, V0.20 browser/mobile/Pages validation, then promote label to V0.20 and owner final test
+- **B13 — Optimization / Mobile / Fallback — COMPLETE ✅**
+  - unified AUTO quality maps constrained/mobile to low V3 budgets while desktop remains balanced
+  - forced vector/V2/V3 plus missing-V3→V2 fallback browser closure passed
+  - reduced-motion propagation validated through V3 presentation
+  - public artifact budget/path + desktop/mobile runtime closure passed
+- **B14 — Integration / Release — ACTIVE**
+  - V0.16–V0.19 historical regression sweep
+  - V0.20 integrated browser/mobile candidate validation
+  - promote public label to V0.20 only after candidate gate passes
+  - exact GitHub Pages deploy, then owner final visual/gameplay test
 
 ## Release discipline
 GitHub `main` is canonical. Fetch latest SHA before edits. Commit every meaningful checkpoint. Do not promote public/runtime V0.20 before B14 gates pass. Current public baseline stays V0.19. Tests remain under `tests/` and are not shipped in Pages artifact.
@@ -145,4 +150,4 @@ GitHub `main` is canonical. Fetch latest SHA before edits. Commit every meaningf
 V0.20 requires normal production gameplay to use coherent V3 artwork, complete 13 fighter states, coherent required enemies, Ashen Sanctum V3, complete skill visual mapping, distinct high tiers, 20 Rare identities, coherent desktop/mobile UI/icons, unchanged gameplay truth, functional V2/vector fallback, no missing assets/runtime errors, desktop/mobile/performance/reduced-motion gates, historical V0.16–V0.19 regressions, exact Pages deployment, then V0.20 label promotion and final owner visual/gameplay test.
 
 ## Current continuation point
-**B0–B12 COMPLETE. B13 ACTIVE: optimize budgets/mobile behavior and close V3→V2→vector fallback before release integration. Public/runtime label remains V0.19 until B14.**
+**B0–B13 COMPLETE. B14 ACTIVE: run the integrated release candidate gates, promote the public label to V0.20 only after they pass, deploy the exact Pages artifact, then hand off to owner final test.**
