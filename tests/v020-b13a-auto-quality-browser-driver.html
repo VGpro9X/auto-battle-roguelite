@@ -1,0 +1,43 @@
+<!doctype html><meta charset="utf-8">
+<style>html,body{margin:0}#app{border:0;display:block}#result{position:fixed;left:0;top:0;z-index:99;background:#000;color:#fff;font:12px monospace;padding:4px}</style>
+<iframe id="app"></iframe><pre id="result">B13A loading…</pre>
+<script>
+(async()=>{
+  const params=new URLSearchParams(location.search),expect=params.get("expect")||"desktop";
+  const mobile=expect!=="desktop",forced=expect==="forced";
+  const width=mobile?360:1280,height=mobile?640:720;
+  const frame=document.getElementById("app"),out=document.getElementById("result");
+  frame.style.width=width+"px";frame.style.height=height+"px";
+  frame.src="../index.html"+(forced?"?visualQuality=full":"");
+  const fail=m=>{out.textContent="V020_B13A_FAIL "+expect+" "+m;throw new Error(m)};
+  const ok=(v,m)=>{if(!v)fail(m)};
+  try{
+    await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error("index load timeout")),16000);frame.onload=()=>{clearTimeout(timer);resolve();};});
+    const w=frame.contentWindow,d=frame.contentDocument;
+    const started=performance.now();
+    while(!w.__V020_RENDERER_V3_BOOTSTRAP__||!w.createDuelVfxTierOverlay||!w.getSurvivalHighTierVfxStatusV020){
+      if(performance.now()-started>15000)throw new Error("runtime bootstrap timeout");
+      await new Promise(r=>setTimeout(r,50));
+    }
+    await w.__V020_RENDERER_V3_BOOTSTRAP__;
+    ok(w.DUEL_RENDERER_V3_QUALITY==="auto","public V3 default is not auto");
+    const legacy=w.getDuelVisualQuality();
+    const expectedLegacy=mobile?"constrained":"full";
+    ok(legacy.id===expectedLegacy,"legacy quality expected "+expectedLegacy+" got "+legacy.id);
+
+    const canvas=d.createElement("canvas");canvas.width=width;canvas.height=height;
+    canvas.style.width=width+"px";canvas.style.height=height+"px";canvas.style.position="fixed";canvas.style.left="-9999px";
+    d.body.appendChild(canvas);
+    const renderer=w.createConfiguredDuelRendererV3(canvas);
+    const bridgeQuality=renderer.getStatus().lighting.quality;
+    const tierQuality=w.createDuelVfxTierOverlay().getStatus().quality;
+    const survivalQuality=w.getSurvivalHighTierVfxStatusV020().quality;
+    const expected=forced?"full":mobile?"low":"balanced";
+    ok(bridgeQuality===expected,"bridge quality expected "+expected+" got "+bridgeQuality);
+    ok(tierQuality===expected,"tier quality expected "+expected+" got "+tierQuality);
+    ok(survivalQuality===expected,"Survival quality expected "+expected+" got "+survivalQuality);
+    canvas.remove();
+    out.textContent="V020_B13A_PASS "+expect+" legacy="+legacy.id+" bridge="+bridgeQuality+" tier="+tierQuality+" survival="+survivalQuality;
+  }catch(error){fail(error&&error.message||String(error))}
+})();
+</script>
