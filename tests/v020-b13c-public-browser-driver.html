@@ -1,0 +1,51 @@
+<!doctype html><meta charset="utf-8">
+<style>html,body{margin:0}#app{border:0;display:block}#result{position:fixed;left:0;top:0;z-index:99;background:#000;color:#fff;font:12px monospace;padding:4px}</style>
+<iframe id="app"></iframe><pre id="result">B13C loading…</pre>
+<script>
+(async()=>{
+  const q=new URLSearchParams(location.search),expect=q.get("expect")||"desktop",mobile=expect==="mobile";
+  const width=mobile?360:1280,height=mobile?640:720,frame=document.getElementById("app"),out=document.getElementById("result");
+  frame.style.width=width+"px";frame.style.height=height+"px";frame.src="../index.html";
+  const fail=m=>{out.textContent="V020_B13C_FAIL "+expect+" "+m;throw new Error(m)};
+  const ok=(v,m)=>{if(!v)fail(m)};
+  try{
+    await new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(new Error("index load timeout")),18000);frame.onload=()=>{clearTimeout(t);resolve();};});
+    const w=frame.contentWindow,d=frame.contentDocument,errors=[];
+    w.addEventListener("error",e=>errors.push(String(e.message||e.error||"error")));
+    w.addEventListener("unhandledrejection",e=>errors.push(String(e.reason||"unhandled rejection")));
+    if(w.__V020_RENDERER_V3_BOOTSTRAP__)await w.__V020_RENDERER_V3_BOOTSTRAP__;
+
+    ok(typeof w.startRun==="function","Survival runtime missing");
+    ok(typeof w.openDuelLobby==="function","Duel UI runtime missing");
+    ok(typeof w.createDuelRenderer==="function","Duel renderer runtime missing");
+    ok(typeof w.getDuelVisualQuality==="function","quality policy missing");
+    ok(d.documentElement.scrollWidth<=w.innerWidth+3,"main menu horizontal overflow");
+
+    w.startRun("5");
+    await new Promise(r=>setTimeout(r,600));
+    ok(!d.getElementById("gameUi").classList.contains("hidden"),"Survival HUD did not open");
+    ok(d.querySelectorAll("#choices .choice").length===3,"Survival initial choices missing");
+    ok(d.documentElement.scrollWidth<=w.innerWidth+3,"Survival horizontal overflow");
+
+    w.showScreen("mainMenu");
+    w.openDuelLobby();
+    await new Promise(r=>setTimeout(r,180));
+    ok(d.getElementById("duelLobby")&&!d.getElementById("duelLobby").classList.contains("hidden"),"Duel lobby did not open");
+
+    const canvas=d.createElement("canvas");canvas.width=width;canvas.height=height;canvas.style.width=width+"px";canvas.style.height=height+"px";canvas.style.position="fixed";canvas.style.left="-9999px";d.body.appendChild(canvas);
+    const renderer=w.createDuelRenderer(canvas);
+    if(renderer.preload)await renderer.preload;
+    const status=renderer.getStatus?renderer.getStatus():null;
+    if(status&&status.lighting){
+      const expected=mobile?"low":"balanced";
+      const legacy=w.getDuelVisualQuality();
+      const actualExpected=legacy.id==="constrained"?"low":expected;
+      ok(status.lighting.quality===actualExpected,"renderer quality mismatch "+status.lighting.quality+" expected "+actualExpected);
+    }
+    canvas.remove();
+    await new Promise(r=>setTimeout(r,300));
+    ok(errors.length===0,"runtime errors: "+errors.join(" | "));
+    out.textContent="V020_B13C_PASS "+expect+" width="+w.innerWidth+" quality="+w.getDuelVisualQuality().id;
+  }catch(error){fail(error&&error.message||String(error))}
+})();
+</script>
