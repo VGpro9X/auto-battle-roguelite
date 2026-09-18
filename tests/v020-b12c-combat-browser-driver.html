@@ -1,0 +1,66 @@
+<!doctype html><meta charset="utf-8">
+<style>
+html,body{margin:0;background:#0b0d12;color:#fff;font:12px monospace}
+#probe{display:block;width:100%;height:100vh}
+#result{position:fixed;left:0;top:0;z-index:9;background:#000;padding:4px 6px;white-space:pre-wrap}
+</style>
+<canvas id="probe"></canvas><pre id="result">B12C loading…</pre>
+<script src="../js/duel-renderer.js?v=020-b12c"></script>
+<script>
+(async()=>{
+  const q=new URLSearchParams(location.search),expect=q.get("expect")||"desktop";
+  const out=document.getElementById("result"),canvas=document.getElementById("probe");
+  const width=expect==="mobile"?360:1280,height=expect==="mobile"?640:720;
+  canvas.width=width;canvas.height=height;canvas.style.width=width+"px";canvas.style.height=height+"px";
+  const fail=m=>{out.textContent="V020_B12C_FAIL "+expect+" "+m;throw new Error(m)};
+  const ok=(v,m)=>{if(!v)fail(m)};
+  try{
+    if(window.__V018_DUEL_RENDERER_READY__)await window.__V018_DUEL_RENDERER_READY__;
+    ok(typeof window.createDuelCamera==="function","camera factory missing");
+    ok(typeof window.createDuelVfxV3==="function","V3 VFX factory missing");
+    if(typeof window.refreshDuelVisualQuality==="function")window.refreshDuelVisualQuality({width,height,reducedMotion:expect==="reduced"});
+    const reduced=expect==="reduced";
+    if(reduced)ok(window.getDuelVisualQuality().reducedMotion===true,"reduced-motion quality not active");
+
+    const arena={width:1000,height:560,floorY:475,leftBound:54,rightBound:946};
+    const player={side:"player",x:280,y:475,hp:100,maxHp:100,shield:0};
+    const opponent={side:"opponent",x:720,y:475,hp:100,maxHp:100,shield:0};
+    const match={arena,currentRound:{number:1,time:12,phase:"NORMAL",fighters:{player,opponent},projectiles:[]}};
+    const camera=window.createDuelCamera();
+    let tr=camera.update(match,1/60,width,height);
+    ok(tr&&Number.isFinite(tr.scale)&&tr.scale>0,"camera transform invalid");
+
+    const events=[
+      {type:"attack_melee",source:"power",side:"player",attacker:"player",target:"opponent",x:704,y:405},
+      {type:"hit",source:"power",attacker:"player",target:"opponent",x:720,y:405,amount:48,critical:true},
+      {type:"ko",source:"power",attacker:"player",target:"opponent",x:728,y:410}
+    ];
+    camera.consume(events);
+    const cs=camera.getState();
+    if(reduced){
+      ok(cs.shakePower===0&&cs.zoomKick===0&&cs.impactKickX===0&&cs.impactKickY===0,"reduced-motion camera impact not disabled");
+    }else{
+      ok(cs.shakePower>0&&cs.zoomKick>0&&cs.impactKickX>0,"desktop/mobile camera impact missing");
+    }
+    tr=camera.update(match,1/60,width,height);
+    if(expect==="mobile")ok(tr.zoom<=1.10,"mobile camera zoom exceeded contract");
+
+    const fx=window.createDuelVfxV3({quality:expect==="mobile"?"low":"balanced",reducedMotion:reduced});
+    fx.consume(events);
+    const ctx=canvas.getContext("2d");
+    const getAnchor=(fighter,name)=>({x:fighter.x+(name==="rightHand"?(fighter.side==="player"?24:-24):0),y:fighter.y-62});
+    fx.render(ctx,tr,match,getAnchor);
+    const status=fx.getStatus();
+    ok(status.combatPolish==="b12a","B12A combat polish marker missing in browser");
+    ok(status.active===3,"unexpected B12 effect count");
+    ok(status.reducedMotion===reduced,"VFX reduced-motion mismatch");
+
+    const pixels=ctx.getImageData(0,0,width,height).data;
+    let visible=0;
+    for(let i=3;i<pixels.length;i+=64)if(pixels[i])visible++;
+    ok(visible>0,"combat polish drew no visible pixels");
+
+    out.textContent="V020_B12C_PASS "+expect+" pixels="+visible+" kick="+cs.impactKickX.toFixed(2)+" fx="+status.active;
+  }catch(error){fail(error&&error.message||String(error))}
+})();
+</script>
