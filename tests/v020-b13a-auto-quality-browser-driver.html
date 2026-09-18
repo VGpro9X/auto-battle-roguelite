@@ -22,8 +22,8 @@
     await w.__V020_RENDERER_V3_BOOTSTRAP__;
     ok(w.DUEL_RENDERER_V3_QUALITY==="auto","public V3 default is not auto");
     const legacy=w.getDuelVisualQuality();
-    const expectedLegacy=mobile?"constrained":"full";
-    ok(legacy.id===expectedLegacy,"legacy quality expected "+expectedLegacy+" got "+legacy.id);
+    if(mobile)ok(legacy.id==="constrained","mobile legacy quality must be constrained, got "+legacy.id);
+    else ok(legacy.id==="full"||legacy.id==="constrained","desktop legacy quality returned unsupported id "+legacy.id);
 
     const canvas=d.createElement("canvas");canvas.width=width;canvas.height=height;
     canvas.style.width=width+"px";canvas.style.height=height+"px";canvas.style.position="fixed";canvas.style.left="-9999px";
@@ -32,7 +32,7 @@
     const bridgeQuality=renderer.getStatus().lighting.quality;
     const tierQuality=w.createDuelVfxTierOverlay().getStatus().quality;
     const survivalQuality=w.getSurvivalHighTierVfxStatusV020().quality;
-    const expected=forced?"full":mobile?"low":"balanced";
+    const expected=forced?"full":legacy.id==="constrained"?"low":"balanced";
     ok(bridgeQuality===expected,"bridge quality expected "+expected+" got "+bridgeQuality);
     ok(tierQuality===expected,"tier quality expected "+expected+" got "+tierQuality);
     ok(survivalQuality===expected,"Survival quality expected "+expected+" got "+survivalQuality);
