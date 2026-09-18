@@ -22,7 +22,7 @@ assert(fighter.fallback==='v2'&&arena.fallback==='v2','manifest fallback changed
 const context={globalThis:{DUEL_RENDERER_V3_DEFAULT:true,createDuelRendererV2:()=>({preload:Promise.resolve(),render(){},consume(){},getStatus(){return{mode:'v2'};}})},URLSearchParams};
 context.globalThis.globalThis=context.globalThis;
 vm.createContext(context);vm.runInContext(renderer,context);vm.runInContext(bridge,context);
-const configured=context.globalThis.createConfiguredDuelRendererV3({dataset:{}});
+const configured=context.globalThis.createConfiguredDuelRendererV3({dataset:{},getContext:()=>({})});
 assert(configured&&configured.fallback,'V2 fallback missing from configured V3 bridge');
 assert(configured.getStatus().mode==='v2','unready V3 assets must remain on V2 render path');
 console.log('v020-b1-runtime-wiring-smoke: ok');
