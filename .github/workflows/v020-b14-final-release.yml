@@ -16,6 +16,8 @@ on:
       - "tests/v017-release-audit.js"
       - "tests/v018-g7-release-audit.js"
       - "tests/v019-a15-release-audit.js"
+      - "tests/v020-b10c-ui-closure-smoke.js"
+      - "tests/v020-b13b-fallback-smoke.js"
       - "tests/v020-b14-final-release-audit.js"
       - "tests/v020-b14-final-browser-driver.html"
       - ".github/workflows/v020-b14-final-release.yml"
@@ -39,6 +41,7 @@ jobs:
 
       - name: V0.20 final dependency closure
         run: |
+          node tests/v020-b10c-ui-closure-smoke.js
           node tests/v020-b11-icon-runtime-smoke.js
           node tests/v020-b12a-combat-polish-smoke.js
           node tests/v020-b12b-camera-impact-smoke.js
