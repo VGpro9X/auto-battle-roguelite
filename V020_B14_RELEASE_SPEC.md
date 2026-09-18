@@ -1,6 +1,6 @@
 # V0.20 — B14 Integration / Release
 
-Status: **ACTIVE — RELEASE CANDIDATE VALIDATION**
+Status: **COMPLETE / RELEASED ✅**
 
 B14 is the final integration checkpoint. It does not add new gameplay or visual scope; it proves the B0–B13 build is coherent, promotes the public version label, deploys the exact Pages artifact, and hands the build to the owner for final visual/gameplay testing.
 
@@ -52,4 +52,11 @@ After promotion:
 ## Ownership boundary
 B14 is integration/release only. No silent balance or mechanics changes.
 
-Current public/runtime label: V0.19 until B14A passes.
+## Release closure
+- B14A release-candidate workflow passed before promotion.
+- B14B promoted runtime/public labels and cache keys to V0.20.
+- B14 Final Release #4 passed static, historical, dependency and desktop/mobile/reduced-motion browser gates.
+- GitHub Pages #795 passed the complete release chain and the Deploy to GitHub Pages step.
+- Release evidence: `V020_RELEASE_VALIDATION.md`.
+
+B14 is complete. Public/runtime version: **V0.20**. Remaining acceptance is the owner's final human visual/gameplay test on the public build.
