@@ -44,7 +44,7 @@ assert.equal(new Set(serialized).size,20,'all 20 Rare visual signatures must be 
 assert.match(rendererSource,/createDuelVfxTierOverlay/,'Renderer V2 must create the tier overlay');
 assert.match(rendererSource,/tierVfx\?\.consume\?\.\(list\)/,'Renderer V2 must feed semantic events to the tier overlay');
 assert.match(rendererSource,/tierVfx\?\.render\?\.\(ctx,tr,match,getAnchor\)/,'tier overlay must share camera transform and anchors');
-assert.match(bootstrapSource,/js\/duel-vfx-tier\.js\?v=018-g4d/,'public bootstrap must load the G4D tier module');
+assert.match(bootstrapSource,/js\/duel-vfx-tier\.js\?v=(?:018-g4d|020-b13a)/,'public bootstrap must load the compatible tier module');
 
 const overlay=api.createDuelVfxTierOverlay();
 overlay.consume([
