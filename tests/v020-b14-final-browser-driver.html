@@ -1,0 +1,49 @@
+<!doctype html><meta charset="utf-8">
+<style>html,body{margin:0}#app{border:0;display:block}#result{position:fixed;left:0;top:0;z-index:99;background:#000;color:#fff;font:12px monospace;padding:4px}</style>
+<iframe id="app"></iframe><pre id="result">B14 loading…</pre>
+<script>
+(async()=>{
+  const q=new URLSearchParams(location.search),expect=q.get("expect")||"desktop",mobile=expect==="mobile";
+  const width=mobile?360:1280,height=mobile?640:720,frame=document.getElementById("app"),out=document.getElementById("result");
+  frame.style.width=width+"px";frame.style.height=height+"px";frame.src="../index.html";
+  const fail=m=>{out.textContent="V020_B14_FAIL "+expect+" "+m;throw new Error(m)};
+  const ok=(v,m)=>{if(!v)fail(m)};
+  try{
+    await new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(new Error("index load timeout")),18000);frame.onload=()=>{clearTimeout(t);resolve();};});
+    const w=frame.contentWindow,d=frame.contentDocument,errors=[];
+    w.addEventListener("error",e=>errors.push(String(e.message||e.error||"error")));
+    w.addEventListener("unhandledrejection",e=>errors.push(String(e.reason||"unhandled rejection")));
+    if(w.__V020_RENDERER_V3_BOOTSTRAP__)await w.__V020_RENDERER_V3_BOOTSTRAP__;
+    ok(d.title==="Auto Battle Roguelite V0.20","title not promoted: "+d.title);
+    ok(d.getElementById("version")?.textContent.trim()==="Auto Battle Roguelite V0.20","version badge not promoted");
+
+    w.startRun("5");
+    await new Promise(r=>setTimeout(r,500));
+    ok(d.querySelectorAll("#choices .choice").length===3,"Survival initial choices missing");
+    ok(d.querySelector("#choices .v20Icon svg"),"V0.20 skill icon missing");
+    ok(d.documentElement.scrollWidth<=w.innerWidth+3,"Survival horizontal overflow");
+
+    w.showScreen("mainMenu");
+    w.openDuelLobby();
+    await new Promise(r=>setTimeout(r,160));
+    const lobby=d.getElementById("duelLobbyMenu");
+    ok(lobby?.classList.contains("visible"),"Duel lobby did not open");
+    ok(lobby?.querySelector(".eyebrow")?.textContent.includes("V0.20"),"Duel lobby version label not promoted");
+
+    const canvas=d.createElement("canvas");canvas.width=width;canvas.height=height;canvas.style.width=width+"px";canvas.style.height=height+"px";canvas.style.position="fixed";canvas.style.left="-9999px";d.body.appendChild(canvas);
+    const renderer=w.createDuelRenderer(canvas);
+    if(renderer.preload)await renderer.preload;
+    const status=renderer.getStatus?renderer.getStatus():null;
+    ok(status&&status.mode,"renderer status missing");
+    if(status.lighting){
+      const legacy=w.getDuelVisualQuality();
+      const expectedQuality=legacy.id==="constrained"?"low":"balanced";
+      ok(status.lighting.quality===expectedQuality,"renderer quality mismatch "+status.lighting.quality+" expected "+expectedQuality);
+    }
+    canvas.remove();
+    await new Promise(r=>setTimeout(r,240));
+    ok(errors.length===0,"runtime errors: "+errors.join(" | "));
+    out.textContent="V020_B14_PASS "+expect+" version=V0.20 renderer="+status.mode+" quality="+w.getDuelVisualQuality().id;
+  }catch(error){fail(error&&error.message||String(error))}
+})();
+</script>
