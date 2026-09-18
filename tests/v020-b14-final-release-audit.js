@@ -18,7 +18,9 @@ assert(readme.includes("Current release: **V0.20 – Complete Visual Rebuild**")
 assert(roadmap.includes("Released baseline: **V0.20 – Complete Visual Rebuild**"),"ROADMAP current release mismatch");
 assert(handoff.includes("Current released/public baseline: **V0.20 – Complete Visual Rebuild**"),"handoff current baseline mismatch");
 assert(plan.includes("B0–B14 COMPLETE"),"master plan not in completed B14 release state");
-assert(spec.includes("# V0.20 — B14 Integration / Release"),"B14 release spec missing");\nassert(spec.includes("Status: **COMPLETE / RELEASED ✅**"),"B14 release spec is not closed");\nassert(exists("V020_RELEASE_VALIDATION.md"),"V0.20 release validation evidence missing");
+assert(spec.includes("# V0.20 — B14 Integration / Release"),"B14 release spec missing");
+assert(spec.includes("Status: **COMPLETE / RELEASED ✅**"),"B14 release spec is not closed");
+assert(exists("V020_RELEASE_VALIDATION.md"),"V0.20 release validation evidence missing");
 
 for(const file of [
  "V019_RELEASE_VALIDATION.md","V018_RELEASE_VALIDATION.md","V017_RELEASE_VALIDATION.md",
