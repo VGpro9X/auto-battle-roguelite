@@ -1,0 +1,50 @@
+name: V0.20 B13C Public Artifact Closure
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "css/**"
+      - "js/**"
+      - "assets/**"
+      - "tests/v020-b13c-public-artifact-audit.js"
+      - "tests/v020-b13c-public-browser-driver.html"
+      - "V020_B13_OPTIMIZATION_MOBILE_FALLBACK_SPEC.md"
+      - ".github/workflows/v020-b13c-public-closure.yml"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Public artifact budget and path audit
+        run: node tests/v020-b13c-public-artifact-audit.js
+
+      - name: Desktop/mobile public runtime audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4189 >/tmp/v020-b13c-http.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          [ -n "$chrome" ] || { echo "Chrome/Chromium not found"; exit 1; }
+          run_case(){
+            name="$1"; out="/tmp/v020-b13c-${name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1280,720 --virtual-time-budget=28000 --dump-dom "http://127.0.0.1:4189/tests/v020-b13c-public-browser-driver.html?expect=${name}" >"$out"
+            grep -q "V020_B13C_PASS ${name}" "$out" || { cat "$out"; exit 1; }
+            grep "V020_B13C_PASS ${name}" "$out"
+          }
+          run_case desktop
+          run_case mobile
+
+      - name: B13 dependency closure
+        run: |
+          node tests/v020-b13a-auto-quality-smoke.js
+          node tests/v020-b13b-fallback-smoke.js
+          node tests/v020-b12a-combat-polish-smoke.js
+          node tests/v020-b12b-camera-impact-smoke.js
