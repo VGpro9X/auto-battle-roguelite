@@ -7,14 +7,14 @@ Public build: `https://vgpro9x.github.io/auto-battle-roguelite/`
 GitHub `main` is canonical.
 
 ## Current status
-- V0.20 B0–B13: **COMPLETE**; B14 release integration is in final validation.
+- V0.20 B0–B14: **COMPLETE / RELEASED**.
 - Runtime/public version label: **V0.20**.
 - V0.19 A0–A15: **COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
 - V0.18 Graphics & Presentation Overhaul remains the frozen graphics/presentation baseline.
 - V0.17 Duel Arena remains the frozen historical mechanics/content baseline.
 - Survival/Endless V0.16 remains supported.
 
-Current V0.20 release evidence: `V020_COMPLETE_VISUAL_REBUILD_PLAN.md` and `V020_B14_RELEASE_SPEC.md`. Historical V0.19 evidence: `V019_RELEASE_VALIDATION.md`.
+Current V0.20 release evidence: `V020_RELEASE_VALIDATION.md`. Historical V0.19 evidence: `V019_RELEASE_VALIDATION.md`.
 
 ## V0.20 complete visual rebuild
 - Renderer V3 with V2/vector fallback
@@ -117,4 +117,4 @@ V0.17 remains frozen except for bug fixes and retains:
 11. `V017_DUEL_ARENA_PLAN.md`
 
 ## Project status
-**V0.20 is the current public release candidate in B14 final validation. V0.19 remains the frozen tactical AI baseline; V0.18 and V0.17 remain historical presentation/mechanics regression baselines.**
+**V0.20 is COMPLETE / RELEASED and is the current public baseline. V0.19 remains the frozen tactical AI baseline; V0.18 and V0.17 remain historical presentation/mechanics regression baselines.**
