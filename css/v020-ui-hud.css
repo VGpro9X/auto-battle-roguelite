@@ -243,7 +243,7 @@
 #gameWrap .v20Icon--area{--v20-icon:#d2a77d;--v20-icon-accent:rgba(224,187,146,.67)}
 #gameWrap .v20Icon--mark{--v20-icon:#c2a3ca;--v20-icon-accent:rgba(211,181,219,.66)}
 #gameWrap .v20Icon--growth{--v20-icon:#a8c58d;--v20-icon-accent:rgba(187,215,160,.67)}
-#gameWrap .v20Icon--projectile{--v20-icon:#d5c7aa;--v20-icon-accent:rgba(231,215,177,.64)}
+#gameWrap .v20Icon--projectile{--v20-icon:#d5c7aa;--v20-icon-accent:rgba(231,215,177,.64)}\n#gameWrap .v20Icon--physical{--v20-icon:#d8d0c1;--v20-icon-accent:rgba(232,222,202,.68)}
 #gameWrap .v20Icon--synergy .v20IconFrame{opacity:.58}
 #gameWrap .v20Icon--evolution .v20IconFrame{opacity:.68}
 #gameWrap .v20Icon--rare .v20IconFrame,#gameWrap .v20Icon--divine .v20IconFrame,#gameWrap .v20Icon--mystic .v20IconFrame{opacity:.80}
