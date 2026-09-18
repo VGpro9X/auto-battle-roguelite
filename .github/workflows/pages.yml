@@ -228,6 +228,15 @@ jobs:
       - name: V0.20 B13A auto quality gate
         run: node tests/v020-b13a-auto-quality-smoke.js
 
+      - name: V0.20 B13B fallback closure gate
+        run: node tests/v020-b13b-fallback-smoke.js
+
+      - name: V0.20 B13C public artifact gate
+        run: node tests/v020-b13c-public-artifact-audit.js
+
+      - name: V0.20 B14 final release gate
+        run: node tests/v020-b14-final-release-audit.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
