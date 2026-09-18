@@ -1,0 +1,60 @@
+name: V0.20 B13A Auto Quality Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "js/duel-renderer-v3-bridge.js"
+      - "js/duel-vfx-tier.js"
+      - "js/v020-survival-divine-vfx.js"
+      - "js/duel-renderer.js"
+      - "js/v020-enemy-presentation.js"
+      - "tests/v020-b13a-auto-quality-smoke.js"
+      - "tests/v020-b13a-auto-quality-browser-driver.html"
+      - "V020_B13_OPTIMIZATION_MOBILE_FALLBACK_SPEC.md"
+      - ".github/workflows/v020-b13a-auto-quality-validation.yml"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Syntax check
+        run: |
+          node --check js/duel-renderer-v3-bridge.js
+          node --check js/duel-vfx-tier.js
+          node --check js/v020-survival-divine-vfx.js
+          node --check tests/v020-b13a-auto-quality-smoke.js
+
+      - name: B13A auto quality smoke
+        run: node tests/v020-b13a-auto-quality-smoke.js
+
+      - name: Historical presentation regressions
+        run: |
+          node tests/v018-g4d-tier-rare-vfx-smoke.js
+          node tests/v018-g6a-quality-policy-smoke.js
+          node tests/v020-b9-high-tier-spectacle-smoke.js
+          node tests/v020-b9-survival-divine-spectacle-smoke.js
+
+      - name: Public desktop/mobile/override auto quality
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4187 >/tmp/v020-b13a-http.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          [ -n "$chrome" ] || { echo "Chrome/Chromium not found"; exit 1; }
+          run_case(){
+            name="$1"; out="/tmp/v020-b13a-${name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1280,720 --virtual-time-budget=26000 --dump-dom "http://127.0.0.1:4187/tests/v020-b13a-auto-quality-browser-driver.html?expect=${name}" >"$out"
+            grep -q "V020_B13A_PASS ${name}" "$out" || { cat "$out"; exit 1; }
+            grep "V020_B13A_PASS ${name}" "$out"
+          }
+          run_case desktop
+          run_case mobile
+          run_case forced
