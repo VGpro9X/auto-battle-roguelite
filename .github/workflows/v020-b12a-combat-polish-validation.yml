@@ -1,0 +1,24 @@
+name: V0.20 B12A Combat Polish Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "js/duel-vfx-v3.js"
+      - "index.html"
+      - "tests/v020-b12a-combat-polish-smoke.js"
+      - "V020_B12_ANIMATION_COMBAT_POLISH_SPEC.md"
+      - ".github/workflows/v020-b12a-combat-polish-validation.yml"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax check
+        run: |
+          node --check js/duel-vfx-v3.js
+          node --check tests/v020-b12a-combat-polish-smoke.js
+      - name: B12A combat polish smoke
+        run: node tests/v020-b12a-combat-polish-smoke.js
