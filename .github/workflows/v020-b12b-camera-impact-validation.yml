@@ -1,0 +1,26 @@
+name: V0.20 B12B Camera Impact Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "js/duel-camera.js"
+      - "js/duel-renderer.js"
+      - "tests/v020-b12b-camera-impact-smoke.js"
+      - "V020_B12_ANIMATION_COMBAT_POLISH_SPEC.md"
+      - ".github/workflows/v020-b12b-camera-impact-validation.yml"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax check
+        run: |
+          node --check js/duel-camera.js
+          node --check tests/v020-b12b-camera-impact-smoke.js
+      - name: B12B camera impact smoke
+        run: node tests/v020-b12b-camera-impact-smoke.js
+      - name: Historical G3/G6E camera regressions
+        run: node tests/v018-g3-arena-camera-smoke.js && node tests/v018-g6e-performance-closure-smoke.js
