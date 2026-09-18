@@ -2,7 +2,7 @@ const fs=require('fs'),vm=require('vm');
 function assert(v,m){if(!v)throw new Error(m);}
 const v3=fs.readFileSync('js/renderer-v3.js','utf8');
 const bridge=fs.readFileSync('js/duel-renderer-v3-bridge.js','utf8');
-const canvas={dataset:{}};
+const canvas={dataset:{},getContext:()=>({})};
 const context={globalThis:{DUEL_RENDERER_V3_DEFAULT:true,createDuelRendererV2:()=>({preload:Promise.resolve(),render(){},consume(){},getStatus(){return{mode:'v2'};}})},URLSearchParams};
 context.globalThis.globalThis=context.globalThis;
 vm.createContext(context);vm.runInContext(v3,context);vm.runInContext(bridge,context);
