@@ -219,6 +219,9 @@ jobs:
       - name: V0.20 B11 icon runtime/catalog gate
         run: node tests/v020-b11-icon-runtime-smoke.js && node tests/v020-b11b-icon-catalog-audit.js
 
+      - name: V0.20 B12A combat polish gate
+        run: node tests/v020-b12a-combat-polish-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
