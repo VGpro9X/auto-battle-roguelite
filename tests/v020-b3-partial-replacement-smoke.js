@@ -8,11 +8,11 @@ const assets={idle:'1536',walk:'2048',run:'2048',dash:'1536',melee:'2560',ranged
 assert(v2.includes('function render(match,dt=0,options={})'),'Renderer V2 partial-render hook missing');
 assert(v2.includes('options.skipFighterSides'),'Renderer V2 does not accept external fighter skip list');
 assert(v2.includes('function getLastTransform()'),'Renderer V2 does not expose final camera transform');
-assert(bridge.includes('fallback.render(match,dt,{skipFighterSides:v3Sides})'),'V3 bridge does not suppress replaced V2 fighters');
+assert(/fallback\.render\(match,dt,\{skipFighterSides:v3Sides(?:,|\})/.test(bridge),'V3 bridge does not suppress replaced V2 fighters');
 assert(bridge.includes('fallback.getLastTransform'),'V3 bridge is not sharing V2/camera transform');
 assert(bridge.includes('stateClocks=new Map()'),'state-relative animation clock missing');
 assert(bridge.includes('drawV3Attachments'),'V3 replacement drops shield/frost/orbit presentation');
-assert(bridge.includes("canvas.dataset.duelRenderer=activeStates.length?'v3-partial':'v3-foundation'"),'partial V3 runtime status missing');
+assert(bridge.includes("canvas.dataset.duelRenderer=arenaActive||activeStates.length?'v3-partial':'v3-foundation'")||bridge.includes("canvas.dataset.duelRenderer=activeStates.length?'v3-partial':'v3-foundation'"),'partial V3 runtime status missing');
 assert(manifest.status==='partial-production','fighter manifest must remain partial-production');
 
 for(const [state,width] of Object.entries(assets)){
