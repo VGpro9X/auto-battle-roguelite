@@ -24,11 +24,11 @@ assert.ok(index.includes(`<title>Auto Battle Roguelite ${currentVersion}</title>
 assert.ok(index.includes(`<div id="version">Auto Battle Roguelite ${currentVersion}</div>`),'static badge/runtime version mismatch');
 assert.ok(uiSync.includes(`${currentVersion} · ĐẤU TRƯỜNG 1V1`),'Duel release label/runtime version mismatch');
 for(const src of [
-  'js/core.js?v=019-release-r1',
   'js/v019-survival-ai.js?v=019-release-r1',
-  'js/v019-duel-ai.js?v=019-release-r1',
-  'js/duel-ui-sync.js?v=019-release-r1'
-])assert.ok(index.includes(src),`release cache key missing: ${src}`);
+  'js/v019-duel-ai.js?v=019-release-r1'
+])assert.ok(index.includes(src),`historical AI cache key missing: ${src}`);
+assert.ok(/js\/core\.js\?v=(?:019-release-r1|020-release-r1)/.test(index),'core release cache key missing');
+assert.ok(/js\/duel-ui-sync\.js\?v=(?:019-release-r1|020-release-r1)/.test(index),'Duel UI sync release cache key missing');
 
 if(currentVersion==='V0.20'){
   assert.ok(readme.includes('Current release: **V0.20 – Complete Visual Rebuild**'),'README current release mismatch');
