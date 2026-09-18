@@ -1,19 +1,32 @@
 # Auto Battle Roguelite
 
-Current release: **V0.19 – Tactical AI & Movement Intelligence**
+Current release: **V0.20 – Complete Visual Rebuild**
 
 Public build: `https://vgpro9x.github.io/auto-battle-roguelite/`
 
 GitHub `main` is canonical.
 
 ## Current status
-- V0.19 A0–A15: **COMPLETE / RELEASED**.
-- Runtime/public version label: **V0.19**.
+- V0.20 B0–B13: **COMPLETE**; B14 release integration is in final validation.
+- Runtime/public version label: **V0.20**.
+- V0.19 A0–A15: **COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
 - V0.18 Graphics & Presentation Overhaul remains the frozen graphics/presentation baseline.
 - V0.17 Duel Arena remains the frozen historical mechanics/content baseline.
 - Survival/Endless V0.16 remains supported.
 
-Release evidence: `V019_RELEASE_VALIDATION.md`.
+Current V0.20 release evidence: `V020_COMPLETE_VISUAL_REBUILD_PLAN.md` and `V020_B14_RELEASE_SPEC.md`. Historical V0.19 evidence: `V019_RELEASE_VALIDATION.md`.
+
+## V0.20 complete visual rebuild
+- Renderer V3 with V2/vector fallback
+- 13-state Ash Wanderer production animation set and Ashen Sanctum V3
+- coherent enemy families, semantic combat VFX and high-tier spectacle
+- UI/HUD V3 across Survival, Duel, Codex, tournament and results
+- deterministic SVG icon system covering 80 base + 28 Hợp Đạo + 12 Siêu Cấp + 20 Rare identities
+- combat impact/camera polish
+- AUTO presentation quality for desktop/mobile/constrained devices
+- desktop/mobile/reduced-motion/fallback and public artifact closure
+
+V0.20 preserves V0.19 tactical AI plus locked V0.16/V0.17 combat/content truth.
 
 ## V0.19 tactical AI release
 ### Survival / Endless
@@ -81,7 +94,7 @@ V0.17 remains frozen except for bug fixes and retains:
 - GitHub `main` is canonical.
 - Fetch latest content/blob SHA before editing an existing file.
 - Commit every meaningful checkpoint.
-- V0.19 is the authorized tactical AI/movement rewrite; unrelated combat/content rebalance still requires a new explicit roadmap.
+- V0.20 is presentation-first and preserves V0.19 tactical AI/movement plus the frozen V0.16/V0.17 combat/content truth; unrelated balance/content changes still require a new explicit roadmap.
 - Player-facing UI remains Vietnamese.
 - No hidden gameplay caps/cooldowns/stack maxima/target limits/retry rules/weighting.
 - Preserve V0.12 hidden-shield-cap removal.
@@ -94,12 +107,14 @@ V0.17 remains frozen except for bug fixes and retains:
 1. `README.md`
 2. `PROJECT_HANDOFF.md`
 3. `ROADMAP.md`
-4. `V019_TACTICAL_AI_PLAN.md`
-5. `V019_RELEASE_VALIDATION.md`
-6. `V018_GRAPHICS_PLAN.md`
-7. `V018_RELEASE_VALIDATION.md`
-8. `V017_RELEASE_VALIDATION.md`
-9. `V017_DUEL_ARENA_PLAN.md`
+4. `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`
+5. `V020_B14_RELEASE_SPEC.md`
+6. `V019_TACTICAL_AI_PLAN.md`
+7. `V019_RELEASE_VALIDATION.md`
+8. `V018_GRAPHICS_PLAN.md`
+9. `V018_RELEASE_VALIDATION.md`
+10. `V017_RELEASE_VALIDATION.md`
+11. `V017_DUEL_ARENA_PLAN.md`
 
 ## Project status
-**V0.19 is COMPLETE / RELEASED. V0.18 remains the frozen graphics/presentation baseline and V0.17 remains the frozen historical mechanics/content baseline.**
+**V0.20 is the current public release candidate in B14 final validation. V0.19 remains the frozen tactical AI baseline; V0.18 and V0.17 remain historical presentation/mechanics regression baselines.**
