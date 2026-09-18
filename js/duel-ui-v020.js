@@ -5,7 +5,7 @@
 
   function addOverlayId(id){if(typeof overlayIds!=="undefined"&&!overlayIds.includes(id))overlayIds.push(id);}
   function byId(id){return document.getElementById(id);}
-  function setText(id,value){const el=byId(id);if(el)el.textContent=value;}
+  function setText(id,value){const el=byId(id);if(el)el.textContent=value;}\n  function duelV20Icon(kind,key,item,size="sm"){return typeof root.getV020IconMarkup==="function"?root.getV020IconMarkup(kind,key,item,{size,title:item?.name||key}):`<span class="legacyIcon" aria-hidden="true">${item?.icon||"◆"}</span>`;}
 
   function ensureDuelDom(){
     const wrap=byId("gameWrap");if(!wrap||byId("duelLobbyMenu"))return;
@@ -37,10 +37,10 @@
 
   function buildHtml(build,{limit=8,empty="Chưa có kỹ năng",owner=null}={}){
     const entries=listDuelBuild(build),links=[];
-    const skillHtml=entries.length?entries.slice(0,limit).map(({meta,rank})=>`<div class="duelBuildChip"><span>${meta.icon}</span><b>${meta.name}</b><small>${rank>=3?"TỐI ĐA":`Rank ${roman[rank]}`}</small></div>`).join(""):"";
-    if(typeof listDuelSynergies==="function")for(const{meta}of listDuelSynergies(build,{includeLocked:false,implementedOnly:true}))links.push(`<div class="duelBuildChip duelLinkChip"><span>${meta.icon}</span><b>${meta.name}</b><small>HỢP ĐẠO</small></div>`);
-    if(typeof listDuelEvolutions==="function")for(const{meta}of listDuelEvolutions(build,{includeLocked:false,implementedOnly:true}))links.push(`<div class="duelBuildChip duelEvolutionChip"><span>${meta.icon}</span><b>${meta.name}</b><small>SIÊU CẤP</small></div>`);
-    if(owner&&typeof listDuelRares==="function")for(const meta of listDuelRares(owner))links.push(`<div class="duelBuildChip duelRareChip ${meta.tier}"><span>${meta.icon}</span><b>${meta.name}</b><small>${getDuelRareTierLabel(meta)}</small></div>`);
+    const skillHtml=entries.length?entries.slice(0,limit).map(({meta,rank})=>`<div class="duelBuildChip"><span>${duelV20Icon("skill",meta.key,meta,"sm")}</span><b>${meta.name}</b><small>${rank>=3?"TỐI ĐA":`Rank ${roman[rank]}`}</small></div>`).join(""):"";
+    if(typeof listDuelSynergies==="function")for(const{meta}of listDuelSynergies(build,{includeLocked:false,implementedOnly:true}))links.push(`<div class="duelBuildChip duelLinkChip"><span>${duelV20Icon("synergy",meta.id||meta.key||meta.name,meta,"sm")}</span><b>${meta.name}</b><small>HỢP ĐẠO</small></div>`);
+    if(typeof listDuelEvolutions==="function")for(const{meta}of listDuelEvolutions(build,{includeLocked:false,implementedOnly:true}))links.push(`<div class="duelBuildChip duelEvolutionChip"><span>${duelV20Icon("evolution",meta.id||meta.key||meta.name,meta,"sm")}</span><b>${meta.name}</b><small>SIÊU CẤP</small></div>`);
+    if(owner&&typeof listDuelRares==="function")for(const meta of listDuelRares(owner))links.push(`<div class="duelBuildChip duelRareChip ${meta.tier}"><span>${duelV20Icon("rare",meta.id||meta.key||meta.name,meta,"sm")}</span><b>${meta.name}</b><small>${getDuelRareTierLabel(meta)}</small></div>`);
     return skillHtml+links.slice(0,12).join("")||`<div class="duelBuildEmpty">${empty}</div>`;
   }
 
@@ -60,12 +60,12 @@
       container.innerHTML="";
       for(const choice of picks){
         if(choice.kind==="rare"){
-          const meta=getDuelRare(choice.key);if(!meta)continue;const button=document.createElement("button");button.className=`choice duelChoice duelRareChoice ${meta.tier}`;button.innerHTML=`<div class="icon">${meta.icon}</div><h3>${meta.name}</h3><div class="lvl">${getDuelRareTierLabel(meta)} · DUY NHẤT</div><div class="tags"><span class="tagChip">RULE</span><span class="tagChip">KHÔNG CẤP</span></div><div class="desc">${meta.desc}</div>`;button.addEventListener("click",()=>{if(!grantDuelRare(player,choice.key))return;showDuelPreMatch();});container.appendChild(button);continue;
+          const meta=getDuelRare(choice.key);if(!meta)continue;const button=document.createElement("button");button.className=`choice duelChoice duelRareChoice ${meta.tier}`;button.innerHTML=`<div class="icon">${duelV20Icon("rare",meta.id||choice.key,meta,"xl")}</div><h3>${meta.name}</h3><div class="lvl">${getDuelRareTierLabel(meta)} · DUY NHẤT</div><div class="tags"><span class="tagChip">RULE</span><span class="tagChip">KHÔNG CẤP</span></div><div class="desc">${meta.desc}</div>`;button.addEventListener("click",()=>{if(!grantDuelRare(player,choice.key))return;showDuelPreMatch();});container.appendChild(button);continue;
         }
         const key=choice.key,meta=getDuelSkill(key),current=getDuelSkillRank(player.build,key),next=current+1;
         const evoHints=typeof getDuelEvolutionChoiceHints==="function"?getDuelEvolutionChoiceHints(player.build,key):[];
-        const hintHtml=evoHints.length?`<div class="duelEvolutionHint">✦ MỞ SIÊU CẤP: ${evoHints.map(item=>`${item.icon} ${item.name}`).join(" · ")}</div>`:"";
-        const button=document.createElement("button");button.className="choice duelChoice"+(next>=3?" maxNext":"");button.innerHTML=`<div class="icon">${meta.icon}</div><h3>${meta.name}</h3><div class="lvl">Rank ${roman[next]} / III${next>=3?" · TỐI ĐA":""}</div><div class="tags">${meta.tags.slice(0,5).map(tag=>`<span class="tagChip">${typeof getTagLabel==="function"?getTagLabel(tag):tag}</span>`).join("")}</div><div class="desc">${meta.desc(next)}</div>${hintHtml}`;
+        const hintHtml=evoHints.length?`<div class="duelEvolutionHint">✦ MỞ SIÊU CẤP: ${evoHints.map(item=>`${duelV20Icon("evolution",item.id||item.base||item.name,item,"xs")} ${item.name}`).join(" · ")}</div>`:"";
+        const button=document.createElement("button");button.className="choice duelChoice"+(next>=3?" maxNext":"");button.innerHTML=`<div class="icon">${duelV20Icon("skill",key,meta,"xl")}</div><h3>${meta.name}</h3><div class="lvl">Rank ${roman[next]} / III${next>=3?" · TỐI ĐA":""}</div><div class="tags">${meta.tags.slice(0,5).map(tag=>`<span class="tagChip">${typeof getTagLabel==="function"?getTagLabel(tag):tag}</span>`).join("")}</div><div class="desc">${meta.desc(next)}</div>${hintHtml}`;
         button.addEventListener("click",()=>{if(!addDuelSkillRank(player.build,key))return;if(!starter&&typeof applyDuelDivineGift==="function")applyDuelDivineGift(player,key,Math.random);if(starter){duelSession.starterPick++;if(duelSession.starterPick<2){showDuelSkillSelection(true);return;}}showDuelPreMatch();});container.appendChild(button);
       }
     }
