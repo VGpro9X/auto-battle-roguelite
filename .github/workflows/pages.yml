@@ -225,6 +225,9 @@ jobs:
       - name: V0.20 B12B camera impact gate
         run: node tests/v020-b12b-camera-impact-smoke.js
 
+      - name: V0.20 B13A auto quality gate
+        run: node tests/v020-b13a-auto-quality-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
