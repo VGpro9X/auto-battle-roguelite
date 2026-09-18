@@ -222,6 +222,9 @@ jobs:
       - name: V0.20 B12A combat polish gate
         run: node tests/v020-b12a-combat-polish-smoke.js
 
+      - name: V0.20 B12B camera impact gate
+        run: node tests/v020-b12b-camera-impact-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
