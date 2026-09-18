@@ -1,0 +1,31 @@
+name: V0.20 B11 Icon Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "js/v020-icons.js"
+      - "js/ui.js"
+      - "js/skill-codex.js"
+      - "js/duel-ui-v020.js"
+      - "css/v020-ui-hud.css"
+      - "index.html"
+      - "tests/v020-b11-icon-runtime-smoke.js"
+      - ".github/workflows/v020-b11-icon-validation.yml"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Syntax check icon and UI runtime
+        run: |
+          node --check js/v020-icons.js
+          node --check js/ui.js
+          node --check js/skill-codex.js
+          node --check js/duel-ui-v020.js
+          node --check tests/v020-b11-icon-runtime-smoke.js
+      - name: Validate B11A icon runtime
+        run: node tests/v020-b11-icon-runtime-smoke.js
