@@ -1,6 +1,6 @@
 # V0.20 — Complete Visual Rebuild Plan
 
-Status: **APPROVED / IN DEVELOPMENT — B0–B10 COMPLETE, B11 ACTIVE**
+Status: **APPROVED / IN DEVELOPMENT — B0–B11 COMPLETE, B12 ACTIVE**
 
 Canonical source: GitHub `main` in `VGpro9X/auto-battle-roguelite`.
 
@@ -121,12 +121,13 @@ FULL/BALANCED/LOW affect presentation cost only, never gameplay truth.
   - desktop/mobile/reduced-motion combined closure gate added
   - Pages now revalidates B10 before publishing
   - presentation-only modernization; gameplay and tournament truth remain authoritative in existing systems
-- **B11 — Icon Production — ACTIVE**
+- **B11 — Icon Production — COMPLETE ✅**
   - B11A deterministic SVG runtime icon foundation integrated
+  - B11B audited 80 base + 28 Hợp Đạo + 12 Siêu Cấp + 20 Rare identities
+  - B11C desktop/mobile/reduced-motion browser validation passed
   - Survival/Codex/Duel primary UI surfaces now prefer semantic V3 icons
   - legacy metadata emoji retained only as compatibility fallback
-  - B11B full catalog audit and B11C desktop/mobile visual closure remain
-- **B12 — Animation & Combat Polish** — impact/camera/trail/KO presentation, no simulation leakage
+- **B12 — Animation & Combat Polish — ACTIVE** — impact/camera/trail/KO presentation, no simulation leakage
 - **B13 — Optimization / Mobile / Fallback** — compression/memory, quality gates, reduced motion, V3→V2→vector fallback
 - **B14 — Integration / Release** — V0.16–V0.19 regressions, V0.20 browser/mobile/Pages validation, then promote label to V0.20 and owner final test
 
@@ -137,4 +138,4 @@ GitHub `main` is canonical. Fetch latest SHA before edits. Commit every meaningf
 V0.20 requires normal production gameplay to use coherent V3 artwork, complete 13 fighter states, coherent required enemies, Ashen Sanctum V3, complete skill visual mapping, distinct high tiers, 20 Rare identities, coherent desktop/mobile UI/icons, unchanged gameplay truth, functional V2/vector fallback, no missing assets/runtime errors, desktop/mobile/performance/reduced-motion gates, historical V0.16–V0.19 regressions, exact Pages deployment, then V0.20 label promotion and final owner visual/gameplay test.
 
 ## Current continuation point
-**B0–B10 COMPLETE. B11 ACTIVE: finish deterministic icon coverage with a full content-ID audit and desktop/mobile visual closure. Public/runtime label remains V0.19 until B14.**
+**B0–B11 COMPLETE. B12 ACTIVE: polish combat animation, hit readability, timing presentation and motion feedback without changing gameplay truth. Public/runtime label remains V0.19 until B14.**
