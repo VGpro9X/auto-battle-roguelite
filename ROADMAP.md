@@ -5,7 +5,7 @@ GitHub `main` is canonical.
 ## Current baseline
 - Released baseline: **V0.20 – Complete Visual Rebuild**.
 - Released/public baseline: **V0.20 – Complete Visual Rebuild**.
-- Active development: **V0.20 B14 final release validation**.
+- Active development: **none — V0.20 released**.
 - V0.20 authoritative plan: `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`.
 - Previous graphics baseline: **V0.18 – Graphics & Presentation Overhaul**.
 - Historical mechanics/content baseline: **V0.17 – Duel Arena / Đấu Trường 1v1**.
@@ -79,7 +79,7 @@ V0.19 remains the frozen tactical AI regression baseline under V0.20.
 
 ---
 
-# V0.20 — COMPLETE VISUAL REBUILD — RELEASE VALIDATION 🚧
+# V0.20 — COMPLETE VISUAL REBUILD — COMPLETE / RELEASED ✅
 
 Authoritative plan: `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`.
 
@@ -100,10 +100,10 @@ Checkpoint status:
 - B11 Icon Production — **COMPLETE ✅**
 - B12 Animation & Combat Polish — **COMPLETE ✅**
 - B13 Optimization / Mobile / Fallback — **COMPLETE ✅**
-- B14 Integration / Release — **ACTIVE 🚧**
+- B14 Integration / Release — **COMPLETE ✅**
 
 Release discipline:
-- Public/runtime label has been promoted to V0.20 after B14 release-candidate validation passed.
+- Public/runtime label is V0.20.
 - Renderer V3 must retain Renderer V2 and vector fallbacks.
 - Production assets must be original/generated for this project; reference imagery is not shipped.
 - Runtime/gameplay truth remains simulation-owned.
@@ -114,4 +114,4 @@ Release discipline:
 
 # PROJECT STATUS
 
-**V0.20 is the current public release candidate with B0–B13 complete and B14 final release validation active. V0.19 remains the tactical AI regression baseline.**
+**V0.20 is COMPLETE / RELEASED and is the current public baseline. V0.19 remains the tactical AI regression baseline.**
