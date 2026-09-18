@@ -19,12 +19,12 @@ Use this file as the starting context when continuing development in a new chat.
 ## Current project state
 - Current released/public baseline: **V0.20 – Complete Visual Rebuild**.
 - Runtime/public label: **V0.20**.
-- V0.20 status: **B0–B13 COMPLETE; B14 final release validation active**.
+- V0.20 status: **B0–B14 COMPLETE / RELEASED**.
 - V0.19 status: **A0–A15 COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
 - V0.18 remains frozen as the graphics/presentation baseline.
 - V0.17 remains frozen as the historical Duel mechanics/content baseline.
 - V0.16 Survival/Endless remains supported.
-- Authoritative V0.20 plan/release state: `V020_COMPLETE_VISUAL_REBUILD_PLAN.md` + `V020_B14_RELEASE_SPEC.md`.
+- Authoritative V0.20 release evidence: `V020_RELEASE_VALIDATION.md`.
 - Historical V0.19 evidence: `V019_RELEASE_VALIDATION.md`.
 
 ## Read first
@@ -120,4 +120,4 @@ Graphics/UI never decide hit success, damage, cooldown, fatal/revive ordering, s
 - Tests stay under `tests/` and are not shipped publicly.
 
 ## Status for next conversation
-**V0.20 is the current public release candidate in B14 final validation. V0.19 remains the frozen tactical AI regression baseline; V0.18 remains the historical graphics baseline and V0.17 the historical mechanics/content baseline. After B14 closes, future feature work should start from a new explicitly approved roadmap.**
+**V0.20 is COMPLETE / RELEASED and is the current public baseline. V0.19 remains the frozen tactical AI regression baseline; V0.18 remains the historical graphics baseline and V0.17 the historical mechanics/content baseline. Future feature work should start from a new explicitly approved roadmap.**
