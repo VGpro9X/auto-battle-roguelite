@@ -4,8 +4,8 @@ const html=read("index.html");
 const plan=read("V020_COMPLETE_VISUAL_REBUILD_PLAN.md");
 const pages=read(".github/workflows/pages.yml");
 
-assert(/<title>Auto Battle Roguelite V0\.19<\/title>/.test(html),"candidate label must remain V0.19 before promotion");
-assert(html.includes('id="version">Auto Battle Roguelite V0.19'),"candidate in-game version must remain V0.19");
+assert(/<title>Auto Battle Roguelite V0\.(?:19|20)<\/title>/.test(html),"B14 label must be V0.19 candidate or V0.20 promoted release");
+assert(/id="version">Auto Battle Roguelite V0\.(?:19|20)/.test(html),"B14 in-game version must be V0.19 candidate or V0.20 promoted release");
 assert(plan.includes("B0–B13 COMPLETE, B14 ACTIVE"),"master plan is not at B14 candidate state");
 
 for(const gate of [
@@ -23,4 +23,4 @@ for(const file of [
   "V020_B13_OPTIMIZATION_MOBILE_FALLBACK_SPEC.md"
 ])assert(fs.readFileSync(file,"utf8").includes("COMPLETE ✅"),file+" is not closed");
 
-console.log("v020-b14-release-candidate-smoke: ok · B0-B13 closed · V0.19 label safely retained");
+console.log("v020-b14-release-candidate-smoke: ok · B0-B13 closed · candidate/promotion label valid");
