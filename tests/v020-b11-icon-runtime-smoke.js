@@ -31,7 +31,7 @@ const fixtures=[
   ["evolution","heavenNet",{name:"Thiên La Địa Võng",tags:["AREA","CONTROL"]},"control","evolution"],
   ["rare","rare-probe",{name:"Rare Probe",tier:"rare",tags:["SOUL"]},"soul","rare"],
   ["divine","immortalBreath",{name:"Bất Tử Nhất Tức",tier:"divine"},"heal","divine"],
-  ["mystic","fateExchange",{name:"Đổi Mệnh",tier:"mystic"},"mark","mystic"]
+  ["mystic","fateExchange",{name:"Đổi Mệnh",tier:"mystic",tags:["MARK"]},"mark","mystic"]
 ];
 for(const [kind,id,item,family,tier] of fixtures){
   const descriptor=context.getV020IconDescriptor(kind,id,item);
