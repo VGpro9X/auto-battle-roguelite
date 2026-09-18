@@ -1,0 +1,67 @@
+name: V0.20 B14 Release Candidate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "css/**"
+      - "js/**"
+      - "assets/**"
+      - "tests/v020-b14-release-candidate-smoke.js"
+      - "V020_B14_RELEASE_SPEC.md"
+      - "V020_COMPLETE_VISUAL_REBUILD_PLAN.md"
+      - ".github/workflows/v020-b14-release-candidate.yml"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: B14 candidate static audit
+        run: node tests/v020-b14-release-candidate-smoke.js
+
+      - name: Historical V0.16 to V0.19 regressions
+        run: |
+          node tests/v016-final-audit-smoke.js
+          node tests/v017-release-audit.js
+          node tests/v018-g7-release-audit.js
+          node tests/v019-a15-release-audit.js
+
+      - name: V0.20 integrated static closure
+        run: |
+          node tests/v020-b3-full-state-runtime-smoke.js
+          node tests/v020-b4-enemy-runtime-harness.js
+          node tests/v020-b9-high-tier-spectacle-smoke.js
+          node tests/v020-b9-survival-divine-spectacle-smoke.js
+          node tests/v020-b10c-ui-closure-smoke.js
+          node tests/v020-b11-icon-runtime-smoke.js
+          node tests/v020-b11b-icon-catalog-audit.js
+          node tests/v020-b12a-combat-polish-smoke.js
+          node tests/v020-b12b-camera-impact-smoke.js
+          node tests/v020-b13a-auto-quality-smoke.js
+          node tests/v020-b13b-fallback-smoke.js
+          node tests/v020-b13c-public-artifact-audit.js
+
+      - name: Integrated desktop mobile V3 reduced browser candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4190 >/tmp/v020-b14-http.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          [ -n "$chrome" ] || { echo "Chrome/Chromium not found"; exit 1; }
+          run_case(){
+            url="$1"; marker="$2"; name="$3"; out="/tmp/v020-b14-${name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1280,720 --virtual-time-budget=30000 --dump-dom "$url" >"$out"
+            grep -q "$marker" "$out" || { cat "$out"; exit 1; }
+            grep "$marker" "$out"
+          }
+          run_case "http://127.0.0.1:4190/tests/v020-b13c-public-browser-driver.html?expect=desktop" "V020_B13C_PASS desktop" desktop
+          run_case "http://127.0.0.1:4190/tests/v020-b13c-public-browser-driver.html?expect=mobile" "V020_B13C_PASS mobile" mobile
+          run_case "http://127.0.0.1:4190/tests/v020-b13b-fallback-browser-driver.html?expect=v3" "V020_B13B_PASS v3" v3
+          run_case "http://127.0.0.1:4190/tests/v020-b13b-fallback-browser-driver.html?expect=reduced" "V020_B13B_PASS reduced" reduced
