@@ -1,6 +1,6 @@
 # V0.20 — B10 UI/HUD V3
 
-Status: **ACTIVE — B10A SHARED SHELL + SURVIVAL UI INTEGRATED**
+Status: **COMPLETE ✅ — B10A/B10B/B10C INTEGRATED**
 
 B10 modernizes presentation and composition while preserving all existing V0.19/V0.18/V0.17 gameplay, tournament and content truth.
 
@@ -74,8 +74,35 @@ B10A adds:
 - `tests/v020-b10-ui-hud-browser-driver.html` for real-app desktop/mobile computed-style and width containment checks
 - `.github/workflows/v020-b10-ui-hud-validation.yml` for static + 1280×720 desktop + 360×640 mobile coverage
 
-## Remaining B10 work
-- **B10B:** dedicated Duel lobby/pre-match/tournament/combat HUD composition pass, preserving the V0.18 reward/result hierarchy.
-- **B10C:** final Codex/menu/result cross-device audit, overflow/interaction cleanup, reduced-motion/fallback closure and combined B10 validation.
+## B10B — Duel UI/HUD V3
+Runtime layer: `css/v020-duel-ui.css`.
+
+B10B completes:
+- Duel lobby and rules presentation
+- pre-match two-sided confrontation layout
+- tournament build chips and reward-choice presentation
+- combat HUD, HP/shield framing, phase/timer hierarchy
+- Duel result/build presentation
+- compact mobile layouts at <=760 px and <=480 px
+- reduced-motion-safe TỬ CHIẾN presentation
+
+## B10C — cross-device closure
+B10C validates the combined UI system instead of treating Survival and Duel as isolated skins:
+- desktop 1280×720 composition
+- mobile 360×640 composition using an explicit iframe viewport
+- menu / mode / Codex / result / Duel surfaces
+- no horizontal overflow in the checked public surfaces
+- reduced-motion transition/animation closure
+- presentation-only ownership boundary retained
+
+Validation:
+- `tests/v020-b10-ui-hud-smoke.js`
+- `tests/v020-b10-duel-ui-smoke.js`
+- `tests/v020-b10c-ui-closure-smoke.js`
+- browser validation drivers for desktop/mobile/reduced-motion
+- Pages now runs the combined B10 static closure gate before publishing the public artifact
+
+## Handoff
+B10 is complete. The next checkpoint is **B11 — Icon Production**. B11 replaces inconsistent runtime emoji presentation with a deterministic SVG icon language while retaining legacy metadata icons as compatibility fallback.
 
 Public/runtime version remains V0.19 until B14.
