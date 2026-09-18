@@ -1,0 +1,65 @@
+<!doctype html><meta charset="utf-8">
+<style>html,body{margin:0}#app{border:0;width:1280px;height:720px}#result{position:fixed;left:0;top:0;z-index:99;background:#000;color:#fff;font:12px monospace;padding:4px}</style>
+<iframe id="app"></iframe><pre id="result">B13B loading…</pre>
+<script>
+(async()=>{
+  const q=new URLSearchParams(location.search),expect=q.get("expect")||"v3";
+  const out=document.getElementById("result"),frame=document.getElementById("app");
+  const query=expect==="reduced"?"?duelRenderer=v3&duelMotion=reduce":"?duelRenderer="+expect;
+  frame.src="../index.html"+query;
+  const fail=m=>{out.textContent="V020_B13B_FAIL "+expect+" "+m;throw new Error(m)};
+  const ok=(v,m)=>{if(!v)fail(m)};
+  try{
+    await new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(new Error("index load timeout")),18000);frame.onload=()=>{clearTimeout(t);resolve();};});
+    const w=frame.contentWindow,d=frame.contentDocument;
+    const started=performance.now();
+    while(!w.__V020_RENDERER_V3_BOOTSTRAP__||typeof w.createDuelRenderer!=="function"){
+      if(performance.now()-started>16000)throw new Error("renderer bootstrap timeout");
+      await new Promise(r=>setTimeout(r,50));
+    }
+    await w.__V020_RENDERER_V3_BOOTSTRAP__;
+    const canvas=d.createElement("canvas");canvas.width=1280;canvas.height=720;canvas.style.width="1280px";canvas.style.height="720px";canvas.style.position="fixed";canvas.style.left="-9999px";d.body.appendChild(canvas);
+    const renderer=w.createDuelRenderer(canvas);
+
+    if(expect==="vector"){
+      ok(canvas.dataset.duelRenderer==="vector","forced vector route failed: "+canvas.dataset.duelRenderer);
+    }else if(expect==="v2"){
+      if(renderer.preload)await renderer.preload;
+      ok(canvas.dataset.duelRenderer==="v2","forced V2 route failed: "+canvas.dataset.duelRenderer);
+      ok(renderer.getStatus&&renderer.getStatus().mode==="v2","forced V2 status mismatch");
+    }else{
+      if(renderer.preload)await renderer.preload;
+      const status=renderer.getStatus();
+      ok(renderer.fallback,"V3 bridge lost V2 fallback object");
+      ok(status.v3&&typeof status.v3.ready==="boolean","V3 bridge status missing");
+      if(expect==="reduced"){
+        const legacy=w.getDuelVisualQuality();
+        ok(legacy.reducedMotion===true,"duelMotion=reduce did not reach quality policy");
+        ok(status.lighting&&status.lighting.motionReduced===true,"reduced motion did not reach V3 lighting");
+        if(status.coreVfx&&status.coreVfx.enabled!==false)ok(status.coreVfx.reducedMotion===true,"reduced motion did not reach V3 core VFX");
+        const tier=w.createDuelVfxTierOverlay().getStatus();
+        ok(tier.reducedMotion===true,"reduced motion did not reach tier VFX");
+      }else{
+        ok(status.mode==="v3-partial"||status.mode==="v3-foundation","forced V3 did not stay on V3 presentation: "+status.mode);
+      }
+
+      const originalCreate=w.AutoBattleRendererV3.create;
+      w.AutoBattleRendererV3.create=()=>({
+        initialize:async()=>({enabled:true,ready:false,arenaReady:false,quality:"balanced",reason:"forced-missing"}),
+        resolveFighterState:()=>({renderer:"v2",entry:null,reason:"forced-missing"}),
+        resolveArena:()=>({renderer:"v2",entry:null,reason:"forced-missing"})
+      });
+      const fallbackCanvas=d.createElement("canvas");fallbackCanvas.width=640;fallbackCanvas.height=360;fallbackCanvas.style.width="640px";fallbackCanvas.style.height="360px";
+      const fallback=w.createDuelRendererV3Bridge(fallbackCanvas);
+      if(fallback.preload)await fallback.preload;
+      const fallbackStatus=fallback.getStatus();
+      ok(fallbackStatus.mode==="v2","missing V3 assets did not fall back to V2: "+fallbackStatus.mode);
+      ok(fallback.fallback,"missing V3 fallback lost V2 renderer");
+      w.AutoBattleRendererV3.create=originalCreate;
+    }
+
+    canvas.remove();
+    out.textContent="V020_B13B_PASS "+expect+" renderer="+(canvas.dataset.duelRenderer||"bridge");
+  }catch(error){fail(error&&error.message||String(error))}
+})();
+</script>
