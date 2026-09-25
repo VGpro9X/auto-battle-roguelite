@@ -28,7 +28,9 @@
     const baseline=w.getV023SurvivalFxStatus().spawned;
     // A valid nearby enemy exercises the actual auto-attack simulation and normal-projectile VFX, not only synthetic preview calls.
     w.eval("state.enemies.push({x:player.x+55,y:player.y,r:12,hp:220,maxHp:220,speed:0,dmg:0,hit:0,elite:false,dead:false,statuses:{},markedUntil:0,markPower:0});");
-    await delay(1250);
+    // Headless Chromium may throttle iframe requestAnimationFrame under virtual time; step the real simulation and render loops explicitly.
+    for(let tick=0;tick<42;tick++){w.update(.033);w.draw();}
+    await delay(180);
     let live=w.getV023SurvivalFxStatus();
     ok(live.spawned>baseline,"real Survival combat did not emit new attack/impact FX "+JSON.stringify(live));
     ok(live.rendered>0&&live.frameDraws>0,"real Survival effects never appeared in draw frames");
