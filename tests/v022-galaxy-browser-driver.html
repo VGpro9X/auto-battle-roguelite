@@ -1,0 +1,40 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>V0.22 Galaxy Survival browser driver</title>
+<style>html,body{margin:0;background:#060a15}#app{display:block;border:0}#result{position:fixed;z-index:99;left:0;top:0;background:#060911;color:#fff;font:12px monospace;padding:4px}</style></head>
+<body><iframe id="app"></iframe><pre id="result">V0.22 đang kiểm tra...</pre>
+<script>
+(async()=>{
+const kind=new URLSearchParams(location.search).get("expect")||"desktop",mobile=kind==="mobile";
+const width=mobile?360:1280,height=mobile?640:720,frame=document.getElementById("app"),out=document.getElementById("result");
+const fail=message=>{out.textContent="V022_GALAXY_BROWSER_FAIL "+kind+" "+message;throw Error(message)};
+const check=(condition,message)=>{if(!condition)fail(message)};
+try{
+  frame.style.width=width+"px";frame.style.height=height+"px";frame.src="../index.html";
+  await new Promise((resolve,reject)=>{const stop=setTimeout(()=>reject(Error("game load timed out")),16000);frame.onload=()=>{clearTimeout(stop);resolve();};});
+  const w=frame.contentWindow,d=frame.contentDocument,errors=[];
+  w.addEventListener("error",e=>errors.push(String(e.message||e.error||"runtime error")));
+  check(typeof w.drawGalaxySurvivalV022==="function","Galaxy renderer not loaded");
+  check(typeof w.startRun==="function","Survival start missing");
+  w.startRun(mobile?"endless":"5");
+  await new Promise(resolve=>setTimeout(resolve,1000));
+  const status=w.getGalaxyBattlefieldStatusV022();
+  check(status.cached,"procedural nebula texture not cached");
+  check(status.draws>3,"Galaxy not rendered into running Survival canvas");
+  check(status.stars===(mobile?65:195),"unexpected mobile/desktop star budget: "+status.stars);
+  check(status.cacheBuilds===1,"expensive nebula recomputed every frame: "+status.cacheBuilds);
+  check(d.documentElement.scrollWidth<=w.innerWidth+3,"horizontal overflow");
+  const canvas=d.getElementById("game"),g=canvas.getContext("2d"),colours=new Set();
+  for(const [nx,ny] of [[.06,.12],[.2,.38],[.43,.58],[.67,.25],[.86,.75],[.95,.93]]){
+    const pixel=g.getImageData(Math.floor(canvas.width*nx),Math.floor(canvas.height*ny),1,1).data;
+    colours.add(Array.from(pixel.slice(0,3)).join(","));
+  }
+  check(colours.size>=3,"background is flat or inaccessible: "+colours.size+" unique samples");
+  w.abandonRunToMenu();
+  await new Promise(resolve=>setTimeout(resolve,180));
+  const prior=w.getGalaxyBattlefieldStatusV022().draws;
+  await new Promise(resolve=>setTimeout(resolve,160));
+  check(w.getGalaxyBattlefieldStatusV022().draws===prior,"Galaxy must not render over the main menu");
+  check(errors.length===0,"runtime errors "+errors.join(" | "));
+  out.textContent="V022_GALAXY_BROWSER_PASS "+kind+" cached="+status.cached+" stars="+status.stars+" renders="+status.draws+" colours="+colours.size;
+}catch(error){if(!out.textContent.startsWith("V022_GALAXY_BROWSER_FAIL"))out.textContent="V022_GALAXY_BROWSER_FAIL "+kind+" "+(error?.message||String(error));console.error(error);}
+})();
+</script></body></html>

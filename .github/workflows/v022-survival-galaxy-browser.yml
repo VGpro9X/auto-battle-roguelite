@@ -1,0 +1,40 @@
+name: V0.22 Survival Galaxy browser validation
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v022-survival-galaxy-browser
+  cancel-in-progress: true
+
+jobs:
+  validate-galaxy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: V0.22 structural visual smoke
+        run: node tests/v022-galaxy-battlefield-smoke.js
+      - name: Desktop and mobile live Survival canvas
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4188 >/tmp/v022-server.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then echo 'Chrome/Chromium missing'; exit 1; fi
+          verify(){
+            case_name="$1"
+            size="$2"
+            file="/tmp/v022-galaxy-${case_name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size="$size" --virtual-time-budget=14000 --dump-dom "http://127.0.0.1:4188/tests/v022-galaxy-browser-driver.html?expect=${case_name}" > "$file"
+            grep -q "V022_GALAXY_BROWSER_PASS ${case_name}" "$file" || { cat "$file"; exit 1; }
+            grep "V022_GALAXY_BROWSER_PASS ${case_name}" "$file"
+          }
+          verify desktop 1280,720
+          verify mobile 360,640
