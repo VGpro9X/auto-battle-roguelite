@@ -1,0 +1,65 @@
+/* V0.21 — Build Intelligence & Choice Clarity
+   Presentation-only layer. Loads after V0.20 UI styles. */
+
+#gameWrap .v021BuildSummary{display:grid;gap:8px;margin:0 0 9px;padding:9px;border:1px solid rgba(211,184,123,.17);border-radius:10px;background:linear-gradient(155deg,rgba(36,38,43,.76),rgba(14,18,23,.76))}
+#gameWrap .v021BuildStats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+#gameWrap .v021BuildStats span{display:grid;place-items:center;min-width:0;padding:5px 3px;border-radius:8px;background:rgba(255,255,255,.035);color:#8f99a7;font-size:7px;line-height:1.15;text-align:center;text-transform:uppercase;letter-spacing:.05em}
+#gameWrap .v021BuildStats b{display:block;margin-bottom:2px;color:#f0e4c6;font-size:13px;line-height:1}
+#gameWrap .v021BuildTags>small{display:block;margin-bottom:5px;color:#77869d;font-size:7px;font-weight:900;letter-spacing:.12em}
+#gameWrap .v021BuildTags>div{display:flex;flex-wrap:wrap;gap:4px}
+#gameWrap .v021TagPill{display:inline-flex;align-items:center;gap:4px;padding:4px 6px;border:1px solid rgba(139,176,204,.16);border-radius:999px;background:rgba(86,124,151,.09);color:#aec4d3;font-size:8px;font-weight:800}
+#gameWrap .v021TagPill b{min-width:15px;padding:1px 4px;border-radius:999px;background:rgba(255,255,255,.07);color:#e9f1f5;text-align:center}
+#gameWrap .v021TagEmpty{color:#6f7885;font-size:8px}
+#gameWrap .v021BuildProgress{display:grid;gap:5px;margin-bottom:8px}
+#gameWrap .v021ProgressLine{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;padding:7px 8px;border:1px solid rgba(220,194,132,.12);border-radius:9px;background:rgba(255,255,255,.025)}
+#gameWrap .v021ProgressLine>div{min-width:0}
+#gameWrap .v021ProgressLine span{display:block;color:#9c8a62;font-size:6px;font-weight:900;letter-spacing:.11em}
+#gameWrap .v021ProgressLine b{display:block;overflow:hidden;color:#d9dde5;font-size:9px;line-height:1.25;text-overflow:ellipsis;white-space:nowrap}
+#gameWrap .v021ProgressLine strong{align-self:center;color:#d9c58f;font-size:10px}
+#gameWrap .v021ProgressLine small{grid-column:1/-1;color:#7e8795;font-size:7px;line-height:1.25}
+#gameWrap .v021ProgressLine.evolution{border-color:rgba(166,126,232,.15)}
+#gameWrap .v021ProgressLine.evolution span,#gameWrap .v021ProgressLine.evolution strong{color:#bba0ec}
+#gameWrap .v021ProgressEmpty{padding:7px 8px;border:1px dashed rgba(255,255,255,.09);border-radius:9px;color:#747e8c;font-size:8px;line-height:1.35}
+#gameWrap .v021ChoiceContext{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;padding:8px 10px;border:1px solid rgba(206,182,128,.16);border-radius:11px;background:linear-gradient(145deg,rgba(31,35,41,.86),rgba(13,17,22,.86))}
+#gameWrap .v021ChoiceContextMain{min-width:0}
+#gameWrap .v021ChoiceContextMain span{display:block;margin-bottom:2px;color:#9e8e69;font-size:7px;font-weight:900;letter-spacing:.12em}
+#gameWrap .v021ChoiceContextMain b{display:block;overflow:hidden;color:#e5e7eb;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+#gameWrap .v021ChoiceContextTags{max-width:45%;overflow:hidden;color:#8997a9;font-size:8px;text-align:right;text-overflow:ellipsis;white-space:nowrap}
+#gameWrap .choice>.v021ChoiceMeta{display:flex;align-items:center;justify-content:space-between;gap:7px;margin:-2px 0 5px}
+#gameWrap .v021ChoiceMeta small{overflow:hidden;color:#758293;font-size:7px;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
+#gameWrap .v021ChoiceBadge{flex:0 0 auto;padding:4px 6px;border:1px solid rgba(132,168,194,.18);border-radius:999px;background:rgba(86,124,151,.10);color:#a9c7dc;font-size:7px;font-weight:950;letter-spacing:.07em}
+#gameWrap .v021ChoiceBadge.upgrade{border-color:rgba(102,173,213,.20);color:#9ccde8}
+#gameWrap .v021ChoiceBadge.max{border-color:rgba(224,188,103,.24);background:rgba(224,188,103,.08);color:#e5ca86}
+#gameWrap .v021ChoiceBadge.unlock{border-color:rgba(102,214,146,.24);background:rgba(102,214,146,.08);color:#9ae2b7}
+#gameWrap .v021ChoiceBadge.evolution{border-color:rgba(166,118,255,.26);background:rgba(166,118,255,.09);color:#cdb2ff}
+#gameWrap .v021ChoiceBadge.divine{border-color:rgba(237,201,105,.28);background:rgba(237,201,105,.10);color:#eed690}
+#gameWrap .v021ChoiceBadge.mystic{border-color:rgba(190,118,255,.30);background:rgba(168,88,232,.11);color:#d8adff}
+#gameWrap #rerollChoicesButton{border-color:rgba(205,178,118,.22)!important;background:linear-gradient(180deg,rgba(35,39,47,.96),rgba(15,19,25,.98))!important;color:#e6ddca!important}
+
+@media(max-width:700px){
+  #gameWrap .v021BuildSummary{padding:8px;margin-bottom:7px}
+  #gameWrap .v021BuildStats{gap:4px}
+  #gameWrap .v021BuildStats span{font-size:6px;padding:4px 2px}
+  #gameWrap .v021BuildStats b{font-size:12px}
+  #gameWrap .v021BuildProgress{gap:4px;margin-bottom:6px}
+  #gameWrap .v021ProgressLine{padding:6px 7px}
+  #gameWrap .v021ChoiceContext{flex:0 0 auto;display:grid;grid-template-columns:1fr;gap:3px;padding:7px 9px;margin-bottom:7px}
+  #gameWrap .v021ChoiceContextMain b{font-size:9px}
+  #gameWrap .v021ChoiceContextTags{max-width:none;text-align:left;font-size:7px}
+  #gameWrap .choice>.v021ChoiceMeta{margin-bottom:3px}
+  #gameWrap .v021ChoiceBadge{font-size:6px;padding:3px 5px}
+  #gameWrap .v021ChoiceMeta small{font-size:6px}
+  #gameWrap #rerollChoicesButton{flex:0 0 auto;margin-top:7px!important;min-height:40px!important}
+}
+
+@media(max-height:520px) and (orientation:landscape){
+  #gameWrap .v021ChoiceContext{display:flex;margin-bottom:5px;padding:5px 8px}
+  #gameWrap .v021ChoiceContextTags{max-width:42%;text-align:right}
+  #gameWrap .choice>.v021ChoiceMeta{display:block}
+  #gameWrap .v021ChoiceMeta small{display:block;margin-top:3px}
+  #gameWrap #rerollChoicesButton{min-height:34px!important;margin-top:5px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  #gameWrap .v021BuildSummary,#gameWrap .v021ChoiceContext,#gameWrap .v021ChoiceBadge{transition:none!important}
+}
