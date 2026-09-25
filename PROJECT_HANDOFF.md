@@ -17,16 +17,17 @@ Use this file as the starting context when continuing development in a new chat.
 - Commit every meaningful checkpoint.
 
 ## Current project state
-- Current released/public baseline: **V0.21 – Build Intelligence & Choice Clarity** (last verified).
-- Active release candidate: **V0.22 – Galaxy Battlefield Foundation**.
-- Runtime/public label on candidate: **V0.22**.
+- Current released/public baseline: **V0.22 – Galaxy Battlefield Foundation**.
+- Previous release: **V0.21 – Build Intelligence & Choice Clarity**.
+- Runtime/public label: **V0.22**.
 - V0.21 status: **Build Intelligence & Choice Clarity COMPLETE / RELEASED**.
 - V0.20 status: **B0–B14 COMPLETE / RELEASED** and retained as the visual/presentation baseline.
 - V0.19 status: **A0–A15 COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
 - V0.18 remains frozen as the graphics/presentation baseline.
 - V0.17 remains frozen as the historical Duel mechanics/content baseline.
 - V0.16 Survival/Endless remains supported.
-- Authoritative V0.21 release evidence: `V021_RELEASE_VALIDATION.md`.
+- V0.22 release evidence: `V022_RELEASE_VALIDATION.md`.
+- Authoritative V0.21 historical evidence: `V021_RELEASE_VALIDATION.md`.
 - Historical V0.20 release evidence: `V020_RELEASE_VALIDATION.md`.
 - Historical V0.19 evidence: `V019_RELEASE_VALIDATION.md`.
 
@@ -36,6 +37,8 @@ Use this file as the starting context when continuing development in a new chat.
 3. `ROADMAP.md`
 4. `V021_BUILD_INTELLIGENCE_PLAN.md`
 5. `V021_RELEASE_VALIDATION.md`
+6. `V022_V026_SURVIVAL_VISUAL_ROADMAP.md`
+7. `V022_RELEASE_VALIDATION.md`
 6. `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`
 5. `V020_B14_RELEASE_SPEC.md`
 6. `V019_TACTICAL_AI_PLAN.md`
@@ -140,4 +143,4 @@ Graphics/UI never decide hit success, damage, cooldown, fatal/revive ordering, s
 - Tests stay under `tests/` and are not shipped publicly.
 
 ## Status for next conversation
-**V0.22 Galaxy Battlefield is a release candidate; check the Pages workflow and get owner approval before V0.23. V0.21 was the prior verified release.**
+**V0.22 Galaxy Battlefield is COMPLETE / RELEASED. Its Pages and desktop/mobile browser workflows passed. Stop at checkpoint for the owner's visual/gameplay test before V0.23. V0.21 is retained as history.**

@@ -8,7 +8,7 @@ Owner direction: prioritize **Sinh Tồn / Vô Hạn**. Galaxy/space combat back
 - Original procedural/vector assets only; no external background requests. Support mobile, reduced motion, fallback and bounded FX budgets.
 - Acceptance: a visible improvement while PLAYING Survival, not just the Codex preview or Duel renderer.
 
-## V0.22 — Galaxy Battlefield Foundation (CURRENT)
+## V0.22 — Galaxy Battlefield Foundation (COMPLETE / RELEASED ✅; owner visual test pending)
 - Procedural original deep-space arena: navy/cosmic gradient, diagonal nebulae, dust field, layered stars and restrained celestial/navigation arcs.
 - Subtle animated twinkle + parallax drifting by visual depth, stable while paused, without moving gameplay coordinates.
 - Cache expensive nebula drawing; cap stars on mobile; detect low quality and prefers-reduced-motion.
@@ -16,7 +16,7 @@ Owner direction: prioritize **Sinh Tồn / Vô Hạn**. Galaxy/space combat back
 - Add deterministic visual-only smoke checks, wire the new scene solely into Survival's battle canvas and publish to Pages.
 - **Exit criterion:** full-screen Galaxy background visible during timed Survival and Endless, mobile/desktop with no combat-rule changes. Owner tests the published build before V0.23.
 
-## V0.23 — Core Skill Impact FX (NEXT; NOT STARTED)
+## V0.23 — Core Skill Impact FX (NEXT; NOT STARTED; blocked until owner approves V0.22)
 - Real attack/hit events spawn readable slash arcs, directional impact bursts, sparks, shock rings, crit accents and subtle camera feedback.
 - Distinguish melee, projectiles, magic, heal and control; preserve hit truth from simulation.
 - Lifetime/pooling and per-frame caps for crowded Survival runs.

@@ -31,9 +31,9 @@ assert.ok(/js\/core\.js\?v=(?:019-release-r1|020-release-r1|021-release-r1|022-r
 assert.ok(/js\/duel-ui-sync\.js\?v=(?:019-release-r1|020-release-r1|021-release-r1|022-release-r1)/.test(index),'Duel UI sync release cache key missing');
 
 if(currentVersion==='V0.22'){
-  assert.ok(readme.includes('Current release candidate: **V0.22 – Galaxy Battlefield Foundation**'),'README V0.22 candidate missing');
-  assert.ok(roadmap.includes('Release candidate: **V0.22 – Galaxy Battlefield Foundation**'),'ROADMAP V0.22 candidate missing');
-  assert.ok(handoff.includes('Active release candidate: **V0.22 – Galaxy Battlefield Foundation**'),'handoff V0.22 candidate missing');
+  assert.ok(readme.includes('Current release: **V0.22 – Galaxy Battlefield Foundation**'),'README V0.22 candidate missing');
+  assert.ok(roadmap.includes('Released baseline: **V0.22 – Galaxy Battlefield Foundation**'),'ROADMAP V0.22 candidate missing');
+  assert.ok(handoff.includes('Current released/public baseline: **V0.22 – Galaxy Battlefield Foundation**'),'handoff V0.22 candidate missing');
 }else if(currentVersion==='V0.21'){
   assert.ok(readme.includes('Current release: **V0.21 – Build Intelligence & Choice Clarity**'),'README current release mismatch');
   assert.ok(roadmap.includes('Released baseline: **V0.21 – Build Intelligence & Choice Clarity**'),'ROADMAP current release mismatch');
