@@ -174,7 +174,7 @@ function draw(){
 
   for(const projectile of state.projectiles){
     const tags=projectile.meta?.tags||[];
-    if(typeof drawProjectileVisual==="function")drawProjectileVisual(ctx,projectile.x,projectile.y,projectile.r,tags,state.t,{type:projectile.type,source:projectile.meta?.source});
+    if(typeof drawProjectileVisual==="function")drawProjectileVisual(ctx,projectile.x,projectile.y,projectile.r,tags,state.t,{type:projectile.type,source:projectile.meta?.source,vx:projectile.vx,vy:projectile.vy});
     else{ctx.fillStyle="#e7e7e7";ctx.beginPath();ctx.arc(projectile.x,projectile.y,projectile.r,0,Math.PI*2);ctx.fill();}
   }
 

@@ -243,6 +243,9 @@ jobs:
       - name: V0.22 Galaxy Survival battlefield gate
         run: node tests/v022-galaxy-battlefield-smoke.js
 
+      - name: V0.23 Survival skill impact FX gate
+        run: node tests/v023-survival-skill-fx-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
