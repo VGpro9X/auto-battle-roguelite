@@ -1,6 +1,6 @@
 # V0.21 — Release Validation
 
-Status: **RELEASE CANDIDATE / AUTOMATION PENDING**
+Status: **COMPLETE / RELEASED ✅**
 
 ## Scope
 
@@ -32,4 +32,13 @@ Choice unlock badges must use existing immediate-unlock relation truth; near-pro
 
 `https://vgpro9x.github.io/auto-battle-roguelite/`
 
-Final status is promoted to COMPLETE / RELEASED only after the Pages workflow is green.
+Release evidence:
+- public artifact commit validated: `9a7eb24b16ae062690deaf0b45ba319c694bded6`
+- Deploy game to GitHub Pages run #828: **SUCCESS**
+- V0.20 B14 historical regression release: **SUCCESS**
+- V0.18 G7 historical regression release: **SUCCESS**
+- V0.19 A15 historical regression release: **SUCCESS**
+- V0.21 build-intelligence smoke gate: **SUCCESS**
+- public Pages target: `https://vgpro9x.github.io/auto-battle-roguelite/`
+
+V0.21 is promoted to COMPLETE / RELEASED.
