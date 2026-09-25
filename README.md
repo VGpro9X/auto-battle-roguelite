@@ -1,22 +1,27 @@
 # Auto Battle Roguelite
 
-Current release: **V0.22 – Galaxy Battlefield Foundation**
+Current release: **V0.23 – Core Survival Skill Impact FX**
 
 Public build: `https://vgpro9x.github.io/auto-battle-roguelite/`
 
 GitHub `main` is canonical.
 
 ## Current status
-- V0.22 Galaxy Battlefield Foundation: **COMPLETE / RELEASED ✅** (owner testing pending).
+- V0.23 Core Survival Skill Impact FX: **COMPLETE / RELEASED ✅** (owner testing pending).
+- V0.22 Galaxy Battlefield Foundation: **COMPLETE / RELEASED ✅**.
 - V0.21 Build Intelligence & Choice Clarity: **COMPLETE / RELEASED**.
 - V0.20 B0–B14: **COMPLETE / RELEASED** and retained as the visual/presentation baseline.
-- Runtime/public version label: **V0.22**.
+- Runtime/public version label: **V0.23**.
 - V0.19 A0–A15: **COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
 - V0.18 Graphics & Presentation Overhaul remains the frozen graphics/presentation baseline.
 - V0.17 Duel Arena remains the frozen historical mechanics/content baseline.
 - Survival/Endless V0.16 remains supported.
 
-Current V0.21 release evidence: `V021_RELEASE_VALIDATION.md`. V0.20 remains the visual/presentation regression baseline; V0.19 remains the tactical AI regression baseline.
+V0.23 release evidence: `V023_RELEASE_VALIDATION.md`; historical V0.22/V0.21 evidence: `V022_RELEASE_VALIDATION.md` and `V021_RELEASE_VALIDATION.md`. V0.20 remains the visual/presentation regression baseline; V0.19 remains the tactical AI regression baseline.
+
+## V0.23 Core Survival Skill Impact FX
+
+Actual Survival/Endless combat now displays animated normal-shot muzzle flashes and directional projectile trails; distinct slash, impact burst, flame, ice shard, lightning, poison mist, control bind, and area wave families; caster glyphs, healing and shield effects, crit highlights and tiny visual-only shake. A new event-driven visual layer reads combat truth and uses capped full/balanced/low effect budgets. Desktop/mobile real-game browser tests passed. V0.24 will give individual skill IDs their own signature animation.
 
 ## V0.22–V0.26 Survival visual roadmap
 
@@ -136,4 +141,4 @@ V0.17 remains frozen except for bug fixes and retains:
 11. `V017_DUEL_ARENA_PLAN.md`
 
 ## Project status
-**V0.21 is COMPLETE / RELEASED and is the current public baseline. V0.20 remains the frozen visual/presentation baseline; V0.19 remains the frozen tactical AI baseline.**
+**V0.23 Core Survival Skill Impact FX is COMPLETE / RELEASED and is the public baseline. Await owner's visual test before V0.24. V0.22 galaxy and historical combat/AI regressions are retained.**

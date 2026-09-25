@@ -13,5 +13,5 @@ assert(core.includes('const GAME_VERSION="V0.21";')||core.includes('const GAME_V
 assert(css.includes(".v021BuildSummary")&&css.includes(".v021ChoiceMeta"),"V0.21 UI styles incomplete");
 assert(readme.includes("## V0.21 build intelligence & choice clarity"),"README V0.21 release label missing");
 assert(roadmap.includes("# V0.21 — BUILD INTELLIGENCE & CHOICE CLARITY — COMPLETE / RELEASED"),"ROADMAP V0.21 closure missing");
-assert(handoff.includes("Previous release: **V0.21 – Build Intelligence & Choice Clarity**"),"handoff V0.21 baseline missing");
+assert(handoff.includes("V0.21 status: **Build Intelligence & Choice Clarity COMPLETE / RELEASED**"),"handoff V0.21 baseline missing");
 console.log("v021-build-intelligence-smoke: PASS · presentation-only build summary, choice clarity and mobile readability wired");

@@ -3,9 +3,9 @@
 GitHub `main` is canonical.
 
 ## Current baseline
-- Released baseline: **V0.22 – Galaxy Battlefield Foundation**.
-- Previous release: **V0.21 – Build Intelligence & Choice Clarity**.
-- Active development: **none — owner visual/gameplay test of V0.22 pending**.
+- Released baseline: **V0.23 – Core Survival Skill Impact FX**.
+- Previous release: **V0.22 – Galaxy Battlefield Foundation**.
+- Active development: **none — owner visual/gameplay test of V0.23 pending**.
 - V0.21 authoritative plan: `V021_BUILD_INTELLIGENCE_PLAN.md`.
 - V0.20 remains the frozen visual/presentation baseline: `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`.
 - Previous graphics baseline: **V0.18 – Graphics & Presentation Overhaul**.
@@ -134,16 +134,16 @@ V0.21 is a presentation/readability layer. V0.20 visual truth and V0.19 tactical
 # V0.22–V0.26 — SURVIVAL VISUAL UPGRADE
 
 Authoritative plan: `V022_V026_SURVIVAL_VISUAL_ROADMAP.md`.
-- V0.22 Galaxy Battlefield Foundation — **COMPLETE / RELEASED ✅** (owner acceptance pending).
-- V0.23 Core Skill Impact FX — PLANNED.
+- V0.22 Galaxy Battlefield Foundation — **COMPLETE / RELEASED ✅**.
+- V0.23 Core Skill Impact FX — **COMPLETE / RELEASED ✅** (owner evaluation pending).
 - V0.24 Unique Skill Visual Language — PLANNED.
 - V0.25 High-Tier Skill Spectacle — PLANNED.
 - V0.26 Combat Presentation Polish — PLANNED.
 
-Survival/Endless first. Owner must test V0.22 Pages before work begins on V0.23.
+V0.23 adds real event-driven combat choreography and desktop/mobile browser validation to actual Survival combat. Owner must test public V0.23 before V0.24 begins.
 
 ---
 
 # PROJECT STATUS
 
-**V0.22 Galaxy Battlefield Foundation is COMPLETE / RELEASED and is the current public baseline. V0.23 does not start until the owner tests V0.22. V0.20/V0.19 retain regression contracts.**
+**V0.23 Core Survival Skill Impact FX is COMPLETE / RELEASED, pending owner visual test before V0.24. V0.22 Galaxy remains integrated; V0.20/V0.19 are frozen regressions.**

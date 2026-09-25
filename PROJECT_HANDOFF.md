@@ -17,16 +17,17 @@ Use this file as the starting context when continuing development in a new chat.
 - Commit every meaningful checkpoint.
 
 ## Current project state
-- Current released/public baseline: **V0.22 – Galaxy Battlefield Foundation**.
-- Previous release: **V0.21 – Build Intelligence & Choice Clarity**.
-- Runtime/public label: **V0.22**.
+- Current released/public baseline: **V0.23 – Core Survival Skill Impact FX**.
+- Previous release: **V0.22 – Galaxy Battlefield Foundation**.
+- Runtime/public label: **V0.23**.
 - V0.21 status: **Build Intelligence & Choice Clarity COMPLETE / RELEASED**.
 - V0.20 status: **B0–B14 COMPLETE / RELEASED** and retained as the visual/presentation baseline.
 - V0.19 status: **A0–A15 COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
 - V0.18 remains frozen as the graphics/presentation baseline.
 - V0.17 remains frozen as the historical Duel mechanics/content baseline.
 - V0.16 Survival/Endless remains supported.
-- V0.22 release evidence: `V022_RELEASE_VALIDATION.md`.
+- V0.23 release evidence: `V023_RELEASE_VALIDATION.md`.
+- V0.22 historical release evidence: `V022_RELEASE_VALIDATION.md`.
 - Authoritative V0.21 historical evidence: `V021_RELEASE_VALIDATION.md`.
 - Historical V0.20 release evidence: `V020_RELEASE_VALIDATION.md`.
 - Historical V0.19 evidence: `V019_RELEASE_VALIDATION.md`.
@@ -49,6 +50,12 @@ Use this file as the starting context when continuing development in a new chat.
 11. `V017_DUEL_ARENA_PLAN.md`
 
 Before editing, fetch latest relevant files and SHAs from GitHub `main`.
+
+## V0.23 Survival FX integration
+- `js/v023-survival-skill-fx.js` attaches to established combat events; `js/game.js` passes projectile vx/vy to presentation only.
+- Canvas shows attack, melee, projectile, spell, control, healing, shield, revive and crit FX on the live Survival/Endless match, on top of the V0.22 Galaxy backdrop. Subtle visual camera shake, low/balanced/full budgets, reduced-motion and clean new-run reset.
+- Debug status: `window.getV023SurvivalFxStatus()`. Tests: `tests/v023-survival-skill-fx-smoke.js` (Pages), `tests/v023-survival-fx-browser-driver.html` (real browser), `.github/workflows/v023-survival-fx-browser.yml`.
+- Do not alter damage, cooldown, movement AI, rare probabilities, Duel or locked content. Stop at V0.23 for owner test before V0.24.
 
 ## V0.22–V0.26 Survival visual roadmap
 - Authoritative plan: `V022_V026_SURVIVAL_VISUAL_ROADMAP.md`.
@@ -143,4 +150,4 @@ Graphics/UI never decide hit success, damage, cooldown, fatal/revive ordering, s
 - Tests stay under `tests/` and are not shipped publicly.
 
 ## Status for next conversation
-**V0.22 Galaxy Battlefield is COMPLETE / RELEASED. Its Pages and desktop/mobile browser workflows passed. Stop at checkpoint for the owner's visual/gameplay test before V0.23. V0.21 is retained as history.**
+**V0.23 Core Survival Skill Impact FX is COMPLETE / RELEASED with live desktop/mobile browser validation. Stop at checkpoint for owner gameplay test before V0.24.**

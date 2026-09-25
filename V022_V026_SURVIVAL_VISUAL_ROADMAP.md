@@ -8,7 +8,7 @@ Owner direction: prioritize **Sinh Tồn / Vô Hạn**. Galaxy/space combat back
 - Original procedural/vector assets only; no external background requests. Support mobile, reduced motion, fallback and bounded FX budgets.
 - Acceptance: a visible improvement while PLAYING Survival, not just the Codex preview or Duel renderer.
 
-## V0.22 — Galaxy Battlefield Foundation (COMPLETE / RELEASED ✅; owner visual test pending)
+## V0.22 — Galaxy Battlefield Foundation (COMPLETE / RELEASED ✅)
 - Procedural original deep-space arena: navy/cosmic gradient, diagonal nebulae, dust field, layered stars and restrained celestial/navigation arcs.
 - Subtle animated twinkle + parallax drifting by visual depth, stable while paused, without moving gameplay coordinates.
 - Cache expensive nebula drawing; cap stars on mobile; detect low quality and prefers-reduced-motion.
@@ -16,12 +16,14 @@ Owner direction: prioritize **Sinh Tồn / Vô Hạn**. Galaxy/space combat back
 - Add deterministic visual-only smoke checks, wire the new scene solely into Survival's battle canvas and publish to Pages.
 - **Exit criterion:** full-screen Galaxy background visible during timed Survival and Endless, mobile/desktop with no combat-rule changes. Owner tests the published build before V0.23.
 
-## V0.23 — Core Skill Impact FX (NEXT; NOT STARTED; blocked until owner approves V0.22)
+## V0.23 — Core Skill Impact FX (COMPLETE / RELEASED ✅; owner visual test pending)
 - Real attack/hit events spawn readable slash arcs, directional impact bursts, sparks, shock rings, crit accents and subtle camera feedback.
 - Distinguish melee, projectiles, magic, heal and control; preserve hit truth from simulation.
 - Lifetime/pooling and per-frame caps for crowded Survival runs.
 
-## V0.24 — Unique Skill Visual Language (PLANNED)
+Delivered: real Survival attack, hit, cast, echo, heal and shield event-driven choreography with differentiated skill families, directional projectile trails, crit accents and capped device effects. Live desktop/mobile browser validation passed.
+
+## V0.24 — Unique Skill Visual Language (NEXT; awaits owner approval of V0.23)
 - Distinct visual grammar by skill ID where meaningful, not generic tag-only particles.
 - Fire flames/explosion, frost crystal/shatter, lightning arc, poison cloud, light/healing circle, dark/void distortion.
 - Distinct orbit/summon/projectile motion; prioritize commonly used skills first then complete catalogue coverage.
