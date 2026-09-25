@@ -14,8 +14,8 @@
     w.addEventListener("error",e=>errors.push(String(e.message||e.error||"error")));
     w.addEventListener("unhandledrejection",e=>errors.push(String(e.reason||"unhandled rejection")));
     if(w.__V020_RENDERER_V3_BOOTSTRAP__)await w.__V020_RENDERER_V3_BOOTSTRAP__;
-    ok(d.title==="Auto Battle Roguelite V0.20","title not promoted: "+d.title);
-    ok(d.getElementById("version")?.textContent.trim()==="Auto Battle Roguelite V0.20","version badge not promoted");
+    ok(d.title==="Auto Battle Roguelite V0.20"||d.title==="Auto Battle Roguelite V0.21","title not on validated V0.20+ release line: "+d.title);
+    ok(["Auto Battle Roguelite V0.20","Auto Battle Roguelite V0.21"].includes(d.getElementById("version")?.textContent.trim()),"version badge not on validated V0.20+ release line");
 
     w.startRun("5");
     await new Promise(r=>setTimeout(r,500));
@@ -28,7 +28,7 @@
     await new Promise(r=>setTimeout(r,160));
     const lobby=d.getElementById("duelLobbyMenu");
     ok(lobby?.classList.contains("visible"),"Duel lobby did not open");
-    ok(lobby?.querySelector(".eyebrow")?.textContent.includes("V0.20"),"Duel lobby version label not promoted");
+    ok(/V0\.(?:20|21)/.test(lobby?.querySelector(".eyebrow")?.textContent||""),"Duel lobby version label not on validated V0.20+ release line");
 
     const canvas=d.createElement("canvas");canvas.width=width;canvas.height=height;canvas.style.width=width+"px";canvas.style.height=height+"px";canvas.style.position="fixed";canvas.style.left="-9999px";d.body.appendChild(canvas);
     const renderer=w.createDuelRenderer(canvas);
@@ -43,7 +43,7 @@
     canvas.remove();
     await new Promise(r=>setTimeout(r,240));
     ok(errors.length===0,"runtime errors: "+errors.join(" | "));
-    out.textContent="V020_B14_PASS "+expect+" version=V0.20 renderer="+status.mode+" quality="+w.getDuelVisualQuality().id;
+    out.textContent="V020_B14_PASS "+expect+" version="+(w.GAME_VERSION||d.getElementById("version")?.textContent.replace("Auto Battle Roguelite ","")||"V0.20+")+" renderer="+status.mode+" quality="+w.getDuelVisualQuality().id;
   }catch(error){fail(error&&error.message||String(error))}
 })();
 </script>
