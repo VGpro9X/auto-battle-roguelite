@@ -17,21 +17,25 @@ Use this file as the starting context when continuing development in a new chat.
 - Commit every meaningful checkpoint.
 
 ## Current project state
-- Current released/public baseline: **V0.20 – Complete Visual Rebuild**.
-- Runtime/public label: **V0.20**.
-- V0.20 status: **B0–B14 COMPLETE / RELEASED**.
+- Current released/public baseline: **V0.21 – Build Intelligence & Choice Clarity**.
+- Runtime/public label: **V0.21**.
+- V0.21 status: **Build Intelligence & Choice Clarity COMPLETE / RELEASED**.
+- V0.20 status: **B0–B14 COMPLETE / RELEASED** and retained as the visual/presentation baseline.
 - V0.19 status: **A0–A15 COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
 - V0.18 remains frozen as the graphics/presentation baseline.
 - V0.17 remains frozen as the historical Duel mechanics/content baseline.
 - V0.16 Survival/Endless remains supported.
-- Authoritative V0.20 release evidence: `V020_RELEASE_VALIDATION.md`.
+- Authoritative V0.21 release evidence: `V021_RELEASE_VALIDATION.md`.
+- Historical V0.20 release evidence: `V020_RELEASE_VALIDATION.md`.
 - Historical V0.19 evidence: `V019_RELEASE_VALIDATION.md`.
 
 ## Read first
 1. `README.md`
 2. `PROJECT_HANDOFF.md`
 3. `ROADMAP.md`
-4. `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`
+4. `V021_BUILD_INTELLIGENCE_PLAN.md`
+5. `V021_RELEASE_VALIDATION.md`
+6. `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`
 5. `V020_B14_RELEASE_SPEC.md`
 6. `V019_TACTICAL_AI_PLAN.md`
 7. `V019_RELEASE_VALIDATION.md`
@@ -41,6 +45,15 @@ Use this file as the starting context when continuing development in a new chat.
 11. `V017_DUEL_ARENA_PLAN.md`
 
 Before editing, fetch latest relevant files and SHAs from GitHub `main`.
+
+## V0.21 decision-readability layer
+- build tracker summarizes owned Kỹ Năng, Hợp Đạo, Siêu Cấp and Rare counts
+- dominant tags describe the current build without changing offer weighting
+- nearest unlock routes expose missing Hợp Đạo/Siêu Cấp requirements
+- level-up cards distinguish new skills, upgrades, near-max and exact immediate unlocks
+- existing one reroll per choice screen remains unchanged
+- mobile layout is compact and scroll-safe
+- V0.21 owns presentation only; it never writes combat, acquisition, probability or AI truth
 
 ## Frozen gameplay/content contract
 V0.20 is presentation-first and preserves V0.19 tactical AI/movement decision truth. Do not silently use the visual rebuild as permission for unrelated balance/content changes.
@@ -120,4 +133,4 @@ Graphics/UI never decide hit success, damage, cooldown, fatal/revive ordering, s
 - Tests stay under `tests/` and are not shipped publicly.
 
 ## Status for next conversation
-**V0.20 is COMPLETE / RELEASED and is the current public baseline. V0.19 remains the frozen tactical AI regression baseline; V0.18 remains the historical graphics baseline and V0.17 the historical mechanics/content baseline. Future feature work should start from a new explicitly approved roadmap.**
+**V0.21 is COMPLETE / RELEASED and is the current public baseline. V0.20 remains the frozen visual/presentation baseline; V0.19 remains the frozen tactical AI baseline. Future feature work should start from V0.22 with a new explicit roadmap.**
