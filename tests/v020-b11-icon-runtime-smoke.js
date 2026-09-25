@@ -12,7 +12,7 @@ const css=read("css/v020-ui-hud.css");
 
 assert(html.includes('js/v020-icons.js?v=020-b11a'),"B11A icon runtime is not wired into public shell");
 assert(html.indexOf('js/v020-icons.js?v=020-b11a')<html.indexOf('js/ui.js'),"B11A icon runtime must load before Survival UI");
-assert.match(html,/<title>Auto Battle Roguelite V0\.(?:19|20)<\/title>/,"public label must be V0.19 candidate or V0.20 release");
+assert.match(html,/<title>Auto Battle Roguelite V0\.(?:19|20|21)<\/title>/,"public label must be V0.19 candidate, V0.20 release or V0.21 release");
 
 const context={};
 context.globalThis=context;
