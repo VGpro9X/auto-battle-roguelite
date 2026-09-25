@@ -19,7 +19,7 @@ const release=read('V018_RELEASE_VALIDATION.md');
 const pages=read('.github/workflows/pages.yml');
 const g7Workflow=read('.github/workflows/v018-g7-release-validation.yml');
 
-const versionMatch=core.match(/GAME_VERSION="(V0\.17|V0\.18|V0\.19|V0\.20|V0\.21|V0\.22)"/);
+const versionMatch=core.match(/GAME_VERSION="(V0\.17|V0\.18|V0\.19|V0\.20|V0\.21|V0\.22|V0\.23)"/);
 assert.ok(versionMatch,'runtime version must be a supported V0.17+ release');
 const version=versionMatch[1];
 assert.ok(index.includes(`<title>Auto Battle Roguelite ${version}</title>`),'static title/runtime version mismatch');

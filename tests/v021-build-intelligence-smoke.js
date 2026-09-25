@@ -9,7 +9,7 @@ assert(!/owned\s*\[[^\]]+\]\s*=/.test(js),"V0.21 presentation layer must not mut
 assert(!/player\.[A-Za-z0-9_]+\s*=/.test(js),"V0.21 presentation layer must not mutate player combat truth");
 assert(html.includes('css/v021-build-intelligence.css?v=021-release-r1'),"V0.21 stylesheet not wired");
 assert(html.includes('js/v021-build-intelligence.js?v=021-release-r1'),"V0.21 runtime not wired");
-assert(core.includes('const GAME_VERSION="V0.21";')||core.includes('const GAME_VERSION="V0.22";'),"historical V0.21 UI layer not retained");
+assert(core.includes('const GAME_VERSION="V0.21";')||core.includes('const GAME_VERSION="V0.22";')||core.includes('const GAME_VERSION="V0.23";'),"historical V0.21 UI layer not retained");
 assert(css.includes(".v021BuildSummary")&&css.includes(".v021ChoiceMeta"),"V0.21 UI styles incomplete");
 assert(readme.includes("## V0.21 build intelligence & choice clarity"),"README V0.21 release label missing");
 assert(roadmap.includes("# V0.21 — BUILD INTELLIGENCE & CHOICE CLARITY — COMPLETE / RELEASED"),"ROADMAP V0.21 closure missing");

@@ -26,6 +26,6 @@ for(const source of ["index.html","js/duel-renderer.js","js/v020-enemy-presentat
   const jsRefs=[...text.matchAll(/(?:["'`])(js\/[A-Za-z0-9._/-]+\.js)(?:\?[^"'\`]*)?(?:["'`])/g)].map(m=>m[1]);
   for(const ref of jsRefs)assert(fs.existsSync(path.join(root,ref)),source+" references missing runtime script "+ref);
 }
-assert(/Auto Battle Roguelite V0\.(?:19|20|21|22)/.test(html),"public label must be V0.19 candidate, V0.20 release or V0.21 release");
+assert(/Auto Battle Roguelite V0\.(?:19|20|21|22|23)/.test(html),"public label must be V0.19 candidate, V0.20 release or V0.21 release");
 assert(!files.some(x=>x.startsWith("tests/")||x.startsWith(".github/")),"test/workflow files leaked into public roots");
 console.log("v020-b13c-public-artifact-audit: ok · files="+files.length+" bytes="+total+" max="+max.path+":"+max.size);
