@@ -3,10 +3,11 @@
 GitHub `main` is canonical.
 
 ## Current baseline
-- Released baseline: **V0.20 – Complete Visual Rebuild**.
-- Released/public baseline: **V0.20 – Complete Visual Rebuild**.
-- Active development: **none — V0.20 released**.
-- V0.20 authoritative plan: `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`.
+- Released baseline: **V0.21 – Build Intelligence & Choice Clarity**.
+- Released/public baseline: **V0.21 – Build Intelligence & Choice Clarity**.
+- Active development: **none — V0.21 released**.
+- V0.21 authoritative plan: `V021_BUILD_INTELLIGENCE_PLAN.md`.
+- V0.20 remains the frozen visual/presentation baseline: `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`.
 - Previous graphics baseline: **V0.18 – Graphics & Presentation Overhaul**.
 - Historical mechanics/content baseline: **V0.17 – Duel Arena / Đấu Trường 1v1**.
 - Survival/Endless V0.16 remains supported.
@@ -112,6 +113,24 @@ Release discipline:
 
 ---
 
+# V0.21 — BUILD INTELLIGENCE & CHOICE CLARITY — COMPLETE / RELEASED ✅
+
+Authoritative plan: `V021_BUILD_INTELLIGENCE_PLAN.md`.
+Release validation: `V021_RELEASE_VALIDATION.md`.
+
+Delivered:
+- build summary for owned Kỹ Năng / Hợp Đạo / Siêu Cấp / Rare
+- dominant-tag readout for the current Survival build
+- nearest Hợp Đạo / Siêu Cấp requirement progress
+- clear choice states: new / upgrade / near-max / immediate unlock / Rare
+- compact build context on level-up choices
+- mobile readability pass for the decision screen
+- existing reroll, probability, balance and AI truth unchanged
+
+V0.21 is a presentation/readability layer. V0.20 visual truth and V0.19 tactical AI remain frozen regression baselines.
+
+---
+
 # PROJECT STATUS
 
-**V0.20 is COMPLETE / RELEASED and is the current public baseline. V0.19 remains the tactical AI regression baseline.**
+**V0.21 is COMPLETE / RELEASED and is the current public baseline. V0.20 remains the visual/presentation regression baseline; V0.19 remains the tactical AI regression baseline.**
