@@ -18,7 +18,7 @@ const plan=read('V019_TACTICAL_AI_PLAN.md');
 const release=read('V019_RELEASE_VALIDATION.md');
 const pages=read('.github/workflows/pages.yml');
 
-const currentVersion=core.includes('const GAME_VERSION="V0.22"')?'V0.22':core.includes('const GAME_VERSION="V0.21"')?'V0.21':core.includes('const GAME_VERSION="V0.20"')?'V0.20':core.includes('const GAME_VERSION="V0.19"')?'V0.19':null;
+const currentVersion=core.includes('const GAME_VERSION="V0.23"')?'V0.23':core.includes('const GAME_VERSION="V0.22"')?'V0.22':core.includes('const GAME_VERSION="V0.21"')?'V0.21':core.includes('const GAME_VERSION="V0.20"')?'V0.20':core.includes('const GAME_VERSION="V0.19"')?'V0.19':null;
 assert.ok(currentVersion,'runtime GAME_VERSION must remain V0.19+ compatible');
 assert.ok(index.includes(`<title>Auto Battle Roguelite ${currentVersion}</title>`),'static title/runtime version mismatch');
 assert.ok(index.includes(`<div id="version">Auto Battle Roguelite ${currentVersion}</div>`),'static badge/runtime version mismatch');
@@ -27,10 +27,14 @@ for(const src of [
   'js/v019-survival-ai.js?v=019-release-r1',
   'js/v019-duel-ai.js?v=019-release-r1'
 ])assert.ok(index.includes(src),`historical AI cache key missing: ${src}`);
-assert.ok(/js\/core\.js\?v=(?:019-release-r1|020-release-r1|021-release-r1|022-release-r1)/.test(index),'core release cache key missing');
-assert.ok(/js\/duel-ui-sync\.js\?v=(?:019-release-r1|020-release-r1|021-release-r1|022-release-r1)/.test(index),'Duel UI sync release cache key missing');
+assert.ok(/js\/core\.js\?v=(?:019-release-r1|020-release-r1|021-release-r1|022-release-r1|023-release-r1)/.test(index),'core release cache key missing');
+assert.ok(/js\/duel-ui-sync\.js\?v=(?:019-release-r1|020-release-r1|021-release-r1|022-release-r1|023-release-r1)/.test(index),'Duel UI sync release cache key missing');
 
-if(currentVersion==='V0.22'){
+if(currentVersion==='V0.23'){
+  assert.ok(readme.includes('Current release: **V0.23 – Core Survival Skill Impact FX**'),'README V0.23 current release missing');
+  assert.ok(roadmap.includes('Released baseline: **V0.23 – Core Survival Skill Impact FX**'),'ROADMAP V0.23 baseline missing');
+  assert.ok(handoff.includes('Current released/public baseline: **V0.23 – Core Survival Skill Impact FX**'),'handoff V0.23 baseline missing');
+}else if(currentVersion==='V0.22'){
   assert.ok(readme.includes('Current release: **V0.22 – Galaxy Battlefield Foundation**'),'README V0.22 candidate missing');
   assert.ok(roadmap.includes('Released baseline: **V0.22 – Galaxy Battlefield Foundation**'),'ROADMAP V0.22 candidate missing');
   assert.ok(handoff.includes('Current released/public baseline: **V0.22 – Galaxy Battlefield Foundation**'),'handoff V0.22 candidate missing');

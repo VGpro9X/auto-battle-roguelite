@@ -4,13 +4,13 @@ const exists=p=>fs.existsSync(p);
 const core=read("js/core.js"),html=read("index.html"),uiSync=read("js/duel-ui-sync.js"),duelUi=read("js/duel-ui-v020.js");
 const readme=read("README.md"),roadmap=read("ROADMAP.md"),handoff=read("PROJECT_HANDOFF.md"),plan=read("V020_COMPLETE_VISUAL_REBUILD_PLAN.md"),spec=read("V020_B14_RELEASE_SPEC.md"),pages=read(".github/workflows/pages.yml");
 
-assert(core.includes('const GAME_VERSION="V0.20";')||core.includes('const GAME_VERSION="V0.21";')||core.includes('const GAME_VERSION="V0.22";'),"runtime GAME_VERSION must preserve V0.20 or advance to V0.21");
-assert(html.includes("<title>Auto Battle Roguelite V0.20</title>")||html.includes("<title>Auto Battle Roguelite V0.21</title>")||html.includes("<title>Auto Battle Roguelite V0.22</title>"),"public title must preserve V0.20 or advance to V0.21");
-assert(html.includes('<div id="version">Auto Battle Roguelite V0.20</div>')||html.includes('<div id="version">Auto Battle Roguelite V0.21</div>')||html.includes('<div id="version">Auto Battle Roguelite V0.22</div>'),"public version badge must preserve V0.20 or advance to V0.21");
-assert(uiSync.includes("V0.20 · ĐẤU TRƯỜNG 1V1")||uiSync.includes("V0.21 · ĐẤU TRƯỜNG 1V1")||uiSync.includes("V0.22 · ĐẤU TRƯỜNG 1V1"),"Duel UI sync label must preserve V0.20 or advance to V0.21");
-assert(duelUi.includes("V0.20 · ĐẤU TRƯỜNG 1V1")||duelUi.includes("V0.21 · ĐẤU TRƯỜNG 1V1")||duelUi.includes("V0.22 · ĐẤU TRƯỜNG 1V1"),"Duel lobby label must preserve V0.20 or advance to V0.21");
-assert(html.includes("js/core.js?v=020-release-r1")||html.includes("js/core.js?v=021-release-r1")||html.includes("js/core.js?v=022-release-r1"),"current core cache key missing");
-assert(html.includes("js/duel-ui-sync.js?v=020-release-r1")||html.includes("js/duel-ui-sync.js?v=021-release-r1")||html.includes("js/duel-ui-sync.js?v=022-release-r1"),"current Duel UI sync cache key missing");
+assert(core.includes('const GAME_VERSION="V0.20";')||core.includes('const GAME_VERSION="V0.21";')||core.includes('const GAME_VERSION="V0.22";')||core.includes('const GAME_VERSION="V0.23";'),"runtime GAME_VERSION must preserve V0.20 or advance to V0.21");
+assert(html.includes("<title>Auto Battle Roguelite V0.20</title>")||html.includes("<title>Auto Battle Roguelite V0.21</title>")||html.includes("<title>Auto Battle Roguelite V0.22</title>")||html.includes("<title>Auto Battle Roguelite V0.23</title>"),"public title must preserve V0.20 or advance to V0.21");
+assert(html.includes('<div id="version">Auto Battle Roguelite V0.20</div>')||html.includes('<div id="version">Auto Battle Roguelite V0.21</div>')||html.includes('<div id="version">Auto Battle Roguelite V0.22</div>')||html.includes('<div id="version">Auto Battle Roguelite V0.23</div>'),"public version badge must preserve V0.20 or advance to V0.21");
+assert(uiSync.includes("V0.20 · ĐẤU TRƯỜNG 1V1")||uiSync.includes("V0.21 · ĐẤU TRƯỜNG 1V1")||uiSync.includes("V0.22 · ĐẤU TRƯỜNG 1V1")||uiSync.includes("V0.23 · ĐẤU TRƯỜNG 1V1"),"Duel UI sync label must preserve V0.20 or advance to V0.21");
+assert(duelUi.includes("V0.20 · ĐẤU TRƯỜNG 1V1")||duelUi.includes("V0.21 · ĐẤU TRƯỜNG 1V1")||duelUi.includes("V0.22 · ĐẤU TRƯỜNG 1V1")||duelUi.includes("V0.23 · ĐẤU TRƯỜNG 1V1"),"Duel lobby label must preserve V0.20 or advance to V0.21");
+assert(html.includes("js/core.js?v=020-release-r1")||html.includes("js/core.js?v=021-release-r1")||html.includes("js/core.js?v=022-release-r1")||html.includes("js/core.js?v=023-release-r1"),"current core cache key missing");
+assert(html.includes("js/duel-ui-sync.js?v=020-release-r1")||html.includes("js/duel-ui-sync.js?v=021-release-r1")||html.includes("js/duel-ui-sync.js?v=022-release-r1")||html.includes("js/duel-ui-sync.js?v=023-release-r1"),"current Duel UI sync cache key missing");
 assert(html.includes("js/duel-renderer-v3-bridge.js?v=020-b13b"),"B13B renderer bridge cache key missing");
 assert(html.includes("js/duel-vfx-v3.js?v=020-b12a"),"B12A VFX cache key missing");
 
