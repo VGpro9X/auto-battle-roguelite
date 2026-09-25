@@ -36,6 +36,6 @@ assert(bridge.includes('fallback.consume(legacy)'),'V2 fallback does not receive
 assert(bridge.includes('fallback.tierVfx?.consume?.(owned)'),'tier overlays do not retain V3-owned events');
 assert(bridge.includes('fallback.camera?.consume?.(owned)'),'camera does not retain V3-owned events');
 assert(bridge.includes('coreVfx?.render?.(ctx,tr,match,getAnchor)'),'V3 core VFX render pass missing');
-assert(html.includes("'js/renderer-v3.js?v=020-b7','js/duel-vfx-v3.js?v=020-b7','js/duel-renderer-v3-bridge.js?v=020-b7'"),'B7 bootstrap load order invalid');
+assert(/'js\\/renderer-v3\\.js\\?v=020-b7','js\\/duel-vfx-v3\\.js\\?v=020-(?:b7|b12a)','js\\/duel-renderer-v3-bridge\\.js\\?v=020-(?:b7|b13b)'/.test(html),'B7 bootstrap load order invalid');
 for(const forbidden of ['duelDealDamage(','spawnDuelProjectile(','target.hp-=','target.x=','round.phase ='])assert(!source.includes(forbidden),'V3 VFX must not own simulation truth: '+forbidden);
 console.log('v020-b7-core-vfx-runtime-smoke: ok');
