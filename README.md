@@ -1,21 +1,26 @@
 # Auto Battle Roguelite
 
-Current release: **V0.21 – Build Intelligence & Choice Clarity**
+Current release candidate: **V0.22 – Galaxy Battlefield Foundation**
 
 Public build: `https://vgpro9x.github.io/auto-battle-roguelite/`
 
 GitHub `main` is canonical.
 
 ## Current status
+- V0.22 Galaxy Battlefield Foundation: **RELEASE CANDIDATE / OWNER TEST PENDING**.
 - V0.21 Build Intelligence & Choice Clarity: **COMPLETE / RELEASED**.
 - V0.20 B0–B14: **COMPLETE / RELEASED** and retained as the visual/presentation baseline.
-- Runtime/public version label: **V0.20**.
+- Runtime/public version label on candidate: **V0.22**.
 - V0.19 A0–A15: **COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
 - V0.18 Graphics & Presentation Overhaul remains the frozen graphics/presentation baseline.
 - V0.17 Duel Arena remains the frozen historical mechanics/content baseline.
 - Survival/Endless V0.16 remains supported.
 
 Current V0.21 release evidence: `V021_RELEASE_VALIDATION.md`. V0.20 remains the visual/presentation regression baseline; V0.19 remains the tactical AI regression baseline.
+
+## V0.22–V0.26 Survival visual roadmap
+
+See `V022_V026_SURVIVAL_VISUAL_ROADMAP.md`. V0.22 brings an original procedural Galaxy backdrop to actual Survival/Endless combat, cached nebula, depth-layer stars, reduced-motion support and bounded mobile rendering. V0.23: combat hit/cast FX. V0.24: individual skill visual identity. V0.25: high-tier spectacle. V0.26: polish/optimization. Each release requires user testing on Pages.
 
 ## V0.21 build intelligence & choice clarity
 - compact build summary for owned skills, Hợp Đạo, Siêu Cấp and Rare rules

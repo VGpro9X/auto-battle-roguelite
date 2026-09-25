@@ -17,8 +17,9 @@ Use this file as the starting context when continuing development in a new chat.
 - Commit every meaningful checkpoint.
 
 ## Current project state
-- Current released/public baseline: **V0.21 – Build Intelligence & Choice Clarity**.
-- Runtime/public label: **V0.21**.
+- Current released/public baseline: **V0.21 – Build Intelligence & Choice Clarity** (last verified).
+- Active release candidate: **V0.22 – Galaxy Battlefield Foundation**.
+- Runtime/public label on candidate: **V0.22**.
 - V0.21 status: **Build Intelligence & Choice Clarity COMPLETE / RELEASED**.
 - V0.20 status: **B0–B14 COMPLETE / RELEASED** and retained as the visual/presentation baseline.
 - V0.19 status: **A0–A15 COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
@@ -45,6 +46,12 @@ Use this file as the starting context when continuing development in a new chat.
 11. `V017_DUEL_ARENA_PLAN.md`
 
 Before editing, fetch latest relevant files and SHAs from GitHub `main`.
+
+## V0.22–V0.26 Survival visual roadmap
+- Authoritative plan: `V022_V026_SURVIVAL_VISUAL_ROADMAP.md`.
+- V0.22 procedural Galaxy backdrop is Survival/Endless only; cached scene lives in `js/v022-galaxy-battlefield.js` and `js/game.js` draws it behind true combat entities.
+- V0.23 core hit/skill animation; V0.24 per-skill visual signatures; V0.25 high-tier spectacles; V0.26 polish, mobile optimization and readability.
+- Do not change damage, cooldowns, AI, rarity or skill acquisition during visual work. Do not begin V0.23 before owner tests public V0.22.
 
 ## V0.21 decision-readability layer
 - build tracker summarizes owned Kỹ Năng, Hợp Đạo, Siêu Cấp and Rare counts
@@ -133,4 +140,4 @@ Graphics/UI never decide hit success, damage, cooldown, fatal/revive ordering, s
 - Tests stay under `tests/` and are not shipped publicly.
 
 ## Status for next conversation
-**V0.21 is COMPLETE / RELEASED and is the current public baseline. V0.20 remains the frozen visual/presentation baseline; V0.19 remains the frozen tactical AI baseline. Future feature work should start from V0.22 with a new explicit roadmap.**
+**V0.22 Galaxy Battlefield is a release candidate; check the Pages workflow and get owner approval before V0.23. V0.21 was the prior verified release.**
