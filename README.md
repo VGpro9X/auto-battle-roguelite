@@ -1,20 +1,32 @@
 # Auto Battle Roguelite
 
-Current release: **V0.20 – Complete Visual Rebuild**
+Current release: **V0.21 – Build Intelligence & Choice Clarity**
 
 Public build: `https://vgpro9x.github.io/auto-battle-roguelite/`
 
 GitHub `main` is canonical.
 
 ## Current status
-- V0.20 B0–B14: **COMPLETE / RELEASED**.
+- V0.21 Build Intelligence & Choice Clarity: **COMPLETE / RELEASED**.
+- V0.20 B0–B14: **COMPLETE / RELEASED** and retained as the visual/presentation baseline.
 - Runtime/public version label: **V0.20**.
 - V0.19 A0–A15: **COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
 - V0.18 Graphics & Presentation Overhaul remains the frozen graphics/presentation baseline.
 - V0.17 Duel Arena remains the frozen historical mechanics/content baseline.
 - Survival/Endless V0.16 remains supported.
 
-Current V0.20 release evidence: `V020_RELEASE_VALIDATION.md`. Historical V0.19 evidence: `V019_RELEASE_VALIDATION.md`.
+Current V0.21 release evidence: `V021_RELEASE_VALIDATION.md`. V0.20 remains the visual/presentation regression baseline; V0.19 remains the tactical AI regression baseline.
+
+## V0.21 build intelligence & choice clarity
+- compact build summary for owned skills, Hợp Đạo, Siêu Cấp and Rare rules
+- dominant-tag readout for the current Survival build
+- near-unlock progress for the closest Hợp Đạo / Siêu Cấp routes
+- choice-card clarity for new skills, upgrades, near-max and exact immediate unlocks
+- compact current-build context on the level-up screen
+- existing one-reroll-per-choice-screen rule retained unchanged
+- mobile-first presentation with no combat, probability, acquisition or AI changes
+
+V0.21 reads existing simulation/content state only. V0.20 visuals, V0.19 AI and the locked V0.16/V0.17 combat/content truth remain authoritative.
 
 ## V0.20 complete visual rebuild
 - Renderer V3 with V2/vector fallback
@@ -107,7 +119,9 @@ V0.17 remains frozen except for bug fixes and retains:
 1. `README.md`
 2. `PROJECT_HANDOFF.md`
 3. `ROADMAP.md`
-4. `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`
+4. `V021_BUILD_INTELLIGENCE_PLAN.md`
+5. `V021_RELEASE_VALIDATION.md`
+6. `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`
 5. `V020_B14_RELEASE_SPEC.md`
 6. `V019_TACTICAL_AI_PLAN.md`
 7. `V019_RELEASE_VALIDATION.md`
@@ -117,4 +131,4 @@ V0.17 remains frozen except for bug fixes and retains:
 11. `V017_DUEL_ARENA_PLAN.md`
 
 ## Project status
-**V0.20 is COMPLETE / RELEASED and is the current public baseline. V0.19 remains the frozen tactical AI baseline; V0.18 and V0.17 remain historical presentation/mechanics regression baselines.**
+**V0.21 is COMPLETE / RELEASED and is the current public baseline. V0.20 remains the frozen visual/presentation baseline; V0.19 remains the frozen tactical AI baseline.**
