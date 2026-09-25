@@ -27,7 +27,7 @@ assert.match(shared,/@media\s*\(max-width:700px\)/,'B10C shared mobile closure m
 assert.match(shared,/@media\s*\(prefers-reduced-motion:reduce\)/,'B10C shared reduced-motion closure missing');
 assert.match(duel,/@media\(max-width:760px\)/,'B10C Duel mobile closure missing');
 assert.match(duel,/@media\(prefers-reduced-motion:reduce\)/,'B10C Duel reduced-motion closure missing');
-assert.match(html,/<title>Auto Battle Roguelite V0\.(?:19|20|21)<\/title>/,'Public label must be V0.19 candidate, V0.20 release or V0.21 release');
+assert.match(html,/<title>Auto Battle Roguelite V0\.(?:19|20|21|22)<\/title>/,'Public label must be V0.19 candidate, V0.20 release or V0.21 release');
 for(const forbidden of ["updateDuelRound","damageDealt","grantDuelRare","addDuelSkillRank","state\.hp","state\.xp"]){
   assert.ok(!shared.includes(forbidden),`B10A CSS must remain presentation-only: ${forbidden}`);
   assert.ok(!duel.includes(forbidden),`B10B CSS must remain presentation-only: ${forbidden}`);

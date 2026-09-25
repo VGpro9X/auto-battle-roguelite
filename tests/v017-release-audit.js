@@ -11,7 +11,7 @@ const readme=fs.readFileSync('README.md','utf8');
 const handoff=fs.readFileSync('PROJECT_HANDOFF.md','utf8');
 const validation=fs.readFileSync('V017_RELEASE_VALIDATION.md','utf8');
 
-const current=core.match(/GAME_VERSION="(V0\.17|V0\.18|V0\.19|V0\.20|V0\.21)"/);
+const current=core.match(/GAME_VERSION="(V0\.17|V0\.18|V0\.19|V0\.20|V0\.21|V0\.22)"/);
 assert.ok(current,'current runtime must remain a validated V0.17+ release line');
 const currentVersion=current[1];
 assert.ok(index.includes(`<title>Auto Battle Roguelite ${currentVersion}</title>`),'static title/current runtime version mismatch');
