@@ -240,6 +240,9 @@ jobs:
       - name: V0.21 build intelligence and choice clarity gate
         run: node tests/v021-build-intelligence-smoke.js
 
+      - name: V0.22 Galaxy Survival battlefield gate
+        run: node tests/v022-galaxy-battlefield-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail

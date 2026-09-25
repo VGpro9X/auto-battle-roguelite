@@ -1,0 +1,16 @@
+const fs=require("fs"),vm=require("vm"),assert=require("assert"),read=p=>fs.readFileSync(p,"utf8");
+const js=read("js/v022-galaxy-battlefield.js"),html=read("index.html"),game=read("js/game.js"),pages=read(".github/workflows/pages.yml"),plan=read("V022_V026_SURVIVAL_VISUAL_ROADMAP.md"),roadmap=read("ROADMAP.md");
+let created=0,painted=0,drawn=0;
+const ctx=()=>({save(){},restore(){},translate(){},rotate(){},scale(){},beginPath(){},arc(){},ellipse(){},fill(){},stroke(){},moveTo(){},lineTo(){},setLineDash(){},fillRect(){painted++},drawImage(){drawn++},createLinearGradient(){return{addColorStop(){}}},createRadialGradient(){return{addColorStop(){}}}});
+const scope={Math,Number,URLSearchParams,document:{createElement(tag){assert.strictEqual(tag,"canvas");created++;return{getContext(){return ctx()}}}},navigator:{deviceMemory:8},location:{search:"?visualQuality=full"},matchMedia(){return{matches:false}}};scope.window=scope;
+vm.runInNewContext(js,scope);
+assert.strictEqual(typeof scope.drawGalaxySurvivalV022,"function");
+assert.strictEqual(JSON.stringify(scope.makeGalaxyStarsV022(30)),JSON.stringify(scope.makeGalaxyStarsV022(30)),"determinism");
+const g=ctx();scope.drawGalaxySurvivalV022(g,1200,720,0);scope.drawGalaxySurvivalV022(g,1200,720,10);
+assert.strictEqual(created,1,"nebula must be cached");assert.strictEqual(scope.getGalaxyBattlefieldStatusV022().stars,195,"desktop star budget");assert(drawn>=2,"background should render");
+scope.location.search="?visualQuality=low";scope.drawGalaxySurvivalV022(g,380,740,5);assert.strictEqual(scope.getGalaxyBattlefieldStatusV022().stars,65,"mobile star budget");assert.strictEqual(created,2,"cache should refresh on resize/quality");
+scope.matchMedia=()=>({matches:true});scope.drawGalaxySurvivalV022(g,380,740,80);assert.strictEqual(scope.getGalaxyBattlefieldStatusV022().reducedMotion,true);
+assert(!js.includes("Math.random"),"visuals may not consume simulation RNG");assert(!/player\.[A-Za-z0-9_]+\s*=/.test(js),"presentation must not change gameplay");
+assert(html.includes("js/v022-galaxy-battlefield.js?v=022-release-r1"));assert(game.includes("drawGalaxySurvivalV022(ctx,W,H,state.t)"));assert(game.includes("state.running||state.gameOver"));assert(pages.includes("V0.22 Galaxy Survival battlefield gate"));
+for(const version of ["V0.22","V0.23","V0.24","V0.25","V0.26"])assert(plan.includes(version)&&roadmap.includes(version),"roadmap missing "+version);
+assert(painted>0);console.log("v022-galaxy-battlefield-smoke: PASS · cached nebula · mobile star budget · reduced motion · Survival-only scene wiring");

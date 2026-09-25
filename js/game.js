@@ -148,11 +148,15 @@ function update(dt){
 
 function draw(){
   ctx.clearRect(0,0,W,H);
-  ctx.globalAlpha=.10;ctx.strokeStyle="#7f8aa3";ctx.lineWidth=1;
-  const grid=42,gridOffset=state.running?(state.t*8)%grid:0;
-  for(let x=gridOffset-grid;x<W;x+=grid){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(let y=0;y<H;y+=grid){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-  ctx.globalAlpha=1;
+  if(typeof drawGalaxySurvivalV022==="function"&&state.mode&&(state.running||state.gameOver)){
+    drawGalaxySurvivalV022(ctx,W,H,state.t);
+  }else{
+    ctx.globalAlpha=.10;ctx.strokeStyle="#7f8aa3";ctx.lineWidth=1;
+    const grid=42,gridOffset=state.running?(state.t*8)%grid:0;
+    for(let x=gridOffset-grid;x<W;x+=grid){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=grid){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    ctx.globalAlpha=1;
+  }
 
   for(const gem of state.gems){ctx.save();ctx.translate(gem.x,gem.y);ctx.rotate(state.t*2);ctx.fillStyle="#79a7ff";ctx.beginPath();ctx.moveTo(0,-6);ctx.lineTo(5,0);ctx.lineTo(0,6);ctx.lineTo(-5,0);ctx.closePath();ctx.fill();ctx.restore();}
 
