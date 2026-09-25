@@ -4,19 +4,19 @@ const exists=p=>fs.existsSync(p);
 const core=read("js/core.js"),html=read("index.html"),uiSync=read("js/duel-ui-sync.js"),duelUi=read("js/duel-ui-v020.js");
 const readme=read("README.md"),roadmap=read("ROADMAP.md"),handoff=read("PROJECT_HANDOFF.md"),plan=read("V020_COMPLETE_VISUAL_REBUILD_PLAN.md"),spec=read("V020_B14_RELEASE_SPEC.md"),pages=read(".github/workflows/pages.yml");
 
-assert(core.includes('const GAME_VERSION="V0.20";'),"runtime GAME_VERSION is not V0.20");
-assert(html.includes("<title>Auto Battle Roguelite V0.20</title>"),"public title is not V0.20");
-assert(html.includes('<div id="version">Auto Battle Roguelite V0.20</div>'),"public version badge is not V0.20");
-assert(uiSync.includes("V0.20 · ĐẤU TRƯỜNG 1V1"),"Duel UI sync label is not V0.20");
-assert(duelUi.includes("V0.20 · ĐẤU TRƯỜNG 1V1"),"Duel lobby source label is not V0.20");
-assert(html.includes("js/core.js?v=020-release-r1"),"V0.20 core cache key missing");
-assert(html.includes("js/duel-ui-sync.js?v=020-release-r1"),"V0.20 Duel UI sync cache key missing");
+assert(/const GAME_VERSION="V0\\.(?:20|21)";/.test(core),"runtime GAME_VERSION must preserve V0.20 or advance to V0.21");
+assert(/<title>Auto Battle Roguelite V0\\.(?:20|21)<\\/title>/.test(html),"public title must preserve V0.20 or advance to V0.21");
+assert(/<div id="version">Auto Battle Roguelite V0\\.(?:20|21)<\\/div>/.test(html),"public version badge must preserve V0.20 or advance to V0.21");
+assert(/V0\\.(?:20|21) · ĐẤU TRƯỜNG 1V1/.test(uiSync),"Duel UI sync label must preserve V0.20 or advance to V0.21");
+assert(/V0\\.(?:20|21) · ĐẤU TRƯỜNG 1V1/.test(duelUi),"Duel lobby label must preserve V0.20 or advance to V0.21");
+assert(/js\\/core\\.js\\?v=(?:020|021)-release-r1/.test(html),"current core cache key missing");
+assert(/js\\/duel-ui-sync\\.js\\?v=(?:020|021)-release-r1/.test(html),"current Duel UI sync cache key missing");
 assert(html.includes("js/duel-renderer-v3-bridge.js?v=020-b13b"),"B13B renderer bridge cache key missing");
 assert(html.includes("js/duel-vfx-v3.js?v=020-b12a"),"B12A VFX cache key missing");
 
-assert(readme.includes("Current release: **V0.20 – Complete Visual Rebuild**"),"README current release mismatch");
-assert(roadmap.includes("Released baseline: **V0.20 – Complete Visual Rebuild**"),"ROADMAP current release mismatch");
-assert(handoff.includes("Current released/public baseline: **V0.20 – Complete Visual Rebuild**"),"handoff current baseline mismatch");
+assert(readme.includes("V0.20"),"README lost V0.20 historical baseline");
+assert(roadmap.includes("# V0.20 — COMPLETE VISUAL REBUILD — COMPLETE / RELEASED"),"ROADMAP lost V0.20 historical baseline");
+assert(handoff.includes("V0.20"),"handoff lost V0.20 historical baseline");
 assert(plan.includes("B0–B14 COMPLETE"),"master plan not in completed B14 release state");
 assert(spec.includes("# V0.20 — B14 Integration / Release"),"B14 release spec missing");
 assert(spec.includes("Status: **COMPLETE / RELEASED ✅**"),"B14 release spec is not closed");
@@ -39,4 +39,4 @@ assert.strictEqual(Object.keys(DUEL_SYNERGY_ADAPTERS).length,28,"V0.20 must reta
 assert.strictEqual(Object.keys(DUEL_EVOLUTION_ADAPTERS).length,12,"V0.20 must retain 12 Siêu Cấp");
 assert.strictEqual(Object.keys(DUEL_RARE_ADAPTERS).length,20,"V0.20 must retain 20 Rare rules");
 
-console.log("v020-b14-final-release-audit: PASS · V0.20 promoted · 80/28/12/20 retained · Pages artifact clean");
+console.log("v020-b14-final-release-audit: PASS · V0.20 historical baseline retained · 80/28/12/20 retained · Pages artifact clean");
