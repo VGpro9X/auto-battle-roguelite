@@ -1,0 +1,17 @@
+const fs=require("fs"),assert=require("assert");
+const read=p=>fs.readFileSync(p,"utf8");
+const js=read("js/v021-build-intelligence.js"),css=read("css/v021-build-intelligence.css"),html=read("index.html"),core=read("js/core.js"),readme=read("README.md"),roadmap=read("ROADMAP.md"),handoff=read("PROJECT_HANDOFF.md");
+assert(js.includes("getV021BuildSnapshot"),"V0.21 build snapshot API missing");
+assert(js.includes("MutationObserver"),"V0.21 choice refresh observer missing");
+assert(js.includes("getNearBuildUnlocks(3)"),"V0.21 near-unlock progress missing");
+assert(js.includes("MỞ HỢP ĐẠO")&&js.includes("MỞ SIÊU CẤP"),"V0.21 immediate unlock badges missing");
+assert(!/owned\s*\[[^\]]+\]\s*=/.test(js),"V0.21 presentation layer must not mutate owned skill truth");
+assert(!/player\.[A-Za-z0-9_]+\s*=/.test(js),"V0.21 presentation layer must not mutate player combat truth");
+assert(html.includes('css/v021-build-intelligence.css?v=021-release-r1'),"V0.21 stylesheet not wired");
+assert(html.includes('js/v021-build-intelligence.js?v=021-release-r1'),"V0.21 runtime not wired");
+assert(core.includes('const GAME_VERSION="V0.21";'),"runtime GAME_VERSION is not V0.21");
+assert(css.includes(".v021BuildSummary")&&css.includes(".v021ChoiceMeta"),"V0.21 UI styles incomplete");
+assert(readme.includes("Current release: **V0.21 – Build Intelligence & Choice Clarity**"),"README V0.21 release label missing");
+assert(roadmap.includes("# V0.21 — BUILD INTELLIGENCE & CHOICE CLARITY — COMPLETE / RELEASED"),"ROADMAP V0.21 closure missing");
+assert(handoff.includes("Current released/public baseline: **V0.21 – Build Intelligence & Choice Clarity**"),"handoff V0.21 baseline missing");
+console.log("v021-build-intelligence-smoke: PASS · presentation-only build summary, choice clarity and mobile readability wired");
