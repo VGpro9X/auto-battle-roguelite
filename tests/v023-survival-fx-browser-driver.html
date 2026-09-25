@@ -1,0 +1,61 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>V0.23 Survival Skill FX browser validation</title>
+<style>html,body{margin:0;background:#050b18}#app{display:block;border:0}#result{position:fixed;left:0;top:0;z-index:99;background:#09101e;color:#fff;font:12px monospace;padding:4px}</style></head>
+<body><iframe id="app"></iframe><pre id="result">V0.23 đang kiểm tra...</pre>
+<script>
+(async()=>{
+  const expect=new URLSearchParams(location.search).get("expect")||"desktop",mobile=expect==="mobile";
+  const width=mobile?360:1280,height=mobile?640:720,frame=document.getElementById("app"),out=document.getElementById("result");
+  const fail=m=>{out.textContent="V023_SURVIVAL_FX_BROWSER_FAIL "+expect+" "+m;throw Error(m);};
+  const ok=(v,m)=>{if(!v)fail(m)};
+  const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+  try{
+    frame.style.width=width+"px";frame.style.height=height+"px";frame.src="../index.html";
+    await new Promise((resolve,reject)=>{const stop=setTimeout(()=>reject(Error("app load timeout")),18000);frame.onload=()=>{clearTimeout(stop);resolve();};});
+    const w=frame.contentWindow,d=frame.contentDocument,errors=[];
+    w.addEventListener("error",e=>errors.push(String(e.message||e.error||"runtime error")));
+    w.addEventListener("unhandledrejection",e=>errors.push(String(e.reason||"unhandled rejection")));
+    ok(typeof w.getV023SurvivalFxStatus==="function","V0.23 runtime unavailable");
+    ok(typeof w.drawGalaxySurvivalV022==="function","V0.22 Galaxy background lost");
+    w.startRun("5");
+    for(let i=0;i<3;i++){
+      await delay(i===0?320:210);
+      const button=d.querySelector("#choices .choice");
+      ok(button&&d.getElementById("levelModal").classList.contains("visible"),"starter choice missing at "+i);
+      button.click();
+    }
+    await delay(280);
+    ok(w.eval("!state.paused&&state.running"),"Survival did not start after starter picks");
+    const baseline=w.getV023SurvivalFxStatus().spawned;
+    // A valid nearby enemy exercises the actual auto-attack simulation and normal-projectile VFX, not only synthetic preview calls.
+    w.eval("state.enemies.push({x:player.x+55,y:player.y,r:12,hp:220,maxHp:220,speed:0,dmg:0,hit:0,elite:false,dead:false,statuses:{},markedUntil:0,markPower:0});");
+    await delay(1250);
+    let live=w.getV023SurvivalFxStatus();
+    ok(live.spawned>baseline,"real Survival combat did not emit new attack/impact FX "+JSON.stringify(live));
+    ok(live.rendered>0&&live.frameDraws>0,"real Survival effects never appeared in draw frames");
+    ok(live.quality===(mobile?"low":"full"),"visual quality mismatch "+live.quality);
+    ok(live.limit===(mobile?24:76),"transient cap mismatch");
+    ok(d.documentElement.scrollWidth<=w.innerWidth+3,"horizontal overflow");
+    // Freeze simulation time to compare identical galaxy frames with and without a critical hit.
+    w.eval("state.paused=true;");
+    const canvas=d.getElementById("game"),g=canvas.getContext("2d"),x=width*.66,y=height*.54,scale=canvas.width/width;
+    const sx=Math.round((x-44)*scale),sy=Math.round((y-44)*scale),size=Math.round(88*scale);
+    w.draw();
+    const before=g.getImageData(sx,sy,size,size).data;
+    const dummy={x,y,r:12,hp:80,maxHp:100,statuses:{}};
+    const oldRendered=w.getV023SurvivalFxStatus().rendered;
+    w.emitSkillEvent("hit",{enemy:dummy,damage:38,meta:{source:"normal",tags:["PROJECTILE","ATTACK"],crit:true,allowProcs:false},killed:false});
+    w.emitSkillEvent("periodic",{skillKey:"fire",level:1});
+    w.emitSkillEvent("heal",{amount:9,meta:{source:"xpHeal"}});
+    w.draw();
+    const after=g.getImageData(sx,sy,size,size).data;
+    let delta=0;for(let i=0;i<before.length;i+=4)delta+=Math.abs(after[i]-before[i])+Math.abs(after[i+1]-before[i+1])+Math.abs(after[i+2]-before[i+2]);
+    const status=w.getV023SurvivalFxStatus();
+    ok(status.rendered>=oldRendered+3,"hit/cast/heal effects not drawn after real event dispatch");
+    ok(delta>700,"visible canvas impact was not measurable "+delta);
+    ok(errors.length===0,"runtime errors "+errors.join(" | "));
+    w.abandonRunToMenu();const prior=w.getV023SurvivalFxStatus().frameDraws;await delay(160);
+    ok(w.getV023SurvivalFxStatus().frameDraws===prior,"Survival effects leaked into main menu");
+    out.textContent="V023_SURVIVAL_FX_BROWSER_PASS "+expect+" realSpawned="+(live.spawned-baseline)+" active="+status.active+" quality="+status.quality+" canvasDelta="+delta;
+  }catch(error){if(!out.textContent.startsWith("V023_SURVIVAL_FX_BROWSER_FAIL"))out.textContent="V023_SURVIVAL_FX_BROWSER_FAIL "+expect+" "+(error?.message||String(error));console.error(error);}
+})();
+</script></body></html>

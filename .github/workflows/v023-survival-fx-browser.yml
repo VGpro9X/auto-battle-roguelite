@@ -1,0 +1,40 @@
+name: V0.23 Survival FX desktop/mobile browser validation
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v023-survival-fx-browser
+  cancel-in-progress: true
+
+jobs:
+  validate-survival-fx:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: V0.23 semantic FX and budget smoke
+        run: node tests/v023-survival-skill-fx-smoke.js
+      - name: Desktop and mobile in-game Survival FX browser test
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4193 >/tmp/v023-http.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then echo 'Chrome/Chromium unavailable'; exit 1; fi
+          verify(){
+            name="$1"
+            size="$2"
+            file="/tmp/v023-${name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size="$size" --virtual-time-budget=20000 --dump-dom "http://127.0.0.1:4193/tests/v023-survival-fx-browser-driver.html?expect=${name}" > "$file"
+            grep -q "V023_SURVIVAL_FX_BROWSER_PASS ${name}" "$file" || { cat "$file"; exit 1; }
+            grep "V023_SURVIVAL_FX_BROWSER_PASS ${name}" "$file"
+          }
+          verify desktop 1280,720
+          verify mobile 360,640
