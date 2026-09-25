@@ -18,7 +18,7 @@ const plan=read('V019_TACTICAL_AI_PLAN.md');
 const release=read('V019_RELEASE_VALIDATION.md');
 const pages=read('.github/workflows/pages.yml');
 
-const currentVersion=core.includes('const GAME_VERSION="V0.20"')?'V0.20':core.includes('const GAME_VERSION="V0.19"')?'V0.19':null;
+const currentVersion=core.includes('const GAME_VERSION="V0.21"')?'V0.21':core.includes('const GAME_VERSION="V0.20"')?'V0.20':core.includes('const GAME_VERSION="V0.19"')?'V0.19':null;
 assert.ok(currentVersion,'runtime GAME_VERSION must remain V0.19+ compatible');
 assert.ok(index.includes(`<title>Auto Battle Roguelite ${currentVersion}</title>`),'static title/runtime version mismatch');
 assert.ok(index.includes(`<div id="version">Auto Battle Roguelite ${currentVersion}</div>`),'static badge/runtime version mismatch');
@@ -27,13 +27,17 @@ for(const src of [
   'js/v019-survival-ai.js?v=019-release-r1',
   'js/v019-duel-ai.js?v=019-release-r1'
 ])assert.ok(index.includes(src),`historical AI cache key missing: ${src}`);
-assert.ok(/js\/core\.js\?v=(?:019-release-r1|020-release-r1)/.test(index),'core release cache key missing');
-assert.ok(/js\/duel-ui-sync\.js\?v=(?:019-release-r1|020-release-r1)/.test(index),'Duel UI sync release cache key missing');
+assert.ok(/js\/core\.js\?v=(?:019-release-r1|020-release-r1|021-release-r1)/.test(index),'core release cache key missing');
+assert.ok(/js\/duel-ui-sync\.js\?v=(?:019-release-r1|020-release-r1|021-release-r1)/.test(index),'Duel UI sync release cache key missing');
 
-if(currentVersion==='V0.20'){
-  assert.ok(readme.includes('Current release: **V0.20 – Complete Visual Rebuild**'),'README current release mismatch');
-  assert.ok(roadmap.includes('Released baseline: **V0.20 – Complete Visual Rebuild**'),'ROADMAP current release mismatch');
-  assert.ok(handoff.includes('Current released/public baseline: **V0.20 – Complete Visual Rebuild**'),'handoff current baseline mismatch');
+if(currentVersion==='V0.21'){
+  assert.ok(readme.includes('Current release: **V0.21 – Build Intelligence & Choice Clarity**'),'README current release mismatch');
+  assert.ok(roadmap.includes('Released baseline: **V0.21 – Build Intelligence & Choice Clarity**'),'ROADMAP current release mismatch');
+  assert.ok(handoff.includes('Current released/public baseline: **V0.21 – Build Intelligence & Choice Clarity**'),'handoff current baseline mismatch');
+}else if(currentVersion==='V0.20'){
+  assert.ok(readme.includes('V0.20'),'README lost V0.20 historical baseline');
+  assert.ok(roadmap.includes('V0.20'),'ROADMAP lost V0.20 historical baseline');
+  assert.ok(handoff.includes('V0.20'),'handoff lost V0.20 historical baseline');
 }else{
   assert.ok(readme.includes('Current release: **V0.19 – Tactical AI & Movement Intelligence**'),'README current release mismatch');
   assert.ok(roadmap.includes('Released baseline: **V0.19 – Tactical AI & Movement Intelligence**'),'ROADMAP current release mismatch');
