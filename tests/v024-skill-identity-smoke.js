@@ -7,12 +7,12 @@ const ids=[...new Set([...base,...extensions])];
 assert.strictEqual(ids.length,80,"80 existing Survival base skill IDs must remain accessible");
 const tagOf=id=>id==="fire"||id==="fireWisp"||id==="meteorSeal"?["FIRE"]:id==="lightning"||id==="stormTotem"?["LIGHTNING"]:id==="frost"||id==="frostMirror"?["ICE"]:id==="poison"?["POISON"]:["ATTACK"];
 const skills=Object.fromEntries(ids.map(id=>[id,{name:id,tags:tagOf(id)}]));
-let strokes=0,draws=0,base=0,resetCount=0;
+let strokes=0,draws=0,baseDrawCalls=0,resetCount=0;
 const ctx={save(){},restore(){},translate(){},rotate(){},beginPath(){},arc(){},moveTo(){},lineTo(){},closePath(){},stroke(){strokes++},fill(){},drawImage(){},ellipse(){},fillRect(){},setLineDash(){}};
 const handlers={},scope={Math,URLSearchParams,Number,Object,Array,WeakMap,skills,owned:{},W:1280,H:720,ctx,
   state:{t:1,running:true,paused:false,gameOver:false,mode:{id:"5"}},
   player:{x:140,y:120,r:16},location:{search:"?visualQuality=full"},navigator:{deviceMemory:8},matchMedia(){return{matches:false}},
-  onSkillEvent(type,fn){(handlers[type]||(handlers[type]=[])).push(fn);},draw(){base++;},drawProjectileVisual(){draws++;},resetSkillEngine(){resetCount++;}};
+  onSkillEvent(type,fn){(handlers[type]||(handlers[type]=[])).push(fn);},draw(){baseDrawCalls++;},drawProjectileVisual(){draws++;},resetSkillEngine(){resetCount++;}};
 scope.window=scope;
 vm.runInNewContext(catalog,scope,{filename:"js/v024-skill-signatures.js"});
 vm.runInNewContext(runtime,scope,{filename:"js/v024-skill-identity-fx.js"});
@@ -31,7 +31,7 @@ scope.state.t+=.22;
 for(const key of ["fire","fireWisp","lightning","stormTotem","frostMirror","blackHole","meteorSeal","runeMine","bloodLink","soulBind"])event("periodic",{skillKey:key,level:2});
 scope.draw();
 let st=scope.getV024SkillIdentityStatus();
-assert(st.active<=38&&st.rendered>0&&st.frameDraws===1&&base===1,"full visual effects not rendered");
+assert(st.active<=38&&st.rendered>0&&st.frameDraws===1&&baseDrawCalls===1,"full visual effects not rendered");
 assert(Object.keys(st.drawnIds).length>=12,"skill IDs were collapsed to one generic effect");
 const projectileBefore=strokes;
 for(const source of ["fire","fireWisp","chaosOrb","echoShot","afterimage","spiritPearl"])scope.drawProjectileVisual(ctx,230,180,6,[],scope.state.t,{source,vx:300,vy:70});
