@@ -13,7 +13,10 @@ Status: **COMPLETE / RELEASED ✅** (owner live visual/gameplay evaluation pendi
 - [V0.25 high-tier browser validation run #3](https://github.com/VGpro9X/auto-battle-roguelite/actions/runs/36212386190): **SUCCESS**. Semantic smoke checks 60 official high-tier registry IDs, source-event truth, limited pools, DOT suppression, reduced motion and reset.
 - Real desktop 1280×720: PASS with true Rare acquisition, timed Rare trigger and actual Hợp Đạo/Siêu Cấp requirement unlocks; visible golden Divine versus purple Mystic canvas difference.
 - Real mobile 360×640: PASS after fair-scheduling fix; same gameplay events and visibly different Rare canvas shapes, low profile.
-- Final runtime version promotion in this commit triggers a fresh Pages release validation plus real browser CI. Append final green references after successful deployment.
+- Final V0.25 public/runtime promotion commit: `15241f312381b5f1c71176c32ff79fb05c5f58b2`.
+- [Production Pages deploy #862](https://github.com/VGpro9X/auto-battle-roguelite/actions/runs/36212522969): **SUCCESS**. New V0.25 version, high-tier module and all production content published.
+- [Final desktop/mobile real gameplay browser validation #5](https://github.com/VGpro9X/auto-battle-roguelite/actions/runs/36212522977): **SUCCESS**, with real Rare acquisition, timed Rare activation and real Siêu Cấp/Hợp Đạo unlocks.
+- Historical regression workflows on the promoted commit: [V0.17](https://github.com/VGpro9X/auto-battle-roguelite/actions/runs/36212522954), [V0.18 G7](https://github.com/VGpro9X/auto-battle-roguelite/actions/runs/36212522896) and [V0.19 A15](https://github.com/VGpro9X/auto-battle-roguelite/actions/runs/36212522993): **ALL SUCCESS**.
 
 Public URL: https://vgpro9x.github.io/auto-battle-roguelite/
 
