@@ -249,6 +249,9 @@ jobs:
       - name: V0.24 distinct Survival skill identity gate
         run: node tests/v024-skill-identity-smoke.js
 
+      - name: V0.25 high-tier Survival spectacle gate
+        run: node tests/v025-high-tier-spectacle-smoke.js
+
       - name: Prepare public game artifact
         run: |
           set -euo pipefail
