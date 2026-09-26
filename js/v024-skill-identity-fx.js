@@ -23,7 +23,7 @@ function add(id,x,y,kind,opts={}){
  const minimum=kind==="hit"?.08:kind==="cast"?.18:kind==="heal"?.18:.09;
  if(stamp-previous<minimum&&!opts.multi){FX.suppressed++;return;}
  FX.last[group]=stamp;
- if(FX.list.length>=MAX[q]){FX.list.shift();FX.dropped++;}
+ while(FX.list.length>=MAX[q]){FX.list.shift();FX.dropped++;}
  const fx={id,spec,x,y,kind,start:stamp,life:kind==="select"?.85:kind==="cast"?.64:kind==="heal"?.58:.42,
    size:Math.min(52,Math.max(10,opts.size||18)),angle:opts.angle||0,echo:!!opts.echo,seed:FX.seed++,
    level:opts.level||1,crit:!!opts.crit};
