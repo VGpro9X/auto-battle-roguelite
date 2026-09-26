@@ -18,7 +18,7 @@ const plan=read('V019_TACTICAL_AI_PLAN.md');
 const release=read('V019_RELEASE_VALIDATION.md');
 const pages=read('.github/workflows/pages.yml');
 
-const currentVersion=core.includes('const GAME_VERSION="V0.24"')?'V0.24':core.includes('const GAME_VERSION="V0.23"')?'V0.23':core.includes('const GAME_VERSION="V0.22"')?'V0.22':core.includes('const GAME_VERSION="V0.21"')?'V0.21':core.includes('const GAME_VERSION="V0.20"')?'V0.20':core.includes('const GAME_VERSION="V0.19"')?'V0.19':null;
+const currentVersion=core.includes('const GAME_VERSION="V0.25"')?'V0.25':core.includes('const GAME_VERSION="V0.24"')?'V0.24':core.includes('const GAME_VERSION="V0.23"')?'V0.23':core.includes('const GAME_VERSION="V0.22"')?'V0.22':core.includes('const GAME_VERSION="V0.21"')?'V0.21':core.includes('const GAME_VERSION="V0.20"')?'V0.20':core.includes('const GAME_VERSION="V0.19"')?'V0.19':null;
 assert.ok(currentVersion,'runtime GAME_VERSION must remain V0.19+ compatible');
 assert.ok(index.includes(`<title>Auto Battle Roguelite ${currentVersion}</title>`),'static title/runtime version mismatch');
 assert.ok(index.includes(`<div id="version">Auto Battle Roguelite ${currentVersion}</div>`),'static badge/runtime version mismatch');
@@ -27,10 +27,14 @@ for(const src of [
   'js/v019-survival-ai.js?v=019-release-r1',
   'js/v019-duel-ai.js?v=019-release-r1'
 ])assert.ok(index.includes(src),`historical AI cache key missing: ${src}`);
-assert.ok(/js\/core\.js\?v=(?:019-release-r1|020-release-r1|021-release-r1|022-release-r1|023-release-r1|024-release-r1)/.test(index),'core release cache key missing');
-assert.ok(/js\/duel-ui-sync\.js\?v=(?:019-release-r1|020-release-r1|021-release-r1|022-release-r1|023-release-r1|024-release-r1)/.test(index),'Duel UI sync release cache key missing');
+assert.ok(/js\/core\.js\?v=(?:019-release-r1|020-release-r1|021-release-r1|022-release-r1|023-release-r1|024-release-r1|025-release-r1)/.test(index),'core release cache key missing');
+assert.ok(/js\/duel-ui-sync\.js\?v=(?:019-release-r1|020-release-r1|021-release-r1|022-release-r1|023-release-r1|024-release-r1|025-release-r1)/.test(index),'Duel UI sync release cache key missing');
 
-if(currentVersion==='V0.24'){
+if(currentVersion==='V0.25'){
+  assert.ok(readme.includes('Current release: **V0.25 – High-Tier Survival Skill Spectacle**'),'README V0.25 current release missing');
+  assert.ok(roadmap.includes('Released baseline: **V0.25 – High-Tier Survival Skill Spectacle**'),'ROADMAP V0.25 baseline missing');
+  assert.ok(handoff.includes('Current released/public baseline: **V0.25 – High-Tier Survival Skill Spectacle**'),'handoff V0.25 baseline missing');
+}else if(currentVersion==='V0.24'){
   assert.ok(readme.includes('Current release: **V0.24 – Unique Survival Skill Visual Language**'),'README V0.24 current release missing');
   assert.ok(roadmap.includes('Released baseline: **V0.24 – Unique Survival Skill Visual Language**'),'ROADMAP V0.24 baseline missing');
   assert.ok(handoff.includes('Current released/public baseline: **V0.24 – Unique Survival Skill Visual Language**'),'handoff V0.24 baseline missing');

@@ -16,5 +16,5 @@ for(const source of [bridge,quality])for(const forbidden of [
   "updateDuelRound","duelDealDamage","settleDuelRound","player.hp=","enemy.hp=","baseDamage","critChance"
 ])assert(!source.includes(forbidden),"B13B fallback/presentation layer leaked gameplay truth: "+forbidden);
 
-assert.match(html,/<title>Auto Battle Roguelite V0\.(?:19|20|21|22|23|24)<\/title>/,"public label must be V0.19 candidate, V0.20 release or V0.21 release");
+assert.match(html,/<title>Auto Battle Roguelite V0\.(?:19|20|21|22|23|24|25)<\/title>/,"public label must be V0.19 candidate, V0.20 release or V0.21 release");
 console.log("v020-b13b-fallback-smoke: ok · vector/V2/V3 routing · reduced-motion propagation · release label valid");
