@@ -17,16 +17,17 @@ Use this file as the starting context when continuing development in a new chat.
 - Commit every meaningful checkpoint.
 
 ## Current project state
-- Current released/public baseline: **V0.24 – Unique Survival Skill Visual Language**.
-- Previous release: **V0.23 – Core Survival Skill Impact FX**.
-- Runtime/public label: **V0.24**.
+- Current released/public baseline: **V0.25 – High-Tier Survival Skill Spectacle**.
+- Previous release: **V0.24 – Unique Survival Skill Visual Language**.
+- Runtime/public label: **V0.25**.
 - V0.21 status: **Build Intelligence & Choice Clarity COMPLETE / RELEASED**.
 - V0.20 status: **B0–B14 COMPLETE / RELEASED** and retained as the visual/presentation baseline.
 - V0.19 status: **A0–A15 COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
 - V0.18 remains frozen as the graphics/presentation baseline.
 - V0.17 remains frozen as the historical Duel mechanics/content baseline.
 - V0.16 Survival/Endless remains supported.
-- V0.24 release evidence: `V024_RELEASE_VALIDATION.md`.
+- V0.25 release evidence: `V025_RELEASE_VALIDATION.md`.
+- V0.24 historical release evidence: `V024_RELEASE_VALIDATION.md`.
 - V0.23 historical release evidence: `V023_RELEASE_VALIDATION.md`.
 - V0.22 historical release evidence: `V022_RELEASE_VALIDATION.md`.
 - Authoritative V0.21 historical evidence: `V021_RELEASE_VALIDATION.md`.
@@ -51,6 +52,13 @@ Use this file as the starting context when continuing development in a new chat.
 11. `V017_DUEL_ARENA_PLAN.md`
 
 Before editing, fetch latest relevant files and SHAs from GitHub `main`.
+
+## V0.25 High-Tier Survival Skill Spectacle
+- New visual-only module `js/v025-high-tier-spectacle.js` loads after the V0.24 identity layer and attaches to the existing events: `divine_acquired`, `divine_trigger`, `build_unlock`, real `hit`, and actual evolved `periodic` / `periodic_echo`.
+- Catalogue matches 20 Rare IDs (10 Divine/10 Mystic), 12 Evolution IDs and 28 Synergy IDs; tier-specific premium shapes and ID-stable signatures distinguish events without touching simulation.
+- Owned Rare halos capped 3/2/1; effect allocations full/balanced/low 11/7/4, per-frame draws 7/4/2, fair scheduler for low/mobile density, prefers-reduced-motion and run reset.
+- Smoke `tests/v025-high-tier-spectacle-smoke.js` in Pages; live desktop/mobile gameplay `tests/v025-spectacle-browser-driver.html` via `.github/workflows/v025-spectacle-browser.yml`. Final evidence `V025_RELEASE_VALIDATION.md`.
+- V0.25 does not touch gameplay positions, damage, cooldowns, Rarity, AI, existing V0.22 Galaxy/V0.23/V0.24 FX or Duel. Stop at checkpoint pending owner test before V0.26.
 
 ## V0.24 Unique Survival Skill Visual Language
 - New modules `js/v024-skill-signatures.js` and `js/v024-skill-identity-fx.js` load after V0.23 to add ID-specific animated cast, hit, projectile and skill-selected effects.
@@ -158,4 +166,4 @@ Graphics/UI never decide hit success, damage, cooldown, fatal/revive ordering, s
 - Tests stay under `tests/` and are not shipped publicly.
 
 ## Status for next conversation
-**V0.24 Unique Survival Skill Visual Language is COMPLETE / RELEASED with 80-skill catalog and live desktop/mobile browser validation. Stop at checkpoint for owner gameplay test before V0.25.**
+**V0.25 High-Tier Survival Skill Spectacle is COMPLETE / RELEASED with 60-ID catalogue and green desktop/mobile true gameplay browser validation. Stop at this checkpoint for owner's in-game evaluation before V0.26.**

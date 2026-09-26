@@ -1,24 +1,35 @@
 # Auto Battle Roguelite
 
-Current release: **V0.24 – Unique Survival Skill Visual Language**
+Current release: **V0.25 – High-Tier Survival Skill Spectacle**
 
 Public build: `https://vgpro9x.github.io/auto-battle-roguelite/`
 
 GitHub `main` is canonical.
 
 ## Current status
-- V0.24 Unique Survival Skill Visual Language: **COMPLETE / RELEASED ✅** (owner visual evaluation pending).
+- V0.25 High-Tier Survival Skill Spectacle: **COMPLETE / RELEASED ✅** (owner evaluation pending).
+- V0.24 Unique Survival Skill Visual Language: **COMPLETE / RELEASED ✅**.
 - V0.23 Core Survival Skill Impact FX: **COMPLETE / RELEASED ✅**.
 - V0.22 Galaxy Battlefield Foundation: **COMPLETE / RELEASED ✅**.
 - V0.21 Build Intelligence & Choice Clarity: **COMPLETE / RELEASED**.
 - V0.20 B0–B14: **COMPLETE / RELEASED** and retained as the visual/presentation baseline.
-- Runtime/public version label: **V0.24**.
+- Runtime/public version label: **V0.25**.
 - V0.19 A0–A15: **COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
 - V0.18 Graphics & Presentation Overhaul remains the frozen graphics/presentation baseline.
 - V0.17 Duel Arena remains the frozen historical mechanics/content baseline.
 - Survival/Endless V0.16 remains supported.
 
-V0.24 release evidence: `V024_RELEASE_VALIDATION.md`; V0.23 evidence: `V023_RELEASE_VALIDATION.md`; historical V0.22/V0.21 evidence: `V022_RELEASE_VALIDATION.md` and `V021_RELEASE_VALIDATION.md`. V0.20 remains the visual/presentation regression baseline; V0.19 remains the tactical AI regression baseline.
+V0.25 release evidence: `V025_RELEASE_VALIDATION.md`; historical V0.24 evidence: `V024_RELEASE_VALIDATION.md`; V0.23 evidence: `V023_RELEASE_VALIDATION.md`; historical V0.22/V0.21 evidence: `V022_RELEASE_VALIDATION.md` and `V021_RELEASE_VALIDATION.md`. V0.20 remains the visual/presentation regression baseline; V0.19 remains the tactical AI regression baseline.
+
+## V0.25 High-Tier Survival Skill Spectacle
+
+- Original, event-driven high-tier visual signature library covering **20 rare rules** (10 Thần Kỹ + 10 Thần Bí Kỹ), **12 Siêu Cấp** and **28 Hợp Đạo Kỹ**: **60 distinct high-tier IDs**.
+- Dedicated premium silhouettes by ID: Thiên Phạt sky lightning, Thần Vực solar domain, Thời Đình frozen clock, Hư Thực eclipse, Thiên Hỏa fire wheel, Thiên Lôi Võng forked network, Huyết Võng web, Tinh Hà Trụy Lạc starfall, and named Hợp Đạo motifs.
+- Visible acquisition seals for new Rare / Siêu Cấp / Hợp Đạo; event-bound triggers for timed rares and evolved base skills; source-bound actual damage impact. A restrained persistent star halo follows owned rare skills.
+- Full/balanced/low quality transient budgets **11/7/4**, frame drawing **7/4/2**, persistent owned markers **3/2/1**. Fair round-robin ensures mobile bursts are not starved when multiple skills trigger at once. Reduced-motion and zero-gameplay-RNG rendering; clear effects on new run.
+- Existing V0.22 Galaxy, V0.23 generic impact and V0.24 base-skill identity layers remain integrated. No combat, AI, rarity, skill choice or Duel changes. Desktop/mobile live browser validation covers genuine Rare acquisition/trigger and Hợp Đạo/Siêu Cấp unlock, plus per-tier visual differentiation.
+
+Next: V0.26 Survival Combat Presentation Polish after owner tests V0.25 on GitHub Pages.
 
 ## V0.24 Unique Survival Skill Visual Language
 
@@ -150,4 +161,4 @@ V0.17 remains frozen except for bug fixes and retains:
 11. `V017_DUEL_ARENA_PLAN.md`
 
 ## Project status
-**V0.24 Unique Survival Skill Visual Language is COMPLETE / RELEASED and is the public baseline. Await owner's in-game evaluation before V0.25. V0.22 Galaxy, V0.23 impact FX and all historical combat/AI regressions are retained.**
+**V0.25 High-Tier Survival Skill Spectacle is COMPLETE / RELEASED and is the public baseline. Await owner playtesting before V0.26 performance and readability polish. V0.22–V0.24 and all gameplay/AI regression baselines remain intact.**

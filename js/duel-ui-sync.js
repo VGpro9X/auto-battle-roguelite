@@ -29,7 +29,7 @@
       }
     }
     const eyebrow=document.querySelector("#duelLobbyMenu .screenHeader .eyebrow");
-    if(eyebrow)eyebrow.textContent="V0.24 · ĐẤU TRƯỜNG 1V1";
+    if(eyebrow)eyebrow.textContent="V0.25 · ĐẤU TRƯỜNG 1V1";
   }
 
   function bootstrapV020EnemyPresentation(){

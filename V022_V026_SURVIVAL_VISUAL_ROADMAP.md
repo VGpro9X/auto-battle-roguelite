@@ -23,19 +23,21 @@ Owner direction: prioritize **Sinh Tồn / Vô Hạn**. Galaxy/space combat back
 
 Delivered: real Survival attack, hit, cast, echo, heal and shield event-driven choreography with differentiated skill families, directional projectile trails, crit accents and capped device effects. Live desktop/mobile browser validation passed.
 
-## V0.24 — Unique Skill Visual Language (COMPLETE / RELEASED ✅; owner evaluation pending)
+## V0.24 — Unique Skill Visual Language (COMPLETE / RELEASED ✅)
 - Distinct visual grammar by skill ID where meaningful, not generic tag-only particles.
 - Fire flames/explosion, frost crystal/shatter, lightning arc, poison cloud, light/healing circle, dark/void distortion.
 - Distinct orbit/summon/projectile motion; prioritize commonly used skills first then complete catalogue coverage.
 
 Delivered: 80/80 base skill IDs mapped; 52 manually authored ID profiles and 28 deterministic fallback inscriptions. Per-skill projectile silhouettes and event-bound cast/hit/passive acquisition visuals; mobile performance caps and reduced-motion support. Real desktop/mobile game browser validation passed with demonstrably different Fireball/Lightning impact frames.
 
-## V0.25 — High-Tier Skill Spectacle (NEXT; awaits owner approval of V0.24)
+## V0.25 — High-Tier Skill Spectacle (COMPLETE / RELEASED ✅; owner evaluation pending)
 - Individual signature cast, impact and aftermath for Thần Kỹ, Thần Bí Kỹ, Siêu Cấp and major Hợp Đạo.
 - Different scales/readability for high-tier activation, cooldown loops and rare acquisition.
 - Bounded spectacle density so a 10+ minute Endless run stays playable.
 
-## V0.26 — Survival Combat Presentation Polish (PLANNED)
+Delivered: full 60/60 high-tier catalogue (20 Rare, 12 Siêu Cấp, 28 Hợp Đạo), acquisition ceremonies, event-bound trigger/impact/aftermath and subtle owned Rare halos. Full/balanced/low budgets 11/7/4 effects, 7/4/2 frame draws, and fair scheduling so mobile FX are not starved. Real desktop/mobile browser validation passed for rare acquisition, genuine timer triggers and actual Hợp Đạo/Siêu Cấp requirement unlocks.
+
+## V0.26 — Survival Combat Presentation Polish (NEXT; awaits owner approval of V0.25)
 - Color/contrast, impact timing, particle caps, background intensity, performance and mobile readability.
 - Low/balanced/high profiles and reduced-motion path; mobile rendered validation and regression closure.
 
