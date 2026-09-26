@@ -1,0 +1,38 @@
+name: V0.24 skill identity desktop/mobile browser validation
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v024-skill-identity-browser
+  cancel-in-progress: true
+
+jobs:
+  validate-skill-identities:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: V0.24 signature catalog, animation and performance smoke
+        run: node tests/v024-skill-identity-smoke.js
+      - name: Desktop/mobile live skill identity browser validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4194 >/tmp/v024-http.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then echo 'Chrome/Chromium unavailable'; exit 1; fi
+          verify(){
+            name="$1"; size="$2"; file="/tmp/v024-${name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size="$size" --virtual-time-budget=22000 --dump-dom "http://127.0.0.1:4194/tests/v024-skill-identity-browser-driver.html?expect=${name}" > "$file"
+            grep -q "V024_SKILL_ID_BROWSER_PASS ${name}" "$file" || { cat "$file"; exit 1; }
+            grep "V024_SKILL_ID_BROWSER_PASS ${name}" "$file"
+          }
+          verify desktop 1280,720
+          verify mobile 360,640

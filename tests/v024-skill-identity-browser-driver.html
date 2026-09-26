@@ -1,0 +1,57 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>V0.24 Survival Skill Signature Browser Gate</title>
+<style>html,body{margin:0;background:#060817}#app{display:block;border:0}#result{position:fixed;left:0;top:0;z-index:99;background:#101423;color:#fff;font:12px monospace;padding:4px}</style>
+</head><body><iframe id="app"></iframe><pre id="result">V0.24 đang kiểm tra…</pre><script>
+(async()=>{
+ const mode=new URLSearchParams(location.search).get("expect")||"desktop",mobile=mode==="mobile",width=mobile?360:1280,height=mobile?640:720;
+ const frame=document.getElementById("app"),out=document.getElementById("result");
+ const fail=s=>{out.textContent="V024_SKILL_ID_BROWSER_FAIL "+mode+" "+s;throw Error(s);};
+ const ensure=(v,msg)=>{if(!v)fail(msg);};
+ const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+ try{
+   frame.style.width=width+"px";frame.style.height=height+"px";frame.src="../index.html";
+   await new Promise((res,rej)=>{const stop=setTimeout(()=>rej(Error("game load timeout")),17000);frame.onload=()=>{clearTimeout(stop);res();};});
+   const w=frame.contentWindow,d=frame.contentDocument,errors=[];
+   w.addEventListener("error",e=>errors.push(String(e.message||e.error||"runtime error")));
+   w.addEventListener("unhandledrejection",e=>errors.push(String(e.reason||"unhandled rejection")));
+   ensure(typeof w.getV024SkillSignature==="function"&&typeof w.getV024SkillIdentityStatus==="function","ID FX library missing");
+   ensure(typeof w.getV023SurvivalFxStatus==="function"&&typeof w.drawGalaxySurvivalV022==="function","V0.22/V0.23 regression");
+   const coverage=w.getV024SkillSignatureCoverage();
+   ensure(coverage.baseSkills===80&&coverage.authored>=40,"skill coverage mismatch "+JSON.stringify(coverage));
+   ensure(w.getV024SkillSignature("fire").motif!==w.getV024SkillSignature("lightning").motif,"skill motifs were collapsed");
+   ensure(w.getV024SkillSignature("fireWisp").motif!==w.getV024SkillSignature("fire").motif,"fire summon and fireball must differ");
+   w.startRun("5");
+   for(let i=0;i<3;i++){await sleep(i===0?310:190);const button=d.querySelector("#choices .choice");
+     ensure(button&&d.getElementById("levelModal").classList.contains("visible"),"starter choice missing "+i);button.click();
+   }
+   await sleep(150);
+   ensure(w.eval("state.running&&!state.paused"),"Survival failed to start");
+   const selected=w.getV024SkillIdentityStatus().spawned;
+   ensure(selected>=3,"real skill acquisition emitted no signature "+selected);
+   // Select two existing active skills only in the isolated test iframe and call the real combat engine.
+   w.eval("owned.fire=1;owned.lightning=1;state.enemies.push({x:player.x+90,y:player.y,r:12,hp:900,maxHp:900,speed:0,dmg:0,hit:0,elite:false,dead:false,statuses:{},markedUntil:0,markPower:0});skillRuntime.timers.fire=0;skillRuntime.timers.lightning=0;");
+   for(let i=0;i<22;i++){w.update(.033);w.draw();}
+   const live=w.getV024SkillIdentityStatus();
+   ensure(live.spawned>selected,"real periodic skills did not emit signature events "+JSON.stringify(live));
+   ensure((live.drawnIds.fire||0)>0&&(live.drawnIds.lightning||0)>0,"fire/lightning identity shapes were not drawn "+JSON.stringify(live.drawnIds));
+   ensure(live.quality===(mobile?"low":"full")&&live.limit===(mobile?12:38),"mobile/desktop visual budgets incorrect");
+   ensure(d.documentElement.scrollWidth<=w.innerWidth+3,"horizontal overflow");
+   const canvas=d.getElementById("game"),g=canvas.getContext("2d"),x=width*.61,y=height*.49,scale=canvas.width/width,sx=Math.floor((x-50)*scale),sy=Math.floor((y-50)*scale),side=Math.floor(100*scale);
+   w.eval("state.paused=true;");
+   const sample=()=>g.getImageData(sx,sy,side,side).data;
+   const renderSource=(id,tags)=>{
+     w.resetSkillEngine();w.draw();const enemy={x,y,r:12,hp:800,maxHp:800,statuses:{}};
+     w.emitSkillEvent("hit",{enemy,damage:35,meta:{source:id,tags,allowProcs:false},killed:false});
+     w.draw();
+     return{pixels:sample(),status:w.getV024SkillIdentityStatus()};
+   };
+   const fire=renderSource("fire",["FIRE","PROJECTILE"]),bolt=renderSource("lightning",["LIGHTNING","CHAIN"]);
+   ensure((fire.status.drawnIds.fire||0)>0&&(bolt.status.drawnIds.lightning||0)>0,"explicit hit source identity animation missing");
+   let pixelDifference=0;for(let i=0;i<fire.pixels.length;i+=4)pixelDifference+=Math.abs(fire.pixels[i]-bolt.pixels[i])+Math.abs(fire.pixels[i+1]-bolt.pixels[i+1])+Math.abs(fire.pixels[i+2]-bolt.pixels[i+2]);
+   ensure(pixelDifference>1100,"different skill IDs produced visually identical impacts "+pixelDifference);
+   ensure(errors.length===0,"game runtime errors "+errors.join(" | "));
+   w.abandonRunToMenu();const frames=w.getV024SkillIdentityStatus().frameDraws;await sleep(140);
+   ensure(w.getV024SkillIdentityStatus().frameDraws===frames,"ID FX leaked into menu");
+   out.textContent="V024_SKILL_ID_BROWSER_PASS "+mode+" catalogue="+coverage.baseSkills+" authored="+coverage.authored+" live="+(live.spawned-selected)+" pxDiff="+pixelDifference+" quality="+live.quality;
+ }catch(error){if(!out.textContent.startsWith("V024_SKILL_ID_BROWSER_FAIL"))out.textContent="V024_SKILL_ID_BROWSER_FAIL "+mode+" "+(error?.message||String(error));console.error(error);}
+})();
+</script></body></html>
