@@ -15,7 +15,10 @@ Status: **COMPLETE / RELEASED ✅** (owner in-game evaluation pending).
   - Desktop 1280×720: PASS · actual fire and lightning periodic skill trigger integration · 139609 differentiated impact pixel delta.
   - Mobile 360×640: PASS · same gameplay triggers and individual silhouettes in low-quality profile · 167209 differentiated pixel delta.
 - [Pages integration run #852](https://github.com/VGpro9X/auto-battle-roguelite/actions/runs/36210439766): **SUCCESS** including legacy release gates and V0.24 smoke.
-- Final runtime/public version label promotion in this commit will trigger production Pages and browser revalidation; record their results after green final deploy.
+- V0.24 public/runtime promotion commit: `d54f0b5906290184964c4faab6fac1b4244b2c35`.
+- [Production GitHub Pages run #854](https://github.com/VGpro9X/auto-battle-roguelite/actions/runs/36210581953): **SUCCESS**, all V0.17–V0.24 static/simulation gates and public artifact deployed.
+- [Final V0.24 desktop/mobile skill-identity browser run #4](https://github.com/VGpro9X/auto-battle-roguelite/actions/runs/36210582044): **SUCCESS**; desktop and mobile both verify actual periodic skill triggers, 80/80 coverage, 52 authored profiles and distinct Fireball/Lightning on-canvas impacts.
+- Historical release regressions on the promoted commit: [V0.17](https://github.com/VGpro9X/auto-battle-roguelite/actions/runs/36210581949), [V0.18 G7](https://github.com/VGpro9X/auto-battle-roguelite/actions/runs/36210582017), [V0.19 A15](https://github.com/VGpro9X/auto-battle-roguelite/actions/runs/36210582059): **ALL SUCCESS**.
 
 Public URL: https://vgpro9x.github.io/auto-battle-roguelite/
 
