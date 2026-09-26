@@ -1,23 +1,32 @@
 # Auto Battle Roguelite
 
-Current release: **V0.23 – Core Survival Skill Impact FX**
+Current release: **V0.24 – Unique Survival Skill Visual Language**
 
 Public build: `https://vgpro9x.github.io/auto-battle-roguelite/`
 
 GitHub `main` is canonical.
 
 ## Current status
-- V0.23 Core Survival Skill Impact FX: **COMPLETE / RELEASED ✅** (owner testing pending).
+- V0.24 Unique Survival Skill Visual Language: **COMPLETE / RELEASED ✅** (owner visual evaluation pending).
+- V0.23 Core Survival Skill Impact FX: **COMPLETE / RELEASED ✅**.
 - V0.22 Galaxy Battlefield Foundation: **COMPLETE / RELEASED ✅**.
 - V0.21 Build Intelligence & Choice Clarity: **COMPLETE / RELEASED**.
 - V0.20 B0–B14: **COMPLETE / RELEASED** and retained as the visual/presentation baseline.
-- Runtime/public version label: **V0.23**.
+- Runtime/public version label: **V0.24**.
 - V0.19 A0–A15: **COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
 - V0.18 Graphics & Presentation Overhaul remains the frozen graphics/presentation baseline.
 - V0.17 Duel Arena remains the frozen historical mechanics/content baseline.
 - Survival/Endless V0.16 remains supported.
 
-V0.23 release evidence: `V023_RELEASE_VALIDATION.md`; historical V0.22/V0.21 evidence: `V022_RELEASE_VALIDATION.md` and `V021_RELEASE_VALIDATION.md`. V0.20 remains the visual/presentation regression baseline; V0.19 remains the tactical AI regression baseline.
+V0.24 release evidence: `V024_RELEASE_VALIDATION.md`; V0.23 evidence: `V023_RELEASE_VALIDATION.md`; historical V0.22/V0.21 evidence: `V022_RELEASE_VALIDATION.md` and `V021_RELEASE_VALIDATION.md`. V0.20 remains the visual/presentation regression baseline; V0.19 remains the tactical AI regression baseline.
+
+## V0.24 Unique Survival Skill Visual Language
+
+The Survival/Endless event stream now renders **ID-specific** animated cast, hit and skill-acquisition signatures. All **80 base skills** have deterministic identity configurations: **52 authored skill-ID profiles** for distinct elemental, weapon, support, cosmic, summon and control motifs, plus **28 ID-seeded derived inscriptions** for remaining skills. Fireball ≠ Fire Wisp, Lightning ≠ Storm Totem, Frost ≠ Frost Mirror; key active families include unique meteor craters, soul chains, rune mines, guardian wards and time dials. Selected passive skills get their own short awakening inscription. Real fire, chaos, echo, afterimage, Spirit Pearl and wisp projectiles gain recognizable silhouettes.
+
+Bounded presentation-only visuals: full 38 effects / 18 drawn per frame, balanced 24 / 10 and low/mobile 12 / 5; reduced-motion support, per-target cooldowns and complete reset between runs. No combat damage, chance, cooldown or Duel changes. The V0.22 Galaxy and V0.23 generic impacts remain beneath the new signature layer.
+
+Verified with desktop and mobile browser tests, including live skill triggers and measurable visual difference between Fireball and Lightning. V0.25 remains reserved for major high-tier Divine, Mystic, evolved and synergy spectacles; await owner approval after V0.24.
 
 ## V0.23 Core Survival Skill Impact FX
 
@@ -141,4 +150,4 @@ V0.17 remains frozen except for bug fixes and retains:
 11. `V017_DUEL_ARENA_PLAN.md`
 
 ## Project status
-**V0.23 Core Survival Skill Impact FX is COMPLETE / RELEASED and is the public baseline. Await owner's visual test before V0.24. V0.22 galaxy and historical combat/AI regressions are retained.**
+**V0.24 Unique Survival Skill Visual Language is COMPLETE / RELEASED and is the public baseline. Await owner's in-game evaluation before V0.25. V0.22 Galaxy, V0.23 impact FX and all historical combat/AI regressions are retained.**

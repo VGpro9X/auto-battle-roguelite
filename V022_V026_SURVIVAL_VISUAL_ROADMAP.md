@@ -16,19 +16,21 @@ Owner direction: prioritize **Sinh Tồn / Vô Hạn**. Galaxy/space combat back
 - Add deterministic visual-only smoke checks, wire the new scene solely into Survival's battle canvas and publish to Pages.
 - **Exit criterion:** full-screen Galaxy background visible during timed Survival and Endless, mobile/desktop with no combat-rule changes. Owner tests the published build before V0.23.
 
-## V0.23 — Core Skill Impact FX (COMPLETE / RELEASED ✅; owner visual test pending)
+## V0.23 — Core Skill Impact FX (COMPLETE / RELEASED ✅)
 - Real attack/hit events spawn readable slash arcs, directional impact bursts, sparks, shock rings, crit accents and subtle camera feedback.
 - Distinguish melee, projectiles, magic, heal and control; preserve hit truth from simulation.
 - Lifetime/pooling and per-frame caps for crowded Survival runs.
 
 Delivered: real Survival attack, hit, cast, echo, heal and shield event-driven choreography with differentiated skill families, directional projectile trails, crit accents and capped device effects. Live desktop/mobile browser validation passed.
 
-## V0.24 — Unique Skill Visual Language (NEXT; awaits owner approval of V0.23)
+## V0.24 — Unique Skill Visual Language (COMPLETE / RELEASED ✅; owner evaluation pending)
 - Distinct visual grammar by skill ID where meaningful, not generic tag-only particles.
 - Fire flames/explosion, frost crystal/shatter, lightning arc, poison cloud, light/healing circle, dark/void distortion.
 - Distinct orbit/summon/projectile motion; prioritize commonly used skills first then complete catalogue coverage.
 
-## V0.25 — High-Tier Skill Spectacle (PLANNED)
+Delivered: 80/80 base skill IDs mapped; 52 manually authored ID profiles and 28 deterministic fallback inscriptions. Per-skill projectile silhouettes and event-bound cast/hit/passive acquisition visuals; mobile performance caps and reduced-motion support. Real desktop/mobile game browser validation passed with demonstrably different Fireball/Lightning impact frames.
+
+## V0.25 — High-Tier Skill Spectacle (NEXT; awaits owner approval of V0.24)
 - Individual signature cast, impact and aftermath for Thần Kỹ, Thần Bí Kỹ, Siêu Cấp and major Hợp Đạo.
 - Different scales/readability for high-tier activation, cooldown loops and rare acquisition.
 - Bounded spectacle density so a 10+ minute Endless run stays playable.

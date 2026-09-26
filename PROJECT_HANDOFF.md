@@ -17,16 +17,17 @@ Use this file as the starting context when continuing development in a new chat.
 - Commit every meaningful checkpoint.
 
 ## Current project state
-- Current released/public baseline: **V0.23 – Core Survival Skill Impact FX**.
-- Previous release: **V0.22 – Galaxy Battlefield Foundation**.
-- Runtime/public label: **V0.23**.
+- Current released/public baseline: **V0.24 – Unique Survival Skill Visual Language**.
+- Previous release: **V0.23 – Core Survival Skill Impact FX**.
+- Runtime/public label: **V0.24**.
 - V0.21 status: **Build Intelligence & Choice Clarity COMPLETE / RELEASED**.
 - V0.20 status: **B0–B14 COMPLETE / RELEASED** and retained as the visual/presentation baseline.
 - V0.19 status: **A0–A15 COMPLETE / RELEASED** and retained as the tactical AI regression baseline.
 - V0.18 remains frozen as the graphics/presentation baseline.
 - V0.17 remains frozen as the historical Duel mechanics/content baseline.
 - V0.16 Survival/Endless remains supported.
-- V0.23 release evidence: `V023_RELEASE_VALIDATION.md`.
+- V0.24 release evidence: `V024_RELEASE_VALIDATION.md`.
+- V0.23 historical release evidence: `V023_RELEASE_VALIDATION.md`.
 - V0.22 historical release evidence: `V022_RELEASE_VALIDATION.md`.
 - Authoritative V0.21 historical evidence: `V021_RELEASE_VALIDATION.md`.
 - Historical V0.20 release evidence: `V020_RELEASE_VALIDATION.md`.
@@ -50,6 +51,13 @@ Use this file as the starting context when continuing development in a new chat.
 11. `V017_DUEL_ARENA_PLAN.md`
 
 Before editing, fetch latest relevant files and SHAs from GitHub `main`.
+
+## V0.24 Unique Survival Skill Visual Language
+- New modules `js/v024-skill-signatures.js` and `js/v024-skill-identity-fx.js` load after V0.23 to add ID-specific animated cast, hit, projectile and skill-selected effects.
+- Current coverage: **80/80 base skills**, **52 authored explicit skill-ID profiles** and **28 deterministic derived ID inscriptions**. These include specifically different Fireball, Fire Wisp, Lightning, Storm Totem, Frost, Frost Mirror, Meteor, Rune Mine, Black Hole, Soul Bind, Seven Star, defensive and healing signatures.
+- Device budgets: full 38 active / 18 per frame, balanced 24 / 10, low/mobile 12 / 5. Suppress repeated same-frame hits, respect reduced motion, clear visual pools on run reset. Existing V0.22 Galaxy and V0.23 generic FX remain.
+- Gates: `tests/v024-skill-identity-smoke.js` in Pages, plus desktop/mobile rendered tests in `.github/workflows/v024-skill-identity-browser.yml`.
+- No V0.24 changes to combat, cooldowns, skill probabilities, AI or Duel. Owner must test public V0.24 before V0.25 high-tier skill spectacle.
 
 ## V0.23 Survival FX integration
 - `js/v023-survival-skill-fx.js` attaches to established combat events; `js/game.js` passes projectile vx/vy to presentation only.
@@ -150,4 +158,4 @@ Graphics/UI never decide hit success, damage, cooldown, fatal/revive ordering, s
 - Tests stay under `tests/` and are not shipped publicly.
 
 ## Status for next conversation
-**V0.23 Core Survival Skill Impact FX is COMPLETE / RELEASED with live desktop/mobile browser validation. Stop at checkpoint for owner gameplay test before V0.24.**
+**V0.24 Unique Survival Skill Visual Language is COMPLETE / RELEASED with 80-skill catalog and live desktop/mobile browser validation. Stop at checkpoint for owner gameplay test before V0.25.**

@@ -3,9 +3,9 @@
 GitHub `main` is canonical.
 
 ## Current baseline
-- Released baseline: **V0.23 – Core Survival Skill Impact FX**.
-- Previous release: **V0.22 – Galaxy Battlefield Foundation**.
-- Active development: **none — owner visual/gameplay test of V0.23 pending**.
+- Released baseline: **V0.24 – Unique Survival Skill Visual Language**.
+- Previous release: **V0.23 – Core Survival Skill Impact FX**.
+- Active development: **none — owner visual/gameplay test of V0.24 pending**.
 - V0.21 authoritative plan: `V021_BUILD_INTELLIGENCE_PLAN.md`.
 - V0.20 remains the frozen visual/presentation baseline: `V020_COMPLETE_VISUAL_REBUILD_PLAN.md`.
 - Previous graphics baseline: **V0.18 – Graphics & Presentation Overhaul**.
@@ -135,15 +135,15 @@ V0.21 is a presentation/readability layer. V0.20 visual truth and V0.19 tactical
 
 Authoritative plan: `V022_V026_SURVIVAL_VISUAL_ROADMAP.md`.
 - V0.22 Galaxy Battlefield Foundation — **COMPLETE / RELEASED ✅**.
-- V0.23 Core Skill Impact FX — **COMPLETE / RELEASED ✅** (owner evaluation pending).
-- V0.24 Unique Skill Visual Language — PLANNED.
+- V0.23 Core Skill Impact FX — **COMPLETE / RELEASED ✅**.
+- V0.24 Unique Skill Visual Language — **COMPLETE / RELEASED ✅** (owner evaluation pending).
 - V0.25 High-Tier Skill Spectacle — PLANNED.
 - V0.26 Combat Presentation Polish — PLANNED.
 
-V0.23 adds real event-driven combat choreography and desktop/mobile browser validation to actual Survival combat. Owner must test public V0.23 before V0.24 begins.
+V0.24 delivers 52 authored per-skill signature designs plus deterministic ID-seeded designs for the 28 remaining base skills. Real periodic cast, hit, projectile and passive-acquisition animation use a bounded, reduced-motion-aware Survival-only visual layer. Desktop/mobile browser validation passed. Owner must test V0.24 before V0.25 begins.
 
 ---
 
 # PROJECT STATUS
 
-**V0.23 Core Survival Skill Impact FX is COMPLETE / RELEASED, pending owner visual test before V0.24. V0.22 Galaxy remains integrated; V0.20/V0.19 are frozen regressions.**
+**V0.24 Unique Survival Skill Visual Language is COMPLETE / RELEASED, pending owner visual test before V0.25. V0.23 core impacts and V0.22 Galaxy remain integrated; V0.20/V0.19 remain frozen regressions.**
