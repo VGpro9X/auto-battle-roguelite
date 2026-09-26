@@ -1,0 +1,63 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>V0.25 High Tier Survival Browser Validation</title>
+<style>html,body{margin:0;background:#070913}#app{display:block;border:0}#result{position:fixed;top:0;left:0;z-index:99;padding:4px;color:#fff;background:#161626;font:12px monospace}</style></head>
+<body><iframe id="app"></iframe><pre id="result">V0.25 đang kiểm tra...</pre><script>
+(async()=>{
+ const mode=new URLSearchParams(location.search).get("expect")||"desktop",mobile=mode==="mobile",width=mobile?360:1280,height=mobile?640:720;
+ const frame=document.getElementById("app"),out=document.getElementById("result");
+ const fail=m=>{out.textContent="V025_HIGH_TIER_BROWSER_FAIL "+mode+" "+m;throw Error(m);};
+ const ok=(pass,msg)=>{if(!pass)fail(msg);};
+ const delay=ms=>new Promise(done=>setTimeout(done,ms));
+ try{
+   frame.style.width=width+"px";frame.style.height=height+"px";frame.src="../index.html";
+   await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error("load timeout")),18000);frame.onload=()=>{clearTimeout(timer);resolve();};});
+   const w=frame.contentWindow,d=frame.contentDocument,errors=[];
+   w.addEventListener("error",e=>errors.push(String(e.message||e.error||"runtime error")));
+   w.addEventListener("unhandledrejection",e=>errors.push(String(e.reason||"unhandled rejection")));
+   ok(typeof w.getV025HighTierSpectacleStatus==="function","spectacle module did not load");
+   ok(typeof w.getV024SkillIdentityStatus==="function"&&typeof w.getV023SurvivalFxStatus==="function"&&typeof w.drawGalaxySurvivalV022==="function","earlier Survival layers missing");
+   const initial=w.getV025HighTierSpectacleStatus();ok(initial.total===60&&initial.divine===10&&initial.mystic===10&&initial.evolutions===12&&initial.synergies===28,"catalogue has wrong registry coverage "+JSON.stringify(initial));
+   w.startRun("5");
+   for(let i=0;i<3;i++){await delay(i===0?300:185);
+     const choice=d.querySelector("#choices .choice");
+     ok(choice&&d.getElementById("levelModal").classList.contains("visible"),"starter pick "+i+" missing");
+     choice.click();
+   }
+   await delay(160);ok(w.eval("state.running&&!state.paused"),"Survival starter did not resolve");
+   // Use real rare acquisition to prove the production event wiring, not visual previews.
+   ok(w.grantDivineSkill("timeStop"),"cannot acquire Thời Đình");
+   ok(w.grantDivineSkill("voidReality"),"cannot acquire Hư Thực");
+   w.draw();
+   let live=w.getV025HighTierSpectacleStatus();
+   ok(live.emitted>=2&&(live.drawnIds.timeStop||0)>0&&(live.drawnIds.voidReality||0)>0,"divine/mystic acquisition not visible "+JSON.stringify(live.drawnIds));
+   // Cause a genuine timed rare trigger and genuine Hợp Đạo / Siêu Cấp requirement resolution.
+   const before=live.emitted;
+   w.eval("skillRuntime.divineTimers.timeStop=0;owned.fire=skills.fire.max;owned.frost=1;owned.burn=1;owned.combustion=1;evaluateBuildUnlocks();");
+   w.runSkillEngine(.033);w.draw();w.draw();
+   live=w.getV025HighTierSpectacleStatus();
+   ok(live.emitted>before,"high-tier simulation did not emit build or rare events");
+   ok(w.eval('hasEvolution("heavenfire")&&hasSynergy("thermalShock")'),"actual build requirements did not unlock expected high-tier rules");
+   ok((live.drawnIds.heavenfire||0)>0&&(live.drawnIds.thermalShock||0)>0,"genuine Siêu Cấp/Hợp Đạo unlocks not rendered "+JSON.stringify(live.drawnIds));
+   ok(live.limit===(mobile?4:11)&&live.frameLimit===(mobile?2:7),"device FX budget incorrect "+JSON.stringify(live));
+   ok(d.documentElement.scrollWidth<=w.innerWidth+3,"horizontal overflow");
+   // Freeze simulation to sample exactly the same region under two high-tier hit signatures.
+   w.eval("state.paused=true;");
+   const canvas=d.getElementById("game"),g=canvas.getContext("2d"),x=width*.59,y=height*.45,scale=canvas.width/width;
+   const side=Math.max(30,Math.round(100*scale)),sx=Math.round((x-50)*scale),sy=Math.round((y-50)*scale);
+   const snapshot=()=>g.getImageData(sx,sy,side,side).data;
+   function renderRare(id){
+     w.resetSkillEngine();w.draw();
+     w.emitSkillEvent("divine_trigger",{id,enemy:{x,y,r:10},targets:[{enemy:{x,y,r:10}}]});
+     w.draw();
+     return{pixels:snapshot(),status:w.getV025HighTierSpectacleStatus()};
+   }
+   const gold=renderRare("heavenlyPunishment"),voidFx=renderRare("voidReality");
+   ok((gold.status.drawnIds.heavenlyPunishment||0)>0&&(voidFx.status.drawnIds.voidReality||0)>0,"rare trigger shape missing");
+   let pixelDiff=0;for(let i=0;i<gold.pixels.length;i+=4)pixelDiff+=Math.abs(gold.pixels[i]-voidFx.pixels[i])+Math.abs(gold.pixels[i+1]-voidFx.pixels[i+1])+Math.abs(gold.pixels[i+2]-voidFx.pixels[i+2]);
+   ok(pixelDiff>1100,"Thần Kỹ and Thần Bí Kỹ have indistinguishable animation "+pixelDiff);
+   ok(errors.length===0,"runtime errors: "+errors.join(" | "));
+   w.abandonRunToMenu();const prior=w.getV025HighTierSpectacleStatus().drawFrames;await delay(170);
+   ok(w.getV025HighTierSpectacleStatus().drawFrames===prior,"V0.25 draws over main menu");
+   out.textContent="V025_HIGH_TIER_BROWSER_PASS "+mode+" catalogue="+live.total+" realEvents="+(live.emitted-before)+" paletteDiff="+pixelDiff+" quality="+live.quality;
+ }catch(error){if(!out.textContent.startsWith("V025_HIGH_TIER_BROWSER_FAIL"))out.textContent="V025_HIGH_TIER_BROWSER_FAIL "+mode+" "+(error?.message||String(error));console.error(error);}
+})();
+</script></body></html>

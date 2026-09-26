@@ -1,0 +1,38 @@
+name: V0.25 high-tier spectacle desktop/mobile validation
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v025-survival-spectacle-browser
+  cancel-in-progress: true
+
+jobs:
+  high-tier-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 60-ID rare/evolved/synergy event smoke
+        run: node tests/v025-high-tier-spectacle-smoke.js
+      - name: Live desktop/mobile Survival and Endless presentation gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4195 >/tmp/v025-server.log 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true' EXIT
+          sleep 1
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then echo "Chromium unavailable"; exit 1; fi
+          verify(){
+            name="$1"; size="$2"; file="/tmp/v025-${name}.html"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size="$size" --virtual-time-budget=22000 --dump-dom "http://127.0.0.1:4195/tests/v025-spectacle-browser-driver.html?expect=${name}" > "$file"
+            grep -q "V025_HIGH_TIER_BROWSER_PASS ${name}" "$file" || { cat "$file"; exit 1; }
+            grep "V025_HIGH_TIER_BROWSER_PASS ${name}" "$file"
+          }
+          verify desktop 1280,720
+          verify mobile 360,640
