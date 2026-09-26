@@ -102,12 +102,8 @@ root.onSkillEvent("periodic_echo",p=>{
  const id=evolvedSources[p?.skillKey];if(!id||typeof hasEvolution!=="function"||!hasEvolution(id))return;
  offer(id,"trigger",{});
 });
-// Explicitly sourced Hợp Đạo impacts (not every base-skill cast) express their own signature.
-const synergyImpactSources=new Set(["thermalShock","bloodConductor","arcCollector","explosiveBlades","toxicFlame","stormVolley","plagueLightning","heavenfallBurn","lastBreath","guardianRetaliation","thunderStride","bloodSymbiosis","nourishingPearls","afterimageEcho"]);
-root.onSkillEvent("hit",p=>{
- const source=p?.meta?.source;if(!synergyImpactSources.has(source)||!(p?.damage>0)||!validPoint(p.enemy))return;
- if(typeof hasSynergy==="function"&&hasSynergy(source))offer(source,"hit",p);
-});
+// The single shared hit listener above already handles explicitly sourced Hợp Đạo
+// damage and filters DOT. Do not double-enqueue the same combat event.
 function line(g,x1,y1,x2,y2,color,alpha,w=1.5){g.globalAlpha=alpha;g.strokeStyle=color;g.lineWidth=w;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();}
 function ring(g,r,color,alpha,w=1.8,start=0,end=TAU){g.globalAlpha=alpha;g.strokeStyle=color;g.lineWidth=w;g.beginPath();g.arc(0,0,Math.max(1,r),start,end);g.stroke();}
 function poly(g,n,r,rotation,color,alpha,w=1.7){g.globalAlpha=alpha;g.strokeStyle=color;g.lineWidth=w;g.beginPath();
