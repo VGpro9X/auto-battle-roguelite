@@ -46,7 +46,7 @@ const catalogue=Object.freeze(Object.fromEntries([
  ...Object.entries(synergy).map(([id,[motif,color,accent]])=>[id,Object.freeze({id,tier:"synergy",motif,color,accent})])
 ]));
 const LIMIT={low:4,balanced:7,full:11},PER_FRAME={low:2,balanced:4,full:7},OWNED={low:1,balanced:2,full:3};
-const F={list:[],last:Object.create(null),activeId:Object.create(null),drawn:Object.create(null),emitted:0,rendered:0,dropped:0,suppressed:0,drawFrames:0,quality:"",reduced:false};
+const F={list:[],last:Object.create(null),activeId:Object.create(null),drawn:Object.create(null),emitted:0,rendered:0,dropped:0,suppressed:0,drawFrames:0,drawCursor:0,quality:"",reduced:false};
 function clock(){return Number(state.t)||0;}
 function quality(){let forced="";try{forced=new URLSearchParams(root.location?.search||"").get("visualQuality")||"";}catch{}
   if(["low","balanced","full"].includes(forced))return forced;
@@ -217,8 +217,16 @@ function paint(g,now){
  // run accumulate invisible oldest events when frame budget is exhausted.
  F.list=F.list.filter(fx=>now-fx.start<=fx.life&&now>=fx.start);
  while(F.list.length>LIMIT[q]){F.list.shift();F.dropped++;}
- let drawn=0;
- for(let i=F.list.length-1;i>=0&&drawn<limit;i--){const fx=F.list[i];motif(g,fx,Math.min(1,(now-fx.start)/fx.life),q,rm);drawn++;}
+ // Round-robin, newest first in the initial frame; every queued high-tier
+ // event receives time on screen, even when mobile can draw only two per frame.
+ // This prevents rare acquisition FX from starving behind a rapid divine trigger.
+ const count=F.list.length,take=Math.min(count,limit);
+ const first=count?F.drawCursor%count:0;
+ for(let j=0;j<take;j++){
+   const index=count-1-(first+j)%count,fx=F.list[index];
+   motif(g,fx,Math.min(1,(now-fx.start)/fx.life),q,rm);
+ }
+ F.drawCursor=count?(first+take)%count:0;
  persistent(g,now,q,rm);F.drawFrames++;
 }
 const oldDraw=root.draw;
@@ -226,7 +234,7 @@ root.draw=function(){const result=oldDraw.apply(this,arguments);paint(ctx,clock(
 const oldReset=root.resetSkillEngine;
 if(typeof oldReset==="function")root.resetSkillEngine=function(){
  const result=oldReset.apply(this,arguments);
- F.list.length=0;F.last=Object.create(null);F.activeId=Object.create(null);return result;
+ F.list.length=0;F.last=Object.create(null);F.activeId=Object.create(null);F.drawCursor=0;return result;
 };
 root.getV025HighTierSignature=id=>catalogue[id]||null;
 root.getV025HighTierSpectacleStatus=()=>{
