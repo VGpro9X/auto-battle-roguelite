@@ -4,7 +4,7 @@ const html=read("index.html");
 const plan=read("V020_COMPLETE_VISUAL_REBUILD_PLAN.md");
 const pages=read(".github/workflows/pages.yml");
 
-assert(/<title>Auto Battle Roguelite V0\.(?:19|20|21|22|23)<\/title>/.test(html),"B14 label must be V0.19 candidate, V0.20 promoted release or V0.21 release");
+assert(/<title>Auto Battle Roguelite V0\.(?:19|20|21|22|23|24)<\/title>/.test(html),"B14 label must be V0.19 candidate, V0.20 promoted release or V0.21 release");
 assert(/id="version">Auto Battle Roguelite V0\.(?:19|20|21|22|23)/.test(html),"B14 in-game version must be V0.19 candidate, V0.20 promoted release or V0.21 release");
 assert(plan.includes("B0–B13 COMPLETE, B14 ACTIVE")||plan.includes("B0–B14 COMPLETE"),"master plan is not in B14 candidate/released state");
 

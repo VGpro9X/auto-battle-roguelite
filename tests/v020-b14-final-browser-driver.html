@@ -14,8 +14,8 @@
     w.addEventListener("error",e=>errors.push(String(e.message||e.error||"error")));
     w.addEventListener("unhandledrejection",e=>errors.push(String(e.reason||"unhandled rejection")));
     if(w.__V020_RENDERER_V3_BOOTSTRAP__)await w.__V020_RENDERER_V3_BOOTSTRAP__;
-    ok(d.title==="Auto Battle Roguelite V0.20"||d.title==="Auto Battle Roguelite V0.21"||d.title==="Auto Battle Roguelite V0.22"||d.title==="Auto Battle Roguelite V0.23","title not on validated V0.20+ release line: "+d.title);
-    ok(["Auto Battle Roguelite V0.20","Auto Battle Roguelite V0.21","Auto Battle Roguelite V0.22","Auto Battle Roguelite V0.23"].includes(d.getElementById("version")?.textContent.trim()),"version badge not on validated V0.20+ release line");
+    ok(d.title==="Auto Battle Roguelite V0.20"||d.title==="Auto Battle Roguelite V0.21"||d.title==="Auto Battle Roguelite V0.22"||d.title==="Auto Battle Roguelite V0.23"||d.title==="Auto Battle Roguelite V0.24","title not on validated V0.20+ release line: "+d.title);
+    ok(["Auto Battle Roguelite V0.20","Auto Battle Roguelite V0.21","Auto Battle Roguelite V0.22","Auto Battle Roguelite V0.23","Auto Battle Roguelite V0.24"].includes(d.getElementById("version")?.textContent.trim()),"version badge not on validated V0.20+ release line");
 
     w.startRun("5");
     await new Promise(r=>setTimeout(r,500));
@@ -28,7 +28,7 @@
     await new Promise(r=>setTimeout(r,160));
     const lobby=d.getElementById("duelLobbyMenu");
     ok(lobby?.classList.contains("visible"),"Duel lobby did not open");
-    ok(/V0\.(?:20|21|22|23)/.test(lobby?.querySelector(".eyebrow")?.textContent||""),"Duel lobby version label not on validated V0.20+ release line");
+    ok(/V0\.(?:20|21|22|23|24)/.test(lobby?.querySelector(".eyebrow")?.textContent||""),"Duel lobby version label not on validated V0.20+ release line");
 
     const canvas=d.createElement("canvas");canvas.width=width;canvas.height=height;canvas.style.width=width+"px";canvas.style.height=height+"px";canvas.style.position="fixed";canvas.style.left="-9999px";d.body.appendChild(canvas);
     const renderer=w.createDuelRenderer(canvas);
